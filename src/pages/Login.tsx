@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -6,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { StepCard, StepCardContent, StepCardDescription, StepCardFooter, StepCardHeader, StepCardTitle } from '@/components/StepCard';
 import { Separator } from '@/components/ui/separator';
-import { LinkedIn } from 'lucide-react';
+import { Linkedin } from 'lucide-react';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -67,7 +66,7 @@ const Login = () => {
               onClick={handleLinkedInLogin}
               disabled={isSubmitting}
             >
-              <LinkedIn className="h-5 w-5" />
+              <Linkedin className="h-5 w-5" />
               <span>Log in with LinkedIn</span>
             </Button>
             
