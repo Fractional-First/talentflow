@@ -5,10 +5,13 @@ import { DashboardLayout } from '@/components/DashboardLayout';
 import { StepCard, StepCardContent, StepCardDescription, StepCardHeader, StepCardTitle } from '@/components/StepCard';
 import { Button } from '@/components/ui/button';
 import { Step } from '@/components/OnboardingProgress';
-import { ArrowRight, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, CheckCircle2, User, FileText, Briefcase, Image, ArrowUpRight } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from "@/components/ui/progress";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [onboardingComplete, setOnboardingComplete] = useState(false);
   const [steps, setSteps] = useState<Step[]>([
     { 
       id: 1, 
@@ -50,11 +53,17 @@ const Dashboard = () => {
   
   const currentStep = steps.findIndex(step => step.status === 'current') + 1;
   
+  // Calculate onboarding progress
+  const completedSteps = steps.filter(step => step.status === 'completed').length;
+  const totalSteps = steps.length;
+  const progressPercentage = (completedSteps / totalSteps) * 100;
+
   // Display appropriate content based on onboarding progress
   const getNextStep = () => {
     const nextStep = steps.find(step => step.status === 'current');
     
     if (!nextStep) {
+      setOnboardingComplete(true);
       return {
         title: 'You\'ve Completed All Steps',
         description: 'Congratulations! You\'ve completed the entire onboarding process.',
@@ -117,12 +126,172 @@ const Dashboard = () => {
   };
   
   const nextStep = getNextStep();
-  
-  // Calculate onboarding progress
-  const completedSteps = steps.filter(step => step.status === 'completed').length;
-  const totalSteps = steps.length;
-  const progressPercentage = (completedSteps / totalSteps) * 100;
 
+  // After onboarding is complete, show dashboard style view
+  if (onboardingComplete) {
+    return (
+      <DashboardLayout steps={steps} currentStep={currentStep}>
+        <div className="space-y-8">
+          <StepCard>
+            <StepCardHeader>
+              <StepCardTitle>Welcome to Your Dashboard</StepCardTitle>
+              <StepCardDescription>
+                You've completed onboarding! Now you can freely navigate between different sections.
+              </StepCardDescription>
+            </StepCardHeader>
+            
+            <StepCardContent>
+              <div className="bg-primary/5 border border-primary/20 rounded-lg p-6">
+                <h3 className="text-lg font-medium mb-4">Your TalentFlow Status</h3>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium">Profile Completion</span>
+                  <span className="text-sm font-medium">100%</span>
+                </div>
+                <Progress value={100} className="h-2 mb-6" />
+                
+                <div className="flex items-center gap-2 mb-1">
+                  <CheckCircle2 className="h-4 w-4 text-green-500" />
+                  <span className="text-sm">All onboarding steps completed</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="success" className="text-xs">Active</Badge>
+                  <span className="text-sm text-muted-foreground">Your profile is visible to potential employers</span>
+                </div>
+              </div>
+            </StepCardContent>
+          </StepCard>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <StepCard className="h-full transition-all hover:shadow-md">
+              <button 
+                onClick={() => navigate('/dashboard/profile-creation')}
+                className="text-left w-full"
+              >
+                <StepCardHeader>
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center">
+                      <div className="bg-primary/10 p-2 rounded-full mr-3">
+                        <User className="h-5 w-5 text-primary" />
+                      </div>
+                      <StepCardTitle>Profile</StepCardTitle>
+                    </div>
+                    <Badge variant="success">Complete</Badge>
+                  </div>
+                  <StepCardDescription>
+                    View and edit your professional profile
+                  </StepCardDescription>
+                </StepCardHeader>
+                
+                <StepCardContent>
+                  <div className="flex justify-between items-center">
+                    <p className="text-sm text-muted-foreground">
+                      Update your skills, experience, and personal information
+                    </p>
+                    <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                </StepCardContent>
+              </button>
+            </StepCard>
+            
+            <StepCard className="h-full transition-all hover:shadow-md">
+              <button 
+                onClick={() => navigate('/dashboard/agreement')}
+                className="text-left w-full"
+              >
+                <StepCardHeader>
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center">
+                      <div className="bg-primary/10 p-2 rounded-full mr-3">
+                        <FileText className="h-5 w-5 text-primary" />
+                      </div>
+                      <StepCardTitle>Legal Agreements</StepCardTitle>
+                    </div>
+                    <Badge variant="success">Signed</Badge>
+                  </div>
+                  <StepCardDescription>
+                    Review signed agreements
+                  </StepCardDescription>
+                </StepCardHeader>
+                
+                <StepCardContent>
+                  <div className="flex justify-between items-center">
+                    <p className="text-sm text-muted-foreground">
+                      View your signed Master Services Agreement
+                    </p>
+                    <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                </StepCardContent>
+              </button>
+            </StepCard>
+            
+            <StepCard className="h-full transition-all hover:shadow-md">
+              <button 
+                onClick={() => navigate('/dashboard/branding')}
+                className="text-left w-full"
+              >
+                <StepCardHeader>
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center">
+                      <div className="bg-primary/10 p-2 rounded-full mr-3">
+                        <Image className="h-5 w-5 text-primary" />
+                      </div>
+                      <StepCardTitle>Professional Branding</StepCardTitle>
+                    </div>
+                    <Badge variant="success">Complete</Badge>
+                  </div>
+                  <StepCardDescription>
+                    Enhance your professional presence
+                  </StepCardDescription>
+                </StepCardHeader>
+                
+                <StepCardContent>
+                  <div className="flex justify-between items-center">
+                    <p className="text-sm text-muted-foreground">
+                      Update your portfolio and professional images
+                    </p>
+                    <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                </StepCardContent>
+              </button>
+            </StepCard>
+            
+            <StepCard className="h-full transition-all hover:shadow-md">
+              <button 
+                onClick={() => navigate('/dashboard/job-matching')}
+                className="text-left w-full"
+              >
+                <StepCardHeader>
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center">
+                      <div className="bg-primary/10 p-2 rounded-full mr-3">
+                        <Briefcase className="h-5 w-5 text-primary" />
+                      </div>
+                      <StepCardTitle>Job Matching</StepCardTitle>
+                    </div>
+                    <Badge variant="success">Active</Badge>
+                  </div>
+                  <StepCardDescription>
+                    View and manage job matches
+                  </StepCardDescription>
+                </StepCardHeader>
+                
+                <StepCardContent>
+                  <div className="flex justify-between items-center">
+                    <p className="text-sm text-muted-foreground">
+                      See opportunities matched to your profile
+                    </p>
+                    <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                </StepCardContent>
+              </button>
+            </StepCard>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  // Initial linear onboarding flow
   return (
     <DashboardLayout steps={steps} currentStep={currentStep}>
       <div className="space-y-6">
