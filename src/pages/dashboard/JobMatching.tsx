@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
@@ -9,7 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
-import { ArrowRight, ArrowLeft, Briefcase, Building, MapPin, DollarSign, Sparkles, ThumbsUp, ThumbsDown, Clock, Flag, Calendar, CalendarDays, AlertCircle } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Briefcase, Building, MapPin, DollarSign, Sparkles, ThumbsUp, ThumbsDown, Clock, Flag, Calendar, CalendarDays, AlertCircle, Home } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
 import { Progress } from '@/components/ui/progress';
@@ -19,6 +18,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { toast } from "@/components/ui/use-toast";
 
 const JobMatching = () => {
   const navigate = useNavigate();
@@ -41,18 +41,25 @@ const JobMatching = () => {
     'Finance',
     'Healthcare'
   ]);
-  const [selectedJob, setSelectedJob] = useState<number | null>(null);
+  
+  const [jobRankings, setJobRankings] = useState<{[key: number]: number | null}>({
+    1: null,
+    2: null,
+    3: null,
+    4: null
+  });
+  
+  const allJobsRanked = Object.values(jobRankings).every(rank => rank !== null);
   
   const steps: Step[] = [
-    { id: 1, name: 'Sign Up', description: 'Create your account', status: 'completed' },
-    { id: 2, name: 'Profile', description: 'Enter your information', status: 'completed' },
-    { id: 3, name: 'Profile Snapshot', description: 'Review your profile', status: 'completed' },
-    { id: 4, name: 'Agreement', description: 'Sign legal documents', status: 'completed' },
-    { id: 5, name: 'Branding', description: 'Enhance your profile', status: 'completed' },
-    { id: 6, name: 'Job Matching', description: 'Get matched to jobs', status: 'current' }
+    { id: 1, name: 'Sign Up', description: 'Create your account', status: 'completed', estimatedTime: '2-3 minutes' },
+    { id: 2, name: 'Profile', description: 'Enter your information', status: 'completed', estimatedTime: '5-7 minutes' },
+    { id: 3, name: 'Profile Snapshot', description: 'Review your profile', status: 'completed', estimatedTime: '3-5 minutes' },
+    { id: 4, name: 'Agreement', description: 'Sign legal documents', status: 'completed', estimatedTime: '4-6 minutes' },
+    { id: 5, name: 'Branding', description: 'Enhance your profile', status: 'completed', estimatedTime: '5-8 minutes' },
+    { id: 6, name: 'Job Matching', description: 'Get matched to jobs', status: 'current', estimatedTime: '8-10 minutes' }
   ];
   
-  // Mock job recommendations
   const recommendedJobs = [
     {
       id: 1,
@@ -101,27 +108,68 @@ const JobMatching = () => {
   const handleContinue = () => {
     setIsSubmitting(true);
     
-    // Simulate API call
     setTimeout(() => {
       setIsSubmitting(false);
       navigate('/dashboard/waiting-room');
     }, 1000);
   };
 
-  const handleJobSelection = (jobId: number) => {
-    setSelectedJob(jobId);
-    // In a real app, this would log the selection for behavioral analysis
+  const handleJobRanking = (jobId: number, rank: number) => {
+    const jobWithThisRank = Object.entries(jobRankings).find(
+      ([id, currentRank]) => currentRank === rank && Number(id) !== jobId
+    );
+    
+    const newRankings = { ...jobRankings };
+    
+    if (jobWithThisRank) {
+      const [otherId] = jobWithThisRank;
+      newRankings[Number(otherId)] = jobRankings[jobId] || null;
+    }
+    
+    newRankings[jobId] = rank;
+    
+    setJobRankings(newRankings);
+    
+    if (Object.values(newRankings).every(r => r !== null) && 
+        Object.values(jobRankings).some(r => r === null)) {
+      toast({
+        title: "Ranking Complete!",
+        description: "Thank you for ranking all job opportunities. Your preferences have been recorded.",
+      });
+    }
   };
+
+  const [onboardingComplete, setOnboardingComplete] = useState(false);
+  
+  useState(() => {
+    const onboardingStatus = localStorage.getItem('onboardingComplete');
+    if (onboardingStatus === 'true') {
+      setOnboardingComplete(true);
+    }
+  });
 
   return (
     <DashboardLayout steps={steps} currentStep={6}>
       <div className="space-y-6">
+        {onboardingComplete && (
+          <div className="mb-4">
+            <Button variant="outline" onClick={() => navigate('/dashboard')} className="gap-2">
+              <Home className="h-4 w-4" />
+              Back to Dashboard
+            </Button>
+          </div>
+        )}
+        
         <StepCard>
           <StepCardHeader>
             <StepCardTitle>Job Matching Preferences</StepCardTitle>
             <StepCardDescription>
               Configure your job matching preferences to help us find the perfect opportunities for you
             </StepCardDescription>
+            <div className="flex items-center mt-2 bg-muted/40 px-3 py-2 rounded-md">
+              <Clock className="h-4 w-4 text-muted-foreground mr-2" />
+              <span className="text-sm text-muted-foreground">Estimated completion time: <strong>{steps[5].estimatedTime}</strong></span>
+            </div>
           </StepCardHeader>
           
           <StepCardContent>
@@ -396,9 +444,9 @@ const JobMatching = () => {
         
         <StepCard>
           <StepCardHeader>
-            <StepCardTitle>Job Selection Simulator</StepCardTitle>
+            <StepCardTitle>Job Ranking Simulator</StepCardTitle>
             <StepCardDescription>
-              Select the job opportunity that interests you most to help us understand your preferences
+              Rank these job opportunities from 1 (most preferred) to 4 (least preferred) to help us understand your preferences
             </StepCardDescription>
           </StepCardHeader>
           
@@ -407,48 +455,87 @@ const JobMatching = () => {
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>Preference Analysis</AlertTitle>
               <AlertDescription>
-                Your selections help our AI understand your preferences and improve job matching accuracy.
+                Your rankings help our AI understand your detailed preferences and improve job matching accuracy.
               </AlertDescription>
             </Alert>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {recommendedJobs.map((job) => (
-                <Card 
-                  key={job.id} 
-                  className={`border-2 transition-all duration-300 hover:shadow-md cursor-pointer ${
-                    selectedJob === job.id ? 'border-primary' : 'border-transparent'
-                  }`}
-                  onClick={() => handleJobSelection(job.id)}
-                >
-                  <CardHeader className="pb-2">
-                    <CardTitle>{job.title}</CardTitle>
-                    <CardDescription className="flex items-center mt-1">
-                      <Building className="h-3.5 w-3.5 mr-1" />
-                      {job.company}
-                      <span className="mx-2">•</span>
-                      <MapPin className="h-3.5 w-3.5 mr-1" />
-                      {job.location}
-                      {job.remote && <Badge variant="outline" className="ml-2 text-xs py-0">Remote</Badge>}
-                    </CardDescription>
-                  </CardHeader>
-                  
-                  <CardContent>
-                    <div className="flex items-center text-muted-foreground text-sm">
-                      <DollarSign className="h-3.5 w-3.5 mr-1" />
-                      {job.salary}
+            <div className="mb-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="font-medium">Rank these opportunities based on your interest (1 = most interested)</h3>
+                {allJobsRanked ? (
+                  <Badge variant="success">Ranking Complete</Badge>
+                ) : (
+                  <Badge variant="outline">Ranking Incomplete</Badge>
+                )}
+              </div>
+              
+              <div className="grid grid-cols-1 gap-4">
+                {recommendedJobs.map((job) => (
+                  <Card 
+                    key={job.id} 
+                    className={`border-2 transition-all duration-300 hover:shadow-md ${
+                      jobRankings[job.id] !== null ? 'border-primary/50' : 'border-transparent'
+                    }`}
+                  >
+                    <div className="flex flex-col md:flex-row md:items-center">
+                      <div className="flex-grow p-4">
+                        <div className="flex justify-between">
+                          <div>
+                            <h4 className="font-medium">{job.title}</h4>
+                            <p className="text-sm text-muted-foreground flex items-center mt-1">
+                              <Building className="h-3.5 w-3.5 mr-1" />
+                              {job.company}
+                              <span className="mx-2">•</span>
+                              <MapPin className="h-3.5 w-3.5 mr-1" />
+                              {job.location}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <div className="flex items-center">
+                              <Sparkles className="h-4 w-4 text-primary mr-1" />
+                              <span className="font-medium">{job.matchScore}% Match</span>
+                            </div>
+                            <p className="text-sm text-muted-foreground flex items-center">
+                              <DollarSign className="h-3.5 w-3.5 mr-1" />
+                              {job.salary}
+                            </p>
+                          </div>
+                        </div>
+                        {job.remote && <Badge variant="outline" className="mt-2 text-xs">Remote</Badge>}
+                      </div>
+                      
+                      <div className="p-4 md:border-l border-border flex items-center space-x-6 md:w-[180px] justify-end">
+                        <div className="font-medium text-sm">Your Ranking:</div>
+                        <Select 
+                          value={jobRankings[job.id]?.toString() || ""} 
+                          onValueChange={(value) => handleJobRanking(job.id, parseInt(value))}
+                        >
+                          <SelectTrigger className="w-[80px]">
+                            <SelectValue placeholder="Rank" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="1">1st</SelectItem>
+                            <SelectItem value="2">2nd</SelectItem>
+                            <SelectItem value="3">3rd</SelectItem>
+                            <SelectItem value="4">4th</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
-                    
-                    <div className="w-full bg-muted rounded-full h-1.5 mt-3 mb-1">
-                      <div 
-                        className="bg-primary h-1.5 rounded-full"
-                        style={{ width: `${job.matchScore}%` }}
-                      ></div>
-                    </div>
-                    <div className="text-xs text-right">{job.matchScore}% Match</div>
-                  </CardContent>
-                </Card>
-              ))}
+                  </Card>
+                ))}
+              </div>
             </div>
+            
+            {allJobsRanked && (
+              <Alert className="bg-primary/10 border-primary/20">
+                <Sparkles className="h-4 w-4" />
+                <AlertTitle>Ranking Complete!</AlertTitle>
+                <AlertDescription>
+                  Thank you for ranking these opportunities. This helps our AI learn your preferences and provide better matches.
+                </AlertDescription>
+              </Alert>
+            )}
           </StepCardContent>
         </StepCard>
         
