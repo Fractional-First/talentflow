@@ -9,8 +9,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Upload, ArrowRight, ArrowLeft, File } from 'lucide-react';
+import { Upload, ArrowRight, ArrowLeft, File, Clock, HelpCircle, Linkedin, FileSpreadsheet, Copy, AlertCircle } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
 
 const industries = [
   'Technology',
@@ -39,6 +43,9 @@ const ProfileCreation = () => {
   
   const [resumeUploaded, setResumeUploaded] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [profileMethod, setProfileMethod] = useState<'manual' | 'linkedin' | 'resume'>('manual');
+  const [dataCollectionConsent, setDataCollectionConsent] = useState(false);
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
   
   const steps: Step[] = [
     { id: 1, name: 'Sign Up', description: 'Create your account', status: 'completed' },
@@ -53,6 +60,7 @@ const ProfileCreation = () => {
     if (e.target.files && e.target.files.length > 0) {
       // In a real app, you'd handle file upload to your server/storage
       setResumeUploaded(true);
+      setProfileMethod('resume');
     }
   };
   
@@ -67,6 +75,13 @@ const ProfileCreation = () => {
     }, 1000);
   };
 
+  const requestEmailVerification = () => {
+    // In a real app, this would send a verification email
+    setTimeout(() => {
+      setIsEmailVerified(true);
+    }, 1500);
+  };
+
   return (
     <DashboardLayout steps={steps} currentStep={2}>
       <form onSubmit={handleSubmit}>
@@ -77,76 +92,226 @@ const ProfileCreation = () => {
               <StepCardDescription>
                 Tell us about your professional background and career goals
               </StepCardDescription>
+              <div className="flex items-center mt-2 bg-muted/40 px-3 py-2 rounded-md">
+                <Clock className="h-4 w-4 text-muted-foreground mr-2" />
+                <span className="text-sm text-muted-foreground">Estimated completion time: <strong>5-7 minutes</strong></span>
+              </div>
             </StepCardHeader>
             
             <StepCardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="firstName">First Name</Label>
-                    <Input id="firstName" required />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" required />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="currentPosition">Current Position</Label>
-                    <Input id="currentPosition" />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="industry">Industry</Label>
-                    <Select>
-                      <SelectTrigger id="industry">
-                        <SelectValue placeholder="Select an industry" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {industries.map(industry => (
-                          <SelectItem key={industry} value={industry.toLowerCase()}>
-                            {industry}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
+              <Tabs defaultValue="manual" onValueChange={(value) => setProfileMethod(value as 'manual' | 'linkedin' | 'resume')}>
+                <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="manual">
+                    <Copy className="h-4 w-4 mr-2" />
+                    Manual Entry
+                  </TabsTrigger>
+                  <TabsTrigger value="linkedin">
+                    <Linkedin className="h-4 w-4 mr-2" />
+                    LinkedIn Import
+                  </TabsTrigger>
+                  <TabsTrigger value="resume">
+                    <FileSpreadsheet className="h-4 w-4 mr-2" />
+                    Resume Upload
+                  </TabsTrigger>
+                </TabsList>
                 
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="lastName">Last Name</Label>
-                    <Input id="lastName" required />
+                <TabsContent value="manual" className="pt-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <div>
+                        <div className="flex items-center justify-between">
+                          <Label htmlFor="firstName">First Name</Label>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p className="w-80">Your first name as it appears on official documents.</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </div>
+                        <Input id="firstName" required />
+                      </div>
+                      
+                      <div>
+                        <div className="flex items-center justify-between">
+                          <Label htmlFor="email">Email</Label>
+                          <Badge variant={isEmailVerified ? "success" : "outline"} className="ml-2">
+                            {isEmailVerified ? "Verified" : "Unverified"}
+                          </Badge>
+                        </div>
+                        <div className="flex space-x-2">
+                          <Input id="email" type="email" required />
+                          {!isEmailVerified && (
+                            <Button type="button" variant="outline" size="sm" onClick={requestEmailVerification}>
+                              Verify
+                            </Button>
+                          )}
+                        </div>
+                        {!isEmailVerified && (
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Verification helps ensure profile authenticity
+                          </p>
+                        )}
+                      </div>
+                      
+                      <div>
+                        <div className="flex items-center justify-between">
+                          <Label htmlFor="currentPosition">Current Position</Label>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p className="w-80">Your current job title. If you're between jobs, enter your most recent position.</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </div>
+                        <Input id="currentPosition" />
+                      </div>
+                      
+                      <div>
+                        <div className="flex items-center justify-between">
+                          <Label htmlFor="industry">Industry</Label>
+                        </div>
+                        <Select>
+                          <SelectTrigger id="industry">
+                            <SelectValue placeholder="Select an industry" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {industries.map(industry => (
+                              <SelectItem key={industry} value={industry.toLowerCase()}>
+                                {industry}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="lastName">Last Name</Label>
+                        <Input id="lastName" required />
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="phone">Phone Number</Label>
+                        <Input id="phone" type="tel" />
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="company">Current Company</Label>
+                        <Input id="company" />
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="experience">Experience Level</Label>
+                        <Select>
+                          <SelectTrigger id="experience">
+                            <SelectValue placeholder="Select experience level" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {experienceLevels.map(level => (
+                              <SelectItem key={level} value={level.toLowerCase()}>
+                                {level}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="linkedin" className="pt-4">
+                  <div className="flex flex-col items-center justify-center py-8">
+                    <Linkedin className="h-12 w-12 text-[#0A66C2] mb-4" />
+                    <h3 className="text-xl font-medium mb-2">Import from LinkedIn</h3>
+                    <p className="text-muted-foreground text-center mb-6 max-w-md">
+                      We'll automatically import your professional details from LinkedIn to save you time
+                    </p>
+                    
+                    <Alert className="mb-6 max-w-md">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertTitle>Additional verification required</AlertTitle>
+                      <AlertDescription>
+                        For security reasons, we'll need to verify your identity with additional steps after import.
+                      </AlertDescription>
+                    </Alert>
+                    
+                    <Button variant="default" className="mb-2">
+                      <Linkedin className="h-4 w-4 mr-2" />
+                      Connect LinkedIn
+                    </Button>
+                    <p className="text-xs text-muted-foreground">
+                      We never post to your LinkedIn without permission
+                    </p>
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="resume" className="pt-4">
+                  <div className="border-2 border-dashed border-muted rounded-lg p-6 text-center">
+                    {resumeUploaded ? (
+                      <div className="flex flex-col items-center">
+                        <div className="bg-primary/10 p-3 rounded-full mb-3">
+                          <File className="h-6 w-6 text-primary" />
+                        </div>
+                        <p className="mb-1 font-medium">Resume uploaded successfully</p>
+                        <p className="text-sm text-muted-foreground mb-3">resume.pdf</p>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => setResumeUploaded(false)}
+                        >
+                          Replace
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center">
+                        <div className="bg-muted/50 p-3 rounded-full mb-3">
+                          <Upload className="h-6 w-6 text-muted-foreground" />
+                        </div>
+                        <p className="mb-1 font-medium">Drag and drop your resume here</p>
+                        <p className="text-sm text-muted-foreground mb-3">Supports PDF, DOCX, up to 5MB</p>
+                        <div>
+                          <label htmlFor="resume">
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              onClick={() => document.getElementById('resume')?.click()}
+                              type="button"
+                            >
+                              Select File
+                            </Button>
+                            <input 
+                              id="resume" 
+                              type="file" 
+                              className="hidden" 
+                              accept=".pdf,.doc,.docx" 
+                              onChange={handleResumeUpload}
+                            />
+                          </label>
+                        </div>
+                      </div>
+                    )}
                   </div>
                   
-                  <div>
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input id="phone" type="tel" />
+                  <div className="mt-4">
+                    <Alert>
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertTitle>Resume parsing</AlertTitle>
+                      <AlertDescription>
+                        We'll automatically extract information from your resume. You'll have a chance to review and edit before finalizing.
+                      </AlertDescription>
+                    </Alert>
                   </div>
-                  
-                  <div>
-                    <Label htmlFor="company">Current Company</Label>
-                    <Input id="company" />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="experience">Experience Level</Label>
-                    <Select>
-                      <SelectTrigger id="experience">
-                        <SelectValue placeholder="Select experience level" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {experienceLevels.map(level => (
-                          <SelectItem key={level} value={level.toLowerCase()}>
-                            {level}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </div>
+                </TabsContent>
+              </Tabs>
             </StepCardContent>
           </StepCard>
           
@@ -242,7 +407,7 @@ const ProfileCreation = () => {
               <div>
                 <div className="flex items-center mb-4">
                   <div className="bg-primary/10 p-2 rounded-full mr-3">
-                    <Upload className="h-5 w-5 text-primary" />
+                    <Linkedin className="h-5 w-5 text-primary" />
                   </div>
                   <h3 className="font-medium">LinkedIn Import</h3>
                 </div>
@@ -252,6 +417,38 @@ const ProfileCreation = () => {
                 <Button variant="outline">
                   Import from LinkedIn
                 </Button>
+              </div>
+            </StepCardContent>
+          </StepCard>
+          
+          <StepCard>
+            <StepCardHeader>
+              <StepCardTitle>Data Collection Consent</StepCardTitle>
+              <StepCardDescription>
+                How we'll use your information to provide better matches
+              </StepCardDescription>
+            </StepCardHeader>
+            
+            <StepCardContent>
+              <Alert className="mb-4">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Ethical Data Use</AlertTitle>
+                <AlertDescription>
+                  We use your profile data and preferences to provide more accurate job matching. Your data is never sold to third parties.
+                </AlertDescription>
+              </Alert>
+              
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="dataConsent"
+                  className="rounded border-gray-300 text-primary focus:ring-primary"
+                  checked={dataCollectionConsent}
+                  onChange={() => setDataCollectionConsent(!dataCollectionConsent)}
+                />
+                <label htmlFor="dataConsent" className="text-sm text-muted-foreground">
+                  I consent to the collection and use of my profile data for job matching purposes, including participation in choice modeling to improve recommendations.
+                </label>
               </div>
             </StepCardContent>
           </StepCard>
@@ -268,7 +465,7 @@ const ProfileCreation = () => {
             
             <Button 
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !dataCollectionConsent}
             >
               {isSubmitting ? 'Saving...' : 'Continue'}
               <ArrowRight className="ml-2 h-4 w-4" />

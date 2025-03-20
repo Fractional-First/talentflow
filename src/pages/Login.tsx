@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -6,12 +7,14 @@ import { Label } from '@/components/ui/label';
 import { StepCard, StepCardContent, StepCardDescription, StepCardFooter, StepCardHeader, StepCardTitle } from '@/components/StepCard';
 import { Separator } from '@/components/ui/separator';
 import { Linkedin } from 'lucide-react';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [accountType, setAccountType] = useState('talent');
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,7 +23,11 @@ const Login = () => {
     // Simulate API call
     setTimeout(() => {
       setIsSubmitting(false);
-      navigate('/dashboard');
+      if (accountType === 'talent') {
+        navigate('/dashboard');
+      } else {
+        navigate('/dashboard/organization');
+      }
     }, 1000);
   };
 
@@ -60,6 +67,36 @@ const Login = () => {
           </StepCardHeader>
           
           <StepCardContent>
+            <div className="mb-6">
+              <RadioGroup defaultValue="talent" value={accountType} onValueChange={setAccountType} className="grid grid-cols-2 gap-4">
+                <div>
+                  <RadioGroupItem value="talent" id="login-talent" className="peer sr-only" />
+                  <Label
+                    htmlFor="login-talent"
+                    className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                  >
+                    <span className="mb-2">Talent</span>
+                    <span className="text-xs text-center text-muted-foreground">
+                      Find new job opportunities
+                    </span>
+                  </Label>
+                </div>
+                
+                <div>
+                  <RadioGroupItem value="organization" id="login-organization" className="peer sr-only" />
+                  <Label
+                    htmlFor="login-organization"
+                    className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                  >
+                    <span className="mb-2">Organization</span>
+                    <span className="text-xs text-center text-muted-foreground">
+                      Hire talent for your company
+                    </span>
+                  </Label>
+                </div>
+              </RadioGroup>
+            </div>
+            
             <Button 
               variant="outline" 
               className="w-full flex items-center justify-center gap-2"
