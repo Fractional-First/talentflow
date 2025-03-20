@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
@@ -48,17 +47,16 @@ const ProfileCreation = () => {
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   
   const steps: Step[] = [
-    { id: 1, name: 'Sign Up', description: 'Create your account', status: 'completed' },
-    { id: 2, name: 'Profile', description: 'Enter your information', status: 'current' },
-    { id: 3, name: 'Profile Snapshot', description: 'Review your profile', status: 'upcoming' },
-    { id: 4, name: 'Agreement', description: 'Sign legal documents', status: 'upcoming' },
-    { id: 5, name: 'Branding', description: 'Enhance your profile', status: 'upcoming' },
-    { id: 6, name: 'Job Matching', description: 'Get matched to jobs', status: 'upcoming' }
+    { id: 1, name: 'Sign Up', description: 'Create your account', status: 'completed', estimatedTime: '2-3 minutes' },
+    { id: 2, name: 'Profile', description: 'Enter your information', status: 'current', estimatedTime: '5-7 minutes' },
+    { id: 3, name: 'Profile Snapshot', description: 'Review your profile', status: 'upcoming', estimatedTime: '3-5 minutes' },
+    { id: 4, name: 'Agreement', description: 'Sign legal documents', status: 'upcoming', estimatedTime: '4-6 minutes' },
+    { id: 5, name: 'Branding', description: 'Enhance your profile', status: 'upcoming', estimatedTime: '5-8 minutes' },
+    { id: 6, name: 'Job Matching', description: 'Get matched to jobs', status: 'upcoming', estimatedTime: '3-5 minutes' }
   ];
   
   const handleResumeUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      // In a real app, you'd handle file upload to your server/storage
       setResumeUploaded(true);
       setProfileMethod('resume');
     }
@@ -68,7 +66,6 @@ const ProfileCreation = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate API call
     setTimeout(() => {
       setIsSubmitting(false);
       navigate('/dashboard/profile-snapshot');
@@ -76,10 +73,22 @@ const ProfileCreation = () => {
   };
 
   const requestEmailVerification = () => {
-    // In a real app, this would send a verification email
     setTimeout(() => {
       setIsEmailVerified(true);
     }, 1500);
+  };
+
+  const handleCompleteSection = () => {
+    setIsSubmitting(true);
+    
+    setTimeout(() => {
+      setIsSubmitting(false);
+      const completedSections = JSON.parse(localStorage.getItem('completedSections') || '{}');
+      completedSections.profile = true;
+      localStorage.setItem('completedSections', JSON.stringify(completedSections));
+      
+      navigate('/dashboard/profile-snapshot');
+    }, 1000);
   };
 
   return (
@@ -466,6 +475,7 @@ const ProfileCreation = () => {
             <Button 
               type="submit"
               disabled={isSubmitting || !dataCollectionConsent}
+              onClick={handleCompleteSection}
             >
               {isSubmitting ? 'Saving...' : 'Continue'}
               <ArrowRight className="ml-2 h-4 w-4" />

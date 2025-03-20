@@ -8,6 +8,7 @@ export type Step = {
   name: string;
   description: string;
   status: 'completed' | 'current' | 'upcoming';
+  estimatedTime?: string;
 };
 
 interface OnboardingProgressProps {
@@ -39,9 +40,12 @@ export function OnboardingProgress({
                   <span>{step.id}</span>
                 )}
                 
-                <div className="absolute -bottom-[40px] left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 min-w-max">
+                <div className="absolute -bottom-[48px] left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 min-w-max z-20">
                   <div className="glassmorphism px-3 py-2 rounded-md text-xs font-medium">
-                    {step.name}
+                    <div>{step.name}</div>
+                    {step.estimatedTime && (
+                      <div className="text-xs opacity-80 mt-1">Est. time: {step.estimatedTime}</div>
+                    )}
                   </div>
                 </div>
               </div>

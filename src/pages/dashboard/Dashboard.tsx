@@ -5,7 +5,7 @@ import { DashboardLayout } from '@/components/DashboardLayout';
 import { StepCard, StepCardContent, StepCardDescription, StepCardHeader, StepCardTitle } from '@/components/StepCard';
 import { Button } from '@/components/ui/button';
 import { Step } from '@/components/OnboardingProgress';
-import { ArrowRight, CheckCircle2, User, FileText, Briefcase, Image, ArrowUpRight } from 'lucide-react';
+import { ArrowRight, CheckCircle2, User, FileText, Briefcase, Image, ArrowUpRight, Clock } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from "@/components/ui/progress";
 
@@ -17,39 +17,53 @@ const Dashboard = () => {
       id: 1, 
       name: 'Sign Up', 
       description: 'Create your account', 
-      status: 'completed' 
+      status: 'completed',
+      estimatedTime: '2-3 minutes' 
     },
     { 
       id: 2, 
       name: 'Profile', 
       description: 'Enter your information', 
-      status: 'completed' 
+      status: 'completed',
+      estimatedTime: '5-7 minutes' 
     },
     { 
       id: 3, 
       name: 'Profile Snapshot', 
       description: 'Review your profile', 
-      status: 'current' 
+      status: 'current',
+      estimatedTime: '3-5 minutes' 
     },
     { 
       id: 4, 
       name: 'Agreement', 
       description: 'Sign legal documents', 
-      status: 'upcoming' 
+      status: 'upcoming',
+      estimatedTime: '4-6 minutes' 
     },
     { 
       id: 5, 
       name: 'Branding', 
       description: 'Enhance your profile', 
-      status: 'upcoming' 
+      status: 'upcoming',
+      estimatedTime: '5-8 minutes' 
     },
     { 
       id: 6, 
       name: 'Job Matching', 
       description: 'Get matched to jobs', 
-      status: 'upcoming' 
+      status: 'upcoming',
+      estimatedTime: '3-5 minutes' 
     }
   ]);
+  
+  // Check localStorage on component mount to determine if onboarding is complete
+  useEffect(() => {
+    const onboardingStatus = localStorage.getItem('onboardingComplete');
+    if (onboardingStatus === 'true') {
+      setOnboardingComplete(true);
+    }
+  }, []);
   
   const currentStep = steps.findIndex(step => step.status === 'current') + 1;
   
@@ -58,17 +72,25 @@ const Dashboard = () => {
   const totalSteps = steps.length;
   const progressPercentage = (completedSteps / totalSteps) * 100;
 
+  // For demo purposes, let's add a function to complete onboarding
+  const completeOnboarding = () => {
+    setOnboardingComplete(true);
+    localStorage.setItem('onboardingComplete', 'true');
+  };
+
   // Display appropriate content based on onboarding progress
   const getNextStep = () => {
     const nextStep = steps.find(step => step.status === 'current');
     
     if (!nextStep) {
       setOnboardingComplete(true);
+      localStorage.setItem('onboardingComplete', 'true');
       return {
         title: 'You\'ve Completed All Steps',
         description: 'Congratulations! You\'ve completed the entire onboarding process.',
         path: '/dashboard/waiting-room',
-        buttonText: 'View Job Matches'
+        buttonText: 'View Job Matches',
+        estimatedTime: ''
       };
     }
     
@@ -78,49 +100,56 @@ const Dashboard = () => {
           title: 'Create Your Profile',
           description: 'Let\'s start by setting up your professional profile.',
           path: '/dashboard/profile-creation',
-          buttonText: 'Create Profile'
+          buttonText: 'Create Profile',
+          estimatedTime: nextStep.estimatedTime
         };
       case 2:
         return {
           title: 'Create Your Profile',
           description: 'Let\'s start by setting up your professional profile.',
           path: '/dashboard/profile-creation',
-          buttonText: 'Create Profile'
+          buttonText: 'Create Profile',
+          estimatedTime: nextStep.estimatedTime
         };
       case 3:
         return {
           title: 'Review Your Profile Snapshot',
           description: 'Take a look at your profile summary and make any necessary adjustments.',
           path: '/dashboard/profile-snapshot',
-          buttonText: 'Review Profile'
+          buttonText: 'Review Profile',
+          estimatedTime: nextStep.estimatedTime
         };
       case 4:
         return {
           title: 'Review and Sign Documents',
           description: 'Review and sign the necessary legal documents to proceed.',
           path: '/dashboard/agreement',
-          buttonText: 'View Documents'
+          buttonText: 'View Documents',
+          estimatedTime: nextStep.estimatedTime
         };
       case 5:
         return {
           title: 'Enhance Your Professional Brand',
           description: 'Take advantage of our tools to enhance your professional brand.',
           path: '/dashboard/branding',
-          buttonText: 'Enhance Brand'
+          buttonText: 'Enhance Brand',
+          estimatedTime: nextStep.estimatedTime
         };
       case 6:
         return {
           title: 'Job Matching',
           description: 'Get matched with job opportunities that fit your profile.',
           path: '/dashboard/job-matching',
-          buttonText: 'View Matches'
+          buttonText: 'View Matches',
+          estimatedTime: nextStep.estimatedTime
         };
       default:
         return {
           title: 'Continue Your Journey',
           description: 'Continue with the next step in your onboarding process.',
           path: '/dashboard',
-          buttonText: 'Continue'
+          buttonText: 'Continue',
+          estimatedTime: ''
         };
     }
   };
@@ -173,7 +202,7 @@ const Dashboard = () => {
                       <div className="bg-primary/10 p-2 rounded-full mr-3">
                         <User className="h-5 w-5 text-primary" />
                       </div>
-                      <StepCardTitle>Profile</StepCardTitle>
+                      <StepCardTitle>Profile Setup</StepCardTitle>
                     </div>
                     <Badge variant="success">Complete</Badge>
                   </div>
@@ -204,7 +233,7 @@ const Dashboard = () => {
                       <div className="bg-primary/10 p-2 rounded-full mr-3">
                         <FileText className="h-5 w-5 text-primary" />
                       </div>
-                      <StepCardTitle>Legal Agreements</StepCardTitle>
+                      <StepCardTitle>Legal Agreement (MSA)</StepCardTitle>
                     </div>
                     <Badge variant="success">Signed</Badge>
                   </div>
@@ -266,7 +295,7 @@ const Dashboard = () => {
                       <div className="bg-primary/10 p-2 rounded-full mr-3">
                         <Briefcase className="h-5 w-5 text-primary" />
                       </div>
-                      <StepCardTitle>Job Matching</StepCardTitle>
+                      <StepCardTitle>AI Job Matching</StepCardTitle>
                     </div>
                     <Badge variant="success">Active</Badge>
                   </div>
@@ -327,6 +356,12 @@ const Dashboard = () => {
                 <div className="flex-1">
                   <h3 className="text-lg font-medium">{nextStep.title}</h3>
                   <p className="text-muted-foreground mt-1">{nextStep.description}</p>
+                  {nextStep.estimatedTime && (
+                    <div className="flex items-center mt-2 bg-muted/40 inline-flex px-3 py-1 rounded-md">
+                      <Clock className="h-4 w-4 text-muted-foreground mr-2" />
+                      <span className="text-sm text-muted-foreground">Estimated time: <strong>{nextStep.estimatedTime}</strong></span>
+                    </div>
+                  )}
                 </div>
                 
                 <Button 
@@ -381,6 +416,15 @@ const Dashboard = () => {
             </StepCardContent>
           </StepCard>
         </div>
+        
+        {/* For demo purposes only - remove in production */}
+        {!onboardingComplete && (
+          <div className="mt-8 border-t pt-4">
+            <Button variant="outline" onClick={completeOnboarding} className="w-full">
+              Demo: Complete Onboarding (Skip to Dashboard View)
+            </Button>
+          </div>
+        )}
       </div>
     </DashboardLayout>
   );
