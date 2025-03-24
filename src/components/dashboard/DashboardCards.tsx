@@ -4,7 +4,7 @@ import { StepCard, StepCardContent, StepCardDescription, StepCardHeader, StepCar
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from "@/components/ui/progress";
-import { User, FileText, Briefcase, Image, ArrowUpRight, CheckCircle2 } from 'lucide-react';
+import { User, Briefcase, Image, ArrowUpRight, CheckCircle2 } from 'lucide-react';
 
 export const WelcomeCard = () => {
   return (
@@ -94,7 +94,7 @@ export const DashboardNavCard = ({
 
 export const DashboardNavGrid = () => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       <DashboardNavCard
         title="Profile Setup"
         description="View and edit your professional profile"
@@ -102,15 +102,6 @@ export const DashboardNavGrid = () => {
         path="/dashboard/profile-creation"
         icon={<User className="h-5 w-5 text-primary" />}
         badgeText="Complete"
-      />
-      
-      <DashboardNavCard
-        title="Legal Agreement (MSA)"
-        description="Review signed agreements"
-        detailText="View your signed Master Services Agreement"
-        path="/dashboard/agreement"
-        icon={<FileText className="h-5 w-5 text-primary" />}
-        badgeText="Signed"
       />
       
       <DashboardNavCard

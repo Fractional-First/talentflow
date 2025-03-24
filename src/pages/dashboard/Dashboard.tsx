@@ -53,10 +53,10 @@ const Dashboard = () => {
   
   const nextStep = getNextStep();
 
-  // After onboarding is complete, show dashboard style view
+  // After onboarding is complete, show dashboard style view without the progress indicator
   if (onboardingComplete) {
     return (
-      <DashboardLayout steps={steps} currentStep={currentStep}>
+      <DashboardLayout steps={[]} currentStep={0}>
         <div className="space-y-8">
           <WelcomeCard />
           <DashboardNavGrid />
