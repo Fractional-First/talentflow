@@ -2,34 +2,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { StepCard, StepCardContent, StepCardDescription, StepCardFooter, StepCardHeader, StepCardTitle } from '@/components/StepCard';
 import { Separator } from '@/components/ui/separator';
 import { Linkedin } from 'lucide-react';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 const Login = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [accountType, setAccountType] = useState('talent');
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
-      if (accountType === 'talent') {
-        navigate('/dashboard');
-      } else {
-        navigate('/dashboard/organization');
-      }
-    }, 1000);
-  };
 
   const handleLinkedInLogin = () => {
     // In a real app, this would trigger OAuth
@@ -60,43 +39,13 @@ const Login = () => {
                 <span className="text-2xl font-semibold">TalentFlow</span>
               </div>
             </div>
-            <StepCardTitle className="text-center">Welcome back</StepCardTitle>
+            <StepCardTitle className="text-center">Welcome to TalentFlow</StepCardTitle>
             <StepCardDescription className="text-center">
-              Log in to continue your onboarding journey
+              The easiest way to find your next opportunity
             </StepCardDescription>
           </StepCardHeader>
           
-          <StepCardContent>
-            <div className="mb-6">
-              <RadioGroup defaultValue="talent" value={accountType} onValueChange={setAccountType} className="grid grid-cols-2 gap-4">
-                <div>
-                  <RadioGroupItem value="talent" id="login-talent" className="peer sr-only" />
-                  <Label
-                    htmlFor="login-talent"
-                    className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                  >
-                    <span className="mb-2">Talent</span>
-                    <span className="text-xs text-center text-muted-foreground">
-                      Find new job opportunities
-                    </span>
-                  </Label>
-                </div>
-                
-                <div>
-                  <RadioGroupItem value="organization" id="login-organization" className="peer sr-only" />
-                  <Label
-                    htmlFor="login-organization"
-                    className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                  >
-                    <span className="mb-2">Organization</span>
-                    <span className="text-xs text-center text-muted-foreground">
-                      Hire talent for your company
-                    </span>
-                  </Label>
-                </div>
-              </RadioGroup>
-            </div>
-            
+          <StepCardContent className="space-y-6">
             <Button 
               variant="outline" 
               className="w-full flex items-center justify-center gap-2"
@@ -104,59 +53,15 @@ const Login = () => {
               disabled={isSubmitting}
             >
               <Linkedin className="h-5 w-5" />
-              <span>Log in with LinkedIn</span>
+              <span>{isSubmitting ? 'Connecting...' : 'Continue with LinkedIn'}</span>
             </Button>
             
-            <div className="relative my-4">
+            <div className="relative">
               <Separator />
               <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-xs text-muted-foreground">
-                OR
+                New to TalentFlow?
               </span>
             </div>
-            
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  placeholder="your@email.com"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  autoComplete="email"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  autoComplete="current-password"
-                />
-              </div>
-              
-              <div className="flex justify-end">
-                <Button 
-                  variant="link" 
-                  className="p-0 h-auto text-sm"
-                >
-                  Forgot password?
-                </Button>
-              </div>
-              
-              <Button 
-                type="submit" 
-                className="w-full"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? 'Logging in...' : 'Log in'}
-              </Button>
-            </form>
           </StepCardContent>
           
           <StepCardFooter className="justify-center">
