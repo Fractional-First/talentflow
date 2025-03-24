@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
@@ -43,7 +44,6 @@ const ProfileCreation = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [profileMethod, setProfileMethod] = useState<'manual' | 'linkedin' | 'resume'>('linkedin');
   const [showManualEntry, setShowManualEntry] = useState(false);
-  const [dataCollectionConsent, setDataCollectionConsent] = useState(false);
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   
   const steps: Step[] = [
@@ -358,39 +358,6 @@ const ProfileCreation = () => {
             </StepCardContent>
           </StepCard>
           
-          {/* Data Collection Consent Card */}
-          <StepCard>
-            <StepCardHeader>
-              <StepCardTitle>Data Collection Consent</StepCardTitle>
-              <StepCardDescription>
-                How we'll use your information to provide better matches
-              </StepCardDescription>
-            </StepCardHeader>
-            
-            <StepCardContent>
-              <Alert className="mb-4">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Ethical Data Use</AlertTitle>
-                <AlertDescription>
-                  We use your profile data and preferences to provide more accurate job matching. Your data is never sold to third parties.
-                </AlertDescription>
-              </Alert>
-              
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="dataConsent"
-                  className="rounded border-gray-300 text-primary focus:ring-primary"
-                  checked={dataCollectionConsent}
-                  onChange={() => setDataCollectionConsent(!dataCollectionConsent)}
-                />
-                <label htmlFor="dataConsent" className="text-sm text-muted-foreground">
-                  I consent to the collection and use of my profile data for job matching purposes, including participation in choice modeling to improve recommendations.
-                </label>
-              </div>
-            </StepCardContent>
-          </StepCard>
-          
           <StepCardFooter className="flex justify-between pt-6">
             <Button
               variant="outline"
@@ -403,7 +370,7 @@ const ProfileCreation = () => {
             
             <Button 
               type="submit"
-              disabled={isSubmitting || !dataCollectionConsent}
+              disabled={isSubmitting}
               onClick={handleCompleteSection}
             >
               {isSubmitting ? 'Saving...' : 'Continue'}
