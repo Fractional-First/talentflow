@@ -46,7 +46,8 @@ export const DashboardNavCard = ({
   path,
   icon,
   badgeText,
-  badgeVariant = "success"
+  badgeVariant = "success",
+  completionRate = 100
 }: { 
   title: string; 
   description: string;
@@ -55,6 +56,7 @@ export const DashboardNavCard = ({
   icon: React.ReactNode;
   badgeText: string;
   badgeVariant?: "default" | "secondary" | "destructive" | "outline" | "success";
+  completionRate?: number;
 }) => {
   const navigate = useNavigate();
   
@@ -80,11 +82,19 @@ export const DashboardNavCard = ({
         </StepCardHeader>
         
         <StepCardContent>
-          <div className="flex justify-between items-center">
-            <p className="text-sm text-muted-foreground">
-              {detailText}
-            </p>
-            <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
+          <div className="flex flex-col space-y-4">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Completion</span>
+              <span className="font-medium">{completionRate}%</span>
+            </div>
+            <Progress value={completionRate} className="h-1.5" />
+            
+            <div className="flex justify-between items-center mt-2">
+              <p className="text-sm text-muted-foreground">
+                {detailText}
+              </p>
+              <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
+            </div>
           </div>
         </StepCardContent>
       </button>
@@ -102,6 +112,7 @@ export const DashboardNavGrid = () => {
         path="/dashboard/profile-creation"
         icon={<User className="h-5 w-5 text-primary" />}
         badgeText="Complete"
+        completionRate={100}
       />
       
       <DashboardNavCard
@@ -111,6 +122,7 @@ export const DashboardNavGrid = () => {
         path="/dashboard/branding"
         icon={<Image className="h-5 w-5 text-primary" />}
         badgeText="Complete"
+        completionRate={90}
       />
       
       <DashboardNavCard
@@ -120,6 +132,7 @@ export const DashboardNavGrid = () => {
         path="/dashboard/job-matching"
         icon={<Briefcase className="h-5 w-5 text-primary" />}
         badgeText="Active"
+        completionRate={75}
       />
     </div>
   );
