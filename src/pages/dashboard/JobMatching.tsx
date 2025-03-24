@@ -56,6 +56,7 @@ const JobMatching = () => {
     4: null
   });
   
+  // Include all steps in the dashboard view
   const steps: Step[] = [
     { id: 1, name: 'Sign Up', description: 'Create your account', status: 'completed', estimatedTime: '2-3 minutes' },
     { id: 2, name: 'Profile', description: 'Enter your information', status: 'completed', estimatedTime: '5-7 minutes' },
@@ -125,7 +126,7 @@ const JobMatching = () => {
   });
 
   return (
-    <DashboardLayout steps={steps} currentStep={4}>
+    <DashboardLayout steps={steps} currentStep={6}>
       <div className="space-y-6">
         {onboardingComplete && (
           <div className="mb-4">

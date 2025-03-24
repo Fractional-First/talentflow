@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
@@ -50,10 +49,7 @@ const ProfileCreation = () => {
   const steps: Step[] = [
     { id: 1, name: 'Sign Up', description: 'Create your account', status: 'completed', estimatedTime: '2-3 minutes' },
     { id: 2, name: 'Profile', description: 'Enter your information', status: 'current', estimatedTime: '5-7 minutes' },
-    { id: 3, name: 'Profile Snapshot', description: 'Review your profile', status: 'upcoming', estimatedTime: '3-5 minutes' },
-    { id: 4, name: 'Agreement', description: 'Sign legal documents', status: 'upcoming', estimatedTime: '4-6 minutes' },
-    { id: 5, name: 'Branding', description: 'Enhance your profile', status: 'upcoming', estimatedTime: '5-8 minutes' },
-    { id: 6, name: 'Job Matching', description: 'Get matched to jobs', status: 'upcoming', estimatedTime: '3-5 minutes' }
+    { id: 3, name: 'Profile Snapshot', description: 'Review your profile', status: 'upcoming', estimatedTime: '3-5 minutes' }
   ];
   
   const handleResumeUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
