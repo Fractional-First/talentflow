@@ -1,23 +1,19 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { StepCard, StepCardContent, StepCardDescription, StepCardFooter, StepCardHeader, StepCardTitle } from '@/components/StepCard';
 import { Separator } from '@/components/ui/separator';
-import { Linkedin } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { StepCard, StepCardContent, StepCardDescription, StepCardFooter, StepCardHeader, StepCardTitle } from '@/components/StepCard';
+import { LinkedInSignUp } from '@/components/auth/LinkedInSignUp';
+import { SignUpForm } from '@/components/auth/SignUpForm';
+import { AuthBackground } from '@/components/auth/AuthBackground';
+import { BrandHeader } from '@/components/auth/BrandHeader';
 
 const SignUp = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  const handleSignUp = (email: string, password: string, confirmPassword: string) => {
     if (password !== confirmPassword) {
       // In a real app, you'd show an error toast
       console.error("Passwords don't match");
@@ -46,22 +42,12 @@ const SignUp = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12">
-      <div className="fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute -top-[30%] -right-[20%] h-[500px] w-[500px] rounded-full bg-primary/10 blur-[100px]" />
-        <div className="absolute -bottom-[30%] -left-[20%] h-[500px] w-[500px] rounded-full bg-primary/10 blur-[100px]" />
-      </div>
+      <AuthBackground />
       
       <div className="w-full max-w-md">
         <StepCard>
           <StepCardHeader>
-            <div className="text-center mb-2">
-              <div 
-                className="inline-block cursor-pointer" 
-                onClick={() => navigate('/')}
-              >
-                <span className="text-2xl font-semibold">TalentFlow</span>
-              </div>
-            </div>
+            <BrandHeader />
             <StepCardTitle className="text-center">Create your account</StepCardTitle>
             <StepCardDescription className="text-center">
               Join TalentFlow to start your onboarding journey
@@ -69,15 +55,10 @@ const SignUp = () => {
           </StepCardHeader>
           
           <StepCardContent>
-            <Button 
-              variant="outline" 
-              className="w-full flex items-center justify-center gap-2"
+            <LinkedInSignUp 
               onClick={handleLinkedInSignUp}
-              disabled={isSubmitting}
-            >
-              <Linkedin className="h-5 w-5" />
-              <span>Sign up with LinkedIn</span>
-            </Button>
+              isSubmitting={isSubmitting}
+            />
             
             <div className="relative my-4">
               <Separator />
@@ -86,53 +67,10 @@ const SignUp = () => {
               </span>
             </div>
             
-            <form onSubmit={handleSignUp} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Work Email</Label>
-                <Input
-                  id="email"
-                  placeholder="your@company.com"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  autoComplete="email"
-                />
-                <p className="text-xs text-muted-foreground">Company email domains help verify your identity</p>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  autoComplete="new-password"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                  autoComplete="new-password"
-                />
-              </div>
-              
-              <Button 
-                type="submit" 
-                className="w-full"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? 'Creating account...' : 'Create account'}
-              </Button>
-            </form>
+            <SignUpForm 
+              onSubmit={handleSignUp}
+              isSubmitting={isSubmitting}
+            />
           </StepCardContent>
           
           <StepCardFooter className="justify-center">
