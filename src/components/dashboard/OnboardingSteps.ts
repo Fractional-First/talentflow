@@ -1,3 +1,4 @@
+
 import { Step } from '@/components/OnboardingProgress';
 
 // Initial steps for onboarding - simplified to only 3 steps

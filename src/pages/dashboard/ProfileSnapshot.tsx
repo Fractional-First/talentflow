@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
@@ -56,9 +57,12 @@ const ProfileSnapshot = () => {
   const handleContinue = () => {
     setIsSubmitting(true);
     
+    // Mark onboarding as complete and navigate to dashboard
+    localStorage.setItem('onboardingComplete', 'true');
+    
     setTimeout(() => {
       setIsSubmitting(false);
-      navigate('/dashboard/agreement');
+      navigate('/dashboard');
     }, 1000);
   };
 
@@ -248,7 +252,7 @@ const ProfileSnapshot = () => {
               onClick={handleContinue}
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Processing...' : 'Confirm & Continue'}
+              {isSubmitting ? 'Processing...' : 'Complete & Go to Dashboard'}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </StepCardFooter>

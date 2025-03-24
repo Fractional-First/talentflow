@@ -11,7 +11,6 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/dashboard/Dashboard";
 import ProfileCreation from "./pages/dashboard/ProfileCreation";
 import ProfileSnapshot from "./pages/dashboard/ProfileSnapshot";
-import Agreement from "./pages/dashboard/Agreement";
 import Branding from "./pages/dashboard/Branding";
 import JobMatching from "./pages/dashboard/JobMatching";
 import WaitingRoom from "./pages/dashboard/WaitingRoom";
@@ -31,7 +30,6 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/profile-creation" element={<ProfileCreation />} />
           <Route path="/dashboard/profile-snapshot" element={<ProfileSnapshot />} />
-          <Route path="/dashboard/agreement" element={<Agreement />} />
           <Route path="/dashboard/branding" element={<Branding />} />
           <Route path="/dashboard/job-matching" element={<JobMatching />} />
           <Route path="/dashboard/waiting-room" element={<WaitingRoom />} />
