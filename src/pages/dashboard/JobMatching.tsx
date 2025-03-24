@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
@@ -8,7 +9,11 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
-import { ArrowRight, ArrowLeft, Briefcase, Building, MapPin, DollarSign, Sparkles, ThumbsUp, ThumbsDown, Clock, Flag, Calendar, CalendarDays, AlertCircle, Home } from 'lucide-react';
+import { 
+  ArrowRight, ArrowLeft, Briefcase, Building, MapPin, DollarSign, 
+  Sparkles, ThumbsUp, ThumbsDown, Clock, Flag, Calendar, 
+  CalendarDays, AlertCircle, Home, Info, Globe, HelpCircle
+} from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
 import { Progress } from '@/components/ui/progress';
@@ -19,23 +24,53 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { toast } from "@/components/ui/use-toast";
+import { 
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const JobMatching = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activelyLooking, setActivelyLooking] = useState(true);
-  const [preferredSalary, setPreferredSalary] = useState([75000]);
-  const [hourlyRate, setHourlyRate] = useState('');
-  const [dailyRate, setDailyRate] = useState('');
+  const [availabilityType, setAvailabilityType] = useState<'full-time' | 'fractional' | 'interim'>('full-time');
+  const [rateRange, setRateRange] = useState([75000, 100000]);
   const [paymentType, setPaymentType] = useState('annual');
   const [remotePreference, setRemotePreference] = useState(true);
-  const [availabilityTab, setAvailabilityTab] = useState('full-time');
+  const [currentLocation, setCurrentLocation] = useState('New York, USA');
   const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [selectedDays, setSelectedDays] = useState({
+    mon: true,
+    tue: true,
+    wed: true,
+    thu: true,
+    fri: true,
+    sat: false,
+    sun: false,
+  });
+  const [timePreference, setTimePreference] = useState('all-day');
+  const [timezone, setTimezone] = useState('EST');
+  
   const [locationPreferences, setLocationPreferences] = useState<string[]>([
     'New York',
     'San Francisco',
     'Boston'
   ]);
+  
+  const [workEligibility, setWorkEligibility] = useState<string[]>([
+    'United States',
+    'Canada'
+  ]);
+  
   const [industryPreferences, setIndustryPreferences] = useState<string[]>([
     'Technology',
     'Finance',
@@ -51,13 +86,12 @@ const JobMatching = () => {
   
   const allJobsRanked = Object.values(jobRankings).every(rank => rank !== null);
   
+  // Simplified steps - removed Agreement, Branding, and Job Branding
   const steps: Step[] = [
     { id: 1, name: 'Sign Up', description: 'Create your account', status: 'completed', estimatedTime: '2-3 minutes' },
     { id: 2, name: 'Profile', description: 'Enter your information', status: 'completed', estimatedTime: '5-7 minutes' },
     { id: 3, name: 'Profile Snapshot', description: 'Review your profile', status: 'completed', estimatedTime: '3-5 minutes' },
-    { id: 4, name: 'Agreement', description: 'Sign legal documents', status: 'completed', estimatedTime: '4-6 minutes' },
-    { id: 5, name: 'Branding', description: 'Enhance your profile', status: 'completed', estimatedTime: '5-8 minutes' },
-    { id: 6, name: 'Job Matching', description: 'Get matched to jobs', status: 'current', estimatedTime: '8-10 minutes' }
+    { id: 4, name: 'Job Matching', description: 'Get matched to jobs', status: 'current', estimatedTime: '8-10 minutes' }
   ];
   
   const recommendedJobs = [
@@ -149,7 +183,7 @@ const JobMatching = () => {
   });
 
   return (
-    <DashboardLayout steps={steps} currentStep={6}>
+    <DashboardLayout steps={steps} currentStep={4}>
       <div className="space-y-6">
         {onboardingComplete && (
           <div className="mb-4">
@@ -168,7 +202,7 @@ const JobMatching = () => {
             </StepCardDescription>
             <div className="flex items-center mt-2 bg-muted/40 px-3 py-2 rounded-md">
               <Clock className="h-4 w-4 text-muted-foreground mr-2" />
-              <span className="text-sm text-muted-foreground">Estimated completion time: <strong>{steps[5].estimatedTime}</strong></span>
+              <span className="text-sm text-muted-foreground">Estimated completion time: <strong>{steps[3].estimatedTime}</strong></span>
             </div>
           </StepCardHeader>
           
@@ -202,7 +236,7 @@ const JobMatching = () => {
                   <DollarSign className="h-5 w-5 text-primary" />
                   <div>
                     <h3 className="font-medium">Compensation Expectations</h3>
-                    <p className="text-sm text-muted-foreground">Set your preferred compensation structure</p>
+                    <p className="text-sm text-muted-foreground">Set your preferred compensation range</p>
                   </div>
                 </div>
                 
@@ -215,45 +249,100 @@ const JobMatching = () => {
                   
                   <TabsContent value="annual" className="pt-4">
                     <div className="px-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium">Rate Range</span>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-8 w-8">
+                                <HelpCircle className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p className="max-w-xs">Set your expected salary range. The lower end applies to higher volume commitments, while the higher end applies to more specialized or shorter-term work.</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
                       <Slider
-                        defaultValue={[75000]}
+                        defaultValue={[75000, 100000]}
                         max={200000}
                         min={30000}
                         step={5000}
-                        value={preferredSalary}
-                        onValueChange={setPreferredSalary}
+                        value={rateRange}
+                        onValueChange={setRateRange}
                       />
                       <div className="flex justify-between mt-2">
-                        <span className="text-sm text-muted-foreground">$30,000</span>
-                        <span className="text-sm font-medium">{formatSalary(preferredSalary[0])}</span>
-                        <span className="text-sm text-muted-foreground">$200,000+</span>
+                        <span className="text-sm font-medium">{formatSalary(rateRange[0])}</span>
+                        <span className="text-sm font-medium">{formatSalary(rateRange[1])}</span>
                       </div>
+                      <p className="text-xs text-muted-foreground mt-2">Range from {formatSalary(rateRange[0])} to {formatSalary(rateRange[1])}</p>
                     </div>
                   </TabsContent>
                   
                   <TabsContent value="daily" className="pt-4">
-                    <div className="flex items-center space-x-2 px-4">
-                      <DollarSign className="h-5 w-5 text-muted-foreground" />
-                      <Input
-                        type="number"
-                        placeholder="Enter your daily rate"
-                        value={dailyRate}
-                        onChange={(e) => setDailyRate(e.target.value)}
+                    <div className="px-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium">Daily Rate Range</span>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-8 w-8">
+                                <HelpCircle className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p className="max-w-xs">Set your expected daily rate range. The lower end applies to longer engagements, while the higher end applies to shorter-term work.</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
+                      <Slider
+                        defaultValue={[500, 1000]}
+                        max={3000}
+                        min={100}
+                        step={50}
+                        value={[500, 1000]}
+                        onValueChange={() => {}}
                       />
-                      <span className="text-sm text-muted-foreground">per day</span>
+                      <div className="flex justify-between mt-2">
+                        <span className="text-sm font-medium">$500</span>
+                        <span className="text-sm font-medium">$1,000</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-2">Range from $500 to $1,000 per day</p>
                     </div>
                   </TabsContent>
                   
                   <TabsContent value="hourly" className="pt-4">
-                    <div className="flex items-center space-x-2 px-4">
-                      <DollarSign className="h-5 w-5 text-muted-foreground" />
-                      <Input
-                        type="number"
-                        placeholder="Enter your hourly rate"
-                        value={hourlyRate}
-                        onChange={(e) => setHourlyRate(e.target.value)}
+                    <div className="px-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium">Hourly Rate Range</span>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-8 w-8">
+                                <HelpCircle className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p className="max-w-xs">Set your expected hourly rate range. The lower end applies to higher volume commitments (20+ hours/week), while the higher end applies to specialized or lower volume work.</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
+                      <Slider
+                        defaultValue={[75, 150]}
+                        max={500}
+                        min={25}
+                        step={5}
+                        value={[75, 150]}
+                        onValueChange={() => {}}
                       />
-                      <span className="text-sm text-muted-foreground">per hour</span>
+                      <div className="flex justify-between mt-2">
+                        <span className="text-sm font-medium">$75</span>
+                        <span className="text-sm font-medium">$150</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-2">Range from $75 to $150 per hour</p>
                     </div>
                   </TabsContent>
                 </Tabs>
@@ -270,96 +359,186 @@ const JobMatching = () => {
                   </div>
                 </div>
                 
-                <Tabs defaultValue="full-time" onValueChange={setAvailabilityTab} className="mb-6">
-                  <TabsList className="grid w-full grid-cols-3">
-                    <TabsTrigger value="full-time">Full-time</TabsTrigger>
-                    <TabsTrigger value="part-time">Part-time</TabsTrigger>
-                    <TabsTrigger value="contract">Contract</TabsTrigger>
-                  </TabsList>
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="full-time" 
+                      checked={availabilityType === 'full-time'}
+                      onCheckedChange={() => setAvailabilityType('full-time')}
+                    />
+                    <div>
+                      <Label htmlFor="full-time" className="font-medium">Full-time</Label>
+                      <p className="text-sm text-muted-foreground">40 hours per week, dedicated to one company</p>
+                    </div>
+                  </div>
                   
-                  <TabsContent value="full-time" className="pt-4 px-4">
-                    <div className="space-y-4">
-                      <div>
-                        <Label htmlFor="start-date" className="text-sm">Earliest Start Date</Label>
-                        <Input
-                          id="start-date"
-                          type="date"
-                          value={startDate}
-                          onChange={(e) => setStartDate(e.target.value)}
-                          className="max-w-xs"
-                        />
-                      </div>
-                      
-                      <div>
-                        <Label className="text-sm">Working Days Preference</Label>
-                        <div className="grid grid-cols-5 gap-2 mt-2">
-                          {['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map((day) => (
-                            <div key={day} className="flex items-center space-x-2">
-                              <Checkbox id={`day-${day}`} defaultChecked />
-                              <label htmlFor={`day-${day}`} className="text-sm">{day}</label>
+                  {availabilityType === 'full-time' && (
+                    <Accordion type="single" collapsible className="ml-7">
+                      <AccordionItem value="start-date">
+                        <AccordionTrigger className="text-sm py-2">
+                          Specify start date
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <div className="space-y-2">
+                            <Label htmlFor="ft-start-date" className="text-sm">Earliest Start Date</Label>
+                            <Input
+                              id="ft-start-date"
+                              type="date"
+                              value={startDate}
+                              onChange={(e) => setStartDate(e.target.value)}
+                              className="max-w-xs"
+                            />
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+                  )}
+                  
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="fractional" 
+                      checked={availabilityType === 'fractional'}
+                      onCheckedChange={() => setAvailabilityType('fractional')}
+                    />
+                    <div>
+                      <Label htmlFor="fractional" className="font-medium">Fractional</Label>
+                      <p className="text-sm text-muted-foreground">Part-time commitment, may work with multiple companies</p>
+                    </div>
+                  </div>
+                  
+                  {availabilityType === 'fractional' && (
+                    <Accordion type="single" collapsible className="ml-7">
+                      <AccordionItem value="flexibility-options">
+                        <AccordionTrigger className="text-sm py-2">
+                          Choose flexibility options
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <div className="space-y-4">
+                            <div>
+                              <Label className="text-sm mb-2 block">Preferred Days</Label>
+                              <div className="grid grid-cols-7 gap-2">
+                                {Object.entries({
+                                  mon: 'Mon',
+                                  tue: 'Tue',
+                                  wed: 'Wed',
+                                  thu: 'Thu',
+                                  fri: 'Fri',
+                                  sat: 'Sat',
+                                  sun: 'Sun'
+                                }).map(([key, label]) => (
+                                  <div key={key} className="flex flex-col items-center">
+                                    <Checkbox 
+                                      id={`day-${key}`} 
+                                      checked={selectedDays[key as keyof typeof selectedDays]}
+                                      onCheckedChange={(checked) => 
+                                        setSelectedDays(prev => ({...prev, [key]: checked === true}))}
+                                      className="mb-1"
+                                    />
+                                    <label htmlFor={`day-${key}`} className="text-xs">{label}</label>
+                                  </div>
+                                ))}
+                              </div>
                             </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </TabsContent>
-                  
-                  <TabsContent value="part-time" className="pt-4 px-4">
-                    <div className="space-y-4">
-                      <div>
-                        <Label className="text-sm">Preferred Days</Label>
-                        <div className="grid grid-cols-7 gap-2 mt-2">
-                          {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
-                            <div key={day} className="flex items-center space-x-2">
-                              <Checkbox id={`pt-day-${day}`} />
-                              <label htmlFor={`pt-day-${day}`} className="text-sm">{day}</label>
+                            
+                            <div>
+                              <Label className="text-sm mb-2 block">Time Preference</Label>
+                              <RadioGroup defaultValue="all-day" value={timePreference} onValueChange={setTimePreference}>
+                                <div className="flex items-center space-x-2">
+                                  <RadioGroupItem value="all-day" id="all-day" />
+                                  <Label htmlFor="all-day">All Day</Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <RadioGroupItem value="mornings" id="mornings" />
+                                  <Label htmlFor="mornings">Mornings Only</Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <RadioGroupItem value="afternoons" id="afternoons" />
+                                  <Label htmlFor="afternoons">Afternoons Only</Label>
+                                </div>
+                              </RadioGroup>
                             </div>
-                          ))}
-                        </div>
-                      </div>
-                      
-                      <div>
-                        <Label className="text-sm">Hours Per Week</Label>
-                        <Select>
-                          <SelectTrigger className="max-w-xs">
-                            <SelectValue placeholder="Select hours per week" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="10-15">10-15 hours</SelectItem>
-                            <SelectItem value="16-20">16-20 hours</SelectItem>
-                            <SelectItem value="21-30">21-30 hours</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                  </TabsContent>
+                            
+                            <div>
+                              <Label className="text-sm mb-2 block">Timezone</Label>
+                              <Select value={timezone} onValueChange={setTimezone}>
+                                <SelectTrigger className="max-w-xs">
+                                  <SelectValue placeholder="Select your timezone" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="EST">Eastern Time (EST/EDT)</SelectItem>
+                                  <SelectItem value="CST">Central Time (CST/CDT)</SelectItem>
+                                  <SelectItem value="MST">Mountain Time (MST/MDT)</SelectItem>
+                                  <SelectItem value="PST">Pacific Time (PST/PDT)</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+                  )}
                   
-                  <TabsContent value="contract" className="pt-4 px-4">
-                    <div className="space-y-4">
-                      <div>
-                        <Label className="text-sm">Contract Duration</Label>
-                        <Select>
-                          <SelectTrigger className="max-w-xs">
-                            <SelectValue placeholder="Select contract duration" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="0-3">0-3 months</SelectItem>
-                            <SelectItem value="3-6">3-6 months</SelectItem>
-                            <SelectItem value="6-12">6-12 months</SelectItem>
-                            <SelectItem value="12+">12+ months</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      
-                      <div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="extension-option" defaultChecked />
-                          <Label htmlFor="extension-option" className="text-sm">Interested in contract extensions</Label>
-                        </div>
-                      </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="interim" 
+                      checked={availabilityType === 'interim'}
+                      onCheckedChange={() => setAvailabilityType('interim')}
+                    />
+                    <div>
+                      <Label htmlFor="interim" className="font-medium">Interim</Label>
+                      <p className="text-sm text-muted-foreground">Temporary role with defined start and end dates</p>
                     </div>
-                  </TabsContent>
-                </Tabs>
+                  </div>
+                  
+                  {availabilityType === 'interim' && (
+                    <Accordion type="single" collapsible className="ml-7">
+                      <AccordionItem value="date-range">
+                        <AccordionTrigger className="text-sm py-2">
+                          Set start and end dates
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <div className="space-y-4">
+                            <div>
+                              <Label htmlFor="int-start-date" className="text-sm">Start Date</Label>
+                              <Input
+                                id="int-start-date"
+                                type="date"
+                                value={startDate}
+                                onChange={(e) => setStartDate(e.target.value)}
+                                className="max-w-xs"
+                              />
+                            </div>
+                            
+                            <div>
+                              <Label htmlFor="int-end-date" className="text-sm">End Date (Optional)</Label>
+                              <Input
+                                id="int-end-date"
+                                type="date"
+                                value={endDate}
+                                onChange={(e) => setEndDate(e.target.value)}
+                                className="max-w-xs"
+                              />
+                            </div>
+                            
+                            <div>
+                              <Label className="text-sm block mb-2">Type</Label>
+                              <RadioGroup defaultValue="full-time">
+                                <div className="flex items-center space-x-2">
+                                  <RadioGroupItem value="full-time" id="int-full-time" />
+                                  <Label htmlFor="int-full-time">Full-time Interim</Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <RadioGroupItem value="fractional" id="int-fractional" />
+                                  <Label htmlFor="int-fractional">Fractional Interim</Label>
+                                </div>
+                              </RadioGroup>
+                            </div>
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+                  )}
+                </div>
               </div>
               
               <Separator />
@@ -391,24 +570,85 @@ const JobMatching = () => {
                 <div className="flex items-center gap-2 mb-4">
                   <MapPin className="h-5 w-5 text-primary" />
                   <div>
-                    <h3 className="font-medium">Location Preferences</h3>
-                    <p className="text-sm text-muted-foreground">Select your preferred work locations</p>
+                    <h3 className="font-medium">Location Information</h3>
+                    <p className="text-sm text-muted-foreground">Your current location and work eligibility</p>
                   </div>
                 </div>
                 
-                <div className="flex flex-wrap gap-2 px-4">
-                  {locationPreferences.map(location => (
-                    <Badge key={location} variant="outline">
-                      {location}
-                      <button 
-                        className="ml-1 text-muted-foreground hover:text-foreground"
-                        onClick={() => setLocationPreferences(prev => prev.filter(l => l !== location))}
-                      >
-                        ×
-                      </button>
-                    </Badge>
-                  ))}
-                  <Button variant="outline" size="sm">+ Add Location</Button>
+                <div className="space-y-4 px-4">
+                  <div>
+                    <Label htmlFor="current-location" className="text-sm">Current Location</Label>
+                    <Input 
+                      id="current-location"
+                      value={currentLocation}
+                      onChange={(e) => setCurrentLocation(e.target.value)}
+                      className="max-w-md"
+                    />
+                  </div>
+                  
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <Label className="text-sm">Legal Work Eligibility</Label>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <HelpCircle className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="max-w-xs">Select countries where you are legally authorized to work without visa sponsorship.</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {workEligibility.map(country => (
+                        <Badge key={country} variant="outline">
+                          {country}
+                          <button 
+                            className="ml-1 text-muted-foreground hover:text-foreground"
+                            onClick={() => setWorkEligibility(prev => prev.filter(c => c !== country))}
+                          >
+                            ×
+                          </button>
+                        </Badge>
+                      ))}
+                      <Button variant="outline" size="sm">+ Add Country</Button>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <Label className="text-sm">Preferred Work Locations</Label>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <HelpCircle className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="max-w-xs">Add cities or regions where you prefer to work, if not working remotely.</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {locationPreferences.map(location => (
+                        <Badge key={location} variant="outline">
+                          {location}
+                          <button 
+                            className="ml-1 text-muted-foreground hover:text-foreground"
+                            onClick={() => setLocationPreferences(prev => prev.filter(l => l !== location))}
+                          >
+                            ×
+                          </button>
+                        </Badge>
+                      ))}
+                      <Button variant="outline" size="sm">+ Add Location</Button>
+                    </div>
+                  </div>
                 </div>
               </div>
               
@@ -627,7 +867,7 @@ const JobMatching = () => {
         <StepCardFooter className="flex justify-between pt-6">
           <Button
             variant="outline"
-            onClick={() => navigate('/dashboard/branding')}
+            onClick={() => navigate('/dashboard/profile-snapshot')}
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back

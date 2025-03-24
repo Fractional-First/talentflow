@@ -25,6 +25,7 @@ const SignUp = () => {
     // Simulate API call
     setTimeout(() => {
       setIsSubmitting(false);
+      // Go directly to profile creation, skipping the agreement step
       navigate('/dashboard/profile-creation');
     }, 1000);
   };
@@ -36,6 +37,7 @@ const SignUp = () => {
     // Simulate API call
     setTimeout(() => {
       setIsSubmitting(false);
+      // Go directly to profile creation, skipping the agreement step
       navigate('/dashboard/profile-creation');
     }, 1000);
   };

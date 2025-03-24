@@ -22,18 +22,17 @@ export const SignUpForm = ({ onSubmit, isSubmitting }: SignUpFormProps) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="email">Work Email</Label>
+        <Label htmlFor="email">Personal Email</Label>
         <Input
           id="email"
           name="email"
-          placeholder="your@company.com"
+          placeholder="your@email.com"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
           autoComplete="email"
         />
-        <p className="text-xs text-muted-foreground">Company email domains help verify your identity</p>
       </div>
       
       <div className="space-y-2">
@@ -60,6 +59,10 @@ export const SignUpForm = ({ onSubmit, isSubmitting }: SignUpFormProps) => {
           required
           autoComplete="new-password"
         />
+      </div>
+      
+      <div className="text-xs text-muted-foreground">
+        By creating an account, you agree to our <a href="#" className="underline hover:text-primary">Terms of Service</a>, <a href="#" className="underline hover:text-primary">Privacy Policy</a>, and <a href="#" className="underline hover:text-primary">Data Consent Agreement</a>.
       </div>
       
       <Button 
