@@ -33,6 +33,31 @@ const Dashboard = () => {
       description: 'Review your profile', 
       status: 'current',
       estimatedTime: '3-5 minutes' 
+    }
+  ]);
+  
+  // The full steps list for the dashboard view after onboarding is complete
+  const fullStepsList: Step[] = [
+    { 
+      id: 1, 
+      name: 'Sign Up', 
+      description: 'Create your account', 
+      status: 'completed',
+      estimatedTime: '2-3 minutes' 
+    },
+    { 
+      id: 2, 
+      name: 'Profile', 
+      description: 'Enter your information', 
+      status: 'completed',
+      estimatedTime: '5-7 minutes' 
+    },
+    { 
+      id: 3, 
+      name: 'Profile Snapshot', 
+      description: 'Review your profile', 
+      status: 'current',
+      estimatedTime: '3-5 minutes' 
     },
     { 
       id: 4, 
@@ -55,13 +80,14 @@ const Dashboard = () => {
       status: 'upcoming',
       estimatedTime: '3-5 minutes' 
     }
-  ]);
+  ];
   
   // Check localStorage on component mount to determine if onboarding is complete
   useEffect(() => {
     const onboardingStatus = localStorage.getItem('onboardingComplete');
     if (onboardingStatus === 'true') {
       setOnboardingComplete(true);
+      setSteps(fullStepsList); // Show all steps when onboarding is complete
     }
   }, []);
   
@@ -75,6 +101,7 @@ const Dashboard = () => {
   // For demo purposes, let's add a function to complete onboarding
   const completeOnboarding = () => {
     setOnboardingComplete(true);
+    setSteps(fullStepsList); // Show all steps when completing onboarding
     localStorage.setItem('onboardingComplete', 'true');
   };
 
@@ -84,6 +111,7 @@ const Dashboard = () => {
     
     if (!nextStep) {
       setOnboardingComplete(true);
+      setSteps(fullStepsList); // Show all steps when completing onboarding
       localStorage.setItem('onboardingComplete', 'true');
       return {
         title: 'You\'ve Completed All Steps',
