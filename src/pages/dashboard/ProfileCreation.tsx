@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
@@ -12,7 +13,6 @@ import { Upload, ArrowRight, ArrowLeft, File, Clock, HelpCircle, Linkedin, FileS
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 
 const industries = [
@@ -42,7 +42,8 @@ const ProfileCreation = () => {
   
   const [resumeUploaded, setResumeUploaded] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [profileMethod, setProfileMethod] = useState<'manual' | 'linkedin' | 'resume'>('manual');
+  const [profileMethod, setProfileMethod] = useState<'manual' | 'linkedin' | 'resume'>('linkedin');
+  const [showManualEntry, setShowManualEntry] = useState(false);
   const [dataCollectionConsent, setDataCollectionConsent] = useState(false);
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   
@@ -108,23 +109,123 @@ const ProfileCreation = () => {
             </StepCardHeader>
             
             <StepCardContent>
-              <Tabs defaultValue="manual" onValueChange={(value) => setProfileMethod(value as 'manual' | 'linkedin' | 'resume')}>
-                <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="manual">
-                    <Copy className="h-4 w-4 mr-2" />
-                    Manual Entry
-                  </TabsTrigger>
-                  <TabsTrigger value="linkedin">
-                    <Linkedin className="h-4 w-4 mr-2" />
-                    LinkedIn Import
-                  </TabsTrigger>
-                  <TabsTrigger value="resume">
-                    <FileSpreadsheet className="h-4 w-4 mr-2" />
-                    Resume Upload
-                  </TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="manual" className="pt-4">
+              {!showManualEntry ? (
+                <div className="space-y-6">
+                  {/* LinkedIn Import Option */}
+                  <div className="border rounded-lg p-6">
+                    <div className="flex items-center mb-4">
+                      <div className="bg-[#0A66C2]/10 p-3 rounded-full mr-3">
+                        <Linkedin className="h-6 w-6 text-[#0A66C2]" />
+                      </div>
+                      <div>
+                        <h3 className="font-medium">LinkedIn Import</h3>
+                        <p className="text-sm text-muted-foreground">
+                          Quickly import your professional profile from LinkedIn
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <Button 
+                      className="w-full" 
+                      onClick={() => setProfileMethod('linkedin')}
+                    >
+                      <Linkedin className="h-4 w-4 mr-2" />
+                      Connect LinkedIn
+                    </Button>
+                    
+                    <p className="text-xs text-center text-muted-foreground mt-2">
+                      We never post to your LinkedIn without permission
+                    </p>
+                  </div>
+                  
+                  {/* Resume Upload Option */}
+                  <div className="border rounded-lg p-6">
+                    <div className="flex items-center mb-4">
+                      <div className="bg-primary/10 p-3 rounded-full mr-3">
+                        <FileSpreadsheet className="h-6 w-6 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-medium">Resume Upload</h3>
+                        <p className="text-sm text-muted-foreground">
+                          Upload your resume and we'll extract the information
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="border-2 border-dashed border-muted rounded-lg p-6 text-center">
+                      {resumeUploaded ? (
+                        <div className="flex flex-col items-center">
+                          <div className="bg-primary/10 p-3 rounded-full mb-3">
+                            <File className="h-6 w-6 text-primary" />
+                          </div>
+                          <p className="mb-1 font-medium">Resume uploaded successfully</p>
+                          <p className="text-sm text-muted-foreground mb-3">resume.pdf</p>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            onClick={() => setResumeUploaded(false)}
+                          >
+                            Replace
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center">
+                          <div className="bg-muted/50 p-3 rounded-full mb-3">
+                            <Upload className="h-6 w-6 text-muted-foreground" />
+                          </div>
+                          <p className="mb-1 font-medium">Drag and drop your resume here</p>
+                          <p className="text-sm text-muted-foreground mb-3">Supports PDF, DOCX, up to 5MB</p>
+                          <div>
+                            <label htmlFor="resume">
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                onClick={() => document.getElementById('resume')?.click()}
+                                type="button"
+                              >
+                                Select File
+                              </Button>
+                              <input 
+                                id="resume" 
+                                type="file" 
+                                className="hidden" 
+                                accept=".pdf,.doc,.docx" 
+                                onChange={handleResumeUpload}
+                              />
+                            </label>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {/* Manual Entry Link */}
+                  <div className="text-center mt-6">
+                    <Button 
+                      variant="link" 
+                      onClick={() => setShowManualEntry(true)}
+                      className="text-sm"
+                      type="button"
+                    >
+                      <Copy className="h-4 w-4 mr-2" />
+                      Enter manually instead
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="font-medium">Manual Profile Entry</h3>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => setShowManualEntry(false)}
+                      type="button"
+                    >
+                      Back to import options
+                    </Button>
+                  </div>
+                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4">
                       <div>
@@ -235,201 +336,33 @@ const ProfileCreation = () => {
                       </div>
                     </div>
                   </div>
-                </TabsContent>
-                
-                <TabsContent value="linkedin" className="pt-4">
-                  <div className="flex flex-col items-center justify-center py-8">
-                    <Linkedin className="h-12 w-12 text-[#0A66C2] mb-4" />
-                    <h3 className="text-xl font-medium mb-2">Import from LinkedIn</h3>
-                    <p className="text-muted-foreground text-center mb-6 max-w-md">
-                      We'll automatically import your professional details from LinkedIn to save you time
-                    </p>
-                    
-                    <Alert className="mb-6 max-w-md">
-                      <AlertCircle className="h-4 w-4" />
-                      <AlertTitle>Additional verification required</AlertTitle>
-                      <AlertDescription>
-                        For security reasons, we'll need to verify your identity with additional steps after import.
-                      </AlertDescription>
-                    </Alert>
-                    
-                    <Button variant="default" className="mb-2">
-                      <Linkedin className="h-4 w-4 mr-2" />
-                      Connect LinkedIn
-                    </Button>
-                    <p className="text-xs text-muted-foreground">
-                      We never post to your LinkedIn without permission
-                    </p>
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="resume" className="pt-4">
-                  <div className="border-2 border-dashed border-muted rounded-lg p-6 text-center">
-                    {resumeUploaded ? (
-                      <div className="flex flex-col items-center">
-                        <div className="bg-primary/10 p-3 rounded-full mb-3">
-                          <File className="h-6 w-6 text-primary" />
-                        </div>
-                        <p className="mb-1 font-medium">Resume uploaded successfully</p>
-                        <p className="text-sm text-muted-foreground mb-3">resume.pdf</p>
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          onClick={() => setResumeUploaded(false)}
-                        >
-                          Replace
-                        </Button>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col items-center">
-                        <div className="bg-muted/50 p-3 rounded-full mb-3">
-                          <Upload className="h-6 w-6 text-muted-foreground" />
-                        </div>
-                        <p className="mb-1 font-medium">Drag and drop your resume here</p>
-                        <p className="text-sm text-muted-foreground mb-3">Supports PDF, DOCX, up to 5MB</p>
-                        <div>
-                          <label htmlFor="resume">
-                            <Button 
-                              variant="outline" 
-                              size="sm" 
-                              onClick={() => document.getElementById('resume')?.click()}
-                              type="button"
-                            >
-                              Select File
-                            </Button>
-                            <input 
-                              id="resume" 
-                              type="file" 
-                              className="hidden" 
-                              accept=".pdf,.doc,.docx" 
-                              onChange={handleResumeUpload}
-                            />
-                          </label>
-                        </div>
-                      </div>
-                    )}
-                  </div>
                   
-                  <div className="mt-4">
-                    <Alert>
-                      <AlertCircle className="h-4 w-4" />
-                      <AlertTitle>Resume parsing</AlertTitle>
-                      <AlertDescription>
-                        We'll automatically extract information from your resume. You'll have a chance to review and edit before finalizing.
-                      </AlertDescription>
-                    </Alert>
-                  </div>
-                </TabsContent>
-              </Tabs>
-            </StepCardContent>
-          </StepCard>
-          
-          <StepCard>
-            <StepCardHeader>
-              <StepCardTitle>Professional Summary</StepCardTitle>
-              <StepCardDescription>
-                Share a brief summary of your professional experience and career goals
-              </StepCardDescription>
-            </StepCardHeader>
-            
-            <StepCardContent>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="summary">Professional Summary</Label>
-                  <Textarea 
-                    id="summary" 
-                    placeholder="Briefly describe your professional background, key skills, and career goals..."
-                    className="min-h-[120px]"
-                    required
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="skills">Key Skills (comma separated)</Label>
-                  <Input 
-                    id="skills" 
-                    placeholder="e.g., Project Management, JavaScript, Data Analysis, Leadership"
-                    required
-                  />
-                </div>
-              </div>
-            </StepCardContent>
-          </StepCard>
-          
-          <StepCard>
-            <StepCardHeader>
-              <StepCardTitle>Upload Your Resume</StepCardTitle>
-              <StepCardDescription>
-                Upload your resume to help us better understand your experience and skills
-              </StepCardDescription>
-            </StepCardHeader>
-            
-            <StepCardContent>
-              <div className="border-2 border-dashed border-muted rounded-lg p-6 text-center">
-                {resumeUploaded ? (
-                  <div className="flex flex-col items-center">
-                    <div className="bg-primary/10 p-3 rounded-full mb-3">
-                      <File className="h-6 w-6 text-primary" />
-                    </div>
-                    <p className="mb-1 font-medium">Resume uploaded successfully</p>
-                    <p className="text-sm text-muted-foreground mb-3">resume.pdf</p>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => setResumeUploaded(false)}
-                    >
-                      Replace
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center">
-                    <div className="bg-muted/50 p-3 rounded-full mb-3">
-                      <Upload className="h-6 w-6 text-muted-foreground" />
-                    </div>
-                    <p className="mb-1 font-medium">Drag and drop your resume here</p>
-                    <p className="text-sm text-muted-foreground mb-3">Supports PDF, DOCX, up to 5MB</p>
+                  <div className="space-y-4 mt-6">
                     <div>
-                      <label htmlFor="resume">
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          onClick={() => document.getElementById('resume')?.click()}
-                          type="button"
-                        >
-                          Select File
-                        </Button>
-                        <input 
-                          id="resume" 
-                          type="file" 
-                          className="hidden" 
-                          accept=".pdf,.doc,.docx" 
-                          onChange={handleResumeUpload}
-                        />
-                      </label>
+                      <Label htmlFor="summary">Professional Summary</Label>
+                      <Textarea 
+                        id="summary" 
+                        placeholder="Briefly describe your professional background, key skills, and career goals..."
+                        className="min-h-[120px]"
+                        required
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="skills">Key Skills (comma separated)</Label>
+                      <Input 
+                        id="skills" 
+                        placeholder="e.g., Project Management, JavaScript, Data Analysis, Leadership"
+                        required
+                      />
                     </div>
                   </div>
-                )}
-              </div>
-              
-              <Separator className="my-6" />
-              
-              <div>
-                <div className="flex items-center mb-4">
-                  <div className="bg-primary/10 p-2 rounded-full mr-3">
-                    <Linkedin className="h-5 w-5 text-primary" />
-                  </div>
-                  <h3 className="font-medium">LinkedIn Import</h3>
                 </div>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Alternatively, you can import your professional data directly from LinkedIn.
-                </p>
-                <Button variant="outline">
-                  Import from LinkedIn
-                </Button>
-              </div>
+              )}
             </StepCardContent>
           </StepCard>
           
+          {/* Data Collection Consent Card */}
           <StepCard>
             <StepCardHeader>
               <StepCardTitle>Data Collection Consent</StepCardTitle>
