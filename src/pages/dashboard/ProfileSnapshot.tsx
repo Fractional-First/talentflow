@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
@@ -17,13 +16,9 @@ const ProfileSnapshot = () => {
   const steps: Step[] = [
     { id: 1, name: 'Sign Up', description: 'Create your account', status: 'completed' },
     { id: 2, name: 'Profile', description: 'Enter your information', status: 'completed' },
-    { id: 3, name: 'Profile Snapshot', description: 'Review your profile', status: 'current' },
-    { id: 4, name: 'Agreement', description: 'Sign legal documents', status: 'upcoming' },
-    { id: 5, name: 'Branding', description: 'Enhance your profile', status: 'upcoming' },
-    { id: 6, name: 'Job Matching', description: 'Get matched to jobs', status: 'upcoming' }
+    { id: 3, name: 'Profile Snapshot', description: 'Review your profile', status: 'current' }
   ];
   
-  // Mock profile data
   const profile = {
     name: 'Alex Johnson',
     title: 'Senior Product Manager',
@@ -61,7 +56,6 @@ const ProfileSnapshot = () => {
   const handleContinue = () => {
     setIsSubmitting(true);
     
-    // Simulate API call
     setTimeout(() => {
       setIsSubmitting(false);
       navigate('/dashboard/agreement');

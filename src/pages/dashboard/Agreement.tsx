@@ -21,6 +21,7 @@ const Agreement = () => {
   const [signature, setSignature] = useState('');
   const [date, setDate] = useState('');
   
+  // Include all steps in the dashboard view
   const steps: Step[] = [
     { id: 1, name: 'Sign Up', description: 'Create your account', status: 'completed' },
     { id: 2, name: 'Profile', description: 'Enter your information', status: 'completed' },
