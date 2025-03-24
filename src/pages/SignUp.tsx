@@ -7,8 +7,6 @@ import { Label } from '@/components/ui/label';
 import { StepCard, StepCardContent, StepCardDescription, StepCardFooter, StepCardHeader, StepCardTitle } from '@/components/StepCard';
 import { Separator } from '@/components/ui/separator';
 import { Linkedin } from 'lucide-react';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -16,10 +14,6 @@ const SignUp = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [accountType, setAccountType] = useState('talent');
-  const [companyName, setCompanyName] = useState('');
-  const [companyWebsite, setCompanyWebsite] = useState('');
-  const [companyLinkedin, setCompanyLinkedin] = useState('');
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,11 +29,7 @@ const SignUp = () => {
     // Simulate API call
     setTimeout(() => {
       setIsSubmitting(false);
-      if (accountType === 'talent') {
-        navigate('/dashboard/profile-creation');
-      } else {
-        navigate('/dashboard/organization-setup');
-      }
+      navigate('/dashboard/profile-creation');
     }, 1000);
   };
 
@@ -79,36 +69,6 @@ const SignUp = () => {
           </StepCardHeader>
           
           <StepCardContent>
-            <div className="mb-6">
-              <RadioGroup defaultValue="talent" value={accountType} onValueChange={setAccountType} className="grid grid-cols-2 gap-4">
-                <div>
-                  <RadioGroupItem value="talent" id="talent" className="peer sr-only" />
-                  <Label
-                    htmlFor="talent"
-                    className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                  >
-                    <span className="mb-2">Talent</span>
-                    <span className="text-xs text-center text-muted-foreground">
-                      Find new job opportunities
-                    </span>
-                  </Label>
-                </div>
-                
-                <div>
-                  <RadioGroupItem value="organization" id="organization" className="peer sr-only" />
-                  <Label
-                    htmlFor="organization"
-                    className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                  >
-                    <span className="mb-2">Organization</span>
-                    <span className="text-xs text-center text-muted-foreground">
-                      Hire talent for your company
-                    </span>
-                  </Label>
-                </div>
-              </RadioGroup>
-            </div>
-          
             <Button 
               variant="outline" 
               className="w-full flex items-center justify-center gap-2"
@@ -164,45 +124,6 @@ const SignUp = () => {
                   autoComplete="new-password"
                 />
               </div>
-              
-              {accountType === 'organization' && (
-                <div className="space-y-4 pt-2">
-                  <Separator />
-                  <p className="text-sm font-medium">Organization Details</p>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="companyName">Company Name</Label>
-                    <Input
-                      id="companyName"
-                      value={companyName}
-                      onChange={(e) => setCompanyName(e.target.value)}
-                      required={accountType === 'organization'}
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="companyWebsite">Company Website</Label>
-                    <Input
-                      id="companyWebsite"
-                      type="url"
-                      placeholder="https://yourcompany.com"
-                      value={companyWebsite}
-                      onChange={(e) => setCompanyWebsite(e.target.value)}
-                      required={accountType === 'organization'}
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="companyLinkedin">Company LinkedIn</Label>
-                    <Input
-                      id="companyLinkedin"
-                      placeholder="https://linkedin.com/company/yourcompany"
-                      value={companyLinkedin}
-                      onChange={(e) => setCompanyLinkedin(e.target.value)}
-                    />
-                  </div>
-                </div>
-              )}
               
               <Button 
                 type="submit" 
