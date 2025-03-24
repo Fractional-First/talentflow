@@ -62,7 +62,11 @@ export const SignUpForm = ({ onSubmit, isSubmitting }: SignUpFormProps) => {
       </div>
       
       <div className="text-xs text-muted-foreground">
-        By creating an account, you agree to our <a href="#" className="underline hover:text-primary">Terms of Service</a>, <a href="#" className="underline hover:text-primary">Privacy Policy</a>, and <a href="#" className="underline hover:text-primary">Data Consent Agreement</a>.
+        By creating an account, you agree to our{' '}
+        <a href="/legal/terms" target="_blank" rel="noopener" className="underline hover:text-primary">Terms of Service</a>,{' '}
+        <a href="/legal/privacy" target="_blank" rel="noopener" className="underline hover:text-primary">Privacy Policy</a>,{' '}
+        <a href="/legal/msa" target="_blank" rel="noopener" className="underline hover:text-primary">Master Services Agreement</a>, and{' '}
+        <a href="/legal/data-consent" target="_blank" rel="noopener" className="underline hover:text-primary">Data Processing Agreement</a>.
       </div>
       
       <Button 

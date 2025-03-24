@@ -1,4 +1,3 @@
-
 import { Step } from '@/components/OnboardingProgress';
 
 // Initial steps for onboarding - simplified to only 3 steps
@@ -51,20 +50,13 @@ export const fullStepsList: Step[] = [
   },
   { 
     id: 4, 
-    name: 'Agreement', 
-    description: 'Sign legal documents', 
-    status: 'upcoming',
-    estimatedTime: '4-6 minutes' 
-  },
-  { 
-    id: 5, 
     name: 'Branding', 
     description: 'Enhance your profile', 
     status: 'upcoming',
     estimatedTime: '5-8 minutes' 
   },
   { 
-    id: 6, 
+    id: 5, 
     name: 'Job Matching', 
     description: 'Get matched to jobs', 
     status: 'upcoming',
@@ -72,7 +64,7 @@ export const fullStepsList: Step[] = [
   }
 ];
 
-// Function to get the next step information based on current state
+// Function to get the next step information
 export const getNextStepInfo = (nextStep: Step | undefined, steps: Step[]) => {
   if (!nextStep) {
     return {
@@ -111,21 +103,13 @@ export const getNextStepInfo = (nextStep: Step | undefined, steps: Step[]) => {
       };
     case 4:
       return {
-        title: 'Review and Sign Documents',
-        description: 'Review and sign the necessary legal documents to proceed.',
-        path: '/dashboard/agreement',
-        buttonText: 'View Documents',
-        estimatedTime: nextStep.estimatedTime
-      };
-    case 5:
-      return {
         title: 'Enhance Your Professional Brand',
         description: 'Take advantage of our tools to enhance your professional brand.',
         path: '/dashboard/branding',
         buttonText: 'Enhance Brand',
         estimatedTime: nextStep.estimatedTime
       };
-    case 6:
+    case 5:
       return {
         title: 'Job Matching',
         description: 'Get matched with job opportunities that fit your profile.',
