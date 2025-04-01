@@ -12,14 +12,14 @@ export const initialSteps: Step[] = [
   },
   { 
     id: 2, 
-    name: 'Profile', 
+    name: 'Create Profile', 
     description: 'Enter your information', 
     status: 'completed',
     estimatedTime: '5-7 minutes' 
   },
   { 
     id: 3, 
-    name: 'Profile Snapshot', 
+    name: 'Review Profile', 
     description: 'Review your profile', 
     status: 'current',
     estimatedTime: '3-5 minutes' 
@@ -37,14 +37,14 @@ export const fullStepsList: Step[] = [
   },
   { 
     id: 2, 
-    name: 'Profile', 
+    name: 'Create Profile', 
     description: 'Enter your information', 
     status: 'completed',
     estimatedTime: '5-7 minutes' 
   },
   { 
     id: 3, 
-    name: 'Profile Snapshot', 
+    name: 'Review Profile', 
     description: 'Review your profile', 
     status: 'current',
     estimatedTime: '3-5 minutes' 
@@ -128,3 +128,4 @@ export const getNextStepInfo = (nextStep: Step | undefined, steps: Step[]) => {
       };
   }
 };
+
