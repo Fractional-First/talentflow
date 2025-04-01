@@ -16,8 +16,8 @@ const ProfileSnapshot = () => {
   
   const steps: Step[] = [
     { id: 1, name: 'Sign Up', description: 'Create your account', status: 'completed' },
-    { id: 2, name: 'Profile', description: 'Enter your information', status: 'completed' },
-    { id: 3, name: 'Profile Snapshot', description: 'Review your profile', status: 'current' }
+    { id: 2, name: 'Create Profile', description: 'Enter your information', status: 'completed' },
+    { id: 3, name: 'Review Profile', description: 'Review your profile', status: 'current' }
   ];
   
   const profile = {
