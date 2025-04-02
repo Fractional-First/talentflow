@@ -22,7 +22,7 @@ export const WelcomeCard = () => {
           <span className="text-sm">All onboarding steps completed</span>
         </div>
         <div className="flex items-center gap-2">
-          <Badge variant="success" className="text-xs flex items-center justify-center">Active</Badge>
+          <Badge variant="success" className="whitespace-nowrap">Active</Badge>
           <span className="text-sm text-muted-foreground">Your profile is visible to potential employers</span>
         </div>
       </StepCardContent>
@@ -65,7 +65,7 @@ export const DashboardNavCard = ({
               </div>
               <StepCardTitle>{title}</StepCardTitle>
             </div>
-            <Badge variant={badgeVariant} className="flex items-center justify-center">{badgeText}</Badge>
+            <Badge variant={badgeVariant} className="whitespace-nowrap">{badgeText}</Badge>
           </div>
           <StepCardDescription>
             {description}
