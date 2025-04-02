@@ -49,16 +49,18 @@ const ProfileCreation = () => {
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [isLinkedInUser, setIsLinkedInUser] = useState(false);
   const [isUsingLinkedInInfo, setIsUsingLinkedInInfo] = useState(false);
+  const [showLinkedInOption, setShowLinkedInOption] = useState(true);
   
   useEffect(() => {
-    const linkedInSignUp = location.state?.linkedInSignUp || false;
-    setIsLinkedInUser(linkedInSignUp);
-    
-    if (!location.state) {
-      const authMethod = localStorage.getItem('authMethod');
-      if (authMethod === 'linkedin') {
-        setIsLinkedInUser(true);
-      }
+    // Check if the user signed up with LinkedIn or email
+    const authMethod = localStorage.getItem('authMethod');
+    if (authMethod === 'linkedin' || location.state?.linkedInSignUp) {
+      setIsLinkedInUser(true);
+      // Already using LinkedIn for auth, so hide the connect LinkedIn option
+      setShowLinkedInOption(false);
+    } else {
+      // Signed up with email, so show the connect LinkedIn option
+      setShowLinkedInOption(true);
     }
   }, [location]);
   
@@ -116,6 +118,19 @@ const ProfileCreation = () => {
     // For this demo, we'll just show a toast notification
   };
 
+  const handleConnectLinkedIn = () => {
+    // In a real app, this would trigger OAuth
+    toast({
+      title: "LinkedIn Connected",
+      description: "Your LinkedIn account has been connected successfully.",
+    });
+    
+    // Simulate connection
+    setTimeout(() => {
+      handleUseLinkedInInfo();
+    }, 1000);
+  };
+
   return (
     <DashboardLayout steps={steps} currentStep={2}>
       <form onSubmit={handleSubmit}>
@@ -135,6 +150,36 @@ const ProfileCreation = () => {
             <StepCardContent>
               {!showManualEntry ? (
                 <div className="space-y-6">
+                  {/* Show LinkedIn option for users who signed up with email */}
+                  {showLinkedInOption && (
+                    <div className="border rounded-lg p-6">
+                      <div className="flex items-center mb-4">
+                        <div className="bg-[#0A66C2]/10 p-3 rounded-full mr-3">
+                          <Linkedin className="h-6 w-6 text-[#0A66C2]" />
+                        </div>
+                        <div>
+                          <h3 className="font-medium">Connect with LinkedIn</h3>
+                          <p className="text-sm text-muted-foreground">
+                            Connect your LinkedIn profile to import your professional information
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <Button 
+                        className="w-full" 
+                        onClick={handleConnectLinkedIn}
+                      >
+                        <Linkedin className="h-4 w-4 mr-2" />
+                        Connect LinkedIn Profile
+                      </Button>
+                      
+                      <p className="text-xs text-center text-muted-foreground mt-2">
+                        We'll import your work history, skills, and education
+                      </p>
+                    </div>
+                  )}
+                  
+                  {/* Show LinkedIn info use option for users who signed up with LinkedIn */}
                   {isLinkedInUser && (
                     <div className="border rounded-lg p-6">
                       <div className="flex items-center mb-4">
