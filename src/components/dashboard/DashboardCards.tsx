@@ -1,4 +1,3 @@
-
 import { useNavigate } from 'react-router-dom';
 import { StepCard, StepCardContent, StepCardDescription, StepCardHeader, StepCardTitle } from '@/components/StepCard';
 import { Button } from '@/components/ui/button';
@@ -17,22 +16,13 @@ export const WelcomeCard = () => {
       </StepCardHeader>
       
       <StepCardContent>
-        <div className="bg-primary/5 border border-primary/20 rounded-lg p-6">
-          <h3 className="text-lg font-medium mb-4">Your TalentFlow Status</h3>
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium">Profile Completion</span>
-            <span className="text-sm font-medium">100%</span>
-          </div>
-          <Progress value={100} className="h-2 mb-6" />
-          
-          <div className="flex items-center gap-2 mb-1">
-            <CheckCircle2 className="h-4 w-4 text-green-500" />
-            <span className="text-sm">All onboarding steps completed</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Badge variant="success" className="text-xs">Active</Badge>
-            <span className="text-sm text-muted-foreground">Your profile is visible to potential employers</span>
-          </div>
+        <div className="flex items-center gap-2 mb-1">
+          <CheckCircle2 className="h-4 w-4 text-green-500" />
+          <span className="text-sm">All onboarding steps completed</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Badge variant="success" className="text-xs">Active</Badge>
+          <span className="text-sm text-muted-foreground">Your profile is visible to potential employers</span>
         </div>
       </StepCardContent>
     </StepCard>
