@@ -63,9 +63,13 @@ export const DashboardNavCard = ({
               <div className="bg-primary/10 p-2 rounded-full mr-3">
                 {icon}
               </div>
-              <StepCardTitle>{title}</StepCardTitle>
+              <div>
+                <StepCardTitle>{title}</StepCardTitle>
+                <div className="mt-1">
+                  <Badge variant={badgeVariant} className="whitespace-nowrap">{badgeText}</Badge>
+                </div>
+              </div>
             </div>
-            <Badge variant={badgeVariant} className="whitespace-nowrap">{badgeText}</Badge>
           </div>
           <StepCardDescription>
             {description}
