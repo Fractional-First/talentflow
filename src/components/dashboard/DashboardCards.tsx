@@ -1,3 +1,4 @@
+
 import { useNavigate } from 'react-router-dom';
 import { StepCard, StepCardContent, StepCardDescription, StepCardHeader, StepCardTitle } from '@/components/StepCard';
 import { Button } from '@/components/ui/button';
@@ -21,7 +22,7 @@ export const WelcomeCard = () => {
           <span className="text-sm">All onboarding steps completed</span>
         </div>
         <div className="flex items-center gap-2">
-          <Badge variant="success" className="text-xs">Active</Badge>
+          <Badge variant="success" className="text-xs flex items-center justify-center">Active</Badge>
           <span className="text-sm text-muted-foreground">Your profile is visible to potential employers</span>
         </div>
       </StepCardContent>
@@ -64,7 +65,7 @@ export const DashboardNavCard = ({
               </div>
               <StepCardTitle>{title}</StepCardTitle>
             </div>
-            <Badge variant={badgeVariant}>{badgeText}</Badge>
+            <Badge variant={badgeVariant} className="flex items-center justify-center">{badgeText}</Badge>
           </div>
           <StepCardDescription>
             {description}
