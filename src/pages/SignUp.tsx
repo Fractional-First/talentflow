@@ -22,6 +22,9 @@ const SignUp = () => {
     
     setIsSubmitting(true);
     
+    // Store auth method in localStorage
+    localStorage.setItem('authMethod', 'email');
+    
     // Simulate API call
     setTimeout(() => {
       setIsSubmitting(false);
@@ -34,11 +37,16 @@ const SignUp = () => {
     // In a real app, this would trigger OAuth
     setIsSubmitting(true);
     
+    // Store auth method in localStorage
+    localStorage.setItem('authMethod', 'linkedin');
+    
     // Simulate API call
     setTimeout(() => {
       setIsSubmitting(false);
-      // Go directly to profile creation, skipping the agreement step
-      navigate('/dashboard/profile-creation');
+      // Navigate to profile creation with state indicating LinkedIn signup
+      navigate('/dashboard/profile-creation', { 
+        state: { linkedInSignUp: true } 
+      });
     }, 1000);
   };
 

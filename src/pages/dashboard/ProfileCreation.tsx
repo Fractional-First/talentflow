@@ -1,6 +1,5 @@
-
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
 import { StepCard, StepCardContent, StepCardDescription, StepCardFooter, StepCardHeader, StepCardTitle } from '@/components/StepCard';
 import { Step } from '@/components/OnboardingProgress';
@@ -39,17 +38,31 @@ const experienceLevels = [
 
 const ProfileCreation = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   
   const [resumeUploaded, setResumeUploaded] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [profileMethod, setProfileMethod] = useState<'manual' | 'linkedin' | 'resume'>('linkedin');
   const [showManualEntry, setShowManualEntry] = useState(false);
   const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [isLinkedInUser, setIsLinkedInUser] = useState(false);
+  
+  useEffect(() => {
+    const linkedInSignUp = location.state?.linkedInSignUp || false;
+    setIsLinkedInUser(linkedInSignUp);
+    
+    if (!location.state) {
+      const authMethod = localStorage.getItem('authMethod');
+      if (authMethod === 'linkedin') {
+        setIsLinkedInUser(true);
+      }
+    }
+  }, [location]);
   
   const steps: Step[] = [
     { id: 1, name: 'Sign Up', description: 'Create your account', status: 'completed', estimatedTime: '2-3 minutes' },
-    { id: 2, name: 'Profile', description: 'Enter your information', status: 'current', estimatedTime: '5-7 minutes' },
-    { id: 3, name: 'Profile Snapshot', description: 'Review your profile', status: 'upcoming', estimatedTime: '3-5 minutes' }
+    { id: 2, name: 'Create Profile', description: 'Enter your information', status: 'current', estimatedTime: '5-7 minutes' },
+    { id: 3, name: 'Review Profile', description: 'Review your profile', status: 'upcoming', estimatedTime: '3-5 minutes' }
   ];
   
   const handleResumeUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -107,34 +120,34 @@ const ProfileCreation = () => {
             <StepCardContent>
               {!showManualEntry ? (
                 <div className="space-y-6">
-                  {/* LinkedIn Import Option */}
-                  <div className="border rounded-lg p-6">
-                    <div className="flex items-center mb-4">
-                      <div className="bg-[#0A66C2]/10 p-3 rounded-full mr-3">
-                        <Linkedin className="h-6 w-6 text-[#0A66C2]" />
+                  {!isLinkedInUser && (
+                    <div className="border rounded-lg p-6">
+                      <div className="flex items-center mb-4">
+                        <div className="bg-[#0A66C2]/10 p-3 rounded-full mr-3">
+                          <Linkedin className="h-6 w-6 text-[#0A66C2]" />
+                        </div>
+                        <div>
+                          <h3 className="font-medium">LinkedIn Import</h3>
+                          <p className="text-sm text-muted-foreground">
+                            Quickly import your professional profile from LinkedIn
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-medium">LinkedIn Import</h3>
-                        <p className="text-sm text-muted-foreground">
-                          Quickly import your professional profile from LinkedIn
-                        </p>
-                      </div>
+                      
+                      <Button 
+                        className="w-full" 
+                        onClick={() => setProfileMethod('linkedin')}
+                      >
+                        <Linkedin className="h-4 w-4 mr-2" />
+                        Connect LinkedIn
+                      </Button>
+                      
+                      <p className="text-xs text-center text-muted-foreground mt-2">
+                        We never post to your LinkedIn without permission
+                      </p>
                     </div>
-                    
-                    <Button 
-                      className="w-full" 
-                      onClick={() => setProfileMethod('linkedin')}
-                    >
-                      <Linkedin className="h-4 w-4 mr-2" />
-                      Connect LinkedIn
-                    </Button>
-                    
-                    <p className="text-xs text-center text-muted-foreground mt-2">
-                      We never post to your LinkedIn without permission
-                    </p>
-                  </div>
+                  )}
                   
-                  {/* Resume Upload Option */}
                   <div className="border rounded-lg p-6">
                     <div className="flex items-center mb-4">
                       <div className="bg-primary/10 p-3 rounded-full mr-3">
@@ -195,7 +208,6 @@ const ProfileCreation = () => {
                     </div>
                   </div>
                   
-                  {/* Manual Entry Link */}
                   <div className="text-center mt-6">
                     <Button 
                       variant="link" 
