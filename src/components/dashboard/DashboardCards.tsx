@@ -59,19 +59,19 @@ export const DashboardNavCard = ({
       >
         <StepCardHeader>
           <div className="flex items-start">
-            <div className="relative mr-3">
+            <div className="mr-3">
               <div className="bg-primary/10 p-2 rounded-full">
                 {icon}
               </div>
-              <Badge 
-                variant={badgeVariant} 
-                className="absolute -bottom-2 -right-2 whitespace-nowrap text-xs"
-              >
-                {badgeText}
-              </Badge>
             </div>
             <div>
               <StepCardTitle>{title}</StepCardTitle>
+              <Badge 
+                variant={badgeVariant} 
+                className="whitespace-nowrap text-xs mt-1"
+              >
+                {badgeText}
+              </Badge>
             </div>
           </div>
           <StepCardDescription>
