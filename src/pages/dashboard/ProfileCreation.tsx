@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
@@ -8,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { toast } from '@/hooks/use-toast';
 import { Upload, ArrowRight, ArrowLeft, File, Clock, HelpCircle, Linkedin, FileSpreadsheet, Copy, AlertCircle } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -46,6 +48,7 @@ const ProfileCreation = () => {
   const [showManualEntry, setShowManualEntry] = useState(false);
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [isLinkedInUser, setIsLinkedInUser] = useState(false);
+  const [isUsingLinkedInInfo, setIsUsingLinkedInInfo] = useState(false);
   
   useEffect(() => {
     const linkedInSignUp = location.state?.linkedInSignUp || false;
@@ -101,6 +104,18 @@ const ProfileCreation = () => {
     }, 1000);
   };
 
+  const handleUseLinkedInInfo = () => {
+    setIsUsingLinkedInInfo(true);
+    setShowManualEntry(true);
+    toast({
+      title: "LinkedIn information applied",
+      description: "Your LinkedIn profile information has been used to pre-fill your profile.",
+    });
+    
+    // In a real implementation, this would populate form fields with LinkedIn data
+    // For this demo, we'll just show a toast notification
+  };
+
   return (
     <DashboardLayout steps={steps} currentStep={2}>
       <form onSubmit={handleSubmit}>
@@ -120,30 +135,30 @@ const ProfileCreation = () => {
             <StepCardContent>
               {!showManualEntry ? (
                 <div className="space-y-6">
-                  {!isLinkedInUser && (
+                  {isLinkedInUser && (
                     <div className="border rounded-lg p-6">
                       <div className="flex items-center mb-4">
                         <div className="bg-[#0A66C2]/10 p-3 rounded-full mr-3">
                           <Linkedin className="h-6 w-6 text-[#0A66C2]" />
                         </div>
                         <div>
-                          <h3 className="font-medium">LinkedIn Import</h3>
+                          <h3 className="font-medium">Use LinkedIn Information</h3>
                           <p className="text-sm text-muted-foreground">
-                            Quickly import your professional profile from LinkedIn
+                            Since you signed up with LinkedIn, we can use your profile information
                           </p>
                         </div>
                       </div>
                       
                       <Button 
                         className="w-full" 
-                        onClick={() => setProfileMethod('linkedin')}
+                        onClick={handleUseLinkedInInfo}
                       >
                         <Linkedin className="h-4 w-4 mr-2" />
-                        Connect LinkedIn
+                        Import LinkedIn Profile
                       </Button>
                       
                       <p className="text-xs text-center text-muted-foreground mt-2">
-                        We never post to your LinkedIn without permission
+                        We'll use the information from your LinkedIn account
                       </p>
                     </div>
                   )}
@@ -234,6 +249,16 @@ const ProfileCreation = () => {
                     </Button>
                   </div>
                   
+                  {isUsingLinkedInInfo && (
+                    <Alert variant="default" className="bg-[#0A66C2]/10 border-[#0A66C2]/30 mb-4">
+                      <Linkedin className="h-4 w-4 text-[#0A66C2]" />
+                      <AlertTitle>LinkedIn Profile Information Applied</AlertTitle>
+                      <AlertDescription>
+                        Your profile information has been pre-filled with data from your LinkedIn account. You can edit any fields as needed.
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4">
                       <div>
@@ -250,7 +275,7 @@ const ProfileCreation = () => {
                             </Tooltip>
                           </TooltipProvider>
                         </div>
-                        <Input id="firstName" required />
+                        <Input id="firstName" required defaultValue={isUsingLinkedInInfo ? "John" : ""} />
                       </div>
                       
                       <div>
@@ -261,7 +286,12 @@ const ProfileCreation = () => {
                           </Badge>
                         </div>
                         <div className="flex space-x-2">
-                          <Input id="email" type="email" required />
+                          <Input 
+                            id="email" 
+                            type="email" 
+                            required 
+                            defaultValue={isUsingLinkedInInfo ? "john.doe@example.com" : ""} 
+                          />
                           {!isEmailVerified && (
                             <Button type="button" variant="outline" size="sm" onClick={requestEmailVerification}>
                               Verify
@@ -289,14 +319,17 @@ const ProfileCreation = () => {
                             </Tooltip>
                           </TooltipProvider>
                         </div>
-                        <Input id="currentPosition" />
+                        <Input 
+                          id="currentPosition" 
+                          defaultValue={isUsingLinkedInInfo ? "Product Manager" : ""} 
+                        />
                       </div>
                       
                       <div>
                         <div className="flex items-center justify-between">
                           <Label htmlFor="industry">Industry</Label>
                         </div>
-                        <Select>
+                        <Select defaultValue={isUsingLinkedInInfo ? "technology" : undefined}>
                           <SelectTrigger id="industry">
                             <SelectValue placeholder="Select an industry" />
                           </SelectTrigger>
@@ -314,22 +347,33 @@ const ProfileCreation = () => {
                     <div className="space-y-4">
                       <div>
                         <Label htmlFor="lastName">Last Name</Label>
-                        <Input id="lastName" required />
+                        <Input 
+                          id="lastName" 
+                          required 
+                          defaultValue={isUsingLinkedInInfo ? "Doe" : ""} 
+                        />
                       </div>
                       
                       <div>
                         <Label htmlFor="phone">Phone Number</Label>
-                        <Input id="phone" type="tel" />
+                        <Input 
+                          id="phone" 
+                          type="tel" 
+                          defaultValue={isUsingLinkedInInfo ? "+1 (555) 123-4567" : ""} 
+                        />
                       </div>
                       
                       <div>
                         <Label htmlFor="company">Current Company</Label>
-                        <Input id="company" />
+                        <Input 
+                          id="company" 
+                          defaultValue={isUsingLinkedInInfo ? "Tech Innovations Inc." : ""} 
+                        />
                       </div>
                       
                       <div>
                         <Label htmlFor="experience">Experience Level</Label>
-                        <Select>
+                        <Select defaultValue={isUsingLinkedInInfo ? "mid level (3-5 years)" : undefined}>
                           <SelectTrigger id="experience">
                             <SelectValue placeholder="Select experience level" />
                           </SelectTrigger>
@@ -353,6 +397,7 @@ const ProfileCreation = () => {
                         placeholder="Briefly describe your professional background, key skills, and career goals..."
                         className="min-h-[120px]"
                         required
+                        defaultValue={isUsingLinkedInInfo ? "Experienced product manager with 5 years in the technology sector. Skilled in agile methodologies, user experience design, and cross-functional team leadership. Passionate about creating innovative solutions that solve real-world problems." : ""}
                       />
                     </div>
                     
@@ -362,6 +407,7 @@ const ProfileCreation = () => {
                         id="skills" 
                         placeholder="e.g., Project Management, JavaScript, Data Analysis, Leadership"
                         required
+                        defaultValue={isUsingLinkedInInfo ? "Product Strategy, User Research, Agile/Scrum, Roadmap Planning, Cross-functional Leadership" : ""}
                       />
                     </div>
                   </div>
