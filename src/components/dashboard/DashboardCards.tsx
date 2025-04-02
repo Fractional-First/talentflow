@@ -104,13 +104,13 @@ export const DashboardNavGrid = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       <DashboardNavCard
-        title="Profile Setup"
-        description="View and edit your professional profile"
-        detailText="Update your skills, experience, and personal information"
+        title="Improve Profile"
+        description="Continuously enhance your professional profile"
+        detailText="Add more skills, experiences, and keep your info current"
         path="/dashboard/profile-creation"
         icon={<User className="h-5 w-5 text-primary" />}
-        badgeText="Complete"
-        completionRate={100}
+        badgeText="Evolving"
+        completionRate={85}
       />
       
       <DashboardNavCard
