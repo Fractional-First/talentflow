@@ -9,6 +9,7 @@ import { NextStepCard } from '@/components/dashboard/NextStepCard';
 import { SupportCard } from '@/components/dashboard/SupportCard';
 import { WelcomeCard, DashboardNavGrid } from '@/components/dashboard/DashboardCards';
 import { initialSteps, fullStepsList, getNextStepInfo } from '@/components/dashboard/OnboardingSteps';
+import { ProfileSummaryCard } from '@/components/dashboard/ProfileSummaryCard';
 
 const Dashboard = () => {
   const [onboardingComplete, setOnboardingComplete] = useState(false);
@@ -58,7 +59,7 @@ const Dashboard = () => {
     return (
       <DashboardLayout steps={[]} currentStep={0}>
         <div className="space-y-8">
-          <WelcomeCard />
+          <ProfileSummaryCard />
           <DashboardNavGrid />
         </div>
       </DashboardLayout>
