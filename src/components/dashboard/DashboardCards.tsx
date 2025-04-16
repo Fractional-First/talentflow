@@ -128,7 +128,7 @@ export const DashboardNavGrid = () => {
       
       <DashboardNavCard
         title="Job Preferences"
-        description="View and manage preferences and availability"
+        description="View and manage preferences"
         detailText="See opportunities matched to your profile"
         path="/dashboard/job-matching"
         icon={<Briefcase className="h-5 w-5 text-primary" />}
