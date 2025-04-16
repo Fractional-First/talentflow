@@ -21,10 +21,6 @@ export const WelcomeCard = () => {
           <CheckCircle2 className="h-4 w-4 text-green-500" />
           <span className="text-sm">All onboarding steps completed</span>
         </div>
-        <div className="flex items-center gap-2">
-          <Badge variant="success" className="whitespace-nowrap">Active</Badge>
-          <span className="text-sm text-muted-foreground">Your profile is visible to potential employers</span>
-        </div>
       </StepCardContent>
     </StepCard>
   );
@@ -66,12 +62,6 @@ export const DashboardNavCard = ({
             </div>
             <div>
               <StepCardTitle>{title}</StepCardTitle>
-              <Badge 
-                variant={badgeVariant} 
-                className="whitespace-nowrap text-xs mt-1"
-              >
-                {badgeText}
-              </Badge>
             </div>
           </div>
           <StepCardDescription>
@@ -124,8 +114,8 @@ export const DashboardNavGrid = () => {
       />
       
       <DashboardNavCard
-        title="AI Job Matching"
-        description="View and manage job matches"
+        title="Job Preferences"
+        description="View and manage job opportunities"
         detailText="See opportunities matched to your profile"
         path="/dashboard/job-matching"
         icon={<Briefcase className="h-5 w-5 text-primary" />}
