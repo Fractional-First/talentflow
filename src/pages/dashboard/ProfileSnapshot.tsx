@@ -274,25 +274,6 @@ const ProfileSnapshot = () => {
     });
   };
   
-  const handleAddMockVersion = () => {
-    // Add a new mock version for demonstration purposes
-    const newSkillsVersion: VersionEntry = {
-      id: `skills-${generateId()}`,
-      timestamp: new Date(),
-      content: [...getCurrentSkills(), 'AI/ML Product Management'],
-      source: 'manual',
-      summary: 'Added AI/ML skill'
-    };
-    
-    setSkillsVersions(prev => [newSkillsVersion, ...prev]);
-    setCurrentVersionIds(prev => ({ ...prev, skills: newSkillsVersion.id }));
-    
-    toast({
-      title: "Skills updated",
-      description: "Added new skill: AI/ML Product Management",
-    });
-  };
-  
   const handleContinue = () => {
     setIsSubmitting(true);
     
@@ -362,15 +343,6 @@ const ProfileSnapshot = () => {
               </div>
               
               <div className="flex flex-col sm:flex-row gap-2">
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={handleAddMockVersion}
-                >
-                  <Pencil className="mr-2 h-4 w-4" />
-                  Add Demo Change
-                </Button>
-                
                 <GlobalVersionHistory 
                   sectionVersions={allSectionVersions}
                   onRevert={handleGlobalRevert}
