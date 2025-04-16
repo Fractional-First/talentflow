@@ -1,9 +1,9 @@
+
 import { useNavigate } from 'react-router-dom';
-import { StepCard, StepCardContent, StepCardDescription, StepCardHeader, StepCardTitle } from '@/components/StepCard';
+import { StepCard } from '@/components/StepCard';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Pencil, Briefcase, MapPin, Calendar, ExternalLink } from 'lucide-react';
+import { Pencil, Briefcase, MapPin, Calendar } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 
 export const ProfileSummaryCard = () => {
@@ -45,12 +45,7 @@ export const ProfileSummaryCard = () => {
         <div className="md:w-3/4 p-6">
           <div className="flex justify-between items-start">
             <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-xl font-semibold">{profile.name}</h2>
-                <Badge variant="outline" className="bg-primary/5 text-xs">
-                  Open to Work
-                </Badge>
-              </div>
+              <h2 className="text-xl font-semibold">{profile.name}</h2>
               <p className="text-muted-foreground">{profile.title}</p>
               
               <div className="flex flex-wrap gap-y-1 gap-x-4 mt-2 text-sm text-muted-foreground">
@@ -75,7 +70,6 @@ export const ProfileSummaryCard = () => {
                 Edit Profile
               </Button>
               <Button size="sm" onClick={() => navigate('/dashboard/waiting-room')}>
-                <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
                 View Job Status
               </Button>
             </div>
@@ -93,9 +87,9 @@ export const ProfileSummaryCard = () => {
               <h3 className="font-medium mb-2">Skills</h3>
               <div className="flex flex-wrap gap-2">
                 {profile.skills.map((skill, index) => (
-                  <Badge key={index} variant="secondary">
+                  <span key={index} className="bg-primary/5 text-primary px-2 py-1 rounded-md text-xs">
                     {skill}
-                  </Badge>
+                  </span>
                 ))}
               </div>
             </div>
