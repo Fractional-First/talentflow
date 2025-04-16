@@ -28,6 +28,14 @@ interface FieldVersionHistory {
   currentVersionId: string;
 }
 
+// Add the missing isCurrent property to this interface
+interface VersionWithField {
+  field: string;
+  fieldIcon: React.ReactNode;
+  version: VersionEntry;
+  isCurrent: boolean;
+}
+
 interface GlobalVersionHistoryProps {
   sectionVersions: FieldVersionHistory[];
   onRevert: (fieldName: string, versionId: string) => void;
@@ -45,7 +53,7 @@ const formatDate = (date: Date) => {
 };
 
 // Helper to group versions by day
-const groupVersionsByDay = (allVersions: { field: string, fieldIcon: React.ReactNode, version: VersionEntry }[]) => {
+const groupVersionsByDay = (allVersions: VersionWithField[]) => {
   const grouped = new Map<string, typeof allVersions>();
   
   allVersions.forEach(item => {
@@ -111,7 +119,7 @@ export const GlobalVersionHistory: React.FC<GlobalVersionHistoryProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   
   // Flatten all versions from all fields into a single array with field information
-  const allVersions = sectionVersions.flatMap(section => 
+  const allVersions: VersionWithField[] = sectionVersions.flatMap(section => 
     section.versions.map(version => ({
       field: section.fieldName,
       fieldIcon: section.fieldIcon,
