@@ -1,4 +1,3 @@
-
 import { useNavigate } from 'react-router-dom';
 import { StepCard, StepCardContent, StepCardDescription, StepCardHeader, StepCardTitle } from '@/components/StepCard';
 import { Button } from '@/components/ui/button';
@@ -129,7 +128,7 @@ export const DashboardNavGrid = () => {
       <DashboardNavCard
         title="Job Preferences"
         description="View and manage preferences"
-        detailText="See opportunities matched to your profile"
+        detailText="Set availability and preferences for smarter opportunity matches"
         path="/dashboard/job-matching"
         icon={<Briefcase className="h-5 w-5 text-primary" />}
         badgeText="Active"
