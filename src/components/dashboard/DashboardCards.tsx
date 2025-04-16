@@ -47,6 +47,15 @@ export const DashboardNavCard = ({
 }) => {
   const navigate = useNavigate();
   
+  // Helper function to determine progress color based on percentage
+  const getProgressColor = (percentage: number) => {
+    if (percentage <= 25) return '#FF4C4C'; // Red
+    if (percentage <= 50) return '#FFA500'; // Orange
+    if (percentage <= 79) return '#FFD700'; // Yellow
+    if (percentage <= 99) return '#90EE90'; // Light Green
+    return '#32CD32'; // Green (100%)
+  };
+  
   return (
     <StepCard className="h-full transition-all hover:shadow-md">
       <button 
@@ -72,10 +81,14 @@ export const DashboardNavCard = ({
         <StepCardContent>
           <div className="flex flex-col space-y-4">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Completion</span>
+              <span className="text-muted-foreground">Progress</span>
               <span className="font-medium">{completionRate}%</span>
             </div>
-            <Progress value={completionRate} className="h-1.5" />
+            <Progress 
+              value={completionRate} 
+              className="h-1.5" 
+              indicatorColor={getProgressColor(completionRate)}
+            />
             
             <div className="flex justify-between items-center mt-2">
               <p className="text-sm text-muted-foreground">
@@ -115,7 +128,7 @@ export const DashboardNavGrid = () => {
       
       <DashboardNavCard
         title="Job Preferences"
-        description="View and manage job opportunities"
+        description="View and manage preferences and availability"
         detailText="See opportunities matched to your profile"
         path="/dashboard/job-matching"
         icon={<Briefcase className="h-5 w-5 text-primary" />}
