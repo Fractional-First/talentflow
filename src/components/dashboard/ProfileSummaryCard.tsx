@@ -1,4 +1,3 @@
-
 import { useNavigate } from 'react-router-dom';
 import { StepCard, StepCardContent, StepCardDescription, StepCardHeader, StepCardTitle } from '@/components/StepCard';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -16,9 +15,6 @@ export const ProfileSummaryCard = () => {
     title: 'Senior Product Manager',
     company: 'TechCorp Inc.',
     location: 'San Francisco, CA',
-    connections: 482,
-    profileViews: 36,
-    postImpressions: 128,
     about: 'Experienced product manager with 7+ years in technology companies. Strong background in user-centric design, agile methodologies, and product strategy.',
     skills: ['Product Strategy', 'User Research', 'Agile', 'Cross-functional Leadership', 'Data Analysis']
   };
@@ -26,7 +22,7 @@ export const ProfileSummaryCard = () => {
   return (
     <StepCard>
       <div className="md:flex gap-6">
-        {/* Profile Left Section (Photo & Stats) */}
+        {/* Profile Left Section (Photo) */}
         <div className="md:w-1/4 p-6 flex flex-col items-center text-center border-r border-border/40">
           <div className="relative mb-4">
             <Avatar className="h-24 w-24 border-2 border-primary/10">
@@ -42,28 +38,6 @@ export const ProfileSummaryCard = () => {
             >
               <Pencil className="h-4 w-4" />
             </Button>
-          </div>
-
-          <div className="w-full">
-            <div className="text-center space-y-4">
-              <div className="space-y-1">
-                <h3 className="text-sm font-medium text-muted-foreground">Profile Views</h3>
-                <p className="text-2xl font-bold">{profile.profileViews}</p>
-                <p className="text-xs text-muted-foreground">Last 7 days</p>
-              </div>
-              
-              <div className="space-y-1">
-                <h3 className="text-sm font-medium text-muted-foreground">Post Impressions</h3>
-                <p className="text-2xl font-bold">{profile.postImpressions}</p>
-                <p className="text-xs text-muted-foreground">Last 7 days</p>
-              </div>
-              
-              <div className="space-y-1">
-                <h3 className="text-sm font-medium text-muted-foreground">Connections</h3>
-                <p className="text-2xl font-bold">{profile.connections}</p>
-                <p className="text-xs text-muted-foreground">Your network</p>
-              </div>
-            </div>
           </div>
         </div>
         
