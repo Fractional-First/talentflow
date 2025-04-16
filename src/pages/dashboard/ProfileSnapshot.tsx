@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
@@ -21,7 +20,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { toast } from '@/hooks/use-toast';
 import VersionControlledSection from '@/components/profile/VersionControlledSection';
 import { GlobalVersionHistory } from '@/components/profile/GlobalVersionHistory';
-import { VersionEntry } from '@/components/profile/VersionHistory';
+import { VersionEntry } from '@/components/profile/types/version-types';
 
 // Helper function to generate unique IDs
 const generateId = () => Math.random().toString(36).substring(2, 15);

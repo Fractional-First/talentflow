@@ -1,9 +1,9 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Pencil, Lock, Unlock } from 'lucide-react';
-import { VersionHistory, VersionEntry, VersionIndicator } from './VersionHistory';
+import { VersionHistory, VersionIndicator } from './VersionHistory';
+import { VersionEntry } from './types/version-types';
 
 interface VersionControlledSectionProps {
   title: string;

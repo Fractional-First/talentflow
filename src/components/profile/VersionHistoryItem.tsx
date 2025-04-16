@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Clock } from 'lucide-react';
+import { Clock, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { VersionSourceBadge } from './VersionSourceBadge';
 import { formatDate } from './utils/version-utils';
