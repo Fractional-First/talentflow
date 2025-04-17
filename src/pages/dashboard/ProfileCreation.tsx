@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
@@ -10,11 +9,12 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
-import { Upload, ArrowRight, ArrowLeft, File, Clock, HelpCircle, Linkedin, FileSpreadsheet, Copy, AlertCircle } from 'lucide-react';
+import { Upload, ArrowRight, ArrowLeft, File, Clock, HelpCircle, Linkedin, FileSpreadsheet, Copy, AlertCircle, Link, FileText, Trash2, Plus, FileImage } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
 
 const industries = [
   'Technology',
@@ -50,16 +50,27 @@ const ProfileCreation = () => {
   const [isLinkedInUser, setIsLinkedInUser] = useState(false);
   const [isUsingLinkedInInfo, setIsUsingLinkedInInfo] = useState(false);
   const [showLinkedInOption, setShowLinkedInOption] = useState(true);
+  const [showSupportingDocs, setShowSupportingDocs] = useState(false);
+  const [supportingDocuments, setSupportingDocuments] = useState<Array<{
+    type: 'document' | 'link';
+    title: string;
+    description?: string;
+    fileUrl?: string;
+    fileName?: string;
+    url?: string;
+  }>>([]);
+  const [currentDocType, setCurrentDocType] = useState<'document' | 'link'>('document');
+  const [currentDocTitle, setCurrentDocTitle] = useState('');
+  const [currentDocDescription, setCurrentDocDescription] = useState('');
+  const [currentDocUrl, setCurrentDocUrl] = useState('');
+  const [currentDocFileName, setCurrentDocFileName] = useState('');
   
   useEffect(() => {
-    // Check if the user signed up with LinkedIn or email
     const authMethod = localStorage.getItem('authMethod');
     if (authMethod === 'linkedin' || location.state?.linkedInSignUp) {
       setIsLinkedInUser(true);
-      // Already using LinkedIn for auth, so hide the connect LinkedIn option
       setShowLinkedInOption(false);
     } else {
-      // Signed up with email, so show the connect LinkedIn option
       setShowLinkedInOption(true);
     }
   }, [location]);
@@ -131,6 +142,77 @@ const ProfileCreation = () => {
     }, 1000);
   };
 
+  const handleDocumentUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      setCurrentDocFileName(file.name);
+      // In a real app, you would upload this file to storage and get a URL
+    }
+  };
+
+  const addSupportingDocument = () => {
+    if (currentDocType === 'document' && !currentDocFileName) {
+      toast({
+        title: "Please select a file",
+        description: "You must upload a document before adding it.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (currentDocType === 'link' && !currentDocUrl) {
+      toast({
+        title: "Please enter a URL",
+        description: "You must provide a valid URL for your link.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!currentDocTitle) {
+      toast({
+        title: "Title required",
+        description: "Please provide a title for your document or link.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const newDoc = {
+      type: currentDocType,
+      title: currentDocTitle,
+      description: currentDocDescription || undefined,
+      fileUrl: currentDocType === 'document' ? 'file-url-would-go-here' : undefined,
+      fileName: currentDocType === 'document' ? currentDocFileName : undefined,
+      url: currentDocType === 'link' ? currentDocUrl : undefined,
+    };
+
+    setSupportingDocuments([...supportingDocuments, newDoc]);
+    
+    // Reset form fields
+    setCurrentDocType('document');
+    setCurrentDocTitle('');
+    setCurrentDocDescription('');
+    setCurrentDocUrl('');
+    setCurrentDocFileName('');
+    
+    toast({
+      title: "Added successfully",
+      description: `Your ${currentDocType} has been added to your profile.`,
+    });
+  };
+
+  const removeDocument = (index: number) => {
+    const newDocs = [...supportingDocuments];
+    newDocs.splice(index, 1);
+    setSupportingDocuments(newDocs);
+    
+    toast({
+      title: "Item removed",
+      description: "The document or link has been removed from your profile.",
+    });
+  };
+
   return (
     <DashboardLayout steps={steps} currentStep={2}>
       <form onSubmit={handleSubmit}>
@@ -150,7 +232,6 @@ const ProfileCreation = () => {
             <StepCardContent>
               {!showManualEntry ? (
                 <div className="space-y-6">
-                  {/* Show LinkedIn option for users who signed up with email */}
                   {showLinkedInOption && (
                     <div className="border rounded-lg p-6">
                       <div className="flex items-center mb-4">
@@ -179,7 +260,6 @@ const ProfileCreation = () => {
                     </div>
                   )}
                   
-                  {/* Show LinkedIn info use option for users who signed up with LinkedIn */}
                   {isLinkedInUser && (
                     <div className="border rounded-lg p-6">
                       <div className="flex items-center mb-4">
@@ -458,6 +538,184 @@ const ProfileCreation = () => {
                   </div>
                 </div>
               )}
+            </StepCardContent>
+          </StepCard>
+          
+          <StepCard>
+            <StepCardHeader>
+              <StepCardTitle>Supporting Documents & Links</StepCardTitle>
+              <StepCardDescription>
+                Add publications, news articles, or other resources that highlight your expertise
+              </StepCardDescription>
+            </StepCardHeader>
+            
+            <StepCardContent>
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-medium">Would you like to add supporting documents?</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Add publications, news articles, portfolios, or other resources that showcase your work
+                    </p>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setShowSupportingDocs(!showSupportingDocs)}
+                  >
+                    {showSupportingDocs ? 'Hide Form' : 'Add Documents'}
+                  </Button>
+                </div>
+                
+                {showSupportingDocs && (
+                  <Card className="border border-border/60">
+                    <CardContent className="p-6 space-y-4">
+                      <div className="flex justify-between items-center">
+                        <h3 className="font-medium">Add New Supporting Material</h3>
+                        
+                        <div className="flex gap-2">
+                          <Button 
+                            variant={currentDocType === 'document' ? 'secondary' : 'outline'} 
+                            size="sm"
+                            onClick={() => setCurrentDocType('document')}
+                            type="button"
+                          >
+                            <FileText className="h-4 w-4 mr-1" />
+                            Document
+                          </Button>
+                          <Button 
+                            variant={currentDocType === 'link' ? 'secondary' : 'outline'} 
+                            size="sm" 
+                            onClick={() => setCurrentDocType('link')}
+                            type="button"
+                          >
+                            <Link className="h-4 w-4 mr-1" />
+                            Link
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="doc-title">Title*</Label>
+                          <Input 
+                            id="doc-title" 
+                            placeholder={currentDocType === 'document' ? "Document Title" : "Link Title"}
+                            value={currentDocTitle}
+                            onChange={(e) => setCurrentDocTitle(e.target.value)}
+                          />
+                        </div>
+                        
+                        {currentDocType === 'document' ? (
+                          <div>
+                            <Label htmlFor="doc-upload">Upload File*</Label>
+                            <div className="mt-1 flex items-center">
+                              <Button 
+                                variant="outline" 
+                                onClick={() => document.getElementById('doc-upload')?.click()}
+                                type="button"
+                                className="w-full justify-start text-muted-foreground"
+                              >
+                                <Upload className="h-4 w-4 mr-2" />
+                                {currentDocFileName || "Select File"}
+                              </Button>
+                              <input 
+                                id="doc-upload" 
+                                type="file" 
+                                className="hidden" 
+                                accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.png,.jpg,.jpeg" 
+                                onChange={handleDocumentUpload}
+                              />
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Supports PDF, DOCX, PPTX, and common image formats up to 10MB
+                            </p>
+                          </div>
+                        ) : (
+                          <div>
+                            <Label htmlFor="doc-url">URL*</Label>
+                            <Input 
+                              id="doc-url" 
+                              placeholder="https://"
+                              value={currentDocUrl}
+                              onChange={(e) => setCurrentDocUrl(e.target.value)}
+                            />
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="doc-description">Description (Optional)</Label>
+                        <Textarea 
+                          id="doc-description" 
+                          placeholder="Briefly describe this resource..."
+                          value={currentDocDescription}
+                          onChange={(e) => setCurrentDocDescription(e.target.value)}
+                          className="resize-none"
+                        />
+                      </div>
+                      
+                      <div className="flex justify-end">
+                        <Button
+                          onClick={addSupportingDocument}
+                          type="button"
+                        >
+                          <Plus className="h-4 w-4 mr-1" />
+                          Add {currentDocType === 'document' ? 'Document' : 'Link'}
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+                
+                {supportingDocuments.length > 0 && (
+                  <div className="space-y-3 mt-6">
+                    <h3 className="font-medium">Added Documents & Links</h3>
+                    <div className="space-y-3">
+                      {supportingDocuments.map((doc, index) => (
+                        <div 
+                          key={index} 
+                          className="flex items-center justify-between p-3 rounded-md border border-border/60 bg-background"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 rounded-md bg-primary/10">
+                              {doc.type === 'document' ? (
+                                <FileText className="h-5 w-5 text-primary" />
+                              ) : (
+                                <Link className="h-5 w-5 text-primary" />
+                              )}
+                            </div>
+                            
+                            <div>
+                              <p className="font-medium">{doc.title}</p>
+                              {doc.description && (
+                                <p className="text-sm text-muted-foreground line-clamp-1">{doc.description}</p>
+                              )}
+                              {doc.type === 'document' && doc.fileName && (
+                                <p className="text-xs text-muted-foreground">{doc.fileName}</p>
+                              )}
+                              {doc.type === 'link' && doc.url && (
+                                <p className="text-xs text-primary truncate max-w-[200px] md:max-w-[300px]">
+                                  {doc.url}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                          
+                          <Button
+                            variant="ghost" 
+                            size="sm"
+                            onClick={() => removeDocument(index)}
+                            className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                            type="button"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </StepCardContent>
           </StepCard>
           
