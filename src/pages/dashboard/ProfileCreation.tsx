@@ -142,6 +142,11 @@ const ProfileCreation = () => {
     }, 1000);
   };
 
+  const toggleSupportingDocs = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent the default action which might trigger form submission
+    setShowSupportingDocs(!showSupportingDocs);
+  };
+
   const handleDocumentUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
@@ -150,7 +155,9 @@ const ProfileCreation = () => {
     }
   };
 
-  const addSupportingDocument = () => {
+  const addSupportingDocument = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent form submission
+    
     if (currentDocType === 'document' && !currentDocFileName) {
       toast({
         title: "Please select a file",
@@ -202,7 +209,8 @@ const ProfileCreation = () => {
     });
   };
 
-  const removeDocument = (index: number) => {
+  const removeDocument = (index: number, e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent form submission
     const newDocs = [...supportingDocuments];
     newDocs.splice(index, 1);
     setSupportingDocuments(newDocs);
@@ -560,7 +568,8 @@ const ProfileCreation = () => {
                   </div>
                   <Button 
                     variant="outline" 
-                    onClick={() => setShowSupportingDocs(!showSupportingDocs)}
+                    onClick={toggleSupportingDocs}
+                    type="button"
                   >
                     {showSupportingDocs ? 'Hide Form' : 'Add Documents'}
                   </Button>
@@ -576,7 +585,10 @@ const ProfileCreation = () => {
                           <Button 
                             variant={currentDocType === 'document' ? 'secondary' : 'outline'} 
                             size="sm"
-                            onClick={() => setCurrentDocType('document')}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setCurrentDocType('document');
+                            }}
                             type="button"
                           >
                             <FileText className="h-4 w-4 mr-1" />
@@ -585,7 +597,10 @@ const ProfileCreation = () => {
                           <Button 
                             variant={currentDocType === 'link' ? 'secondary' : 'outline'} 
                             size="sm" 
-                            onClick={() => setCurrentDocType('link')}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setCurrentDocType('link');
+                            }}
                             type="button"
                           >
                             <Link className="h-4 w-4 mr-1" />
@@ -611,7 +626,10 @@ const ProfileCreation = () => {
                             <div className="mt-1 flex items-center">
                               <Button 
                                 variant="outline" 
-                                onClick={() => document.getElementById('doc-upload')?.click()}
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  document.getElementById('doc-upload')?.click();
+                                }}
                                 type="button"
                                 className="w-full justify-start text-muted-foreground"
                               >
@@ -704,7 +722,7 @@ const ProfileCreation = () => {
                           <Button
                             variant="ghost" 
                             size="sm"
-                            onClick={() => removeDocument(index)}
+                            onClick={(e) => removeDocument(index, e)}
                             className="text-destructive hover:text-destructive hover:bg-destructive/10"
                             type="button"
                           >
