@@ -538,14 +538,7 @@ const ProfileSnapshot = () => {
                 {/* SUMMARY SECTION */}
                 <div className={`rounded transition-all p-2 ${highlightClass('summary')}`}>
                   <VersionControlledSection
-                    title={
-                      <span className="flex items-center gap-2">
-                        Professional Summary
-                        <span className="inline-flex items-center gap-1 text-primary">
-                          <WandSparkles className="h-4 w-4" /> AI Suggestions
-                        </span>
-                      </span>
-                    }
+                    title="Professional Summary"
                     icon={<User className="h-4 w-4 text-primary" />}
                     versions={summaryVersions}
                     currentVersionId={currentVersionIds.summary}
@@ -566,14 +559,7 @@ const ProfileSnapshot = () => {
                 {/* SKILLS SECTION */}
                 <div className={`rounded transition-all p-2 ${highlightClass('skills')}`}>
                   <VersionControlledSection
-                    title={
-                      <span className="flex items-center gap-2">
-                        Skills
-                        <span className="inline-flex items-center gap-1 text-primary">
-                          <WandSparkles className="h-4 w-4" /> AI Suggestions
-                        </span>
-                      </span>
-                    }
+                    title="Skills"
                     icon={<CheckCircle className="h-4 w-4 text-primary" />}
                     versions={skillsVersions}
                     currentVersionId={currentVersionIds.skills}
@@ -597,14 +583,7 @@ const ProfileSnapshot = () => {
                 {/* EXPERIENCE SECTION */}
                 <div className={`rounded transition-all p-2 ${highlightClass('experience')}`}>
                   <VersionControlledSection
-                    title={
-                      <span className="flex items-center gap-2">
-                        Work Experience
-                        <span className="inline-flex items-center gap-1 text-primary">
-                          <WandSparkles className="h-4 w-4" /> AI Suggestions
-                        </span>
-                      </span>
-                    }
+                    title="Work Experience"
                     icon={<Briefcase className="h-4 w-4 text-primary" />}
                     versions={experienceVersions}
                     currentVersionId={currentVersionIds.experience}
@@ -634,14 +613,7 @@ const ProfileSnapshot = () => {
                 {/* EDUCATION SECTION */}
                 <div className={`rounded transition-all p-2 ${highlightClass('education')}`}>
                   <VersionControlledSection
-                    title={
-                      <span className="flex items-center gap-2">
-                        Education
-                        <span className="inline-flex items-center gap-1 text-primary">
-                          <WandSparkles className="h-4 w-4" /> AI Suggestions
-                        </span>
-                      </span>
-                    }
+                    title="Education"
                     icon={<GraduationCap className="h-4 w-4 text-primary" />}
                     versions={educationVersions}
                     currentVersionId={currentVersionIds.education}

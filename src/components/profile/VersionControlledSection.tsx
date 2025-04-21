@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -6,7 +7,7 @@ import { VersionHistory, VersionIndicator } from './VersionHistory';
 import { VersionEntry } from './types/version-types';
 
 interface VersionControlledSectionProps {
-  title: string;
+  title: React.ReactNode;
   icon: React.ReactNode;
   versions: VersionEntry[];
   currentVersionId: string;
@@ -60,7 +61,7 @@ const VersionControlledSection: React.FC<VersionControlledSectionProps> = ({
             versions={versions}
             currentVersion={currentVersionId}
             onRevert={onRevert}
-            fieldName={title}
+            fieldName={typeof title === 'string' ? title : 'Section'}
             compareVersions={true}
           />
             
