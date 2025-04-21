@@ -11,7 +11,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { useNavigate, useLocation } from "react-router-dom";
-import { User, Briefcase, Home, Settings, LogOut } from "lucide-react";
+import { User, Briefcase, Home, Settings, LogOut, Award } from "lucide-react";
 import React from "react";
 
 const menuItems = [
@@ -26,13 +26,18 @@ const menuItems = [
     icon: User,
   },
   {
+    title: "Professional Branding",
+    path: "/dashboard/branding",
+    icon: Award,
+  },
+  {
     title: "Job Preferences",
     path: "/dashboard/job-matching",
     icon: Briefcase,
   },
   {
     title: "Settings",
-    path: "/dashboard/branding",
+    path: "/dashboard/branding", // Optionally, if you have a real settings page, update this path
     icon: Settings,
   },
 ];
@@ -95,3 +100,4 @@ export function AppSidebar() {
     </Sidebar>
   );
 }
+
