@@ -38,6 +38,9 @@ const experienceLevels = [
   'Executive (10+ years)'
 ];
 
+const LINKEDIN_PDF_GUIDE_URL =
+  "https://www.linkedin.com/help/linkedin/answer/a521735/how-to-save-a-profile-as-a-pdf?lang=en";
+
 const ProfileCreation = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -225,6 +228,7 @@ const ProfileCreation = () => {
     <DashboardLayout steps={steps} currentStep={2}>
       <form onSubmit={handleSubmit}>
         <div className="space-y-6">
+
           <StepCard>
             <StepCardHeader>
               <StepCardTitle>Create Your Profile</StepCardTitle>
@@ -233,94 +237,185 @@ const ProfileCreation = () => {
               </StepCardDescription>
               <div className="flex items-center mt-2 bg-muted/40 px-3 py-2 rounded-md">
                 <Clock className="h-4 w-4 text-muted-foreground mr-2" />
-                <span className="text-sm text-muted-foreground">Estimated completion time: <strong>5-7 minutes</strong></span>
+                <span className="text-sm text-muted-foreground">
+                  Estimated completion time: <strong>5-7 minutes</strong>
+                </span>
               </div>
             </StepCardHeader>
-            
+
             <StepCardContent>
+
+              {/* INSTRUCTIONAL HELPER TEXT */}
+              <div className="mb-4 bg-green-50 border border-green-200 rounded-lg p-4">
+                <span className="font-medium text-green-800">
+                  At least one of the following is required, but both are ideal:
+                </span>
+                <ul className="list-disc ml-6 mt-2 text-green-900 text-sm">
+                  <li>Upload your resume <span className="font-semibold">(PDF or DOCX)</span></li>
+                  <li>Upload your LinkedIn profile as a <span className="font-semibold">PDF</span></li>
+                </ul>
+                <div className="flex items-center mt-3 text-xs text-muted-foreground">
+                  <HelpCircle className="h-4 w-4 mr-2" />
+                  To get your LinkedIn Profile PDF, see:&nbsp;
+                  <a href={LINKEDIN_PDF_GUIDE_URL} target="_blank" rel="noopener noreferrer" className="text-primary underline font-medium">
+                    How to export your LinkedIn profile →
+                  </a>
+                </div>
+              </div>
+
+              {/* SHOW ALERT IF SIGNED IN VIA LINKEDIN */}
+              {isLinkedInUser && (
+                <Alert variant="info" className="mb-4 bg-blue-50 border-blue-200">
+                  <Linkedin className="h-4 w-4 text-[#0A66C2]" />
+                  <AlertTitle className="mb-1 font-semibold text-[#0A66C2]">
+                    LinkedIn sign-in provides only limited information
+                  </AlertTitle>
+                  <AlertDescription className="text-xs text-blue-900">
+                    For your full experience, please upload your LinkedIn profile as a PDF. LinkedIn sign-in does not import your entire professional data automatically.
+                  </AlertDescription>
+                </Alert>
+              )}
+
               {!showManualEntry ? (
                 <div className="space-y-6">
-                  {showLinkedInOption && (
-                    <div className="border rounded-lg p-6">
-                      <div className="flex items-center mb-4">
-                        <div className="bg-[#0A66C2]/10 p-3 rounded-full mr-3">
-                          <Linkedin className="h-6 w-6 text-[#0A66C2]" />
-                        </div>
-                        <div>
-                          <h3 className="font-medium">Connect with LinkedIn</h3>
-                          <p className="text-sm text-muted-foreground">
-                            Connect your LinkedIn profile to import your professional information
-                          </p>
+
+                  {/* LINKEDIN PDF UPLOAD SEGMENT */}
+                  <div className="border rounded-lg p-6 mb-2">
+                    <div className="flex items-center mb-4">
+                      <div className="bg-[#0A66C2]/10 p-3 rounded-full mr-3">
+                        <Linkedin className="h-6 w-6 text-[#0A66C2]" />
+                      </div>
+                      <div>
+                        <h3 className="font-medium">Upload LinkedIn Profile (PDF)</h3>
+                        <p className="text-sm text-muted-foreground">
+                          Download your LinkedIn profile as a PDF, then upload it here to share your professional information in detail.
+                        </p>
+                        <div className="text-xs mt-1">
+                          <a
+                            href={LINKEDIN_PDF_GUIDE_URL}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary hover:underline"
+                          >
+                            How to export your LinkedIn profile →
+                          </a>
                         </div>
                       </div>
-                      
-                      <Button 
-                        className="w-full" 
-                        onClick={handleConnectLinkedIn}
-                      >
-                        <Linkedin className="h-4 w-4 mr-2" />
-                        Connect LinkedIn Profile
-                      </Button>
-                      
-                      <p className="text-xs text-center text-muted-foreground mt-2">
-                        We'll import your work history, skills, and education
-                      </p>
                     </div>
-                  )}
-                  
-                  {isLinkedInUser && (
-                    <div className="border rounded-lg p-6">
-                      <div className="flex items-center mb-4">
-                        <div className="bg-[#0A66C2]/10 p-3 rounded-full mr-3">
-                          <Linkedin className="h-6 w-6 text-[#0A66C2]" />
+                    {/* LinkedIn PDF Upload Input */}
+                    <div className="border-2 border-dashed border-muted rounded-lg p-6 text-center">
+                      {/* VERY basic mocked upload – replace with actual logic if needed */}
+                      {profileMethod === "linkedin" && resumeUploaded !== true ? (
+                        <div className="flex flex-col items-center">
+                          <div className="bg-muted/50 p-3 rounded-full mb-3">
+                            <Upload className="h-6 w-6 text-muted-foreground" />
+                          </div>
+                          <p className="mb-1 font-medium">Drag and drop your LinkedIn PDF here</p>
+                          <p className="text-sm text-muted-foreground mb-3">PDF up to 5MB</p>
+                          <div>
+                            <label htmlFor="linkedin-pdf-upload">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => document.getElementById('linkedin-pdf-upload')?.click()}
+                                type="button"
+                              >
+                                Select File
+                              </Button>
+                              <input
+                                id="linkedin-pdf-upload"
+                                type="file"
+                                className="hidden"
+                                accept=".pdf"
+                                onChange={(e) => {
+                                  // For simplicity in demo, selecting this sets profileMethod
+                                  setProfileMethod('linkedin');
+                                  setResumeUploaded(true);
+                                }}
+                              />
+                            </label>
+                          </div>
                         </div>
-                        <div>
-                          <h3 className="font-medium">Use LinkedIn Information</h3>
-                          <p className="text-sm text-muted-foreground">
-                            Since you signed up with LinkedIn, we can use your profile information
-                          </p>
+                      ) : profileMethod === "linkedin" && resumeUploaded === true ? (
+                        <div className="flex flex-col items-center">
+                          <div className="bg-primary/10 p-3 rounded-full mb-3">
+                            <File className="h-6 w-6 text-primary" />
+                          </div>
+                          <p className="mb-1 font-medium">LinkedIn PDF uploaded successfully</p>
+                          <p className="text-sm text-muted-foreground mb-3">linkedin-profile.pdf</p>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setResumeUploaded(false);
+                              setProfileMethod('linkedin')
+                            }}
+                          >
+                            Replace
+                          </Button>
                         </div>
-                      </div>
-                      
-                      <Button 
-                        className="w-full" 
-                        onClick={handleUseLinkedInInfo}
-                      >
-                        <Linkedin className="h-4 w-4 mr-2" />
-                        Import LinkedIn Profile
-                      </Button>
-                      
-                      <p className="text-xs text-center text-muted-foreground mt-2">
-                        We'll use the information from your LinkedIn account
-                      </p>
+                      ) : (
+                        <div className="flex flex-col items-center">
+                          <div className="bg-muted/50 p-3 rounded-full mb-3">
+                            <Upload className="h-6 w-6 text-muted-foreground" />
+                          </div>
+                          <p className="mb-1 font-medium">Drag and drop your LinkedIn PDF here</p>
+                          <p className="text-sm text-muted-foreground mb-3">PDF up to 5MB</p>
+                          <div>
+                            <label htmlFor="linkedin-pdf-upload">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => document.getElementById('linkedin-pdf-upload')?.click()}
+                                type="button"
+                              >
+                                Select File
+                              </Button>
+                              <input
+                                id="linkedin-pdf-upload"
+                                type="file"
+                                className="hidden"
+                                accept=".pdf"
+                                onChange={(e) => {
+                                  setProfileMethod('linkedin');
+                                  setResumeUploaded(true);
+                                }}
+                              />
+                            </label>
+                          </div>
+                        </div>
+                      )}
                     </div>
-                  )}
-                  
+                  </div>
+
+                  {/* RESUME UPLOAD SEGMENT */}
                   <div className="border rounded-lg p-6">
                     <div className="flex items-center mb-4">
                       <div className="bg-primary/10 p-3 rounded-full mr-3">
-                        <FileSpreadsheet className="h-6 w-6 text-primary" />
+                        <File className="h-6 w-6 text-primary" />
                       </div>
                       <div>
                         <h3 className="font-medium">Resume Upload</h3>
                         <p className="text-sm text-muted-foreground">
-                          Upload your resume and we'll extract the information
+                          Upload your resume and we’ll extract the relevant information to help enhance your profile.
                         </p>
                       </div>
                     </div>
-                    
                     <div className="border-2 border-dashed border-muted rounded-lg p-6 text-center">
-                      {resumeUploaded ? (
+                      {profileMethod === 'resume' && resumeUploaded ? (
                         <div className="flex flex-col items-center">
                           <div className="bg-primary/10 p-3 rounded-full mb-3">
                             <File className="h-6 w-6 text-primary" />
                           </div>
                           <p className="mb-1 font-medium">Resume uploaded successfully</p>
                           <p className="text-sm text-muted-foreground mb-3">resume.pdf</p>
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            onClick={() => setResumeUploaded(false)}
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setResumeUploaded(false);
+                              setProfileMethod('resume');
+                            }}
                           >
                             Replace
                           </Button>
@@ -334,19 +429,21 @@ const ProfileCreation = () => {
                           <p className="text-sm text-muted-foreground mb-3">Supports PDF, DOCX, up to 5MB</p>
                           <div>
                             <label htmlFor="resume">
-                              <Button 
-                                variant="outline" 
-                                size="sm" 
-                                onClick={() => document.getElementById('resume')?.click()}
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() =>
+                                  document.getElementById('resume')?.click()
+                                }
                                 type="button"
                               >
                                 Select File
                               </Button>
-                              <input 
-                                id="resume" 
-                                type="file" 
-                                className="hidden" 
-                                accept=".pdf,.doc,.docx" 
+                              <input
+                                id="resume"
+                                type="file"
+                                className="hidden"
+                                accept=".pdf,.doc,.docx"
                                 onChange={handleResumeUpload}
                               />
                             </label>
@@ -355,10 +452,11 @@ const ProfileCreation = () => {
                       )}
                     </div>
                   </div>
-                  
+
+                  {/* SWITCH TO MANUAL ENTRY */}
                   <div className="text-center mt-6">
-                    <Button 
-                      variant="link" 
+                    <Button
+                      variant="link"
                       onClick={() => setShowManualEntry(true)}
                       className="text-sm"
                       type="button"
@@ -548,7 +646,8 @@ const ProfileCreation = () => {
               )}
             </StepCardContent>
           </StepCard>
-          
+
+          {/* SUPPORTING DOCUMENTS/ADDITIONAL RESOURCES SEGMENT */}
           <StepCard>
             <StepCardHeader>
               <StepCardTitle>Supporting Documents & Links</StepCardTitle>
@@ -736,7 +835,8 @@ const ProfileCreation = () => {
               </div>
             </StepCardContent>
           </StepCard>
-          
+
+          {/* FOOTER: NAV BUTTONS */}
           <StepCardFooter className="flex justify-between pt-6">
             <Button
               variant="outline"
@@ -746,8 +846,8 @@ const ProfileCreation = () => {
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Dashboard
             </Button>
-            
-            <Button 
+
+            <Button
               type="submit"
               disabled={isSubmitting}
               onClick={handleCompleteSection}
