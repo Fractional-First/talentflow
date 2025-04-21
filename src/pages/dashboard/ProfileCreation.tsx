@@ -265,7 +265,7 @@ const ProfileCreation = () => {
 
               {/* SHOW ALERT IF SIGNED IN VIA LINKEDIN */}
               {isLinkedInUser && (
-                <Alert variant="info" className="mb-4 bg-blue-50 border-blue-200">
+                <Alert className="mb-4 bg-blue-50 border-blue-200">
                   <Linkedin className="h-4 w-4 text-[#0A66C2]" />
                   <AlertTitle className="mb-1 font-semibold text-[#0A66C2]">
                     LinkedIn sign-in provides only limited information
