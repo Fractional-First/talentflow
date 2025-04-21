@@ -1,18 +1,20 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
 import { StepCard, StepCardContent, StepCardDescription, StepCardFooter, StepCardHeader, StepCardTitle } from '@/components/StepCard';
 import { Step } from '@/components/OnboardingProgress';
 import { Button } from '@/components/ui/button';
-import { 
-  ArrowRight, 
-  ArrowLeft, 
-  User, 
-  Briefcase, 
-  GraduationCap, 
-  CheckCircle, 
+import {
+  ArrowRight,
+  ArrowLeft,
+  User,
+  Briefcase,
+  GraduationCap,
+  CheckCircle,
   Pencil,
-  History
+  // History,
+  WandSparkles, // [AI SUGGESTION FEATURE] Lucide icon for suggestions
+  Info // for highlight
 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
@@ -21,6 +23,9 @@ import { toast } from '@/hooks/use-toast';
 import VersionControlledSection from '@/components/profile/VersionControlledSection';
 import { GlobalVersionHistory } from '@/components/profile/GlobalVersionHistory';
 import { VersionEntry } from '@/components/profile/types/version-types';
+// [AI SUGGESTION FEATURE] Dialog + Tooltip for guide and tooltips.
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 // Helper function to generate unique IDs
 const generateId = () => Math.random().toString(36).substring(2, 15);
@@ -40,16 +45,18 @@ const getRandomPastDate = (maxDaysAgo = 30) => {
   return pastDate;
 };
 
+const AIGUIDE_KEY = 'aiSuggestionsGuideSeen';
+
 const ProfileSnapshot = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const steps: Step[] = [
     { id: 1, name: 'Sign Up', description: 'Create your account', status: 'completed' },
     { id: 2, name: 'Create Profile', description: 'Enter your information', status: 'completed' },
     { id: 3, name: 'Review Profile', description: 'Review your profile', status: 'current' }
   ];
-  
+
   // Version history for basic info
   const [basicInfoVersions, setBasicInfoVersions] = useState<VersionEntry[]>([
     {
@@ -152,16 +159,74 @@ const ProfileSnapshot = () => {
       summary: 'Added education history'
     }
   ]);
-  
-  // Section lock state
-  const [lockedSections, setLockedSections] = useState<Record<string, boolean>>({
-    basicInfo: false,
-    summary: false,
-    skills: false,
-    experience: false,
-    education: false
-  });
-  
+
+  // ---- [AI SUGGESTION FEATURE] State for per-section AI suggestions ----
+  // In a real app these would be backend-generated suggestions.
+  const sectionKeys = ['summary', 'skills', 'experience', 'education'];
+  const aiSuggestionsInit: any = {
+    summary: {
+      suggestion: "Consider adding more about your leadership experience and impact on key projects.",
+      accepted: false,
+      dismissed: false
+    },
+    skills: {
+      suggestion: "Highlight your experience with product analytics platforms like Amplitude or Mixpanel.",
+      accepted: false,
+      dismissed: false
+    },
+    experience: {
+      suggestion: "Mention your role leading the migration project to cloud infrastructure.",
+      accepted: false,
+      dismissed: false
+    },
+    education: {
+      suggestion: "",
+      accepted: false,
+      dismissed: false
+    }
+  };
+  const [aiSuggestions, setAISuggestions] = useState(aiSuggestionsInit);
+
+  // State for displaying highlights if an AI suggestion is accepted.
+  const [highlightedSections, setHighlightedSections] = useState<Record<string, boolean>>({});
+
+  // Guide dialog display state
+  const [showAIGuide, setShowAIGuide] = useState(false);
+
+  // Show popup on first load
+  useEffect(() => {
+    if (!localStorage.getItem(AIGUIDE_KEY)) setShowAIGuide(true);
+  }, []);
+
+  // When guide is dismissed, remember for future visits
+  const handleDismissGuide = () => {
+    localStorage.setItem(AIGUIDE_KEY, 'seen');
+    setShowAIGuide(false);
+  };
+
+  // Handler: Accept AI suggestion
+  const handleAcceptAISuggestion = (section: string) => {
+    setAISuggestions((prev: any) => ({
+      ...prev,
+      [section]: { ...prev[section], accepted: true, dismissed: false }
+    }));
+    setHighlightedSections(prev => ({ ...prev, [section]: true }));
+    toast({
+      title: "AI suggestion applied",
+      description: "This section has been updated using an AI suggestion. Please review or adjust as needed.",
+    });
+    setTimeout(() => setHighlightedSections(prev => ({ ...prev, [section]: false })), 2500);
+  };
+
+  // Handler: Dismiss AI suggestion
+  const handleDismissAISuggestion = (section: string) => {
+    setAISuggestions((prev: any) => ({
+      ...prev,
+      [section]: { ...prev[section], accepted: false, dismissed: true }
+    }));
+    setHighlightedSections(prev => ({ ...prev, [section]: false }));
+  };
+
   // Current version IDs
   const [currentVersionIds, setCurrentVersionIds] = useState({
     basicInfo: 'basic-1',
@@ -259,21 +324,6 @@ const ProfileSnapshot = () => {
     }
   };
   
-  // Toggle section lock
-  const toggleSectionLock = (section: keyof typeof lockedSections) => {
-    setLockedSections(prev => ({ 
-      ...prev, 
-      [section]: !prev[section] 
-    }));
-    
-    toast({
-      title: lockedSections[section] ? "Section unlocked" : "Section locked",
-      description: lockedSections[section] 
-        ? "This section can now be modified" 
-        : "This section is now protected from automatic updates",
-    });
-  };
-  
   const handleContinue = () => {
     setIsSubmitting(true);
     
@@ -294,7 +344,7 @@ const ProfileSnapshot = () => {
     experience: getCurrentExperience(),
     education: getCurrentEducation()
   };
-  
+
   // Prepare data for global version history
   const allSectionVersions = [
     {
@@ -329,8 +379,102 @@ const ProfileSnapshot = () => {
     }
   ];
 
+  // Helper: render AI Suggestion feature per section
+  const renderAISuggestionButton = (section: string, disabled?: boolean) => (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 px-2 text-xs"
+            onClick={() => setAISuggestions((prev: any) => ({
+              ...prev,
+              [section]: { ...prev[section], dismissed: false }
+            }))}
+            disabled={
+              !aiSuggestions[section]?.suggestion ||
+              aiSuggestions[section]?.accepted
+            }
+            aria-label="Show AI suggestion"
+            type="button"
+          >
+            <WandSparkles
+              className={`h-4 w-4 ${
+                aiSuggestions[section]?.suggestion && !aiSuggestions[section]?.accepted && !aiSuggestions[section]?.dismissed
+                  ? 'text-primary animate-pulse'
+                  : 'text-muted-foreground'
+              }`}
+            />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          Show AI suggestion to improve this section
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+
+  // Helper: render AI suggestion UI if available and not accepted/dismissed
+  const renderAISuggestionPanel = (section: string) => {
+    const suggestion = aiSuggestions[section]?.suggestion;
+    if (!suggestion || aiSuggestions[section]?.accepted || aiSuggestions[section]?.dismissed) return null;
+    return (
+      <div className="mt-3 mb-2 border-l-4 border-primary bg-primary/5 p-3 rounded animate-fade-in flex gap-2 items-start">
+        <WandSparkles className="h-5 w-5 mt-0.5 text-primary" />
+        <div className="flex-1">
+          <span className="font-medium text-primary mr-2 inline-block">AI Suggestion</span>
+          <span className="text-[.97em]">{suggestion}</span>
+          <div className="mt-2 flex gap-2">
+            <Button size="sm" variant="success" onClick={() => handleAcceptAISuggestion(section)}>
+              Accept
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => handleDismissAISuggestion(section)}>
+              Dismiss
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Render highlight for accepted suggestions in a section
+  const highlightClass = (section: string) =>
+    highlightedSections[section]
+      ? 'bg-green-50 border border-green-300 animate-fade-in'
+      : '';
+
   return (
     <DashboardLayout steps={steps} currentStep={3}>
+      {/* [AI SUGGESTION FEATURE] Onboarding popup */}
+      <Dialog open={showAIGuide} onOpenChange={handleDismissGuide}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              <span className="flex items-center gap-2">
+                <WandSparkles className="text-primary h-5 w-5" />
+                AI Suggestions for Your Profile
+              </span>
+            </DialogTitle>
+            <DialogDescription>
+              Get helpful suggestions based on your uploaded resume or LinkedIn PDF.<br/>
+              <span className="mt-1 block">
+                These are optional and can help you improve your profile. You have full control and can accept, ignore or dismiss any suggestion.
+              </span>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="bg-primary/5 p-3 rounded text-sm my-2 flex gap-2">
+            <Info className="h-4 w-4 text-primary mt-0.5" />
+            <span>
+              AI suggestions are based only on the documents and data you provide (such as PDF uploads). No changes are made without your review and approval.
+            </span>
+          </div>
+          <DialogFooter>
+            <Button onClick={handleDismissGuide}>Got It</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <div className="space-y-6">
         <StepCard>
           <StepCardHeader>
@@ -341,37 +485,47 @@ const ProfileSnapshot = () => {
                   Review your professional profile before proceeding to the next step
                 </StepCardDescription>
               </div>
-              
               <div className="flex flex-col sm:flex-row gap-2">
-                <GlobalVersionHistory 
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button size="sm" variant="outline" onClick={() => setShowAIGuide(true)}>
+                        <WandSparkles className="mr-2 h-4 w-4 text-primary animate-pulse" />
+                        What are AI Suggestions?
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      Learn about suggestions for enhancing your profile.
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                <GlobalVersionHistory
                   sectionVersions={allSectionVersions}
                   onRevert={handleGlobalRevert}
                 />
               </div>
             </div>
           </StepCardHeader>
-          
+
           <StepCardContent>
             <div className="flex flex-col md:flex-row items-start gap-6">
               <div className="md:w-1/3 flex flex-col items-center text-center">
                 <Avatar className="h-32 w-32 mb-4 animate-scale-in">
                   <AvatarFallback className="text-3xl bg-primary/10 text-primary">
-                    {profile.name.split(' ').map(n => n[0]).join('')}
+                    {profile.name.split(' ').map((n: string) => n[0]).join('')}
                   </AvatarFallback>
                 </Avatar>
-                
                 <h3 className="text-xl font-medium">{profile.name}</h3>
                 <p className="text-muted-foreground">{profile.title}</p>
                 <p className="text-sm text-muted-foreground">{profile.company}</p>
-                
+
                 <div className="mt-4 space-y-1 text-sm w-full">
                   <p>{profile.email}</p>
                   <p>{profile.phone}</p>
                 </div>
-                
-                <Button 
-                  variant="outline" 
-                  size="sm" 
+                <Button
+                  variant="outline"
+                  size="sm"
                   className="mt-4"
                   onClick={() => navigate('/dashboard/profile-creation')}
                 >
@@ -379,96 +533,145 @@ const ProfileSnapshot = () => {
                   Edit Basic Info
                 </Button>
               </div>
-              
+
               <div className="md:w-2/3 space-y-6">
-                <VersionControlledSection
-                  title="Professional Summary"
-                  icon={<User className="h-4 w-4 text-primary" />}
-                  versions={summaryVersions}
-                  currentVersionId={currentVersionIds.summary}
-                  onRevert={handleRevertSummary}
-                  onEdit={() => navigate('/dashboard/profile-creation')}
-                  isLocked={lockedSections.summary}
-                  onToggleLock={() => toggleSectionLock('summary')}
-                >
-                  <p className="text-sm text-muted-foreground">
-                    {profile.summary}
-                  </p>
-                </VersionControlledSection>
-                
-                <VersionControlledSection
-                  title="Skills"
-                  icon={<CheckCircle className="h-4 w-4 text-primary" />}
-                  versions={skillsVersions}
-                  currentVersionId={currentVersionIds.skills}
-                  onRevert={handleRevertSkills}
-                  onEdit={() => navigate('/dashboard/profile-creation')}
-                  isLocked={lockedSections.skills}
-                  onToggleLock={() => toggleSectionLock('skills')}
-                >
-                  <div className="flex flex-wrap gap-2">
-                    {profile.skills.map((skill: string, index: number) => (
-                      <Badge key={index} variant="secondary" className="animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
-                        {skill}
-                      </Badge>
-                    ))}
-                  </div>
-                </VersionControlledSection>
-                
-                <VersionControlledSection
-                  title="Work Experience"
-                  icon={<Briefcase className="h-4 w-4 text-primary" />}
-                  versions={experienceVersions}
-                  currentVersionId={currentVersionIds.experience}
-                  onRevert={handleRevertExperience}
-                  onEdit={() => navigate('/dashboard/profile-creation')}
-                  isLocked={lockedSections.experience}
-                  onToggleLock={() => toggleSectionLock('experience')}
-                >
-                  <div className="space-y-3">
-                    {profile.experience.map((exp: any, index: number) => (
-                      <div key={index} className="animate-slide-up" style={{ animationDelay: `${index * 0.15}s` }}>
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h4 className="font-medium">{exp.title}</h4>
-                            <p className="text-sm text-muted-foreground">{exp.company}</p>
-                          </div>
-                          <span className="text-xs text-muted-foreground">{exp.duration}</span>
-                        </div>
+                {/* SUMMARY SECTION */}
+                <div className={`rounded transition-all p-2 ${highlightClass('summary')}`}>
+                  <VersionControlledSection
+                    title={
+                      <span className="flex items-center gap-2">
+                        Professional Summary
+                        <span className="inline-flex items-center gap-1 text-primary">
+                          <WandSparkles className="h-4 w-4" /> AI Suggestions
+                        </span>
+                      </span>
+                    }
+                    icon={<User className="h-4 w-4 text-primary" />}
+                    versions={summaryVersions}
+                    currentVersionId={currentVersionIds.summary}
+                    onRevert={handleRevertSummary}
+                    onEdit={() => navigate('/dashboard/profile-creation')}
+                  >
+                    <div>
+                      {/* [AI SUGGESTION FEATURE] Button and suggestion display */}
+                      <div className="flex items-start gap-2">
+                        {renderAISuggestionButton('summary')}
+                        {renderAISuggestionPanel('summary')}
                       </div>
-                    ))}
-                  </div>
-                </VersionControlledSection>
-                
-                <VersionControlledSection
-                  title="Education"
-                  icon={<GraduationCap className="h-4 w-4 text-primary" />}
-                  versions={educationVersions}
-                  currentVersionId={currentVersionIds.education}
-                  onRevert={handleRevertEducation}
-                  onEdit={() => navigate('/dashboard/profile-creation')}
-                  isLocked={lockedSections.education}
-                  onToggleLock={() => toggleSectionLock('education')}
-                >
-                  <div className="space-y-3">
-                    {profile.education.map((edu: any, index: number) => (
-                      <div key={index} className="animate-slide-up" style={{ animationDelay: `${index * 0.15 + 0.3}s` }}>
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h4 className="font-medium">{edu.degree}</h4>
-                            <p className="text-sm text-muted-foreground">{edu.school}</p>
-                          </div>
-                          <span className="text-xs text-muted-foreground">{edu.year}</span>
-                        </div>
+                      <p className="text-sm text-muted-foreground mt-2">{profile.summary}</p>
+                    </div>
+                  </VersionControlledSection>
+                </div>
+
+                {/* SKILLS SECTION */}
+                <div className={`rounded transition-all p-2 ${highlightClass('skills')}`}>
+                  <VersionControlledSection
+                    title={
+                      <span className="flex items-center gap-2">
+                        Skills
+                        <span className="inline-flex items-center gap-1 text-primary">
+                          <WandSparkles className="h-4 w-4" /> AI Suggestions
+                        </span>
+                      </span>
+                    }
+                    icon={<CheckCircle className="h-4 w-4 text-primary" />}
+                    versions={skillsVersions}
+                    currentVersionId={currentVersionIds.skills}
+                    onRevert={handleRevertSkills}
+                    onEdit={() => navigate('/dashboard/profile-creation')}
+                  >
+                    <div>
+                      {renderAISuggestionButton('skills')}
+                      {renderAISuggestionPanel('skills')}
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {profile.skills.map((skill: string, index: number) => (
+                          <Badge key={index} variant="secondary" className="animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
+                            {skill}
+                          </Badge>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                </VersionControlledSection>
+                    </div>
+                  </VersionControlledSection>
+                </div>
+
+                {/* EXPERIENCE SECTION */}
+                <div className={`rounded transition-all p-2 ${highlightClass('experience')}`}>
+                  <VersionControlledSection
+                    title={
+                      <span className="flex items-center gap-2">
+                        Work Experience
+                        <span className="inline-flex items-center gap-1 text-primary">
+                          <WandSparkles className="h-4 w-4" /> AI Suggestions
+                        </span>
+                      </span>
+                    }
+                    icon={<Briefcase className="h-4 w-4 text-primary" />}
+                    versions={experienceVersions}
+                    currentVersionId={currentVersionIds.experience}
+                    onRevert={handleRevertExperience}
+                    onEdit={() => navigate('/dashboard/profile-creation')}
+                  >
+                    <div>
+                      {renderAISuggestionButton('experience')}
+                      {renderAISuggestionPanel('experience')}
+                      <div className="space-y-3 mt-2">
+                        {profile.experience.map((exp: any, index: number) => (
+                          <div key={index} className="animate-slide-up" style={{ animationDelay: `${index * 0.15}s` }}>
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <h4 className="font-medium">{exp.title}</h4>
+                                <p className="text-sm text-muted-foreground">{exp.company}</p>
+                              </div>
+                              <span className="text-xs text-muted-foreground">{exp.duration}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </VersionControlledSection>
+                </div>
+
+                {/* EDUCATION SECTION */}
+                <div className={`rounded transition-all p-2 ${highlightClass('education')}`}>
+                  <VersionControlledSection
+                    title={
+                      <span className="flex items-center gap-2">
+                        Education
+                        <span className="inline-flex items-center gap-1 text-primary">
+                          <WandSparkles className="h-4 w-4" /> AI Suggestions
+                        </span>
+                      </span>
+                    }
+                    icon={<GraduationCap className="h-4 w-4 text-primary" />}
+                    versions={educationVersions}
+                    currentVersionId={currentVersionIds.education}
+                    onRevert={handleRevertEducation}
+                    onEdit={() => navigate('/dashboard/profile-creation')}
+                  >
+                    <div>
+                      {renderAISuggestionButton('education')}
+                      {renderAISuggestionPanel('education')}
+                      <div className="space-y-3 mt-2">
+                        {profile.education.map((edu: any, index: number) => (
+                          <div key={index} className="animate-slide-up" style={{ animationDelay: `${index * 0.15 + 0.3}s` }}>
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <h4 className="font-medium">{edu.degree}</h4>
+                                <p className="text-sm text-muted-foreground">{edu.school}</p>
+                              </div>
+                              <span className="text-xs text-muted-foreground">{edu.year}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </VersionControlledSection>
+                </div>
               </div>
             </div>
           </StepCardContent>
         </StepCard>
-        
+
         <StepCard>
           <StepCardHeader>
             <StepCardTitle>Confirm Your Profile</StepCardTitle>
