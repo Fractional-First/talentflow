@@ -8,21 +8,22 @@ import { Home } from 'lucide-react';
 
 interface DashboardLayoutProps {
   children: ReactNode;
-  steps: Step[];
-  currentStep: number;
+  steps?: Step[];
+  currentStep?: number;
   className?: string;
+  sidebar?: boolean;
 }
 
 export function DashboardLayout({
   children,
   steps,
   currentStep,
-  className
+  className,
+  sidebar = false
 }: DashboardLayoutProps) {
   const navigate = useNavigate();
   const [onboardingComplete, setOnboardingComplete] = useState(false);
-  
-  // Check if onboarding is complete
+
   useEffect(() => {
     const onboardingStatus = localStorage.getItem('onboardingComplete');
     if (onboardingStatus === 'true') {
@@ -37,16 +38,28 @@ export function DashboardLayout({
     </div>
   );
 
+  // Sidebar Layout
+  if (sidebar) {
+    return (
+      <div className="min-h-screen w-full flex">
+        {backgroundEffect}
+        {/* Sidebar goes here */}
+        {children /* in sidebar mode, the layout is custom and children handle the rest */}
+      </div>
+    );
+  }
+
+  // Standard Layout (with onboarding progress)
   return (
     <div className="min-h-screen w-full flex flex-col">
       {backgroundEffect}
-      
+
       <header className="border-b border-border/40 bg-background/80 backdrop-blur-md sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <span className="text-xl font-semibold">TalentFlow</span>
           </div>
-          
+
           <div className="flex items-center space-x-2">
             {onboardingComplete && window.location.pathname !== '/dashboard' && (
               <Button variant="outline" size="sm" onClick={() => navigate('/dashboard')} className="gap-2">
@@ -60,14 +73,15 @@ export function DashboardLayout({
 
       <div className="container mx-auto px-4 py-6 flex-1">
         <div className="max-w-4xl mx-auto">
-          <OnboardingProgress steps={steps} currentStep={currentStep} />
-          
+          {steps && currentStep !== undefined && (
+            <OnboardingProgress steps={steps} currentStep={currentStep} />
+          )}
           <main className={cn("mt-8", className)}>
             {children}
           </main>
         </div>
       </div>
-      
+
       <footer className="border-t border-border/40 py-6 mt-10">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
           <p>© 2023 TalentFlow. All rights reserved.</p>
