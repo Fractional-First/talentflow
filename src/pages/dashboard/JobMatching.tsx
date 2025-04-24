@@ -8,9 +8,11 @@ import { ArrowRight, ArrowLeft, Home } from 'lucide-react';
 import JobMatchingPreferencesSection from '@/components/job-matching/JobMatchingPreferencesSection';
 import JobRankingSection from '@/components/job-matching/JobRankingSection';
 import JobRecommendationsSection from '@/components/job-matching/JobRecommendationsSection';
+import { PlacementTypeStep } from '@/components/job-matching/PlacementTypeStep';
 
 const JobMatching = () => {
   const navigate = useNavigate();
+  const [currentStep, setCurrentStep] = useState<'placement-type' | 'preferences'>('placement-type');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activelyLooking, setActivelyLooking] = useState(true);
   const [availabilityType, setAvailabilityType] = useState<'full-time' | 'fractional' | 'interim'>('full-time');
@@ -56,7 +58,6 @@ const JobMatching = () => {
     4: null
   });
   
-  // Include all steps in the dashboard view
   const steps: Step[] = [
     { id: 1, name: 'Sign Up', description: 'Create your account', status: 'completed', estimatedTime: '2-3 minutes' },
     { id: 2, name: 'Profile', description: 'Enter your information', status: 'completed', estimatedTime: '5-7 minutes' },
@@ -109,7 +110,6 @@ const JobMatching = () => {
   
   const handleContinue = () => {
     setIsSubmitting(true);
-    
     setTimeout(() => {
       setIsSubmitting(false);
       navigate('/dashboard/waiting-room');
@@ -125,18 +125,19 @@ const JobMatching = () => {
     }
   });
 
-  return (
-    <DashboardLayout steps={steps} currentStep={6}>
-      <div className="space-y-6">
-        {onboardingComplete && (
-          <div className="mb-4">
-            <Button variant="outline" onClick={() => navigate('/dashboard')} className="gap-2">
-              <Home className="h-4 w-4" />
-              Back to Dashboard
-            </Button>
-          </div>
-        )}
-        
+  const renderStepContent = () => {
+    if (currentStep === 'placement-type') {
+      return (
+        <PlacementTypeStep 
+          availabilityType={availabilityType}
+          onSelectType={setAvailabilityType}
+          onContinue={() => setCurrentStep('preferences')}
+        />
+      );
+    }
+
+    return (
+      <>
         <JobMatchingPreferencesSection
           activelyLooking={activelyLooking}
           setActivelyLooking={setActivelyLooking}
@@ -178,24 +179,43 @@ const JobMatching = () => {
         <JobRecommendationsSection 
           recommendedJobs={recommendedJobs}
         />
+      </>
+    );
+  };
+
+  return (
+    <DashboardLayout steps={steps} currentStep={6}>
+      <div className="space-y-6">
+        {onboardingComplete && (
+          <div className="mb-4">
+            <Button variant="outline" onClick={() => navigate('/dashboard')} className="gap-2">
+              <Home className="h-4 w-4" />
+              Back to Dashboard
+            </Button>
+          </div>
+        )}
         
-        <StepCardFooter className="flex justify-between pt-6">
-          <Button
-            variant="outline"
-            onClick={() => navigate('/dashboard/profile-snapshot')}
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back
-          </Button>
-          
-          <Button 
-            onClick={handleContinue}
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? 'Processing...' : 'Enter Waiting Room'}
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-        </StepCardFooter>
+        {renderStepContent()}
+        
+        {currentStep === 'preferences' && (
+          <StepCardFooter className="flex justify-between pt-6">
+            <Button
+              variant="outline"
+              onClick={() => setCurrentStep('placement-type')}
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back
+            </Button>
+            
+            <Button 
+              onClick={handleContinue}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Processing...' : 'Enter Waiting Room'}
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </StepCardFooter>
+        )}
       </div>
     </DashboardLayout>
   );
