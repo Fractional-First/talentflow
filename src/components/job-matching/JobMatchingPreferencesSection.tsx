@@ -13,6 +13,11 @@ interface JobMatchingPreferencesSectionProps {
   setActivelyLooking: (value: boolean) => void;
   availabilityType: 'full-time' | 'fractional' | 'interim';
   setAvailabilityType: (type: 'full-time' | 'fractional' | 'interim') => void;
+  availabilityTypes: {
+    fullTime: boolean;
+    fractional: boolean;
+  };
+  setAvailabilityTypes: (types: { fullTime: boolean; fractional: boolean }) => void;
   rateRange: number[];
   setRateRange: (range: number[]) => void;
   paymentType: string;
@@ -61,6 +66,8 @@ const JobMatchingPreferencesSection = ({
   setActivelyLooking,
   availabilityType,
   setAvailabilityType,
+  availabilityTypes,
+  setAvailabilityTypes,
   rateRange,
   setRateRange,
   paymentType,
@@ -119,8 +126,8 @@ const JobMatchingPreferencesSection = ({
           <Separator />
           
           <AvailabilitySection
-            availabilityType={availabilityType}
-            setAvailabilityType={setAvailabilityType}
+            availabilityTypes={availabilityTypes}
+            setAvailabilityTypes={setAvailabilityTypes}
             startDate={startDate}
             setStartDate={setStartDate}
             endDate={endDate}

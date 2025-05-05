@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
@@ -168,6 +167,8 @@ const JobMatching = () => {
           setActivelyLooking={setActivelyLooking}
           availabilityType={availabilityType}
           setAvailabilityType={setAvailabilityType}
+          availabilityTypes={availabilityTypes}
+          setAvailabilityTypes={handleSelectTypes}
           rateRange={rateRange}
           setRateRange={setRateRange}
           paymentType={paymentType}
@@ -192,7 +193,7 @@ const JobMatching = () => {
           setWorkEligibility={setWorkEligibility}
           industryPreferences={industryPreferences}
           setIndustryPreferences={setIndustryPreferences}
-          estimatedTime={steps[3].estimatedTime}
+          estimatedTime={steps[5].estimatedTime}
         />
         
         <JobRankingSection

@@ -9,11 +9,12 @@ import { Separator } from '@/components/ui/separator';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { CalendarDays } from 'lucide-react';
 
-type AvailabilityType = 'full-time' | 'fractional' | 'interim';
-
 interface AvailabilitySectionProps {
-  availabilityType: AvailabilityType;
-  setAvailabilityType: (type: AvailabilityType) => void;
+  availabilityTypes: {
+    fullTime: boolean;
+    fractional: boolean;
+  };
+  setAvailabilityTypes: (types: { fullTime: boolean; fractional: boolean }) => void;
   startDate: string;
   setStartDate: (date: string) => void;
   endDate: string;
@@ -43,8 +44,8 @@ interface AvailabilitySectionProps {
 }
 
 const AvailabilitySection = ({
-  availabilityType,
-  setAvailabilityType,
+  availabilityTypes,
+  setAvailabilityTypes,
   startDate,
   setStartDate,
   endDate,
@@ -70,8 +71,9 @@ const AvailabilitySection = ({
         <div className="flex items-center space-x-2">
           <Checkbox 
             id="full-time" 
-            checked={availabilityType === 'full-time'}
-            onCheckedChange={() => setAvailabilityType('full-time')}
+            checked={availabilityTypes.fullTime}
+            onCheckedChange={(checked) => 
+              setAvailabilityTypes({ ...availabilityTypes, fullTime: checked === true })}
           />
           <div>
             <Label htmlFor="full-time" className="font-medium">Full-time</Label>
@@ -79,7 +81,7 @@ const AvailabilitySection = ({
           </div>
         </div>
         
-        {availabilityType === 'full-time' && (
+        {availabilityTypes.fullTime && (
           <Accordion type="single" collapsible className="ml-7">
             <AccordionItem value="start-date">
               <AccordionTrigger className="text-sm py-2">
@@ -104,8 +106,9 @@ const AvailabilitySection = ({
         <div className="flex items-center space-x-2">
           <Checkbox 
             id="fractional" 
-            checked={availabilityType === 'fractional'}
-            onCheckedChange={() => setAvailabilityType('fractional')}
+            checked={availabilityTypes.fractional}
+            onCheckedChange={(checked) => 
+              setAvailabilityTypes({ ...availabilityTypes, fractional: checked === true })}
           />
           <div>
             <Label htmlFor="fractional" className="font-medium">Fractional</Label>
@@ -113,7 +116,7 @@ const AvailabilitySection = ({
           </div>
         </div>
         
-        {availabilityType === 'fractional' && (
+        {availabilityTypes.fractional && (
           <Accordion type="single" collapsible className="ml-7">
             <AccordionItem value="flexibility-options">
               <AccordionTrigger className="text-sm py-2">
@@ -178,67 +181,6 @@ const AvailabilitySection = ({
                         <SelectItem value="PST">Pacific Time (PST/PDT)</SelectItem>
                       </SelectContent>
                     </Select>
-                  </div>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        )}
-        
-        <div className="flex items-center space-x-2">
-          <Checkbox 
-            id="interim" 
-            checked={availabilityType === 'interim'}
-            onCheckedChange={() => setAvailabilityType('interim')}
-          />
-          <div>
-            <Label htmlFor="interim" className="font-medium">Interim</Label>
-            <p className="text-sm text-muted-foreground">Temporary role with defined start and end dates</p>
-          </div>
-        </div>
-        
-        {availabilityType === 'interim' && (
-          <Accordion type="single" collapsible className="ml-7">
-            <AccordionItem value="date-range">
-              <AccordionTrigger className="text-sm py-2">
-                Set start and end dates
-              </AccordionTrigger>
-              <AccordionContent>
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="int-start-date" className="text-sm">Start Date</Label>
-                    <Input
-                      id="int-start-date"
-                      type="date"
-                      value={startDate}
-                      onChange={(e) => setStartDate(e.target.value)}
-                      className="max-w-xs"
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="int-end-date" className="text-sm">End Date (Optional)</Label>
-                    <Input
-                      id="int-end-date"
-                      type="date"
-                      value={endDate}
-                      onChange={(e) => setEndDate(e.target.value)}
-                      className="max-w-xs"
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label className="text-sm block mb-2">Type</Label>
-                    <RadioGroup defaultValue="full-time">
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="full-time" id="int-full-time" />
-                        <Label htmlFor="int-full-time">Full-time Interim</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="fractional" id="int-fractional" />
-                        <Label htmlFor="int-fractional">Fractional Interim</Label>
-                      </div>
-                    </RadioGroup>
                   </div>
                 </div>
               </AccordionContent>
