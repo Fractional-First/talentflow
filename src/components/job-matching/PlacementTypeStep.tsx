@@ -1,11 +1,15 @@
 
 import { Button } from "@/components/ui/button";
 import { StepCard, StepCardContent, StepCardDescription, StepCardHeader, StepCardTitle } from "@/components/StepCard";
-import { Briefcase, Clock, CalendarRange } from "lucide-react";
+import { Briefcase, Clock } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface PlacementTypeStepProps {
-  availabilityType: 'full-time' | 'fractional' | 'interim';
-  onSelectType: (type: 'full-time' | 'fractional' | 'interim') => void;
+  availabilityTypes: {
+    fullTime: boolean;
+    fractional: boolean;
+  };
+  onSelectTypes: (types: { fullTime: boolean; fractional: boolean }) => void;
   onContinue: () => void;
 }
 
@@ -17,7 +21,7 @@ const PlacementTypeCard = ({
   isSelected,
   onClick,
 }: {
-  type: 'full-time' | 'fractional' | 'interim';
+  type: 'fullTime' | 'fractional';
   title: string;
   description: string;
   icon: typeof Briefcase;
@@ -26,47 +30,61 @@ const PlacementTypeCard = ({
 }) => (
   <button
     onClick={onClick}
-    className={`w-full p-6 rounded-lg border-2 transition-all ${
+    className={`w-full p-6 rounded-lg border-2 transition-all flex items-start ${
       isSelected 
         ? "border-primary bg-primary/5 shadow-soft" 
         : "border-border hover:border-primary/50"
     }`}
   >
-    <div className="flex items-start gap-4">
-      <div className={`rounded-full p-2 ${isSelected ? "bg-primary/10" : "bg-muted"}`}>
-        <Icon className={`h-6 w-6 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
-      </div>
-      <div className="text-left">
+    <div className={`rounded-full p-2 mr-4 ${isSelected ? "bg-primary/10" : "bg-muted"}`}>
+      <Icon className={`h-6 w-6 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
+    </div>
+    <div className="flex-grow text-left">
+      <div className="flex items-center justify-between">
         <h4 className="font-medium">{title}</h4>
-        <p className="text-sm text-muted-foreground mt-1">{description}</p>
+        <Checkbox 
+          checked={isSelected}
+          className="ml-2"
+          onCheckedChange={() => onClick()}
+        />
       </div>
+      <p className="text-sm text-muted-foreground mt-1">{description}</p>
     </div>
   </button>
 );
 
 export const PlacementTypeStep = ({
-  availabilityType,
-  onSelectType,
+  availabilityTypes,
+  onSelectTypes,
   onContinue,
 }: PlacementTypeStepProps) => {
+  const toggleType = (type: 'fullTime' | 'fractional') => {
+    onSelectTypes({
+      ...availabilityTypes,
+      [type]: !availabilityTypes[type]
+    });
+  };
+
+  const hasSelection = availabilityTypes.fullTime || availabilityTypes.fractional;
+
   return (
     <StepCard>
       <StepCardHeader>
         <StepCardTitle>Select Your Preferred Placement Type</StepCardTitle>
         <StepCardDescription>
-          Choose how you'd like to work. This will help us tailor job opportunities and compensation structures to your preferences.
+          Choose how you'd like to work. You may select one or both options. This will help us tailor job opportunities and compensation structures to your preferences.
         </StepCardDescription>
       </StepCardHeader>
       
       <StepCardContent>
         <div className="space-y-4">
           <PlacementTypeCard
-            type="full-time"
+            type="fullTime"
             title="Full-time Position"
             description="40 hours per week, dedicated to one company. Traditional employment with benefits."
             icon={Briefcase}
-            isSelected={availabilityType === 'full-time'}
-            onClick={() => onSelectType('full-time')}
+            isSelected={availabilityTypes.fullTime}
+            onClick={() => toggleType('fullTime')}
           />
           
           <PlacementTypeCard
@@ -74,23 +92,14 @@ export const PlacementTypeStep = ({
             title="Fractional Position"
             description="Part-time commitment, flexible hours. Work with multiple companies simultaneously."
             icon={Clock}
-            isSelected={availabilityType === 'fractional'}
-            onClick={() => onSelectType('fractional')}
-          />
-          
-          <PlacementTypeCard
-            type="interim"
-            title="Interim Position"
-            description="Temporary role with defined start and end dates. Project-based work."
-            icon={CalendarRange}
-            isSelected={availabilityType === 'interim'}
-            onClick={() => onSelectType('interim')}
+            isSelected={availabilityTypes.fractional}
+            onClick={() => toggleType('fractional')}
           />
           
           <div className="pt-6">
             <Button 
               onClick={onContinue}
-              disabled={!availabilityType}
+              disabled={!hasSelection}
               className="w-full"
             >
               Continue to Job Preferences

@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
@@ -15,7 +16,16 @@ const JobMatching = () => {
   const [currentStep, setCurrentStep] = useState<'placement-type' | 'preferences'>('placement-type');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activelyLooking, setActivelyLooking] = useState(true);
+  
+  // Updated placement type state to handle multiple selections
+  const [availabilityTypes, setAvailabilityTypes] = useState({
+    fullTime: false,
+    fractional: false
+  });
+  
+  // This value is used for backward compatibility with existing components
   const [availabilityType, setAvailabilityType] = useState<'full-time' | 'fractional' | 'interim'>('full-time');
+  
   const [rateRange, setRateRange] = useState([75000, 100000]);
   const [paymentType, setPaymentType] = useState('annual');
   const [remotePreference, setRemotePreference] = useState(true);
@@ -125,12 +135,27 @@ const JobMatching = () => {
     }
   });
 
+  // Handle selection of placement types and update the backward compatibility variable
+  const handleSelectTypes = (types: { fullTime: boolean; fractional: boolean }) => {
+    setAvailabilityTypes(types);
+    
+    // Update the availabilityType for backward compatibility
+    if (types.fullTime && types.fractional) {
+      // Both selected, default to full-time for legacy components
+      setAvailabilityType('full-time');
+    } else if (types.fullTime) {
+      setAvailabilityType('full-time');
+    } else if (types.fractional) {
+      setAvailabilityType('fractional');
+    }
+  };
+
   const renderStepContent = () => {
     if (currentStep === 'placement-type') {
       return (
         <PlacementTypeStep 
-          availabilityType={availabilityType}
-          onSelectType={setAvailabilityType}
+          availabilityTypes={availabilityTypes}
+          onSelectTypes={handleSelectTypes}
           onContinue={() => setCurrentStep('preferences')}
         />
       );
