@@ -245,36 +245,38 @@ const ProfileCreation = () => {
 
             <StepCardContent>
 
-              {/* INSTRUCTIONAL HELPER TEXT */}
-              <div className="mb-4 bg-green-50 border border-green-200 rounded-lg p-4">
-                <span className="font-medium text-green-800">
-                  At least one of the following is required, but both are ideal:
-                </span>
-                <ul className="list-disc ml-6 mt-2 text-green-900 text-sm">
-                  <li>Upload your resume <span className="font-semibold">(PDF or DOCX)</span></li>
-                  <li>Upload your LinkedIn profile as a <span className="font-semibold">PDF</span></li>
-                </ul>
-                <div className="flex items-center mt-3 text-xs text-muted-foreground">
-                  <HelpCircle className="h-4 w-4 mr-2" />
-                  To get your LinkedIn Profile PDF, see:&nbsp;
-                  <a href={LINKEDIN_PDF_GUIDE_URL} target="_blank" rel="noopener noreferrer" className="text-primary underline font-medium">
-                    How to export your LinkedIn profile →
-                  </a>
+              {/* COMBINED INSTRUCTIONAL HELPER TEXT */}
+              <Alert className="mb-4 bg-blue-50 border-blue-200">
+                <div className="flex gap-2">
+                  <div className="mt-0.5">
+                    {isLinkedInUser ? <Linkedin className="h-5 w-5 text-[#0A66C2]" /> : <HelpCircle className="h-5 w-5 text-blue-600" />}
+                  </div>
+                  <div>
+                    <AlertTitle className="mb-1 font-semibold text-blue-800">
+                      Profile Information Requirements
+                    </AlertTitle>
+                    <AlertDescription className="text-sm text-blue-900">
+                      <p className="mb-1">At least <strong>one</strong> of the following is required, but both are ideal:</p>
+                      <ul className="list-disc ml-6 mb-2">
+                        <li>Upload your resume <span className="font-semibold">(PDF or DOCX)</span></li>
+                        <li>Upload your LinkedIn profile as a <span className="font-semibold">PDF</span></li>
+                      </ul>
+                      
+                      {isLinkedInUser && (
+                        <p className="p-1.5 bg-blue-100/50 rounded border border-blue-200 text-xs">
+                          <strong>Note:</strong> LinkedIn sign-in provides only limited information. For your full experience, please upload your LinkedIn profile as a PDF.
+                        </p>
+                      )}
+                      
+                      <div className="flex items-center mt-2 text-xs">
+                        <a href={LINKEDIN_PDF_GUIDE_URL} target="_blank" rel="noopener noreferrer" className="text-primary underline font-medium">
+                          How to export your LinkedIn profile →
+                        </a>
+                      </div>
+                    </AlertDescription>
+                  </div>
                 </div>
-              </div>
-
-              {/* SHOW ALERT IF SIGNED IN VIA LINKEDIN */}
-              {isLinkedInUser && (
-                <Alert className="mb-4 bg-blue-50 border-blue-200">
-                  <Linkedin className="h-4 w-4 text-[#0A66C2]" />
-                  <AlertTitle className="mb-1 font-semibold text-[#0A66C2]">
-                    LinkedIn sign-in provides only limited information
-                  </AlertTitle>
-                  <AlertDescription className="text-xs text-blue-900">
-                    For your full experience, please upload your LinkedIn profile as a PDF. LinkedIn sign-in does not import your entire professional data automatically.
-                  </AlertDescription>
-                </Alert>
-              )}
+              </Alert>
 
               {!showManualEntry ? (
                 <div className="space-y-6">
