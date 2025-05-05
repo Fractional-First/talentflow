@@ -490,9 +490,7 @@ const ProfileCreation = () => {
                             Enhanced Profile Quality
                           </AlertTitle>
                           <AlertDescription className="text-sm text-blue-900">
-                            The more supporting materials you provide, the better and more complete your profile will be. 
-                            Including additional work samples, certifications, portfolios, and publications helps us create a 
-                            more comprehensive representation of your professional abilities.
+                            The more supporting materials you provide, the stronger and more complete your profile will be. These additions help us present a well-rounded and accurate representation of your professional expertise.
                           </AlertDescription>
                         </div>
                       </div>
