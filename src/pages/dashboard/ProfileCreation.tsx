@@ -480,16 +480,22 @@ const ProfileCreation = () => {
                       </Button>
                     </div>
                     
-                    <Alert className="mb-4 bg-amber-50 border-amber-200">
-                      <AlertCircle className="h-4 w-4 text-amber-600" />
-                      <AlertTitle className="text-amber-800 font-medium">
-                        Enhanced Profile Quality
-                      </AlertTitle>
-                      <AlertDescription className="text-sm text-amber-700">
-                        The more supporting materials you provide, the better and more complete your profile will be. 
-                        Including additional work samples, certifications, portfolios, and publications helps us create a 
-                        more comprehensive representation of your professional abilities.
-                      </AlertDescription>
+                    <Alert className="mb-4 bg-blue-50 border-blue-200">
+                      <div className="flex gap-2">
+                        <div className="mt-0.5">
+                          <HelpCircle className="h-5 w-5 text-blue-600" />
+                        </div>
+                        <div>
+                          <AlertTitle className="mb-1 font-semibold text-blue-800">
+                            Enhanced Profile Quality
+                          </AlertTitle>
+                          <AlertDescription className="text-sm text-blue-900">
+                            The more supporting materials you provide, the better and more complete your profile will be. 
+                            Including additional work samples, certifications, portfolios, and publications helps us create a 
+                            more comprehensive representation of your professional abilities.
+                          </AlertDescription>
+                        </div>
+                      </div>
                     </Alert>
                     
                     {showSupportingDocs && (
