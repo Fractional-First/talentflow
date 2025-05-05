@@ -454,6 +454,191 @@ const ProfileCreation = () => {
                       )}
                     </div>
                   </div>
+                  
+                  {/* SUPPORTING DOCUMENTS SECTION - Moved here from separate card */}
+                  <div className="border rounded-lg p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <div className="flex items-center">
+                          <div className="bg-primary/10 p-3 rounded-full mr-3">
+                            <FileText className="h-6 w-6 text-primary" />
+                          </div>
+                          <div>
+                            <h3 className="font-medium">Supporting Documents & Links</h3>
+                            <p className="text-sm text-muted-foreground">
+                              Add publications, news articles, portfolios, or other resources that showcase your work
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <Button 
+                        variant="outline" 
+                        onClick={toggleSupportingDocs}
+                        type="button"
+                      >
+                        {showSupportingDocs ? 'Hide Form' : 'Add Documents'}
+                      </Button>
+                    </div>
+                    
+                    {showSupportingDocs && (
+                      <Card className="border border-border/60">
+                        <CardContent className="p-6 space-y-4">
+                          <div className="flex justify-between items-center">
+                            <h3 className="font-medium">Add New Supporting Material</h3>
+                            
+                            <div className="flex gap-2">
+                              <Button 
+                                variant={currentDocType === 'document' ? 'secondary' : 'outline'} 
+                                size="sm"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  setCurrentDocType('document');
+                                }}
+                                type="button"
+                              >
+                                <FileText className="h-4 w-4 mr-1" />
+                                Document
+                              </Button>
+                              <Button 
+                                variant={currentDocType === 'link' ? 'secondary' : 'outline'} 
+                                size="sm" 
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  setCurrentDocType('link');
+                                }}
+                                type="button"
+                              >
+                                <Link className="h-4 w-4 mr-1" />
+                                Link
+                              </Button>
+                            </div>
+                          </div>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <Label htmlFor="doc-title">Title*</Label>
+                              <Input 
+                                id="doc-title" 
+                                placeholder={currentDocType === 'document' ? "Document Title" : "Link Title"}
+                                value={currentDocTitle}
+                                onChange={(e) => setCurrentDocTitle(e.target.value)}
+                              />
+                            </div>
+                            
+                            {currentDocType === 'document' ? (
+                              <div>
+                                <Label htmlFor="doc-upload">Upload File*</Label>
+                                <div className="mt-1 flex items-center">
+                                  <Button 
+                                    variant="outline" 
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      document.getElementById('doc-upload')?.click();
+                                    }}
+                                    type="button"
+                                    className="w-full justify-start text-muted-foreground"
+                                  >
+                                    <Upload className="h-4 w-4 mr-2" />
+                                    {currentDocFileName || "Select File"}
+                                  </Button>
+                                  <input 
+                                    id="doc-upload" 
+                                    type="file" 
+                                    className="hidden" 
+                                    accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.png,.jpg,.jpeg" 
+                                    onChange={handleDocumentUpload}
+                                  />
+                                </div>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  Supports PDF, DOCX, PPTX, and common image formats up to 10MB
+                                </p>
+                              </div>
+                            ) : (
+                              <div>
+                                <Label htmlFor="doc-url">URL*</Label>
+                                <Input 
+                                  id="doc-url" 
+                                  placeholder="https://"
+                                  value={currentDocUrl}
+                                  onChange={(e) => setCurrentDocUrl(e.target.value)}
+                                />
+                              </div>
+                            )}
+                          </div>
+                          
+                          <div>
+                            <Label htmlFor="doc-description">Description (Optional)</Label>
+                            <Textarea 
+                              id="doc-description" 
+                              placeholder="Briefly describe this resource..."
+                              value={currentDocDescription}
+                              onChange={(e) => setCurrentDocDescription(e.target.value)}
+                              className="resize-none"
+                            />
+                          </div>
+                          
+                          <div className="flex justify-end">
+                            <Button
+                              onClick={addSupportingDocument}
+                              type="button"
+                            >
+                              <Plus className="h-4 w-4 mr-1" />
+                              Add {currentDocType === 'document' ? 'Document' : 'Link'}
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
+                    
+                    {supportingDocuments.length > 0 && (
+                      <div className="space-y-3 mt-6">
+                        <h3 className="font-medium">Added Documents & Links</h3>
+                        <div className="space-y-3">
+                          {supportingDocuments.map((doc, index) => (
+                            <div 
+                              key={index} 
+                              className="flex items-center justify-between p-3 rounded-md border border-border/60 bg-background"
+                            >
+                              <div className="flex items-center gap-3">
+                                <div className="p-2 rounded-md bg-primary/10">
+                                  {doc.type === 'document' ? (
+                                    <FileText className="h-5 w-5 text-primary" />
+                                  ) : (
+                                    <Link className="h-5 w-5 text-primary" />
+                                  )}
+                                </div>
+                                
+                                <div>
+                                  <p className="font-medium">{doc.title}</p>
+                                  {doc.description && (
+                                    <p className="text-sm text-muted-foreground line-clamp-1">{doc.description}</p>
+                                  )}
+                                  {doc.type === 'document' && doc.fileName && (
+                                    <p className="text-xs text-muted-foreground">{doc.fileName}</p>
+                                  )}
+                                  {doc.type === 'link' && doc.url && (
+                                    <p className="text-xs text-primary truncate max-w-[200px] md:max-w-[300px]">
+                                      {doc.url}
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                              
+                              <Button
+                                variant="ghost" 
+                                size="sm"
+                                onClick={(e) => removeDocument(index, e)}
+                                className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                                type="button"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
 
                   {/* SWITCH TO MANUAL ENTRY */}
                   <div className="text-center mt-6">
@@ -649,196 +834,7 @@ const ProfileCreation = () => {
             </StepCardContent>
           </StepCard>
 
-          {/* SUPPORTING DOCUMENTS/ADDITIONAL RESOURCES SEGMENT */}
-          <StepCard>
-            <StepCardHeader>
-              <StepCardTitle>Supporting Documents & Links</StepCardTitle>
-              <StepCardDescription>
-                Add publications, news articles, or other resources that highlight your expertise
-              </StepCardDescription>
-            </StepCardHeader>
-            
-            <StepCardContent>
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-medium">Would you like to add supporting documents?</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Add publications, news articles, portfolios, or other resources that showcase your work
-                    </p>
-                  </div>
-                  <Button 
-                    variant="outline" 
-                    onClick={toggleSupportingDocs}
-                    type="button"
-                  >
-                    {showSupportingDocs ? 'Hide Form' : 'Add Documents'}
-                  </Button>
-                </div>
-                
-                {showSupportingDocs && (
-                  <Card className="border border-border/60">
-                    <CardContent className="p-6 space-y-4">
-                      <div className="flex justify-between items-center">
-                        <h3 className="font-medium">Add New Supporting Material</h3>
-                        
-                        <div className="flex gap-2">
-                          <Button 
-                            variant={currentDocType === 'document' ? 'secondary' : 'outline'} 
-                            size="sm"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              setCurrentDocType('document');
-                            }}
-                            type="button"
-                          >
-                            <FileText className="h-4 w-4 mr-1" />
-                            Document
-                          </Button>
-                          <Button 
-                            variant={currentDocType === 'link' ? 'secondary' : 'outline'} 
-                            size="sm" 
-                            onClick={(e) => {
-                              e.preventDefault();
-                              setCurrentDocType('link');
-                            }}
-                            type="button"
-                          >
-                            <Link className="h-4 w-4 mr-1" />
-                            Link
-                          </Button>
-                        </div>
-                      </div>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="doc-title">Title*</Label>
-                          <Input 
-                            id="doc-title" 
-                            placeholder={currentDocType === 'document' ? "Document Title" : "Link Title"}
-                            value={currentDocTitle}
-                            onChange={(e) => setCurrentDocTitle(e.target.value)}
-                          />
-                        </div>
-                        
-                        {currentDocType === 'document' ? (
-                          <div>
-                            <Label htmlFor="doc-upload">Upload File*</Label>
-                            <div className="mt-1 flex items-center">
-                              <Button 
-                                variant="outline" 
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  document.getElementById('doc-upload')?.click();
-                                }}
-                                type="button"
-                                className="w-full justify-start text-muted-foreground"
-                              >
-                                <Upload className="h-4 w-4 mr-2" />
-                                {currentDocFileName || "Select File"}
-                              </Button>
-                              <input 
-                                id="doc-upload" 
-                                type="file" 
-                                className="hidden" 
-                                accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.png,.jpg,.jpeg" 
-                                onChange={handleDocumentUpload}
-                              />
-                            </div>
-                            <p className="text-xs text-muted-foreground mt-1">
-                              Supports PDF, DOCX, PPTX, and common image formats up to 10MB
-                            </p>
-                          </div>
-                        ) : (
-                          <div>
-                            <Label htmlFor="doc-url">URL*</Label>
-                            <Input 
-                              id="doc-url" 
-                              placeholder="https://"
-                              value={currentDocUrl}
-                              onChange={(e) => setCurrentDocUrl(e.target.value)}
-                            />
-                          </div>
-                        )}
-                      </div>
-                      
-                      <div>
-                        <Label htmlFor="doc-description">Description (Optional)</Label>
-                        <Textarea 
-                          id="doc-description" 
-                          placeholder="Briefly describe this resource..."
-                          value={currentDocDescription}
-                          onChange={(e) => setCurrentDocDescription(e.target.value)}
-                          className="resize-none"
-                        />
-                      </div>
-                      
-                      <div className="flex justify-end">
-                        <Button
-                          onClick={addSupportingDocument}
-                          type="button"
-                        >
-                          <Plus className="h-4 w-4 mr-1" />
-                          Add {currentDocType === 'document' ? 'Document' : 'Link'}
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-                
-                {supportingDocuments.length > 0 && (
-                  <div className="space-y-3 mt-6">
-                    <h3 className="font-medium">Added Documents & Links</h3>
-                    <div className="space-y-3">
-                      {supportingDocuments.map((doc, index) => (
-                        <div 
-                          key={index} 
-                          className="flex items-center justify-between p-3 rounded-md border border-border/60 bg-background"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="p-2 rounded-md bg-primary/10">
-                              {doc.type === 'document' ? (
-                                <FileText className="h-5 w-5 text-primary" />
-                              ) : (
-                                <Link className="h-5 w-5 text-primary" />
-                              )}
-                            </div>
-                            
-                            <div>
-                              <p className="font-medium">{doc.title}</p>
-                              {doc.description && (
-                                <p className="text-sm text-muted-foreground line-clamp-1">{doc.description}</p>
-                              )}
-                              {doc.type === 'document' && doc.fileName && (
-                                <p className="text-xs text-muted-foreground">{doc.fileName}</p>
-                              )}
-                              {doc.type === 'link' && doc.url && (
-                                <p className="text-xs text-primary truncate max-w-[200px] md:max-w-[300px]">
-                                  {doc.url}
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                          
-                          <Button
-                            variant="ghost" 
-                            size="sm"
-                            onClick={(e) => removeDocument(index, e)}
-                            className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                            type="button"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </StepCardContent>
-          </StepCard>
-
-          {/* FOOTER: NAV BUTTONS */}
+          {/* FOOTER: NAV BUTTONS - Removed the separate supporting documents card */}
           <StepCardFooter className="flex justify-between pt-6">
             <Button
               variant="outline"
