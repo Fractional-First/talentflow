@@ -1,8 +1,8 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
 import { StepCardFooter } from '@/components/StepCard';
-import { Step } from '@/components/OnboardingProgress';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, ArrowLeft, Home } from 'lucide-react';
 import JobMatchingPreferencesSection from '@/components/job-matching/JobMatchingPreferencesSection';
@@ -67,14 +67,8 @@ const JobMatching = () => {
     4: null
   });
   
-  const steps: Step[] = [
-    { id: 1, name: 'Sign Up', description: 'Create your account', status: 'completed', estimatedTime: '2-3 minutes' },
-    { id: 2, name: 'Profile', description: 'Enter your information', status: 'completed', estimatedTime: '5-7 minutes' },
-    { id: 3, name: 'Profile Snapshot', description: 'Review your profile', status: 'completed', estimatedTime: '3-5 minutes' },
-    { id: 4, name: 'Agreement', description: 'Sign legal documents', status: 'completed', estimatedTime: '4-6 minutes' },
-    { id: 5, name: 'Branding', description: 'Enhance your profile', status: 'completed', estimatedTime: '5-8 minutes' },
-    { id: 6, name: 'Job Matching', description: 'Get matched to jobs', status: 'current', estimatedTime: '8-10 minutes' }
-  ];
+  // Define the estimated time value separately since we're removing the steps
+  const estimatedTime = '8-10 minutes';
   
   const recommendedJobs = [
     {
@@ -193,7 +187,7 @@ const JobMatching = () => {
           setWorkEligibility={setWorkEligibility}
           industryPreferences={industryPreferences}
           setIndustryPreferences={setIndustryPreferences}
-          estimatedTime={steps[5].estimatedTime}
+          estimatedTime={estimatedTime}
         />
         
         <JobRankingSection
@@ -210,7 +204,7 @@ const JobMatching = () => {
   };
 
   return (
-    <DashboardLayout steps={steps} currentStep={6}>
+    <DashboardLayout sidebar={false} className="space-y-6">
       <div className="space-y-6">
         {onboardingComplete && (
           <div className="mb-4">
