@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
-import { Upload, ArrowRight, ArrowLeft, File, Clock, HelpCircle, Linkedin, FileSpreadsheet, Copy, AlertCircle, Link, FileText, Trash2, Plus, FileImage } from 'lucide-react';
+import { Upload, ArrowRight, ArrowLeft, File, Clock, HelpCircle, Linkedin, FileSpreadsheet, Copy, AlertCircle, Link, FileText, Trash2, Plus, FileImage, Paperclip } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -461,7 +461,7 @@ const ProfileCreation = () => {
                       <div>
                         <div className="flex items-center">
                           <div className="bg-primary/10 p-3 rounded-full mr-3">
-                            <FileText className="h-6 w-6 text-primary" />
+                            <Paperclip className="h-6 w-6 text-primary" />
                           </div>
                           <div>
                             <h3 className="font-medium">Supporting Documents & Links</h3>
@@ -479,6 +479,18 @@ const ProfileCreation = () => {
                         {showSupportingDocs ? 'Hide Form' : 'Add Documents'}
                       </Button>
                     </div>
+                    
+                    <Alert className="mb-4 bg-amber-50 border-amber-200">
+                      <AlertCircle className="h-4 w-4 text-amber-600" />
+                      <AlertTitle className="text-amber-800 font-medium">
+                        Enhanced Profile Quality
+                      </AlertTitle>
+                      <AlertDescription className="text-sm text-amber-700">
+                        The more supporting materials you provide, the better and more complete your profile will be. 
+                        Including additional work samples, certifications, portfolios, and publications helps us create a 
+                        more comprehensive representation of your professional abilities.
+                      </AlertDescription>
+                    </Alert>
                     
                     {showSupportingDocs && (
                       <Card className="border border-border/60">
