@@ -420,16 +420,16 @@ const ProfileSnapshot = () => {
     const suggestion = aiSuggestions[section]?.suggestion;
     if (!suggestion || aiSuggestions[section]?.accepted || aiSuggestions[section]?.dismissed) return null;
     return (
-      <div className="mt-3 mb-2 border-l-4 border-primary bg-primary/5 p-3 rounded animate-fade-in flex gap-2 items-start">
-        <WandSparkles className="h-5 w-5 mt-0.5 text-primary" />
+      <div className="mt-2 border-l-2 border-primary/30 bg-primary/5 p-2 rounded-sm text-xs animate-fade-in flex gap-2 items-start">
+        <WandSparkles className="h-3 w-3 mt-0.5 text-primary/60" />
         <div className="flex-1">
-          <span className="font-medium text-primary mr-2 inline-block">AI Suggestion</span>
-          <span className="text-[.97em]">{suggestion}</span>
-          <div className="mt-2 flex gap-2">
-            <Button size="sm" variant="success" onClick={() => handleAcceptAISuggestion(section)}>
+          <span className="text-primary/80 mr-1 text-[0.9em]">AI Suggestion:</span>
+          <span className="text-muted-foreground/90">{suggestion}</span>
+          <div className="mt-1.5 flex gap-2">
+            <Button size="sm" variant="ghost" className="h-7 text-xs px-2 hover:bg-primary/10 text-primary/80" onClick={() => handleAcceptAISuggestion(section)}>
               Accept
             </Button>
-            <Button size="sm" variant="outline" onClick={() => handleDismissAISuggestion(section)}>
+            <Button size="sm" variant="ghost" className="h-7 text-xs px-2 hover:bg-muted/20 text-muted-foreground/80" onClick={() => handleDismissAISuggestion(section)}>
               Dismiss
             </Button>
           </div>
@@ -490,7 +490,7 @@ const ProfileSnapshot = () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button size="sm" variant="outline" onClick={() => setShowAIGuide(true)}>
-                        <WandSparkles className="mr-2 h-4 w-4 text-primary animate-pulse" />
+                        <WandSparkles className="mr-2 h-4 w-4 text-primary/70" />
                         What are AI Suggestions?
                       </Button>
                     </TooltipTrigger>
@@ -546,12 +546,13 @@ const ProfileSnapshot = () => {
                     onEdit={() => navigate('/dashboard/profile-creation')}
                   >
                     <div>
-                      {/* [AI SUGGESTION FEATURE] Button and suggestion display */}
-                      <div className="flex items-start gap-2">
-                        {renderAISuggestionButton('summary')}
-                        {renderAISuggestionPanel('summary')}
-                      </div>
                       <p className="text-sm text-muted-foreground mt-2">{profile.summary}</p>
+                      
+                      {/* [AI SUGGESTION FEATURE] Button and suggestion display - moved after content */}
+                      <div className="flex items-start mt-1 gap-1 justify-end">
+                        {renderAISuggestionButton('summary')}
+                      </div>
+                      {renderAISuggestionPanel('summary')}
                     </div>
                   </VersionControlledSection>
                 </div>
@@ -567,8 +568,6 @@ const ProfileSnapshot = () => {
                     onEdit={() => navigate('/dashboard/profile-creation')}
                   >
                     <div>
-                      {renderAISuggestionButton('skills')}
-                      {renderAISuggestionPanel('skills')}
                       <div className="flex flex-wrap gap-2 mt-2">
                         {profile.skills.map((skill: string, index: number) => (
                           <Badge key={index} variant="secondary" className="animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
@@ -576,6 +575,12 @@ const ProfileSnapshot = () => {
                           </Badge>
                         ))}
                       </div>
+                      
+                      {/* [AI SUGGESTION FEATURE] Button and suggestion display - moved after content */}
+                      <div className="flex items-start mt-2 gap-1 justify-end">
+                        {renderAISuggestionButton('skills')}
+                      </div>
+                      {renderAISuggestionPanel('skills')}
                     </div>
                   </VersionControlledSection>
                 </div>
@@ -591,8 +596,6 @@ const ProfileSnapshot = () => {
                     onEdit={() => navigate('/dashboard/profile-creation')}
                   >
                     <div>
-                      {renderAISuggestionButton('experience')}
-                      {renderAISuggestionPanel('experience')}
                       <div className="space-y-3 mt-2">
                         {profile.experience.map((exp: any, index: number) => (
                           <div key={index} className="animate-slide-up" style={{ animationDelay: `${index * 0.15}s` }}>
@@ -606,6 +609,12 @@ const ProfileSnapshot = () => {
                           </div>
                         ))}
                       </div>
+                      
+                      {/* [AI SUGGESTION FEATURE] Button and suggestion display - moved after content */}
+                      <div className="flex items-start mt-2 gap-1 justify-end">
+                        {renderAISuggestionButton('experience')}
+                      </div>
+                      {renderAISuggestionPanel('experience')}
                     </div>
                   </VersionControlledSection>
                 </div>
@@ -621,8 +630,6 @@ const ProfileSnapshot = () => {
                     onEdit={() => navigate('/dashboard/profile-creation')}
                   >
                     <div>
-                      {renderAISuggestionButton('education')}
-                      {renderAISuggestionPanel('education')}
                       <div className="space-y-3 mt-2">
                         {profile.education.map((edu: any, index: number) => (
                           <div key={index} className="animate-slide-up" style={{ animationDelay: `${index * 0.15 + 0.3}s` }}>
@@ -636,6 +643,12 @@ const ProfileSnapshot = () => {
                           </div>
                         ))}
                       </div>
+                      
+                      {/* [AI SUGGESTION FEATURE] Button and suggestion display - moved after content */}
+                      <div className="flex items-start mt-2 gap-1 justify-end">
+                        {renderAISuggestionButton('education')}
+                      </div>
+                      {renderAISuggestionPanel('education')}
                     </div>
                   </VersionControlledSection>
                 </div>
