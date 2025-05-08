@@ -1,7 +1,10 @@
 
-import { Briefcase } from 'lucide-react';
+import { useState } from 'react';
+import { Briefcase, Plus } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 
 interface IndustryPreferencesSectionProps {
   industryPreferences: string[];
@@ -12,6 +15,17 @@ const IndustryPreferencesSection = ({
   industryPreferences,
   setIndustryPreferences
 }: IndustryPreferencesSectionProps) => {
+  const [open, setOpen] = useState(false);
+  const [newIndustry, setNewIndustry] = useState("");
+  
+  const handleAddIndustry = () => {
+    if (newIndustry.trim() && !industryPreferences.includes(newIndustry.trim())) {
+      setIndustryPreferences([...industryPreferences, newIndustry.trim()]);
+      setNewIndustry("");
+      setOpen(false);
+    }
+  };
+
   return (
     <div>
       <div className="flex items-center gap-2 mb-4">
@@ -34,7 +48,30 @@ const IndustryPreferencesSection = ({
             </button>
           </Badge>
         ))}
-        <Button variant="outline" size="sm">+ Add Industry</Button>
+        
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <Button variant="outline" size="sm" className="gap-1">
+              <Plus className="h-3.5 w-3.5" />
+              Add Industry
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Add Industry Preference</DialogTitle>
+            </DialogHeader>
+            <div className="flex items-center gap-2">
+              <Input 
+                value={newIndustry} 
+                onChange={(e) => setNewIndustry(e.target.value)}
+                placeholder="Enter industry name" 
+                className="flex-1"
+                onKeyDown={(e) => e.key === 'Enter' && handleAddIndustry()}
+              />
+              <Button onClick={handleAddIndustry}>Add</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

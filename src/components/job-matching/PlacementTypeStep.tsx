@@ -1,8 +1,7 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { StepCard, StepCardContent, StepCardDescription, StepCardHeader, StepCardTitle } from "@/components/StepCard";
-import { Briefcase, Clock, MapPin } from "lucide-react";
+import { Briefcase, Clock, MapPin, Plus } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import CompensationSection from "./CompensationSection";
 import AvailabilitySection from "./AvailabilitySection";
@@ -10,6 +9,9 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import LocationSection from "./LocationSection";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 
 interface PlacementTypeStepProps {
   availabilityTypes: {
@@ -113,7 +115,7 @@ const PlacementTypeCard = ({
   </div>
 );
 
-// Simple component for Remote Work Preference
+// Updated Remote Work Preference component with toggle buttons
 const RemoteWorkPreference = ({ 
   remotePreference, 
   setRemotePreference 
@@ -129,19 +131,19 @@ const RemoteWorkPreference = ({
         <MapPin className="h-5 w-5 text-primary" />
         <h3 className="font-medium">Remote Work Preference</h3>
       </div>
-      <div className="flex items-center space-x-2 px-4">
-        <Switch 
-          id="remote-work" 
-          checked={remotePreference} 
-          onCheckedChange={setRemotePreference} 
-        />
-        <Label htmlFor="remote-work">I prefer remote work opportunities</Label>
+      <div className="px-4">
+        <ToggleGroup type="single" value={remotePreference ? "remote" : "onsite"} onValueChange={(value) => {
+          if (value) setRemotePreference(value === "remote");
+        }}>
+          <ToggleGroupItem value="remote" className="flex-1">Remote</ToggleGroupItem>
+          <ToggleGroupItem value="onsite" className="flex-1">On-site</ToggleGroupItem>
+        </ToggleGroup>
       </div>
     </div>
   );
 };
 
-// Simple component for Industry Preferences
+// Enhanced Industry Preferences with Add button and dialog
 const IndustryPreferenceSection = ({
   industryPreferences,
   setIndustryPreferences
@@ -149,7 +151,18 @@ const IndustryPreferenceSection = ({
   industryPreferences?: string[];
   setIndustryPreferences?: React.Dispatch<React.SetStateAction<string[]>>;
 }) => {
+  const [open, setOpen] = useState(false);
+  const [newIndustry, setNewIndustry] = useState("");
+  
   if (!industryPreferences || !setIndustryPreferences) return null;
+
+  const handleAddIndustry = () => {
+    if (newIndustry.trim() && !industryPreferences.includes(newIndustry.trim())) {
+      setIndustryPreferences([...industryPreferences, newIndustry.trim()]);
+      setNewIndustry("");
+      setOpen(false);
+    }
+  };
 
   return (
     <div className="py-4">
@@ -169,6 +182,30 @@ const IndustryPreferenceSection = ({
             </button>
           </Badge>
         ))}
+        
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <Button variant="outline" size="sm" className="gap-1">
+              <Plus className="h-3.5 w-3.5" />
+              Add Industry
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Add Industry Preference</DialogTitle>
+            </DialogHeader>
+            <div className="flex items-center gap-2">
+              <Input 
+                value={newIndustry} 
+                onChange={(e) => setNewIndustry(e.target.value)}
+                placeholder="Enter industry name" 
+                className="flex-1"
+                onKeyDown={(e) => e.key === 'Enter' && handleAddIndustry()}
+              />
+              <Button onClick={handleAddIndustry}>Add</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
