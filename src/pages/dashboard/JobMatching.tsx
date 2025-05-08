@@ -150,6 +150,20 @@ const JobMatching = () => {
           availabilityTypes={availabilityTypes}
           onSelectTypes={handleSelectTypes}
           onContinue={() => setCurrentStep('preferences')}
+          rateRange={rateRange}
+          setRateRange={setRateRange}
+          paymentType={paymentType}
+          setPaymentType={setPaymentType}
+          startDate={startDate}
+          setStartDate={setStartDate}
+          endDate={endDate}
+          setEndDate={setEndDate}
+          selectedDays={selectedDays}
+          setSelectedDays={setSelectedDays}
+          timePreference={timePreference}
+          setTimePreference={setTimePreference}
+          timezone={timezone}
+          setTimezone={setTimezone}
         />
       );
     }
