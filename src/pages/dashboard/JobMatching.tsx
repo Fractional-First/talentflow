@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
@@ -164,6 +163,10 @@ const JobMatching = () => {
           setTimePreference={setTimePreference}
           timezone={timezone}
           setTimezone={setTimezone}
+          remotePreference={remotePreference}
+          setRemotePreference={setRemotePreference}
+          industryPreferences={industryPreferences}
+          setIndustryPreferences={setIndustryPreferences}
         />
       );
     }

@@ -2,16 +2,13 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { StepCard, StepCardContent, StepCardDescription, StepCardHeader, StepCardTitle } from "@/components/StepCard";
-import { Briefcase, Clock } from "lucide-react";
+import { Briefcase, Clock, MapPin } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
-import { 
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import CompensationSection from "./CompensationSection";
 import AvailabilitySection from "./AvailabilitySection";
-import { ChevronDown } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 interface PlacementTypeStepProps {
   availabilityTypes: {
@@ -51,6 +48,10 @@ interface PlacementTypeStepProps {
   setTimePreference: (preference: string) => void;
   timezone: string;
   setTimezone: (zone: string) => void;
+  remotePreference?: boolean;
+  setRemotePreference?: (preference: boolean) => void;
+  industryPreferences?: string[];
+  setIndustryPreferences?: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 const PlacementTypeCard = ({
@@ -60,8 +61,6 @@ const PlacementTypeCard = ({
   icon: Icon,
   isSelected,
   onClick,
-  isOpen,
-  onToggle,
   children,
 }: {
   type: 'fullTime' | 'fractional';
@@ -70,8 +69,6 @@ const PlacementTypeCard = ({
   icon: typeof Briefcase;
   isSelected: boolean;
   onClick: () => void;
-  isOpen: boolean;
-  onToggle: () => void;
   children?: React.ReactNode;
 }) => (
   <div className="w-full">
@@ -99,23 +96,76 @@ const PlacementTypeCard = ({
       </div>
     </button>
     
-    {isSelected && (
-      <Collapsible
-        open={isOpen}
-        onOpenChange={onToggle}
-        className="mt-2 ml-8 border-l-2 border-primary/30 pl-4"
-      >
-        <CollapsibleTrigger className="flex items-center text-sm text-primary hover:text-primary/80 transition-colors">
-          <span>Configure preferences</span>
-          <ChevronDown className={`h-4 w-4 ml-1 transition-transform ${isOpen ? 'transform rotate-180' : ''}`} />
-        </CollapsibleTrigger>
-        <CollapsibleContent className="pt-4 space-y-4">
+    {isSelected && children && (
+      <div className="mt-4 ml-8 border-l-2 border-primary/30 pl-4">
+        <div className="pt-2 space-y-6">
           {children}
-        </CollapsibleContent>
-      </Collapsible>
+        </div>
+      </div>
     )}
   </div>
 );
+
+// Simple component for Remote Work Preference
+const RemoteWorkPreference = ({ 
+  remotePreference, 
+  setRemotePreference 
+}: { 
+  remotePreference?: boolean; 
+  setRemotePreference?: (value: boolean) => void 
+}) => {
+  if (!remotePreference || !setRemotePreference) return null;
+  
+  return (
+    <div className="py-4">
+      <div className="flex items-center gap-2 mb-4">
+        <MapPin className="h-5 w-5 text-primary" />
+        <h3 className="font-medium">Remote Work Preference</h3>
+      </div>
+      <div className="flex items-center space-x-2 px-4">
+        <Switch 
+          id="remote-work" 
+          checked={remotePreference} 
+          onCheckedChange={setRemotePreference} 
+        />
+        <Label htmlFor="remote-work">I prefer remote work opportunities</Label>
+      </div>
+    </div>
+  );
+};
+
+// Simple component for Industry Preferences
+const IndustryPreferenceSection = ({
+  industryPreferences,
+  setIndustryPreferences
+}: {
+  industryPreferences?: string[];
+  setIndustryPreferences?: React.Dispatch<React.SetStateAction<string[]>>;
+}) => {
+  if (!industryPreferences || !setIndustryPreferences) return null;
+
+  return (
+    <div className="py-4">
+      <div className="flex items-center gap-2 mb-4">
+        <Briefcase className="h-5 w-5 text-primary" />
+        <h3 className="font-medium">Industry Preferences</h3>
+      </div>
+      <div className="flex flex-wrap gap-2 px-4">
+        {industryPreferences.map(industry => (
+          <Badge key={industry} variant="outline">
+            {industry}
+            <button 
+              className="ml-1 text-muted-foreground hover:text-foreground"
+              onClick={() => setIndustryPreferences(prev => prev.filter(i => i !== industry))}
+            >
+              ×
+            </button>
+          </Badge>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 export const PlacementTypeStep = ({
   availabilityTypes,
@@ -135,6 +185,10 @@ export const PlacementTypeStep = ({
   setTimePreference,
   timezone,
   setTimezone,
+  remotePreference,
+  setRemotePreference,
+  industryPreferences,
+  setIndustryPreferences
 }: PlacementTypeStepProps) => {
   const toggleType = (type: 'fullTime' | 'fractional') => {
     onSelectTypes({
@@ -144,10 +198,6 @@ export const PlacementTypeStep = ({
   };
 
   const hasSelection = availabilityTypes.fullTime || availabilityTypes.fractional;
-  
-  // Track open/close state for each placement type's preferences
-  const [fullTimeOpen, setFullTimeOpen] = useState(false);
-  const [flexibleOpen, setFlexibleOpen] = useState(false);
 
   return (
     <StepCard>
@@ -159,7 +209,7 @@ export const PlacementTypeStep = ({
       </StepCardHeader>
       
       <StepCardContent>
-        <div className="space-y-4">
+        <div className="space-y-6">
           <PlacementTypeCard
             type="fullTime"
             title="Full-time Position"
@@ -167,18 +217,16 @@ export const PlacementTypeStep = ({
             icon={Briefcase}
             isSelected={availabilityTypes.fullTime}
             onClick={() => toggleType('fullTime')}
-            isOpen={fullTimeOpen}
-            onToggle={() => setFullTimeOpen(!fullTimeOpen)}
           >
-            <div className="bg-background/80 rounded-lg p-4">
-              <h5 className="font-medium mb-2 text-sm">Full-time Preferences</h5>
-              <CompensationSection
-                paymentType={paymentType}
-                setPaymentType={setPaymentType}
-                rateRange={rateRange}
-                setRateRange={setRateRange}
-              />
-              <div className="mt-4">
+            {availabilityTypes.fullTime && (
+              <div className="bg-background/80 rounded-lg p-4 space-y-6">
+                <CompensationSection
+                  paymentType={paymentType}
+                  setPaymentType={setPaymentType}
+                  rateRange={rateRange}
+                  setRateRange={setRateRange}
+                />
+                
                 <AvailabilitySection
                   availabilityTypes={{ fullTime: true, fractional: false }}
                   setAvailabilityTypes={() => {}}
@@ -193,8 +241,18 @@ export const PlacementTypeStep = ({
                   timezone={timezone}
                   setTimezone={setTimezone}
                 />
+                
+                <RemoteWorkPreference 
+                  remotePreference={remotePreference}
+                  setRemotePreference={setRemotePreference}
+                />
+                
+                <IndustryPreferenceSection
+                  industryPreferences={industryPreferences}
+                  setIndustryPreferences={setIndustryPreferences}
+                />
               </div>
-            </div>
+            )}
           </PlacementTypeCard>
           
           <PlacementTypeCard
@@ -204,18 +262,16 @@ export const PlacementTypeStep = ({
             icon={Clock}
             isSelected={availabilityTypes.fractional}
             onClick={() => toggleType('fractional')}
-            isOpen={flexibleOpen}
-            onToggle={() => setFlexibleOpen(!flexibleOpen)}
           >
-            <div className="bg-background/80 rounded-lg p-4">
-              <h5 className="font-medium mb-2 text-sm">Flexible Position Preferences</h5>
-              <CompensationSection
-                paymentType={paymentType}
-                setPaymentType={setPaymentType}
-                rateRange={rateRange}
-                setRateRange={setRateRange}
-              />
-              <div className="mt-4">
+            {availabilityTypes.fractional && (
+              <div className="bg-background/80 rounded-lg p-4 space-y-6">
+                <CompensationSection
+                  paymentType={paymentType}
+                  setPaymentType={setPaymentType}
+                  rateRange={rateRange}
+                  setRateRange={setRateRange}
+                />
+                
                 <AvailabilitySection
                   availabilityTypes={{ fullTime: false, fractional: true }}
                   setAvailabilityTypes={() => {}}
@@ -230,8 +286,18 @@ export const PlacementTypeStep = ({
                   timezone={timezone}
                   setTimezone={setTimezone}
                 />
+                
+                <RemoteWorkPreference 
+                  remotePreference={remotePreference}
+                  setRemotePreference={setRemotePreference}
+                />
+                
+                <IndustryPreferenceSection
+                  industryPreferences={industryPreferences}
+                  setIndustryPreferences={setIndustryPreferences}
+                />
               </div>
-            </div>
+            )}
           </PlacementTypeCard>
           
           <div className="pt-6">
