@@ -1,11 +1,16 @@
 
-import { MapPin, Building } from 'lucide-react';
+import { MapPin, HelpCircle, Building } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface LocationSectionProps {
   currentLocation: string;
@@ -30,7 +35,7 @@ const LocationSection = ({
 }: LocationSectionProps) => {
   return (
     <>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Building className="h-5 w-5 text-primary" />
           <div>
@@ -51,7 +56,7 @@ const LocationSection = ({
         </div>
       </div>
       
-      <div className="mt-4">
+      <div>
         <div className="flex items-center gap-2 mb-4">
           <MapPin className="h-5 w-5 text-primary" />
           <div>
@@ -74,6 +79,18 @@ const LocationSection = ({
           <div>
             <div className="flex items-center justify-between mb-2">
               <Label className="text-sm">Legal Work Eligibility</Label>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <HelpCircle className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="max-w-xs">Select countries where you are legally authorized to work without visa sponsorship.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
             <div className="flex flex-wrap gap-2">
               {workEligibility.map(country => (
@@ -94,6 +111,18 @@ const LocationSection = ({
           <div>
             <div className="flex items-center justify-between mb-2">
               <Label className="text-sm">Preferred Work Locations</Label>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <HelpCircle className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="max-w-xs">Add cities or regions where you prefer to work, if not working remotely.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
             <div className="flex flex-wrap gap-2">
               {locationPreferences.map(location => (
