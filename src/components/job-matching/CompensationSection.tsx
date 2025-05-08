@@ -1,4 +1,3 @@
-
 import { 
   DollarSign, 
   HelpCircle 
@@ -18,13 +17,15 @@ interface CompensationSectionProps {
   setPaymentType: (type: string) => void;
   rateRange: number[];
   setRateRange: (range: number[]) => void;
+  showOnly?: 'annual' | 'hourly-daily'; // New prop for conditional rendering
 }
 
 const CompensationSection = ({
   paymentType,
   setPaymentType,
   rateRange,
-  setRateRange
+  setRateRange,
+  showOnly
 }: CompensationSectionProps) => {
   const formatSalary = (value: number) => {
     return `$${value.toLocaleString()}`;
@@ -40,14 +41,14 @@ const CompensationSection = ({
         </div>
       </div>
       
-      <Tabs defaultValue="annual" onValueChange={setPaymentType} className="mb-6">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="annual">Annual Salary</TabsTrigger>
-          <TabsTrigger value="daily">Daily Rate</TabsTrigger>
-          <TabsTrigger value="hourly">Hourly Rate</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="annual" className="pt-4">
+      {/* Display either only annual, or only hourly and daily based on showOnly prop */}
+      {showOnly === 'annual' ? (
+        // Annual salary only option for full-time positions
+        <div className="mb-6">
+          <div className="bg-muted/30 rounded-md p-2 mb-4">
+            <span className="text-sm font-medium">Annual Salary</span>
+          </div>
+          
           <div className="px-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium">Rate Range</span>
@@ -59,7 +60,7 @@ const CompensationSection = ({
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p className="max-w-xs">Set your expected salary range. The lower end applies to higher volume commitments, while the higher end applies to more specialized or shorter-term work.</p>
+                    <p className="max-w-xs">Set your expected salary range for full-time positions.</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -78,74 +79,190 @@ const CompensationSection = ({
             </div>
             <p className="text-xs text-muted-foreground mt-2">Range from {formatSalary(rateRange[0])} to {formatSalary(rateRange[1])}</p>
           </div>
-        </TabsContent>
-        
-        <TabsContent value="daily" className="pt-4">
-          <div className="px-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium">Daily Rate Range</span>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <HelpCircle className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="max-w-xs">Set your expected daily rate range. The lower end applies to longer engagements, while the higher end applies to shorter-term work.</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+        </div>
+      ) : showOnly === 'hourly-daily' ? (
+        // Hourly and daily rate options only for flexible positions
+        <Tabs defaultValue={paymentType} onValueChange={setPaymentType} className="mb-6">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="hourly">Hourly Rate</TabsTrigger>
+            <TabsTrigger value="daily">Daily Rate</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="hourly" className="pt-4">
+            <div className="px-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium">Hourly Rate Range</span>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <HelpCircle className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="max-w-xs">Set your expected hourly rate range. The lower end applies to higher volume commitments (20+ hours/week), while the higher end applies to specialized or lower volume work.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+              <Slider
+                defaultValue={[75, 150]}
+                max={500}
+                min={25}
+                step={5}
+                value={[75, 150]}
+                onValueChange={(values) => setRateRange([values[0], values[1]])}
+              />
+              <div className="flex justify-between mt-2">
+                <span className="text-sm font-medium">$75</span>
+                <span className="text-sm font-medium">$150</span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">Range from $75 to $150 per hour</p>
             </div>
-            <Slider
-              defaultValue={[500, 1000]}
-              max={3000}
-              min={100}
-              step={50}
-              value={[500, 1000]}
-              onValueChange={() => {}}
-            />
-            <div className="flex justify-between mt-2">
-              <span className="text-sm font-medium">$500</span>
-              <span className="text-sm font-medium">$1,000</span>
+          </TabsContent>
+          
+          <TabsContent value="daily" className="pt-4">
+            <div className="px-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium">Daily Rate Range</span>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <HelpCircle className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="max-w-xs">Set your expected daily rate range. The lower end applies to longer engagements, while the higher end applies to shorter-term work.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+              <Slider
+                defaultValue={[500, 1000]}
+                max={3000}
+                min={100}
+                step={50}
+                value={[500, 1000]}
+                onValueChange={(values) => setRateRange([values[0], values[1]])}
+              />
+              <div className="flex justify-between mt-2">
+                <span className="text-sm font-medium">$500</span>
+                <span className="text-sm font-medium">$1,000</span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">Range from $500 to $1,000 per day</p>
             </div>
-            <p className="text-xs text-muted-foreground mt-2">Range from $500 to $1,000 per day</p>
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="hourly" className="pt-4">
-          <div className="px-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium">Hourly Rate Range</span>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <HelpCircle className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="max-w-xs">Set your expected hourly rate range. The lower end applies to higher volume commitments (20+ hours/week), while the higher end applies to specialized or lower volume work.</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+          </TabsContent>
+        </Tabs>
+      ) : (
+        // Default case - show all options (original functionality)
+        <Tabs defaultValue="annual" onValueChange={setPaymentType} className="mb-6">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="annual">Annual Salary</TabsTrigger>
+            <TabsTrigger value="daily">Daily Rate</TabsTrigger>
+            <TabsTrigger value="hourly">Hourly Rate</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="annual" className="pt-4">
+            <div className="px-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium">Rate Range</span>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <HelpCircle className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="max-w-xs">Set your expected salary range. The lower end applies to higher volume commitments, while the higher end applies to more specialized or shorter-term work.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+              <Slider
+                defaultValue={[75000, 100000]}
+                max={200000}
+                min={30000}
+                step={5000}
+                value={rateRange}
+                onValueChange={setRateRange}
+              />
+              <div className="flex justify-between mt-2">
+                <span className="text-sm font-medium">{formatSalary(rateRange[0])}</span>
+                <span className="text-sm font-medium">{formatSalary(rateRange[1])}</span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">Range from {formatSalary(rateRange[0])} to {formatSalary(rateRange[1])}</p>
             </div>
-            <Slider
-              defaultValue={[75, 150]}
-              max={500}
-              min={25}
-              step={5}
-              value={[75, 150]}
-              onValueChange={() => {}}
-            />
-            <div className="flex justify-between mt-2">
-              <span className="text-sm font-medium">$75</span>
-              <span className="text-sm font-medium">$150</span>
+          </TabsContent>
+          
+          <TabsContent value="daily" className="pt-4">
+            <div className="px-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium">Daily Rate Range</span>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <HelpCircle className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="max-w-xs">Set your expected daily rate range. The lower end applies to longer engagements, while the higher end applies to shorter-term work.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+              <Slider
+                defaultValue={[500, 1000]}
+                max={3000}
+                min={100}
+                step={50}
+                value={rateRange}
+                onValueChange={setRateRange}
+              />
+              <div className="flex justify-between mt-2">
+                <span className="text-sm font-medium">$500</span>
+                <span className="text-sm font-medium">$1,000</span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">Range from $500 to $1,000 per day</p>
             </div>
-            <p className="text-xs text-muted-foreground mt-2">Range from $75 to $150 per hour</p>
-          </div>
-        </TabsContent>
-      </Tabs>
+          </TabsContent>
+          
+          <TabsContent value="hourly" className="pt-4">
+            <div className="px-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium">Hourly Rate Range</span>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <HelpCircle className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="max-w-xs">Set your expected hourly rate range. The lower end applies to higher volume commitments (20+ hours/week), while the higher end applies to specialized or lower volume work.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+              <Slider
+                defaultValue={[75, 150]}
+                max={500}
+                min={25}
+                step={5}
+                value={rateRange}
+                onValueChange={setRateRange}
+              />
+              <div className="flex justify-between mt-2">
+                <span className="text-sm font-medium">$75</span>
+                <span className="text-sm font-medium">$150</span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">Range from $75 to $150 per hour</p>
+            </div>
+          </TabsContent>
+        </Tabs>
+      )}
     </div>
   );
 };

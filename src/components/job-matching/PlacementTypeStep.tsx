@@ -9,6 +9,7 @@ import AvailabilitySection from "./AvailabilitySection";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import LocationSection from "./LocationSection";
 
 interface PlacementTypeStepProps {
   availabilityTypes: {
@@ -52,6 +53,12 @@ interface PlacementTypeStepProps {
   setRemotePreference?: (preference: boolean) => void;
   industryPreferences?: string[];
   setIndustryPreferences?: React.Dispatch<React.SetStateAction<string[]>>;
+  currentLocation?: string;
+  setCurrentLocation?: (location: string) => void;
+  locationPreferences?: string[];
+  setLocationPreferences?: React.Dispatch<React.SetStateAction<string[]>>;
+  workEligibility?: string[];
+  setWorkEligibility?: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 const PlacementTypeCard = ({
@@ -167,6 +174,40 @@ const IndustryPreferenceSection = ({
   );
 };
 
+// Simple component for Location Information
+const LocationPreferenceSection = ({
+  currentLocation,
+  setCurrentLocation,
+  locationPreferences,
+  setLocationPreferences,
+  workEligibility,
+  setWorkEligibility
+}: {
+  currentLocation?: string;
+  setCurrentLocation?: (location: string) => void;
+  locationPreferences?: string[];
+  setLocationPreferences?: React.Dispatch<React.SetStateAction<string[]>>;
+  workEligibility?: string[];
+  setWorkEligibility?: React.Dispatch<React.SetStateAction<string[]>>;
+}) => {
+  if (!currentLocation || !setCurrentLocation || !locationPreferences || !setLocationPreferences || !workEligibility || !setWorkEligibility) return null;
+
+  return (
+    <div className="py-4">
+      <LocationSection
+        currentLocation={currentLocation}
+        setCurrentLocation={setCurrentLocation}
+        workEligibility={workEligibility}
+        setWorkEligibility={setWorkEligibility}
+        locationPreferences={locationPreferences}
+        setLocationPreferences={setLocationPreferences}
+        remotePreference={false} // We handle remote preference separately
+        setRemotePreference={() => {}} // Empty function since we handle it separately
+      />
+    </div>
+  );
+};
+
 export const PlacementTypeStep = ({
   availabilityTypes,
   onSelectTypes,
@@ -188,7 +229,13 @@ export const PlacementTypeStep = ({
   remotePreference,
   setRemotePreference,
   industryPreferences,
-  setIndustryPreferences
+  setIndustryPreferences,
+  currentLocation,
+  setCurrentLocation,
+  locationPreferences,
+  setLocationPreferences,
+  workEligibility,
+  setWorkEligibility
 }: PlacementTypeStepProps) => {
   const toggleType = (type: 'fullTime' | 'fractional') => {
     onSelectTypes({
@@ -198,6 +245,21 @@ export const PlacementTypeStep = ({
   };
 
   const hasSelection = availabilityTypes.fullTime || availabilityTypes.fractional;
+  
+  // Set appropriate payment type when selecting position type
+  const handleFullTimeToggle = () => {
+    if (!availabilityTypes.fullTime) {
+      setPaymentType('annual'); // Force annual salary for full-time
+    }
+    toggleType('fullTime');
+  };
+  
+  const handleFlexibleToggle = () => {
+    if (!availabilityTypes.fractional) {
+      setPaymentType('hourly'); // Default to hourly for flexible positions
+    }
+    toggleType('fractional');
+  };
 
   return (
     <StepCard>
@@ -216,15 +278,17 @@ export const PlacementTypeStep = ({
             description="40 hours per week, dedicated to one company. Traditional employment with benefits."
             icon={Briefcase}
             isSelected={availabilityTypes.fullTime}
-            onClick={() => toggleType('fullTime')}
+            onClick={handleFullTimeToggle}
           >
             {availabilityTypes.fullTime && (
               <div className="bg-background/80 rounded-lg p-4 space-y-6">
+                {/* Full-time position only shows annual salary option */}
                 <CompensationSection
-                  paymentType={paymentType}
-                  setPaymentType={setPaymentType}
+                  paymentType="annual"
+                  setPaymentType={() => {}} // Lock to annual
                   rateRange={rateRange}
                   setRateRange={setRateRange}
+                  showOnly="annual"
                 />
                 
                 <AvailabilitySection
@@ -247,6 +311,15 @@ export const PlacementTypeStep = ({
                   setRemotePreference={setRemotePreference}
                 />
                 
+                <LocationPreferenceSection
+                  currentLocation={currentLocation}
+                  setCurrentLocation={setCurrentLocation}
+                  locationPreferences={locationPreferences}
+                  setLocationPreferences={setLocationPreferences}
+                  workEligibility={workEligibility}
+                  setWorkEligibility={setWorkEligibility}
+                />
+                
                 <IndustryPreferenceSection
                   industryPreferences={industryPreferences}
                   setIndustryPreferences={setIndustryPreferences}
@@ -261,15 +334,17 @@ export const PlacementTypeStep = ({
             description="Part-time commitment, flexible hours. Work with multiple companies simultaneously."
             icon={Clock}
             isSelected={availabilityTypes.fractional}
-            onClick={() => toggleType('fractional')}
+            onClick={handleFlexibleToggle}
           >
             {availabilityTypes.fractional && (
               <div className="bg-background/80 rounded-lg p-4 space-y-6">
+                {/* Flexible position only shows hourly and daily rate options */}
                 <CompensationSection
-                  paymentType={paymentType}
+                  paymentType={paymentType === 'annual' ? 'hourly' : paymentType}
                   setPaymentType={setPaymentType}
                   rateRange={rateRange}
                   setRateRange={setRateRange}
+                  showOnly="hourly-daily"
                 />
                 
                 <AvailabilitySection
@@ -290,6 +365,15 @@ export const PlacementTypeStep = ({
                 <RemoteWorkPreference 
                   remotePreference={remotePreference}
                   setRemotePreference={setRemotePreference}
+                />
+                
+                <LocationPreferenceSection
+                  currentLocation={currentLocation}
+                  setCurrentLocation={setCurrentLocation}
+                  locationPreferences={locationPreferences}
+                  setLocationPreferences={setLocationPreferences}
+                  workEligibility={workEligibility}
+                  setWorkEligibility={setWorkEligibility}
                 />
                 
                 <IndustryPreferenceSection

@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
@@ -167,6 +168,12 @@ const JobMatching = () => {
           setRemotePreference={setRemotePreference}
           industryPreferences={industryPreferences}
           setIndustryPreferences={setIndustryPreferences}
+          currentLocation={currentLocation}
+          setCurrentLocation={setCurrentLocation}
+          locationPreferences={locationPreferences}
+          setLocationPreferences={setLocationPreferences}
+          workEligibility={workEligibility}
+          setWorkEligibility={setWorkEligibility}
         />
       );
     }
