@@ -1,18 +1,16 @@
-
-import { MapPin, HelpCircle, Building } from 'lucide-react';
+import { MapPin, Building } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useState } from 'react';
 
 interface LocationSectionProps {
@@ -68,17 +66,14 @@ const LocationSection = ({
           </div>
         </div>
         
-        <div className="flex items-center gap-4">
-          <ToggleGroup 
-            type="single" 
-            value={remotePreference ? "remote" : "onsite"} 
-            onValueChange={(value) => {
-              if (value) setRemotePreference(value === "remote");
-            }}
-          >
-            <ToggleGroupItem value="remote" className="flex-1">Remote</ToggleGroupItem>
-            <ToggleGroupItem value="onsite" className="flex-1">On-site</ToggleGroupItem>
-          </ToggleGroup>
+        <div className="flex items-center gap-2">
+          <Label htmlFor="remote-toggle" className={`text-sm ${!remotePreference && "font-medium"}`}>No</Label>
+          <Switch 
+            id="remote-toggle"
+            checked={remotePreference}
+            onCheckedChange={setRemotePreference}
+          />
+          <Label htmlFor="remote-toggle" className={`text-sm ${remotePreference && "font-medium"}`}>Yes</Label>
         </div>
       </div>
       

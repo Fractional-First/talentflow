@@ -115,7 +115,7 @@ const PlacementTypeCard = ({
   </div>
 );
 
-// Updated Remote Work Preference component with toggle buttons
+// Updated Remote Work Preference component with toggle
 const RemoteWorkPreference = ({ 
   remotePreference, 
   setRemotePreference 
@@ -131,13 +131,15 @@ const RemoteWorkPreference = ({
         <MapPin className="h-5 w-5 text-primary" />
         <h3 className="font-medium">Remote Work Preference</h3>
       </div>
-      <div className="px-4">
-        <ToggleGroup type="single" value={remotePreference ? "remote" : "onsite"} onValueChange={(value) => {
-          if (value) setRemotePreference(value === "remote");
-        }}>
-          <ToggleGroupItem value="remote" className="flex-1">Remote</ToggleGroupItem>
-          <ToggleGroupItem value="onsite" className="flex-1">On-site</ToggleGroupItem>
-        </ToggleGroup>
+      <div className="px-4 flex items-center gap-2">
+        <Label htmlFor="remote-toggle-step" className={`text-sm ${!remotePreference && "font-medium"}`}>No</Label>
+        <Switch 
+          id="remote-toggle-step"
+          checked={remotePreference}
+          onCheckedChange={setRemotePreference}
+        />
+        <Label htmlFor="remote-toggle-step" className={`text-sm ${remotePreference && "font-medium"}`}>Yes</Label>
+        <span className="text-sm text-muted-foreground ml-2">Are you interested in remote work?</span>
       </div>
     </div>
   );
