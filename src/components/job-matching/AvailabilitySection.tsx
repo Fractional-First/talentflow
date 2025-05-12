@@ -2,12 +2,11 @@
 import { useState } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { CalendarDays } from 'lucide-react';
+import { CalendarDays, Clock } from 'lucide-react';
+import WeeklyCalendar from './WeeklyCalendar';
 
 interface AvailabilitySectionProps {
   availabilityTypes: {
@@ -57,6 +56,51 @@ const AvailabilitySection = ({
   timezone,
   setTimezone
 }: AvailabilitySectionProps) => {
+  // Create a state for selected time slots based on the current selectedDays
+  const initialTimeSlots = {} as { [key: string]: boolean };
+  
+  // Map days to indices in the weekly calendar
+  const daysMap: { [key: string]: string } = {
+    'mon': 'Mon',
+    'tue': 'Tue',
+    'wed': 'Wed',
+    'thu': 'Thu',
+    'fri': 'Fri', 
+    'sat': 'Sat',
+    'sun': 'Sun'
+  };
+  
+  // Set initial time slots based on existing preferences
+  Object.entries(selectedDays).forEach(([day, selected]) => {
+    if (selected) {
+      // If this day is selected, set the proper time range based on preference
+      const startHour = timePreference === 'mornings' ? 8 : timePreference === 'afternoons' ? 13 : 9;
+      const endHour = timePreference === 'mornings' ? 12 : timePreference === 'afternoons' ? 17 : 17;
+      
+      for (let hour = startHour; hour < endHour; hour++) {
+        initialTimeSlots[`${daysMap[day]}-${hour}`] = true;
+      }
+    }
+  });
+  
+  const [selectedTimeSlots, setSelectedTimeSlots] = useState(initialTimeSlots);
+  
+  // Handle updates to the time slots by updating the selectedDays and timePreference
+  const handleTimeSlotsChange = (newTimeSlots: { [key: string]: boolean }) => {
+    setSelectedTimeSlots(newTimeSlots);
+    
+    // Update selectedDays based on whether any time slot for a day is selected
+    const updatedDays = { ...selectedDays };
+    Object.entries(daysMap).forEach(([dayKey, dayValue]) => {
+      const hasActiveSlot = Object.keys(newTimeSlots).some(
+        key => key.startsWith(dayValue) && newTimeSlots[key]
+      );
+      updatedDays[dayKey as keyof typeof selectedDays] = hasActiveSlot;
+    });
+    
+    setSelectedDays(updatedDays);
+  };
+
   return (
     <div>
       <div className="flex items-center gap-2 mb-4">
@@ -123,71 +167,24 @@ const AvailabilitySection = ({
             </div>
             
             {availabilityTypes.fractional && (
-              <Accordion type="single" collapsible className="ml-7">
+              <Accordion type="single" defaultValue="flexibility-options" collapsible className="ml-7">
                 <AccordionItem value="flexibility-options">
                   <AccordionTrigger className="text-sm py-2">
                     Choose flexibility options
                   </AccordionTrigger>
                   <AccordionContent>
                     <div className="space-y-4">
-                      <div>
-                        <Label className="text-sm mb-2 block">Preferred Days</Label>
-                        <div className="grid grid-cols-7 gap-2">
-                          {Object.entries({
-                            mon: 'Mon',
-                            tue: 'Tue',
-                            wed: 'Wed',
-                            thu: 'Thu',
-                            fri: 'Fri',
-                            sat: 'Sat',
-                            sun: 'Sun'
-                          }).map(([key, label]) => (
-                            <div key={key} className="flex flex-col items-center">
-                              <Checkbox 
-                                id={`day-${key}`} 
-                                checked={selectedDays[key as keyof typeof selectedDays]}
-                                onCheckedChange={(checked) => 
-                                  setSelectedDays(prev => ({...prev, [key]: checked === true}))}
-                                className="mb-1"
-                              />
-                              <label htmlFor={`day-${key}`} className="text-xs">{label}</label>
-                            </div>
-                          ))}
-                        </div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <Clock className="h-4 w-4 text-primary" />
+                        <Label className="text-sm font-medium">Weekly Schedule</Label>
                       </div>
                       
-                      <div>
-                        <Label className="text-sm mb-2 block">Time Preference</Label>
-                        <RadioGroup defaultValue="all-day" value={timePreference} onValueChange={setTimePreference}>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="all-day" id="all-day" />
-                            <Label htmlFor="all-day">All Day</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="mornings" id="mornings" />
-                            <Label htmlFor="mornings">Mornings Only</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="afternoons" id="afternoons" />
-                            <Label htmlFor="afternoons">Afternoons Only</Label>
-                          </div>
-                        </RadioGroup>
-                      </div>
-                      
-                      <div>
-                        <Label className="text-sm mb-2 block">Timezone</Label>
-                        <Select value={timezone} onValueChange={setTimezone}>
-                          <SelectTrigger className="max-w-xs">
-                            <SelectValue placeholder="Select your timezone" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="EST">Eastern Time (EST/EDT)</SelectItem>
-                            <SelectItem value="CST">Central Time (CST/CDT)</SelectItem>
-                            <SelectItem value="MST">Mountain Time (MST/MDT)</SelectItem>
-                            <SelectItem value="PST">Pacific Time (PST/PDT)</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
+                      <WeeklyCalendar 
+                        selectedTimeSlots={selectedTimeSlots}
+                        setSelectedTimeSlots={handleTimeSlotsChange}
+                        timezone={timezone}
+                        setTimezone={setTimezone}
+                      />
                     </div>
                   </AccordionContent>
                 </AccordionItem>

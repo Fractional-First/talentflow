@@ -5,12 +5,15 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useState } from 'react';
 
 interface LocationSectionProps {
   currentLocation: string;
@@ -33,9 +36,30 @@ const LocationSection = ({
   remotePreference,
   setRemotePreference
 }: LocationSectionProps) => {
+  const [newCountry, setNewCountry] = useState("");
+  const [newLocation, setNewLocation] = useState("");
+  const [openCountryDialog, setOpenCountryDialog] = useState(false);
+  const [openLocationDialog, setOpenLocationDialog] = useState(false);
+
+  const handleAddCountry = () => {
+    if (newCountry.trim() && !workEligibility.includes(newCountry.trim())) {
+      setWorkEligibility([...workEligibility, newCountry.trim()]);
+      setNewCountry("");
+      setOpenCountryDialog(false);
+    }
+  };
+
+  const handleAddLocation = () => {
+    if (newLocation.trim() && !locationPreferences.includes(newLocation.trim())) {
+      setLocationPreferences([...locationPreferences, newLocation.trim()]);
+      setNewLocation("");
+      setOpenLocationDialog(false);
+    }
+  };
+
   return (
     <>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <Building className="h-5 w-5 text-primary" />
           <div>
@@ -44,15 +68,17 @@ const LocationSection = ({
           </div>
         </div>
         
-        <div className="flex items-center space-x-2">
-          <Switch 
-            id="remote-preference" 
-            checked={remotePreference}
-            onCheckedChange={setRemotePreference}
-          />
-          <label htmlFor="remote-preference" className="text-sm font-medium">
-            {remotePreference ? 'Yes' : 'No'}
-          </label>
+        <div className="flex items-center gap-4">
+          <ToggleGroup 
+            type="single" 
+            value={remotePreference ? "remote" : "onsite"} 
+            onValueChange={(value) => {
+              if (value) setRemotePreference(value === "remote");
+            }}
+          >
+            <ToggleGroupItem value="remote" className="flex-1">Remote</ToggleGroupItem>
+            <ToggleGroupItem value="onsite" className="flex-1">On-site</ToggleGroupItem>
+          </ToggleGroup>
         </div>
       </div>
       
@@ -79,18 +105,6 @@ const LocationSection = ({
           <div>
             <div className="flex items-center justify-between mb-2">
               <Label className="text-sm">Legal Work Eligibility</Label>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <HelpCircle className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="max-w-xs">Select countries where you are legally authorized to work without visa sponsorship.</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
             </div>
             <div className="flex flex-wrap gap-2">
               {workEligibility.map(country => (
@@ -104,25 +118,31 @@ const LocationSection = ({
                   </button>
                 </Badge>
               ))}
-              <Button variant="outline" size="sm">+ Add Country</Button>
+              <Dialog open={openCountryDialog} onOpenChange={setOpenCountryDialog}>
+                <DialogTrigger asChild>
+                  <Button variant="outline" size="sm">+ Add Country</Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add Work Eligibility Country</DialogTitle>
+                  </DialogHeader>
+                  <div className="flex items-center gap-2 mt-2">
+                    <Input 
+                      value={newCountry} 
+                      onChange={(e) => setNewCountry(e.target.value)}
+                      placeholder="Enter country name"
+                      onKeyDown={(e) => e.key === 'Enter' && handleAddCountry()}
+                    />
+                    <Button onClick={handleAddCountry}>Add</Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
           
           <div>
             <div className="flex items-center justify-between mb-2">
               <Label className="text-sm">Preferred Work Locations</Label>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <HelpCircle className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="max-w-xs">Add cities or regions where you prefer to work, if not working remotely.</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
             </div>
             <div className="flex flex-wrap gap-2">
               {locationPreferences.map(location => (
@@ -136,7 +156,25 @@ const LocationSection = ({
                   </button>
                 </Badge>
               ))}
-              <Button variant="outline" size="sm">+ Add Location</Button>
+              <Dialog open={openLocationDialog} onOpenChange={setOpenLocationDialog}>
+                <DialogTrigger asChild>
+                  <Button variant="outline" size="sm">+ Add Location</Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add Preferred Work Location</DialogTitle>
+                  </DialogHeader>
+                  <div className="flex items-center gap-2 mt-2">
+                    <Input 
+                      value={newLocation} 
+                      onChange={(e) => setNewLocation(e.target.value)}
+                      placeholder="Enter city or region"
+                      onKeyDown={(e) => e.key === 'Enter' && handleAddLocation()}
+                    />
+                    <Button onClick={handleAddLocation}>Add</Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
         </div>
