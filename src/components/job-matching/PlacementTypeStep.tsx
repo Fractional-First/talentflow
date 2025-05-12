@@ -9,7 +9,6 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import LocationSection from "./LocationSection";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 
@@ -125,6 +124,10 @@ const RemoteWorkPreference = ({
 }) => {
   if (!remotePreference || !setRemotePreference) return null;
   
+  const handleRemoteToggle = (checked: boolean) => {
+    setRemotePreference(checked);
+  };
+  
   return (
     <div className="py-4">
       <div className="flex items-center gap-2 mb-4">
@@ -136,7 +139,7 @@ const RemoteWorkPreference = ({
         <Switch 
           id="remote-toggle-step"
           checked={remotePreference}
-          onCheckedChange={setRemotePreference}
+          onCheckedChange={handleRemoteToggle}
         />
         <Label htmlFor="remote-toggle-step" className={`text-sm ${remotePreference && "font-medium"}`}>Yes</Label>
         <span className="text-sm text-muted-foreground ml-2">Are you interested in remote work?</span>

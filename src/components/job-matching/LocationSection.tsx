@@ -1,3 +1,4 @@
+
 import { MapPin, Building } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -55,6 +56,10 @@ const LocationSection = ({
     }
   };
 
+  const handleRemoteToggle = (checked: boolean) => {
+    setRemotePreference(checked);
+  };
+
   return (
     <>
       <div className="flex items-center justify-between mb-6">
@@ -71,7 +76,7 @@ const LocationSection = ({
           <Switch 
             id="remote-toggle"
             checked={remotePreference}
-            onCheckedChange={setRemotePreference}
+            onCheckedChange={handleRemoteToggle}
           />
           <Label htmlFor="remote-toggle" className={`text-sm ${remotePreference && "font-medium"}`}>Yes</Label>
         </div>
