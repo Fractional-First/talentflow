@@ -127,32 +127,14 @@ const RemoteWorkPreference = ({
   
   return (
     <div className="py-4">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <MapPin className="h-5 w-5 text-primary" />
-          <h3 className="font-medium">Remote Work Preference</h3>
-        </div>
-        
-        <div className="flex items-center space-x-2">
-          <Switch 
-            id="remote-preference-step" 
-            checked={remotePreference}
-            onCheckedChange={setRemotePreference}
-          />
-          <label htmlFor="remote-preference-step" className="text-sm font-medium">
-            {remotePreference ? 'Yes' : 'No'}
-          </label>
-        </div>
+      <div className="flex items-center gap-2 mb-4">
+        <MapPin className="h-5 w-5 text-primary" />
+        <h3 className="font-medium">Remote Work Preference</h3>
       </div>
-      
       <div className="px-4">
-        <ToggleGroup 
-          type="single" 
-          value={remotePreference ? "remote" : "onsite"} 
-          onValueChange={(value) => {
-            if (value) setRemotePreference(value === "remote");
-          }}
-        >
+        <ToggleGroup type="single" value={remotePreference ? "remote" : "onsite"} onValueChange={(value) => {
+          if (value) setRemotePreference(value === "remote");
+        }}>
           <ToggleGroupItem value="remote" className="flex-1">Remote</ToggleGroupItem>
           <ToggleGroupItem value="onsite" className="flex-1">On-site</ToggleGroupItem>
         </ToggleGroup>
