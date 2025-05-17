@@ -68,6 +68,25 @@ const ProfileCreation = () => {
   const [currentDocUrl, setCurrentDocUrl] = useState('');
   const [currentDocFileName, setCurrentDocFileName] = useState('');
   
+  // New state for file data
+  const [linkedinPdfFile, setLinkedinPdfFile] = useState<File | null>(null);
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [supportingFiles, setSupportingFiles] = useState<Map<string, File>>(new Map());
+  
+  // Form fields state
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    currentPosition: '',
+    company: '',
+    industry: '',
+    experienceLevel: '',
+    summary: '',
+    skills: ''
+  });
+  
   useEffect(() => {
     const authMethod = localStorage.getItem('authMethod');
     if (authMethod === 'linkedin' || location.state?.linkedInSignUp) {
@@ -86,38 +105,127 @@ const ProfileCreation = () => {
   
   const handleResumeUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
       setResumeUploaded(true);
       setProfileMethod('resume');
+      setResumeFile(file);
+    }
+  };
+
+  const handleLinkedInPdfUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      setResumeUploaded(true);
+      setProfileMethod('linkedin');
+      setLinkedinPdfFile(file);
+    }
+  };
+  
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [id]: value
+    }));
+  };
+
+  const handleSelectChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+  
+  const submitProfileData = async () => {
+    setIsSubmitting(true);
+    
+    try {
+      const formDataToSubmit = new FormData();
+      
+      // Add form fields
+      Object.entries(formData).forEach(([key, value]) => {
+        formDataToSubmit.append(key, value);
+      });
+      
+      // Add profile method
+      formDataToSubmit.append('profileMethod', profileMethod);
+      
+      // Add files based on profile method
+      if (profileMethod === 'linkedin' && linkedinPdfFile) {
+        formDataToSubmit.append('linkedinPdf', linkedinPdfFile);
+      }
+      
+      if (profileMethod === 'resume' && resumeFile) {
+        formDataToSubmit.append('resume', resumeFile);
+      }
+      
+      // Add supporting documents
+      supportingDocuments.forEach((doc, index) => {
+        formDataToSubmit.append(`supportingDoc[${index}][type]`, doc.type);
+        formDataToSubmit.append(`supportingDoc[${index}][title]`, doc.title);
+        
+        if (doc.description) {
+          formDataToSubmit.append(`supportingDoc[${index}][description]`, doc.description);
+        }
+        
+        if (doc.type === 'document' && supportingFiles.has(doc.title)) {
+          const file = supportingFiles.get(doc.title);
+          if (file) {
+            formDataToSubmit.append(`supportingDoc[${index}][file]`, file);
+          }
+        }
+        
+        if (doc.type === 'link' && doc.url) {
+          formDataToSubmit.append(`supportingDoc[${index}][url]`, doc.url);
+        }
+      });
+      
+      // Send POST request to webhook
+      const response = await fetch('https://webhook-processor-production-48f8.up.railway.app/webhook-test/d4245ae6-e289-47aa-95b4-26a93b75f7d9', {
+        method: 'POST',
+        body: formDataToSubmit,
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      // Store completion status in localStorage
+      const completedSections = JSON.parse(localStorage.getItem('completedSections') || '{}');
+      completedSections.profile = true;
+      localStorage.setItem('completedSections', JSON.stringify(completedSections));
+      
+      toast({
+        title: "Profile saved successfully",
+        description: "Your profile information has been submitted.",
+      });
+      
+      navigate('/dashboard/profile-snapshot');
+    } catch (error) {
+      console.error('Error submitting profile:', error);
+      toast({
+        title: "Error saving profile",
+        description: "There was a problem submitting your profile. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    
-    setTimeout(() => {
-      setIsSubmitting(false);
-      navigate('/dashboard/profile-snapshot');
-    }, 1000);
+    submitProfileData();
+  };
+
+  const handleCompleteSection = () => {
+    submitProfileData();
   };
 
   const requestEmailVerification = () => {
     setTimeout(() => {
       setIsEmailVerified(true);
     }, 1500);
-  };
-
-  const handleCompleteSection = () => {
-    setIsSubmitting(true);
-    
-    setTimeout(() => {
-      setIsSubmitting(false);
-      const completedSections = JSON.parse(localStorage.getItem('completedSections') || '{}');
-      completedSections.profile = true;
-      localStorage.setItem('completedSections', JSON.stringify(completedSections));
-      
-      navigate('/dashboard/profile-snapshot');
-    }, 1000);
   };
 
   const handleUseLinkedInInfo = () => {
@@ -154,7 +262,15 @@ const ProfileCreation = () => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       setCurrentDocFileName(file.name);
-      // In a real app, you would upload this file to storage and get a URL
+      
+      // Store the file in memory for later submission
+      if (currentDocTitle) {
+        setSupportingFiles(prev => {
+          const newMap = new Map(prev);
+          newMap.set(currentDocTitle, file);
+          return newMap;
+        });
+      }
     }
   };
 
@@ -306,7 +422,6 @@ const ProfileCreation = () => {
                     </div>
                     {/* LinkedIn PDF Upload Input */}
                     <div className="border-2 border-dashed border-muted rounded-lg p-6 text-center">
-                      {/* VERY basic mocked upload – replace with actual logic if needed */}
                       {profileMethod === "linkedin" && resumeUploaded !== true ? (
                         <div className="flex flex-col items-center">
                           <div className="bg-muted/50 p-3 rounded-full mb-3">
@@ -329,11 +444,7 @@ const ProfileCreation = () => {
                                 type="file"
                                 className="hidden"
                                 accept=".pdf"
-                                onChange={(e) => {
-                                  // For simplicity in demo, selecting this sets profileMethod
-                                  setProfileMethod('linkedin');
-                                  setResumeUploaded(true);
-                                }}
+                                onChange={handleLinkedInPdfUpload}
                               />
                             </label>
                           </div>
@@ -344,13 +455,16 @@ const ProfileCreation = () => {
                             <File className="h-6 w-6 text-primary" />
                           </div>
                           <p className="mb-1 font-medium">LinkedIn PDF uploaded successfully</p>
-                          <p className="text-sm text-muted-foreground mb-3">linkedin-profile.pdf</p>
+                          <p className="text-sm text-muted-foreground mb-3">
+                            {linkedinPdfFile ? linkedinPdfFile.name : "linkedin-profile.pdf"}
+                          </p>
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => {
                               setResumeUploaded(false);
-                              setProfileMethod('linkedin')
+                              setProfileMethod('linkedin');
+                              setLinkedinPdfFile(null);
                             }}
                           >
                             Replace
@@ -378,10 +492,7 @@ const ProfileCreation = () => {
                                 type="file"
                                 className="hidden"
                                 accept=".pdf"
-                                onChange={(e) => {
-                                  setProfileMethod('linkedin');
-                                  setResumeUploaded(true);
-                                }}
+                                onChange={handleLinkedInPdfUpload}
                               />
                             </label>
                           </div>
@@ -410,13 +521,16 @@ const ProfileCreation = () => {
                             <File className="h-6 w-6 text-primary" />
                           </div>
                           <p className="mb-1 font-medium">Resume uploaded successfully</p>
-                          <p className="text-sm text-muted-foreground mb-3">resume.pdf</p>
+                          <p className="text-sm text-muted-foreground mb-3">
+                            {resumeFile ? resumeFile.name : "resume.pdf"}
+                          </p>
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => {
                               setResumeUploaded(false);
                               setProfileMethod('resume');
+                              setResumeFile(null);
                             }}
                           >
                             Replace
@@ -709,7 +823,12 @@ const ProfileCreation = () => {
                             </Tooltip>
                           </TooltipProvider>
                         </div>
-                        <Input id="firstName" required defaultValue={isUsingLinkedInInfo ? "John" : ""} />
+                        <Input 
+                          id="firstName" 
+                          required 
+                          defaultValue={isUsingLinkedInInfo ? "John" : ""} 
+                          onChange={handleFormChange}
+                        />
                       </div>
                       
                       <div>
@@ -725,6 +844,7 @@ const ProfileCreation = () => {
                             type="email" 
                             required 
                             defaultValue={isUsingLinkedInInfo ? "john.doe@example.com" : ""} 
+                            onChange={handleFormChange}
                           />
                           {!isEmailVerified && (
                             <Button type="button" variant="outline" size="sm" onClick={requestEmailVerification}>
@@ -756,6 +876,7 @@ const ProfileCreation = () => {
                         <Input 
                           id="currentPosition" 
                           defaultValue={isUsingLinkedInInfo ? "Product Manager" : ""} 
+                          onChange={handleFormChange}
                         />
                       </div>
                       
@@ -763,7 +884,10 @@ const ProfileCreation = () => {
                         <div className="flex items-center justify-between">
                           <Label htmlFor="industry">Industry</Label>
                         </div>
-                        <Select defaultValue={isUsingLinkedInInfo ? "technology" : undefined}>
+                        <Select 
+                          defaultValue={isUsingLinkedInInfo ? "technology" : undefined}
+                          onValueChange={(value) => handleSelectChange('industry', value)}
+                        >
                           <SelectTrigger id="industry">
                             <SelectValue placeholder="Select an industry" />
                           </SelectTrigger>
@@ -785,6 +909,7 @@ const ProfileCreation = () => {
                           id="lastName" 
                           required 
                           defaultValue={isUsingLinkedInInfo ? "Doe" : ""} 
+                          onChange={handleFormChange}
                         />
                       </div>
                       
@@ -794,6 +919,7 @@ const ProfileCreation = () => {
                           id="phone" 
                           type="tel" 
                           defaultValue={isUsingLinkedInInfo ? "+1 (555) 123-4567" : ""} 
+                          onChange={handleFormChange}
                         />
                       </div>
                       
@@ -802,12 +928,16 @@ const ProfileCreation = () => {
                         <Input 
                           id="company" 
                           defaultValue={isUsingLinkedInInfo ? "Tech Innovations Inc." : ""} 
+                          onChange={handleFormChange}
                         />
                       </div>
                       
                       <div>
                         <Label htmlFor="experience">Experience Level</Label>
-                        <Select defaultValue={isUsingLinkedInInfo ? "mid level (3-5 years)" : undefined}>
+                        <Select 
+                          defaultValue={isUsingLinkedInInfo ? "mid level (3-5 years)" : undefined}
+                          onValueChange={(value) => handleSelectChange('experienceLevel', value)}
+                        >
                           <SelectTrigger id="experience">
                             <SelectValue placeholder="Select experience level" />
                           </SelectTrigger>
@@ -832,6 +962,7 @@ const ProfileCreation = () => {
                         className="min-h-[120px]"
                         required
                         defaultValue={isUsingLinkedInInfo ? "Experienced product manager with 5 years in the technology sector. Skilled in agile methodologies, user experience design, and cross-functional team leadership. Passionate about creating innovative solutions that solve real-world problems." : ""}
+                        onChange={handleFormChange}
                       />
                     </div>
                     
@@ -842,6 +973,7 @@ const ProfileCreation = () => {
                         placeholder="e.g., Project Management, JavaScript, Data Analysis, Leadership"
                         required
                         defaultValue={isUsingLinkedInInfo ? "Product Strategy, User Research, Agile/Scrum, Roadmap Planning, Cross-functional Leadership" : ""}
+                        onChange={handleFormChange}
                       />
                     </div>
                   </div>
@@ -864,7 +996,6 @@ const ProfileCreation = () => {
             <Button
               type="submit"
               disabled={isSubmitting}
-              onClick={handleCompleteSection}
             >
               {isSubmitting ? 'Saving...' : 'Continue'}
               <ArrowRight className="ml-2 h-4 w-4" />
