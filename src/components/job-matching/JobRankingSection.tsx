@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { AlertCircle, Building, MapPin, Sparkles, DollarSign } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -51,9 +50,8 @@ const JobRankingSection = ({
     
     if (Object.values(newRankings).every(r => r !== null) && 
         Object.values(jobRankings).some(r => r === null)) {
-      toast({
-        title: "Ranking Complete!",
-        description: "Thank you for ranking all job opportunities. Your preferences have been recorded.",
+      toast("Ranking Complete!", {
+        description: "Thank you for ranking all job opportunities. Your preferences have been recorded."
       });
     }
   };

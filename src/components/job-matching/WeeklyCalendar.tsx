@@ -1,11 +1,10 @@
-
 import { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
 
 interface WeeklyCalendarProps {
   selectedTimeSlots: { [key: string]: boolean };
@@ -89,18 +88,16 @@ export const WeeklyCalendar = ({
   const handleTimezoneChange = (value: string) => {
     setTimezone(value);
     setTimezoneSelected(true);
-    toast({
-      title: "Timezone updated",
-      description: `Your calendar now shows times in ${value}`,
+    toast("Timezone updated", {
+      description: `Your calendar now shows times in ${value}`
     });
   };
 
   const applyTimeRange = (range: typeof COMMON_TIME_RANGES[0]) => {
     if (!timezoneSelected) {
-      toast({
-        title: "Timezone Required",
+      toast("Timezone Required", {
         description: "Please select a timezone before setting your schedule",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
