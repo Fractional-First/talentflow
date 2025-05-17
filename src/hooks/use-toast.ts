@@ -57,7 +57,7 @@ const toastStore = {
           description: data.description,
           duration: data.duration,
         });
-        return toastStore.addToast(data as ToasterToast);
+        return toastStore.addToast({ ...data } as ToasterToast);
       },
     };
   },

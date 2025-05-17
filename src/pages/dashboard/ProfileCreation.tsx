@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
@@ -68,6 +67,8 @@ const ProfileCreation = () => {
   const [currentDocDescription, setCurrentDocDescription] = useState('');
   const [currentDocUrl, setCurrentDocUrl] = useState('');
   const [currentDocFileName, setCurrentDocFileName] = useState('');
+  const [serverError, setServerError] = useState('');
+  const [bothFilesUploaded, setBothFilesUploaded] = useState(false);
   
   // New state for file data
   const [linkedinPdfFile, setLinkedinPdfFile] = useState<File | null>(null);
@@ -89,6 +90,15 @@ const ProfileCreation = () => {
   });
   
   useEffect(() => {
+    // Check if both LinkedIn PDF and resume are uploaded
+    if (linkedinPdfFile && resumeFile) {
+      setBothFilesUploaded(true);
+    } else {
+      setBothFilesUploaded(false);
+    }
+  }, [linkedinPdfFile, resumeFile]);
+
+  useEffect(() => {
     const authMethod = localStorage.getItem('authMethod');
     if (authMethod === 'linkedin' || location.state?.linkedInSignUp) {
       setIsLinkedInUser(true);
@@ -108,8 +118,15 @@ const ProfileCreation = () => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       setResumeUploaded(true);
-      setProfileMethod('resume');
       setResumeFile(file);
+      // Allow both resume and LinkedIn to be uploaded
+      if (linkedinPdfFile) {
+        setBothFilesUploaded(true);
+      }
+      toast({
+        title: "Resume uploaded",
+        description: "Your resume was successfully uploaded."
+      });
     }
   };
 
@@ -117,8 +134,15 @@ const ProfileCreation = () => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       setResumeUploaded(true);
-      setProfileMethod('linkedin');
       setLinkedinPdfFile(file);
+      // Allow both resume and LinkedIn to be uploaded
+      if (resumeFile) {
+        setBothFilesUploaded(true);
+      }
+      toast({
+        title: "LinkedIn PDF uploaded",
+        description: "Your LinkedIn profile PDF was successfully uploaded."
+      });
     }
   };
   
@@ -139,6 +163,7 @@ const ProfileCreation = () => {
   
   const submitProfileData = async () => {
     setIsSubmitting(true);
+    setServerError('');
     
     try {
       const formDataToSubmit = new FormData();
@@ -150,15 +175,26 @@ const ProfileCreation = () => {
         }
       });
       
-      // Add profile method
-      formDataToSubmit.append('profileMethod', profileMethod);
+      // Set the profile method based on what's available
+      let actualProfileMethod = profileMethod;
+      if (linkedinPdfFile && resumeFile) {
+        actualProfileMethod = 'both'; // New value to indicate both are uploaded
+      } else if (linkedinPdfFile) {
+        actualProfileMethod = 'linkedin';
+      } else if (resumeFile) {
+        actualProfileMethod = 'resume';
+      } else if (formData.firstName && formData.lastName) {
+        actualProfileMethod = 'manual';
+      }
       
-      // Add files based on profile method
-      if (profileMethod === 'linkedin' && linkedinPdfFile) {
+      formDataToSubmit.append('profileMethod', actualProfileMethod);
+      
+      // Add files based on what's available
+      if (linkedinPdfFile) {
         formDataToSubmit.append('linkedinPdf', linkedinPdfFile);
       }
       
-      if (profileMethod === 'resume' && resumeFile) {
+      if (resumeFile) {
         formDataToSubmit.append('resume', resumeFile);
       }
       
@@ -186,11 +222,7 @@ const ProfileCreation = () => {
       // Check for required content
       let isValidSubmission = false;
       
-      if (profileMethod === 'linkedin' && linkedinPdfFile) {
-        isValidSubmission = true;
-      } else if (profileMethod === 'resume' && resumeFile) {
-        isValidSubmission = true;
-      } else if (profileMethod === 'manual' && formData.firstName && formData.lastName) {
+      if (linkedinPdfFile || resumeFile || (formData.firstName && formData.lastName)) {
         isValidSubmission = true;
       }
       
@@ -205,7 +237,7 @@ const ProfileCreation = () => {
       });
       
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`Server error: ${response.status} ${response.statusText}`);
       }
       
       // Store completion status in localStorage
@@ -215,22 +247,27 @@ const ProfileCreation = () => {
       
       toast({
         title: "Profile saved successfully",
-        description: "Your profile information has been submitted.",
+        description: "Your profile information has been submitted."
       });
       
       navigate('/dashboard/profile-snapshot');
     } catch (error) {
       console.error('Error submitting profile:', error);
-      let errorMessage = "There was a problem submitting your profile. Please try again.";
+      let errorMessage = "There was a problem submitting your profile.";
       
       if (error instanceof Error) {
         errorMessage = error.message;
       }
       
+      if (errorMessage.includes("Failed to fetch")) {
+        errorMessage = "Unable to connect to the server. Please check your internet connection and try again.";
+        setServerError(errorMessage);
+      }
+      
       toast({
         title: "Error saving profile",
         description: errorMessage,
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setIsSubmitting(false);
@@ -249,6 +286,10 @@ const ProfileCreation = () => {
   const requestEmailVerification = () => {
     setTimeout(() => {
       setIsEmailVerified(true);
+      toast({
+        title: "Email verified",
+        description: "Your email address has been verified successfully."
+      });
     }, 1500);
   };
 
@@ -257,7 +298,7 @@ const ProfileCreation = () => {
     setShowManualEntry(true);
     toast({
       title: "LinkedIn information applied",
-      description: "Your LinkedIn profile information has been used to pre-fill your profile.",
+      description: "Your LinkedIn profile information has been used to pre-fill your profile."
     });
     
     // In a real implementation, this would populate form fields with LinkedIn data
@@ -268,7 +309,7 @@ const ProfileCreation = () => {
     // In a real app, this would trigger OAuth
     toast({
       title: "LinkedIn Connected",
-      description: "Your LinkedIn account has been connected successfully.",
+      description: "Your LinkedIn account has been connected successfully."
     });
     
     // Simulate connection
@@ -305,7 +346,7 @@ const ProfileCreation = () => {
       toast({
         title: "Please select a file",
         description: "You must upload a document before adding it.",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
@@ -314,7 +355,7 @@ const ProfileCreation = () => {
       toast({
         title: "Please enter a URL",
         description: "You must provide a valid URL for your link.",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
@@ -323,7 +364,7 @@ const ProfileCreation = () => {
       toast({
         title: "Title required",
         description: "Please provide a title for your document or link.",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
@@ -348,7 +389,7 @@ const ProfileCreation = () => {
     
     toast({
       title: "Added successfully",
-      description: `Your ${currentDocType} has been added to your profile.`,
+      description: `Your ${currentDocType} has been added to your profile.`
     });
   };
 
@@ -360,7 +401,7 @@ const ProfileCreation = () => {
     
     toast({
       title: "Item removed",
-      description: "The document or link has been removed from your profile.",
+      description: "The document or link has been removed from your profile."
     });
   };
 
@@ -403,6 +444,8 @@ const ProfileCreation = () => {
                         <li>Or manually enter your basic information</li>
                       </ul>
                       
+                      <p className="mb-1"><strong>Note:</strong> You can upload both your resume AND LinkedIn PDF if you wish.</p>
+                      
                       {isLinkedInUser && (
                         <p className="p-1.5 bg-blue-100/50 rounded border border-blue-200 text-xs">
                           <strong>Note:</strong> LinkedIn sign-in provides only limited information. For your full experience, please upload your LinkedIn profile as a PDF.
@@ -418,6 +461,22 @@ const ProfileCreation = () => {
                   </div>
                 </div>
               </Alert>
+
+              {/* Display any server connection errors */}
+              {serverError && (
+                <Alert className="mb-4 bg-red-50 border-red-200">
+                  <AlertCircle className="h-5 w-5 text-red-600" />
+                  <AlertTitle className="mb-1 font-semibold text-red-800">
+                    Connection Error
+                  </AlertTitle>
+                  <AlertDescription className="text-sm text-red-900">
+                    {serverError}
+                    <p className="mt-1 text-xs">
+                      You can continue filling out the form and try submitting again later.
+                    </p>
+                  </AlertDescription>
+                </Alert>
+              )}
 
               {!showManualEntry ? (
                 <div className="space-y-6">
@@ -447,50 +506,23 @@ const ProfileCreation = () => {
                     </div>
                     {/* LinkedIn PDF Upload Input */}
                     <div className="border-2 border-dashed border-muted rounded-lg p-6 text-center">
-                      {profileMethod === "linkedin" && resumeUploaded !== true ? (
-                        <div className="flex flex-col items-center">
-                          <div className="bg-muted/50 p-3 rounded-full mb-3">
-                            <Upload className="h-6 w-6 text-muted-foreground" />
-                          </div>
-                          <p className="mb-1 font-medium">Drag and drop your LinkedIn PDF here</p>
-                          <p className="text-sm text-muted-foreground mb-3">PDF up to 5MB</p>
-                          <div>
-                            <label htmlFor="linkedin-pdf-upload">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => document.getElementById('linkedin-pdf-upload')?.click()}
-                                type="button"
-                              >
-                                Select File
-                              </Button>
-                              <input
-                                id="linkedin-pdf-upload"
-                                type="file"
-                                className="hidden"
-                                accept=".pdf"
-                                onChange={handleLinkedInPdfUpload}
-                              />
-                            </label>
-                          </div>
-                        </div>
-                      ) : profileMethod === "linkedin" && resumeUploaded === true ? (
+                      {linkedinPdfFile ? (
                         <div className="flex flex-col items-center">
                           <div className="bg-primary/10 p-3 rounded-full mb-3">
                             <File className="h-6 w-6 text-primary" />
                           </div>
                           <p className="mb-1 font-medium">LinkedIn PDF uploaded successfully</p>
                           <p className="text-sm text-muted-foreground mb-3">
-                            {linkedinPdfFile ? linkedinPdfFile.name : "linkedin-profile.pdf"}
+                            {linkedinPdfFile.name}
                           </p>
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => {
-                              setResumeUploaded(false);
-                              setProfileMethod('linkedin');
                               setLinkedinPdfFile(null);
+                              setBothFilesUploaded(resumeFile !== null);
                             }}
+                            type="button"
                           >
                             Replace
                           </Button>
@@ -540,23 +572,23 @@ const ProfileCreation = () => {
                       </div>
                     </div>
                     <div className="border-2 border-dashed border-muted rounded-lg p-6 text-center">
-                      {profileMethod === 'resume' && resumeUploaded ? (
+                      {resumeFile ? (
                         <div className="flex flex-col items-center">
                           <div className="bg-primary/10 p-3 rounded-full mb-3">
                             <File className="h-6 w-6 text-primary" />
                           </div>
                           <p className="mb-1 font-medium">Resume uploaded successfully</p>
                           <p className="text-sm text-muted-foreground mb-3">
-                            {resumeFile ? resumeFile.name : "resume.pdf"}
+                            {resumeFile.name}
                           </p>
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => {
-                              setResumeUploaded(false);
-                              setProfileMethod('resume');
                               setResumeFile(null);
+                              setBothFilesUploaded(linkedinPdfFile !== null);
                             }}
+                            type="button"
                           >
                             Replace
                           </Button>
@@ -593,6 +625,26 @@ const ProfileCreation = () => {
                       )}
                     </div>
                   </div>
+
+                  {/* DISPLAY WHEN BOTH FILES ARE UPLOADED */}
+                  {bothFilesUploaded && (
+                    <Alert className="mb-4 bg-green-50 border-green-200">
+                      <div className="flex gap-2">
+                        <div className="mt-0.5">
+                          <File className="h-5 w-5 text-green-600" />
+                        </div>
+                        <div>
+                          <AlertTitle className="mb-1 font-semibold text-green-800">
+                            Both files uploaded successfully
+                          </AlertTitle>
+                          <AlertDescription className="text-sm text-green-900">
+                            Great job! You've uploaded both your LinkedIn PDF and resume. 
+                            This will give us the most complete picture of your professional background.
+                          </AlertDescription>
+                        </div>
+                      </div>
+                    </Alert>
+                  )}
                   
                   {/* SUPPORTING DOCUMENTS SECTION - Moved here from separate card */}
                   <div className="border rounded-lg p-6">
@@ -1005,7 +1057,7 @@ const ProfileCreation = () => {
             </StepCardContent>
           </StepCard>
 
-          {/* FOOTER: NAV BUTTONS - Removed the separate supporting documents card */}
+          {/* FOOTER: NAV BUTTONS */}
           <StepCardFooter className="flex justify-between pt-6">
             <Button
               variant="outline"
