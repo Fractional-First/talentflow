@@ -50,7 +50,8 @@ const JobRankingSection = ({
     
     if (Object.values(newRankings).every(r => r !== null) && 
         Object.values(jobRankings).some(r => r === null)) {
-      toast("Ranking Complete!", {
+      toast({
+        title: "Ranking Complete!",
         description: "Thank you for ranking all job opportunities. Your preferences have been recorded."
       });
     }

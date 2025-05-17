@@ -53,8 +53,8 @@ const toastStore = {
     return {
       toasts: state,
       toast: (data: Omit<ToasterToast, "id">) => {
-        sonnerToast(data.description || "", {
-          id: data.id,
+        sonnerToast(data.title as string || "", {
+          description: data.description,
           duration: data.duration,
         });
         return toastStore.addToast(data as ToasterToast);
@@ -75,4 +75,3 @@ export function toast(props: ToastProps) {
     ...rest,
   });
 }
-

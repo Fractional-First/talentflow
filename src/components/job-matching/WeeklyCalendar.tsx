@@ -88,14 +88,16 @@ export const WeeklyCalendar = ({
   const handleTimezoneChange = (value: string) => {
     setTimezone(value);
     setTimezoneSelected(true);
-    toast("Timezone updated", {
+    toast({
+      title: "Timezone updated",
       description: `Your calendar now shows times in ${value}`
     });
   };
 
   const applyTimeRange = (range: typeof COMMON_TIME_RANGES[0]) => {
     if (!timezoneSelected) {
-      toast("Timezone Required", {
+      toast({
+        title: "Timezone Required",
         description: "Please select a timezone before setting your schedule",
         variant: "destructive"
       });
