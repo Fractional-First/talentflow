@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
@@ -47,7 +48,8 @@ const ProfileCreation = () => {
   
   const [resumeUploaded, setResumeUploaded] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [profileMethod, setProfileMethod] = useState<'manual' | 'linkedin' | 'resume'>('linkedin');
+  // Update the type to include 'both' as a valid option
+  const [profileMethod, setProfileMethod] = useState<'manual' | 'linkedin' | 'resume' | 'both'>('linkedin');
   const [showManualEntry, setShowManualEntry] = useState(false);
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [isLinkedInUser, setIsLinkedInUser] = useState(false);
@@ -178,7 +180,7 @@ const ProfileCreation = () => {
       // Set the profile method based on what's available
       let actualProfileMethod = profileMethod;
       if (linkedinPdfFile && resumeFile) {
-        actualProfileMethod = 'both'; // New value to indicate both are uploaded
+        actualProfileMethod = 'both'; // This is now a valid type
       } else if (linkedinPdfFile) {
         actualProfileMethod = 'linkedin';
       } else if (resumeFile) {
