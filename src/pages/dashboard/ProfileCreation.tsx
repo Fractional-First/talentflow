@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
@@ -141,10 +142,12 @@ const ProfileCreation = () => {
     
     try {
       const formDataToSubmit = new FormData();
-      
-      // Add form fields
+
+      // Only submit fields that have values
       Object.entries(formData).forEach(([key, value]) => {
-        formDataToSubmit.append(key, value);
+        if (value) {
+          formDataToSubmit.append(key, value);
+        }
       });
       
       // Add profile method
@@ -180,6 +183,21 @@ const ProfileCreation = () => {
         }
       });
       
+      // Check for required content
+      let isValidSubmission = false;
+      
+      if (profileMethod === 'linkedin' && linkedinPdfFile) {
+        isValidSubmission = true;
+      } else if (profileMethod === 'resume' && resumeFile) {
+        isValidSubmission = true;
+      } else if (profileMethod === 'manual' && formData.firstName && formData.lastName) {
+        isValidSubmission = true;
+      }
+      
+      if (!isValidSubmission) {
+        throw new Error('Please provide at least your LinkedIn PDF, resume, or basic profile information');
+      }
+      
       // Send POST request to webhook
       const response = await fetch('https://webhook-processor-production-48f8.up.railway.app/webhook-test/d4245ae6-e289-47aa-95b4-26a93b75f7d9', {
         method: 'POST',
@@ -203,9 +221,15 @@ const ProfileCreation = () => {
       navigate('/dashboard/profile-snapshot');
     } catch (error) {
       console.error('Error submitting profile:', error);
+      let errorMessage = "There was a problem submitting your profile. Please try again.";
+      
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      
       toast({
         title: "Error saving profile",
-        description: "There was a problem submitting your profile. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -372,10 +396,11 @@ const ProfileCreation = () => {
                       Profile Information Requirements
                     </AlertTitle>
                     <AlertDescription className="text-sm text-blue-900">
-                      <p className="mb-1">At least <strong>one</strong> of the following is required, but both are ideal:</p>
+                      <p className="mb-1">At least <strong>one</strong> of the following is required:</p>
                       <ul className="list-disc ml-6 mb-2">
                         <li>Upload your resume <span className="font-semibold">(PDF or DOCX)</span></li>
                         <li>Upload your LinkedIn profile as a <span className="font-semibold">PDF</span></li>
+                        <li>Or manually enter your basic information</li>
                       </ul>
                       
                       {isLinkedInUser && (
@@ -510,7 +535,7 @@ const ProfileCreation = () => {
                       <div>
                         <h3 className="font-medium">Resume Upload</h3>
                         <p className="text-sm text-muted-foreground">
-                          Upload your resume and we’ll extract the relevant information to help enhance your profile.
+                          Upload your resume and we'll extract the relevant information to help enhance your profile.
                         </p>
                       </div>
                     </div>
@@ -578,7 +603,7 @@ const ProfileCreation = () => {
                             <Paperclip className="h-6 w-6 text-primary" />
                           </div>
                           <div>
-                            <h3 className="font-medium">Supporting Documents & Links</h3>
+                            <h3 className="font-medium">Supporting Documents & Links (Optional)</h3>
                             <p className="text-sm text-muted-foreground">
                               Add publications, news articles, portfolios, or other resources that showcase your work
                             </p>
@@ -774,7 +799,10 @@ const ProfileCreation = () => {
                   <div className="text-center mt-6">
                     <Button
                       variant="link"
-                      onClick={() => setShowManualEntry(true)}
+                      onClick={() => {
+                        setShowManualEntry(true);
+                        setProfileMethod('manual');
+                      }}
                       className="text-sm"
                       type="button"
                     >
@@ -825,7 +853,6 @@ const ProfileCreation = () => {
                         </div>
                         <Input 
                           id="firstName" 
-                          required 
                           defaultValue={isUsingLinkedInInfo ? "John" : ""} 
                           onChange={handleFormChange}
                         />
@@ -842,7 +869,6 @@ const ProfileCreation = () => {
                           <Input 
                             id="email" 
                             type="email" 
-                            required 
                             defaultValue={isUsingLinkedInInfo ? "john.doe@example.com" : ""} 
                             onChange={handleFormChange}
                           />
@@ -907,7 +933,6 @@ const ProfileCreation = () => {
                         <Label htmlFor="lastName">Last Name</Label>
                         <Input 
                           id="lastName" 
-                          required 
                           defaultValue={isUsingLinkedInInfo ? "Doe" : ""} 
                           onChange={handleFormChange}
                         />
@@ -960,7 +985,6 @@ const ProfileCreation = () => {
                         id="summary" 
                         placeholder="Briefly describe your professional background, key skills, and career goals..."
                         className="min-h-[120px]"
-                        required
                         defaultValue={isUsingLinkedInInfo ? "Experienced product manager with 5 years in the technology sector. Skilled in agile methodologies, user experience design, and cross-functional team leadership. Passionate about creating innovative solutions that solve real-world problems." : ""}
                         onChange={handleFormChange}
                       />
@@ -971,7 +995,6 @@ const ProfileCreation = () => {
                       <Input 
                         id="skills" 
                         placeholder="e.g., Project Management, JavaScript, Data Analysis, Leadership"
-                        required
                         defaultValue={isUsingLinkedInInfo ? "Product Strategy, User Research, Agile/Scrum, Roadmap Planning, Cross-functional Leadership" : ""}
                         onChange={handleFormChange}
                       />
