@@ -8,41 +8,33 @@ import { LinkedInSignUp } from '@/components/auth/LinkedInSignUp';
 import { SignUpForm } from '@/components/auth/SignUpForm';
 import { AuthBackground } from '@/components/auth/AuthBackground';
 import { BrandHeader } from '@/components/auth/BrandHeader';
+import { useAuth } from '@/contexts/AuthContext';
 
 const SignUp = () => {
   const navigate = useNavigate();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { signUp, loading } = useAuth();
+  const [isLinkedInSubmitting, setIsLinkedInSubmitting] = useState(false);
 
-  const handleSignUp = (email: string, password: string, confirmPassword: string) => {
+  const handleSignUp = async (email: string, password: string, confirmPassword: string) => {
     if (password !== confirmPassword) {
       // In a real app, you'd show an error toast
       console.error("Passwords don't match");
       return;
     }
     
-    setIsSubmitting(true);
-    
-    // Store auth method in localStorage
-    localStorage.setItem('authMethod', 'email');
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
-      // Go directly to profile creation, skipping the agreement step
-      navigate('/dashboard/profile-creation');
-    }, 1000);
+    await signUp(email, password);
   };
 
   const handleLinkedInSignUp = () => {
     // In a real app, this would trigger OAuth
-    setIsSubmitting(true);
+    setIsLinkedInSubmitting(true);
     
     // Store auth method in localStorage
     localStorage.setItem('authMethod', 'linkedin');
     
     // Simulate API call
     setTimeout(() => {
-      setIsSubmitting(false);
+      setIsLinkedInSubmitting(false);
       // Navigate to profile creation with state indicating LinkedIn signup
       navigate('/dashboard/profile-creation', { 
         state: { linkedInSignUp: true } 
@@ -67,7 +59,7 @@ const SignUp = () => {
           <StepCardContent>
             <LinkedInSignUp 
               onClick={handleLinkedInSignUp}
-              isSubmitting={isSubmitting}
+              isSubmitting={isLinkedInSubmitting}
             />
             
             <div className="relative my-4">
@@ -79,7 +71,7 @@ const SignUp = () => {
             
             <SignUpForm 
               onSubmit={handleSignUp}
-              isSubmitting={isSubmitting}
+              isSubmitting={loading}
             />
           </StepCardContent>
           

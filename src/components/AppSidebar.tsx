@@ -13,6 +13,7 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import { User, Briefcase, Home, Settings, LogOut, Award } from "lucide-react";
 import React from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const menuItems = [
   {
@@ -45,6 +46,7 @@ const menuItems = [
 export function AppSidebar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { signOut } = useAuth();
 
   return (
     <Sidebar>
@@ -83,10 +85,7 @@ export function AppSidebar() {
                   tooltip="Logout"
                 >
                   <button
-                    onClick={() => {
-                      // add logout logic here if needed
-                      window.location.href = "/";
-                    }}
+                    onClick={signOut}
                   >
                     <LogOut className="mr-2" />
                     Logout
@@ -100,4 +99,3 @@ export function AppSidebar() {
     </Sidebar>
   );
 }
-

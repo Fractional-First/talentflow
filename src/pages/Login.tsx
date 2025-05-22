@@ -1,32 +1,41 @@
 
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { StepCard, StepCardContent, StepCardDescription, StepCardFooter, StepCardHeader, StepCardTitle } from '@/components/StepCard';
 import { Separator } from '@/components/ui/separator';
 import { Linkedin } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { AuthBackground } from '@/components/auth/AuthBackground';
 
 const Login = () => {
   const navigate = useNavigate();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { signIn, loading } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLinkedInSubmitting, setIsLinkedInSubmitting] = useState(false);
 
   const handleLinkedInLogin = () => {
     // In a real app, this would trigger OAuth
-    setIsSubmitting(true);
+    setIsLinkedInSubmitting(true);
     
     // Simulate API call
     setTimeout(() => {
-      setIsSubmitting(false);
+      setIsLinkedInSubmitting(false);
       navigate('/dashboard');
     }, 1000);
   };
 
+  const handleEmailLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await signIn(email, password);
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12">
-      <div className="fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute -top-[30%] -right-[20%] h-[500px] w-[500px] rounded-full bg-primary/10 blur-[100px]" />
-        <div className="absolute -bottom-[30%] -left-[20%] h-[500px] w-[500px] rounded-full bg-primary/10 blur-[100px]" />
-      </div>
+      <AuthBackground />
       
       <div className="w-full max-w-md">
         <StepCard>
@@ -50,18 +59,53 @@ const Login = () => {
               variant="outline" 
               className="w-full flex items-center justify-center gap-2"
               onClick={handleLinkedInLogin}
-              disabled={isSubmitting}
+              disabled={isLinkedInSubmitting || loading}
             >
               <Linkedin className="h-5 w-5" />
-              <span>{isSubmitting ? 'Connecting...' : 'Continue with LinkedIn'}</span>
+              <span>{isLinkedInSubmitting ? 'Connecting...' : 'Continue with LinkedIn'}</span>
             </Button>
             
             <div className="relative">
               <Separator />
               <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-xs text-muted-foreground">
-                New to TalentFlow?
+                OR
               </span>
             </div>
+
+            <form onSubmit={handleEmailLogin} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="your@email.com"
+                  required
+                  autoComplete="email"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  autoComplete="current-password"
+                />
+              </div>
+              
+              <Button 
+                type="submit" 
+                className="w-full"
+                disabled={loading}
+              >
+                {loading ? 'Logging in...' : 'Log in'}
+              </Button>
+            </form>
           </StepCardContent>
           
           <StepCardFooter className="justify-center">

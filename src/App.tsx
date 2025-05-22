@@ -14,6 +14,8 @@ import ProfileSnapshot from "./pages/dashboard/ProfileSnapshot";
 import Branding from "./pages/dashboard/Branding";
 import JobMatching from "./pages/dashboard/JobMatching";
 import WaitingRoom from "./pages/dashboard/WaitingRoom";
+import { AuthProvider } from "./contexts/AuthContext";
+import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -23,18 +25,48 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/dashboard/profile-creation" element={<ProfileCreation />} />
-          <Route path="/dashboard/profile-snapshot" element={<ProfileSnapshot />} />
-          <Route path="/dashboard/branding" element={<Branding />} />
-          <Route path="/dashboard/job-matching" element={<JobMatching />} />
-          <Route path="/dashboard/waiting-room" element={<WaitingRoom />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            {/* Public routes */}
+            <Route path="/" element={<Index />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/login" element={<Login />} />
+            
+            {/* Protected routes */}
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/profile-creation" element={
+              <ProtectedRoute>
+                <ProfileCreation />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/profile-snapshot" element={
+              <ProtectedRoute>
+                <ProfileSnapshot />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/branding" element={
+              <ProtectedRoute>
+                <Branding />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/job-matching" element={
+              <ProtectedRoute>
+                <JobMatching />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/waiting-room" element={
+              <ProtectedRoute>
+                <WaitingRoom />
+              </ProtectedRoute>
+            } />
+            
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
