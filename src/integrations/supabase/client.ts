@@ -15,7 +15,12 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     persistSession: true,
     storage: localStorage,
     detectSessionInUrl: true,
-    flowType: 'pkce',
-    redirectTo: 'https://talentflow-dashboard-v3-95.lovable.app'
-  }
+    flowType: 'pkce'
+  },
+  global: {
+    headers: {
+      'x-application-name': 'talentflow-dashboard'
+    }
+  },
+  site: 'https://talentflow-dashboard-v3-95.lovable.app'
 });
