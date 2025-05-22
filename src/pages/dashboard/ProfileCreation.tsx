@@ -345,8 +345,8 @@ const ProfileCreation = () => {
         throw new Error('Please provide at least your LinkedIn PDF, resume, or basic profile information');
       }
       
-      // Send POST request to webhook
-      const response = await fetch('https://webhook-processor-production-48f8.up.railway.app/webhook-test/d4245ae6-e289-47aa-95b4-26a93b75f7d9', {
+      // Send POST request to webhook - UPDATED URL HERE
+      const response = await fetch('https://webhook-processor-production-48f8.up.railway.app/webhook/d4245ae6-e289-47aa-95b4-26a93b75f7d9', {
         method: 'POST',
         body: formDataToSubmit,
       });
