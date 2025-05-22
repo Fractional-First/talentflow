@@ -16,7 +16,11 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     storage: localStorage,
     detectSessionInUrl: true,
     flowType: 'pkce',
-    redirectTo: 'https://talentflow-dashboard-v3-95.lovable.app'
+    cookieOptions: {
+      // This configures the cookie domain for redirect handling
+      domain: 'lovable.app',
+      path: '/'
+    }
   },
   global: {
     headers: {
