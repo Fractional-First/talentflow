@@ -2,9 +2,33 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { BlurImage } from '@/components/BlurImage';
+import { Users, Rocket, Settings, Briefcase } from 'lucide-react';
 
 const Index = () => {
   const navigate = useNavigate();
+
+  const features = [
+    {
+      icon: Users,
+      title: "Talent Onboarding",
+      description: "Streamlined onboarding process that guides new talent through every step of their journey with personalized experiences."
+    },
+    {
+      icon: Briefcase,
+      title: "Career Matching",
+      description: "Advanced matching algorithms that connect talented individuals with the perfect opportunities based on skills and preferences."
+    },
+    {
+      icon: Rocket,
+      title: "Growth Acceleration",
+      description: "Comprehensive tools and resources to accelerate professional growth and unlock career potential."
+    },
+    {
+      icon: Settings,
+      title: "Process Optimization",
+      description: "Automated workflows and smart systems that optimize the entire talent acquisition and development process."
+    }
+  ];
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -64,6 +88,37 @@ const Index = () => {
           </div>
         </div>
       </main>
+      
+      {/* What We Do Section */}
+      <section className="py-20 bg-muted/30">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-16 animate-slide-up">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">What We Do</h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              TalentFlow revolutionizes the way organizations discover, onboard, and develop talent through innovative technology and streamlined processes.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {features.map((feature, index) => {
+              const Icon = feature.icon;
+              return (
+                <div 
+                  key={feature.title}
+                  className="glass-card rounded-2xl p-6 text-center hover:shadow-medium transition-all duration-300 animate-scale-in"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Icon className="w-8 h-8 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
+                  <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
     </div>
   );
 };
