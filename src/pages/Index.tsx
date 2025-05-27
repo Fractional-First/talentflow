@@ -1,3 +1,4 @@
+
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { BlurImage } from '@/components/BlurImage';
@@ -80,7 +81,7 @@ const Index = () => {
               size="lg"
               onClick={() => navigate('/login')}
             >
-              Learn More
+              Let's Explore
             </Button>
           </div>
         </div>
