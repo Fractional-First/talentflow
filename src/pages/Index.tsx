@@ -47,17 +47,9 @@ const Index = () => {
             <Button 
               size="lg" 
               onClick={() => navigate('/signup')}
-              className="mr-4 shadow-soft hover:shadow-medium transition-all duration-300"
+              className="shadow-soft hover:shadow-medium transition-all duration-300"
             >
               Start Your Journey
-            </Button>
-            
-            <Button 
-              variant="outline" 
-              size="lg"
-              onClick={() => navigate('/login')}
-            >
-              Learn More
             </Button>
           </div>
         </div>
