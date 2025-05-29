@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useReducer } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
@@ -532,7 +531,7 @@ const ProfileCreation = () => {
                         <li>Or manually enter your basic information</li>
                       </ul>
                       
-                      <p className="mb-1"><strong>Note:</strong> You can upload both your resume AND LinkedIn PDF if you wish.</p>
+                      <p className="mb-1"><strong>Note:</strong> Upload both your resume/CV AND LinkedIn PDF for best results.</p>
                       
                       {state.isLinkedInUser && (
                         <p className="p-1.5 bg-blue-100/50 rounded border border-blue-200 text-xs">
