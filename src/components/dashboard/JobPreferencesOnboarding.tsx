@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { StepCard, StepCardContent, StepCardDescription, StepCardHeader, StepCardTitle } from "@/components/StepCard";
@@ -10,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, MapPin, DollarSign, Building, Clock } from "lucide-react";
+import { CheckCircle2, MapPin, DollarSign, Building, Clock, Briefcase } from "lucide-react";
 
 interface JobPreferencesOnboardingProps {
   onComplete: () => void;
