@@ -3,14 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { StepCard } from '@/components/StepCard';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Pencil, Briefcase, MapPin, Calendar, CheckCircle2 } from 'lucide-react';
+import { Pencil, Briefcase, MapPin, Calendar } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 
-interface ProfileSummaryCardProps {
-  readonly?: boolean;
-}
-
-export const ProfileSummaryCard = ({ readonly = false }: ProfileSummaryCardProps) => {
+export const ProfileSummaryCard = () => {
   const navigate = useNavigate();
   
   // Mock profile data - in a real app, this would come from API/state
@@ -24,14 +20,7 @@ export const ProfileSummaryCard = ({ readonly = false }: ProfileSummaryCardProps
   };
   
   return (
-    <StepCard className={readonly ? 'border-green-200 bg-green-50/30' : ''}>
-      {readonly && (
-        <div className="px-6 py-3 bg-green-50 border-b border-green-200 flex items-center gap-2">
-          <CheckCircle2 className="h-4 w-4 text-green-600" />
-          <span className="text-sm font-medium text-green-800">Profile Complete</span>
-        </div>
-      )}
-      
+    <StepCard>
       <div className="md:flex gap-6">
         {/* Profile Left Section (Photo) */}
         <div className="md:w-1/4 p-6 flex flex-col items-center text-center border-r border-border/40">
@@ -41,16 +30,14 @@ export const ProfileSummaryCard = ({ readonly = false }: ProfileSummaryCardProps
                 {profile.name.split(' ').map(n => n[0]).join('')}
               </AvatarFallback>
             </Avatar>
-            {!readonly && (
-              <Button 
-                size="icon" 
-                variant="secondary" 
-                className="absolute bottom-0 right-0 h-8 w-8 rounded-full"
-                onClick={() => navigate('/dashboard/branding')}
-              >
-                <Pencil className="h-4 w-4" />
-              </Button>
-            )}
+            <Button 
+              size="icon" 
+              variant="secondary" 
+              className="absolute bottom-0 right-0 h-8 w-8 rounded-full"
+              onClick={() => navigate('/dashboard/branding')}
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
           </div>
         </div>
         
@@ -77,17 +64,15 @@ export const ProfileSummaryCard = ({ readonly = false }: ProfileSummaryCardProps
               </div>
             </div>
             
-            {!readonly && (
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={() => navigate('/dashboard/profile-creation')}>
-                  <Pencil className="h-3.5 w-3.5 mr-1.5" />
-                  Edit Profile
-                </Button>
-                <Button size="sm" onClick={() => navigate('/dashboard/waiting-room')}>
-                  View Job Status
-                </Button>
-              </div>
-            )}
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" onClick={() => navigate('/dashboard/profile-creation')}>
+                <Pencil className="h-3.5 w-3.5 mr-1.5" />
+                Edit Profile
+              </Button>
+              <Button size="sm" onClick={() => navigate('/dashboard/waiting-room')}>
+                View Job Status
+              </Button>
+            </div>
           </div>
           
           <Separator className="my-4" />
@@ -110,13 +95,11 @@ export const ProfileSummaryCard = ({ readonly = false }: ProfileSummaryCardProps
             </div>
           </div>
           
-          {!readonly && (
-            <div className="mt-6 flex gap-2">
-              <Button variant="outline" size="sm" onClick={() => navigate('/dashboard/profile-snapshot')}>
-                View Full Profile
-              </Button>
-            </div>
-          )}
+          <div className="mt-6 flex gap-2">
+            <Button variant="outline" size="sm" onClick={() => navigate('/dashboard/profile-snapshot')}>
+              View Full Profile
+            </Button>
+          </div>
         </div>
       </div>
     </StepCard>
