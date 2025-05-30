@@ -15,14 +15,14 @@ const SignUp = () => {
   const { signUp, loading } = useAuth();
   const [isLinkedInSubmitting, setIsLinkedInSubmitting] = useState(false);
 
-  const handleSignUp = async (email: string, password: string, confirmPassword: string) => {
+  const handleSignUp = async (email: string, password: string, confirmPassword: string, firstName: string, lastName: string) => {
     if (password !== confirmPassword) {
       // In a real app, you'd show an error toast
       console.error("Passwords don't match");
       return;
     }
     
-    await signUp(email, password);
+    await signUp(email, password, firstName, lastName);
   };
 
   const handleLinkedInSignUp = () => {
