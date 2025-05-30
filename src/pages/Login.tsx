@@ -9,6 +9,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { AuthBackground } from '@/components/auth/AuthBackground';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -16,6 +18,7 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLinkedInSubmitting, setIsLinkedInSubmitting] = useState(false);
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
 
   const handleLinkedInLogin = () => {
     // In a real app, this would trigger OAuth
@@ -31,6 +34,28 @@ const Login = () => {
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     await signIn(email, password);
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      toast.error('Please enter your email address first');
+      return;
+    }
+
+    setIsResettingPassword(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      
+      if (error) throw error;
+      
+      toast.success('Password reset email sent! Check your inbox.');
+    } catch (error: any) {
+      toast.error(error.message || 'Error sending reset email');
+    } finally {
+      setIsResettingPassword(false);
+    }
   };
 
   return (
@@ -96,6 +121,18 @@ const Login = () => {
                   required
                   autoComplete="current-password"
                 />
+              </div>
+              
+              <div className="flex justify-end">
+                <Button 
+                  type="button"
+                  variant="link" 
+                  className="p-0 h-auto text-sm font-normal text-muted-foreground hover:text-primary"
+                  onClick={handleForgotPassword}
+                  disabled={isResettingPassword}
+                >
+                  {isResettingPassword ? 'Sending...' : 'Forgot password?'}
+                </Button>
               </div>
               
               <Button 
