@@ -748,7 +748,7 @@ const ProfileCreation = () => {
                         onClick={() => dispatch({ type: 'TOGGLE_SUPPORTING_DOCS' })}
                         type="button"
                       >
-                        {state.showSupportingDocs ? 'Hide Form' : 'Add Documents'}
+                        {state.showSupportingDocs ? 'Hide Form' : 'Add Files'}
                       </Button>
                     </div>
                     
