@@ -14,6 +14,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { User, Briefcase, Home, Settings, LogOut, Award } from "lucide-react";
 import React from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { cn } from "@/lib/utils";
 
 const menuItems = [
   {
@@ -38,12 +39,16 @@ const menuItems = [
   },
   {
     title: "Settings",
-    path: "/dashboard/branding", // Optionally, if you have a real settings page, update this path
+    path: "/dashboard/branding",
     icon: Settings,
   },
 ];
 
-export function AppSidebar() {
+interface AppSidebarProps {
+  isOnboarding?: boolean;
+}
+
+export function AppSidebar({ isOnboarding = false }: AppSidebarProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const { signOut } = useAuth();
@@ -55,28 +60,52 @@ export function AppSidebar() {
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={
-                      location.pathname === item.path ||
-                      (item.path === "/dashboard" && location.pathname === "/dashboard")
-                    }
-                  >
-                    <a
-                      href={item.path}
-                      onClick={e => {
-                        e.preventDefault();
-                        navigate(item.path);
-                      }}
+              {menuItems.map((item) => {
+                const isJobPreferences = item.path === "/dashboard/job-matching";
+                const isDisabled = isOnboarding && !isJobPreferences && item.path !== "/dashboard";
+                const isHighlighted = isOnboarding && isJobPreferences;
+                
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={
+                        location.pathname === item.path ||
+                        (item.path === "/dashboard" && location.pathname === "/dashboard")
+                      }
+                      className={cn(
+                        isDisabled && "opacity-50 pointer-events-none",
+                        isHighlighted && "bg-primary/10 border border-primary/20 shadow-sm"
+                      )}
                     >
-                      <item.icon className="mr-2" />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+                      <a
+                        href={item.path}
+                        onClick={e => {
+                          e.preventDefault();
+                          if (!isDisabled) {
+                            navigate(item.path);
+                          }
+                        }}
+                      >
+                        <item.icon className={cn(
+                          "mr-2",
+                          isHighlighted && "text-primary"
+                        )} />
+                        <span className={cn(
+                          isHighlighted && "text-primary font-medium"
+                        )}>
+                          {item.title}
+                          {isHighlighted && (
+                            <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-primary text-primary-foreground">
+                              Next
+                            </span>
+                          )}
+                        </span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
               <SidebarMenuItem>
                 <SidebarMenuButton
                   asChild
