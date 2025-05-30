@@ -732,7 +732,7 @@ const ProfileCreation = () => {
                         onClick={() => setShowSupportingDocs(!showSupportingDocs)}
                         type="button"
                       >
-                        {showSupportingDocs ? 'Hide Form' : 'Add Documents'}
+                        {showSupportingDocs ? 'Hide Form' : 'Add Files'}
                       </Button>
                     </div>
                     
