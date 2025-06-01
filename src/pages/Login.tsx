@@ -98,6 +98,17 @@ const Login = () => {
                 />
               </div>
               
+              <div className="flex justify-end">
+                <Button 
+                  variant="link" 
+                  className="p-0 h-auto text-sm"
+                  onClick={() => navigate('/forgot-password')}
+                  type="button"
+                >
+                  Forgot password?
+                </Button>
+              </div>
+              
               <Button 
                 type="submit" 
                 className="w-full"
