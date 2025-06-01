@@ -18,23 +18,39 @@ const ResetPassword = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [validResetLink, setValidResetLink] = useState(false);
 
   useEffect(() => {
-    // Check if we have the necessary tokens in the URL
-    const accessToken = searchParams.get('access_token');
-    const refreshToken = searchParams.get('refresh_token');
-    
-    if (!accessToken || !refreshToken) {
+    // Check if this is a valid password reset link from Supabase
+    const checkResetLink = async () => {
+      const type = searchParams.get('type');
+      
+      // If this is a recovery type link from Supabase, it's valid
+      if (type === 'recovery') {
+        setValidResetLink(true);
+        console.log('Valid password reset link detected');
+        return;
+      }
+      
+      // If no recovery type, check if user has an active session (already authenticated)
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          setValidResetLink(true);
+          console.log('User has active session for password reset');
+          return;
+        }
+      } catch (error) {
+        console.error('Error checking session:', error);
+      }
+      
+      // If we get here, this is not a valid reset scenario
+      console.log('Invalid reset link, redirecting to forgot password');
       toast.error('Invalid reset link. Please request a new password reset.');
       navigate('/forgot-password');
-      return;
-    }
+    };
 
-    // Set the session with the tokens from the URL
-    supabase.auth.setSession({
-      access_token: accessToken,
-      refresh_token: refreshToken,
-    });
+    checkResetLink();
   }, [searchParams, navigate]);
 
   const handleResetPassword = async (e: React.FormEvent) => {
@@ -73,6 +89,24 @@ const ResetPassword = () => {
       setLoading(false);
     }
   };
+
+  // Don't render the form until we've validated this is a proper reset link
+  if (!validResetLink) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4 py-12">
+        <AuthBackground />
+        <div className="w-full max-w-md">
+          <StepCard>
+            <StepCardContent>
+              <div className="text-center">
+                <p>Validating reset link...</p>
+              </div>
+            </StepCardContent>
+          </StepCard>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12">
