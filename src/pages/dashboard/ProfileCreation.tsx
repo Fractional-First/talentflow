@@ -367,7 +367,7 @@ const ProfileCreation = () => {
       });
       
       // Invalidate React Query cache for profile data to ensure fresh data
-      await queryClient.invalidateQueries(['profile', user.id]);
+      await queryClient.invalidateQueries({ queryKey: ['profile', user.id] });
       
       // Redirect to profile snapshot page
       navigate('/dashboard/profile-snapshot');
