@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useReducer } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
@@ -42,6 +43,14 @@ const experienceLevels = [
 const LINKEDIN_PDF_GUIDE_URL =
   "https://www.linkedin.com/help/linkedin/answer/a521735/how-to-save-a-profile-as-a-pdf?lang=en";
 
+// Profile document type
+type ProfileDocument = {
+  type: 'linkedin' | 'resume' | 'other';
+  file: File;
+  title?: string;
+  description?: string;
+};
+
 // Supporting document type
 type SupportingDocument = {
   type: 'document' | 'link';
@@ -67,11 +76,10 @@ interface ProfileState {
     summary: string;
     skills: string;
   };
-  // Files
-  resumeFile: File | null;
-  linkedinPdfFile: File | null;
-  supportingFiles: Map<string, File>;
+  // New simplified file structure
+  profileDocuments: ProfileDocument[];
   // Supporting documents
+  supportingFiles: Map<string, File>;
   supportingDocuments: SupportingDocument[];
   currentDoc: {
     type: 'document' | 'link';
@@ -86,6 +94,7 @@ interface ProfileState {
   isEmailVerified: boolean;
   isSubmitting: boolean;
   serverError: string;
+  validationErrors: string[];
   // Context state
   isLinkedInUser: boolean;
   isUsingLinkedInInfo: boolean;
@@ -94,8 +103,8 @@ interface ProfileState {
 // Define actions for our reducer
 type ProfileAction =
   | { type: 'UPDATE_FORM_FIELD'; field: string; value: string }
-  | { type: 'SET_RESUME_FILE'; file: File | null }
-  | { type: 'SET_LINKEDIN_PDF'; file: File | null }
+  | { type: 'ADD_PROFILE_DOCUMENT'; document: ProfileDocument }
+  | { type: 'REMOVE_PROFILE_DOCUMENT'; index: number }
   | { type: 'SET_SUPPORTING_FILE'; title: string; file: File }
   | { type: 'UPDATE_DOC_FIELD'; field: keyof ProfileState['currentDoc']; value: string }
   | { type: 'TOGGLE_MANUAL_ENTRY'; value: boolean }
@@ -105,6 +114,7 @@ type ProfileAction =
   | { type: 'SET_EMAIL_VERIFIED'; value: boolean }
   | { type: 'SET_SUBMITTING'; value: boolean }
   | { type: 'SET_SERVER_ERROR'; error: string }
+  | { type: 'SET_VALIDATION_ERRORS'; errors: string[] }
   | { type: 'SET_LINKEDIN_USER'; value: boolean }
   | { type: 'USE_LINKEDIN_INFO'; value: boolean };
 
@@ -122,8 +132,7 @@ const initialState: ProfileState = {
     summary: '',
     skills: ''
   },
-  resumeFile: null,
-  linkedinPdfFile: null,
+  profileDocuments: [],
   supportingFiles: new Map(),
   supportingDocuments: [],
   currentDoc: {
@@ -138,6 +147,7 @@ const initialState: ProfileState = {
   isEmailVerified: false,
   isSubmitting: false,
   serverError: '',
+  validationErrors: [],
   isLinkedInUser: false,
   isUsingLinkedInInfo: false
 };
@@ -153,10 +163,16 @@ function profileReducer(state: ProfileState, action: ProfileAction): ProfileStat
           [action.field]: action.value
         }
       };
-    case 'SET_RESUME_FILE':
-      return { ...state, resumeFile: action.file };
-    case 'SET_LINKEDIN_PDF':
-      return { ...state, linkedinPdfFile: action.file };
+    case 'ADD_PROFILE_DOCUMENT':
+      return {
+        ...state,
+        profileDocuments: [...state.profileDocuments, action.document]
+      };
+    case 'REMOVE_PROFILE_DOCUMENT': {
+      const newDocs = [...state.profileDocuments];
+      newDocs.splice(action.index, 1);
+      return { ...state, profileDocuments: newDocs };
+    }
     case 'SET_SUPPORTING_FILE': {
       const newMap = new Map(state.supportingFiles);
       newMap.set(action.title, action.file);
@@ -195,6 +211,8 @@ function profileReducer(state: ProfileState, action: ProfileAction): ProfileStat
       return { ...state, isSubmitting: action.value };
     case 'SET_SERVER_ERROR':
       return { ...state, serverError: action.error };
+    case 'SET_VALIDATION_ERRORS':
+      return { ...state, validationErrors: action.errors };
     case 'SET_LINKEDIN_USER':
       return { ...state, isLinkedInUser: action.value };
     case 'USE_LINKEDIN_INFO':
@@ -222,15 +240,35 @@ function profileReducer(state: ProfileState, action: ProfileAction): ProfileStat
   }
 }
 
+// Validation function
+const validateProfileData = (profileDocuments: ProfileDocument[], formData: any): string[] => {
+  const errors: string[] = [];
+  
+  // Check if at least one required document is uploaded
+  const hasLinkedIn = profileDocuments.some(doc => doc.type === 'linkedin');
+  const hasResume = profileDocuments.some(doc => doc.type === 'resume');
+  
+  if (!hasLinkedIn && !hasResume) {
+    errors.push('At least one of the following is required: LinkedIn PDF or Resume');
+  }
+  
+  // If manual entry is being used, validate basic required fields
+  if (!hasLinkedIn && !hasResume && (!formData.firstName || !formData.lastName)) {
+    errors.push('First name and last name are required when not uploading documents');
+  }
+  
+  return errors;
+};
+
 const ProfileCreation = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [state, dispatch] = useReducer(profileReducer, initialState);
   
   // Derived state
-  const bothFilesUploaded = state.resumeFile !== null && state.linkedinPdfFile !== null;
-  const showLinkedInOption = !state.isLinkedInUser;
-  const resumeUploaded = state.resumeFile !== null;
+  const hasLinkedInDoc = state.profileDocuments.some(doc => doc.type === 'linkedin');
+  const hasResumeDoc = state.profileDocuments.some(doc => doc.type === 'resume');
+  const hasRequiredDocuments = hasLinkedInDoc || hasResumeDoc;
   
   // Effect to check if the user signed up with LinkedIn
   useEffect(() => {
@@ -247,24 +285,38 @@ const ProfileCreation = () => {
   ];
   
   // Handlers
-  const handleResumeUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLinkedInUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-      dispatch({ type: 'SET_RESUME_FILE', file });
+      
+      // Remove existing LinkedIn document if any
+      const filteredDocs = state.profileDocuments.filter(doc => doc.type !== 'linkedin');
+      dispatch({ type: 'REMOVE_PROFILE_DOCUMENT', index: -1 });
+      
+      // Add new LinkedIn document
+      dispatch({ type: 'ADD_PROFILE_DOCUMENT', document: { type: 'linkedin', file } });
+      
       toast({
-        title: "Resume uploaded",
-        description: "Your resume was successfully uploaded."
+        title: "LinkedIn PDF uploaded",
+        description: "Your LinkedIn profile PDF was successfully uploaded."
       });
     }
   };
 
-  const handleLinkedInPdfUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleResumeUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-      dispatch({ type: 'SET_LINKEDIN_PDF', file });
+      
+      // Remove existing resume document if any
+      const filteredDocs = state.profileDocuments.filter(doc => doc.type !== 'resume');
+      dispatch({ type: 'REMOVE_PROFILE_DOCUMENT', index: -1 });
+      
+      // Add new resume document
+      dispatch({ type: 'ADD_PROFILE_DOCUMENT', document: { type: 'resume', file } });
+      
       toast({
-        title: "LinkedIn PDF uploaded",
-        description: "Your LinkedIn profile PDF was successfully uploaded."
+        title: "Resume uploaded",
+        description: "Your resume was successfully uploaded."
       });
     }
   };
@@ -279,73 +331,66 @@ const ProfileCreation = () => {
   };
   
   const submitProfileData = async () => {
+    // Validate before submission
+    const errors = validateProfileData(state.profileDocuments, state.formData);
+    if (errors.length > 0) {
+      dispatch({ type: 'SET_VALIDATION_ERRORS', errors });
+      toast({
+        title: "Validation Error",
+        description: errors[0],
+        variant: "destructive"
+      });
+      return;
+    }
+    
     dispatch({ type: 'SET_SUBMITTING', value: true });
     dispatch({ type: 'SET_SERVER_ERROR', error: '' });
+    dispatch({ type: 'SET_VALIDATION_ERRORS', errors: [] });
     
     try {
       const formDataToSubmit = new FormData();
 
-      // Only submit fields that have values
+      // Add form data
       Object.entries(state.formData).forEach(([key, value]) => {
         if (value) {
           formDataToSubmit.append(key, value);
         }
       });
       
-      // Determine profile method based on what files are available
-      let profileMethod = 'manual';
-      if (state.linkedinPdfFile && state.resumeFile) {
-        profileMethod = 'both';
-      } else if (state.linkedinPdfFile) {
-        profileMethod = 'linkedin';
-      } else if (state.resumeFile) {
-        profileMethod = 'resume';
-      }
-      
-      formDataToSubmit.append('profileMethod', profileMethod);
-      
-      // Add files based on what's available
-      if (state.linkedinPdfFile) {
-        formDataToSubmit.append('linkedinPdf', state.linkedinPdfFile);
-      }
-      
-      if (state.resumeFile) {
-        formDataToSubmit.append('resume', state.resumeFile);
-      }
+      // Add profile documents array
+      state.profileDocuments.forEach((doc, index) => {
+        formDataToSubmit.append(`profileDocuments[${index}][type]`, doc.type);
+        formDataToSubmit.append(`profileDocuments[${index}][file]`, doc.file);
+        if (doc.title) {
+          formDataToSubmit.append(`profileDocuments[${index}][title]`, doc.title);
+        }
+        if (doc.description) {
+          formDataToSubmit.append(`profileDocuments[${index}][description]`, doc.description);
+        }
+      });
       
       // Add supporting documents
       state.supportingDocuments.forEach((doc, index) => {
-        formDataToSubmit.append(`supportingDoc[${index}][type]`, doc.type);
-        formDataToSubmit.append(`supportingDoc[${index}][title]`, doc.title);
+        formDataToSubmit.append(`supportingDocuments[${index}][type]`, doc.type);
+        formDataToSubmit.append(`supportingDocuments[${index}][title]`, doc.title);
         
         if (doc.description) {
-          formDataToSubmit.append(`supportingDoc[${index}][description]`, doc.description);
+          formDataToSubmit.append(`supportingDocuments[${index}][description]`, doc.description);
         }
         
         if (doc.type === 'document' && state.supportingFiles.has(doc.title)) {
           const file = state.supportingFiles.get(doc.title);
           if (file) {
-            formDataToSubmit.append(`supportingDoc[${index}][file]`, file);
+            formDataToSubmit.append(`supportingDocuments[${index}][file]`, file);
           }
         }
         
         if (doc.type === 'link' && doc.url) {
-          formDataToSubmit.append(`supportingDoc[${index}][url]`, doc.url);
+          formDataToSubmit.append(`supportingDocuments[${index}][url]`, doc.url);
         }
       });
       
-      // Check for required content
-      let isValidSubmission = false;
-      
-      if (state.linkedinPdfFile || state.resumeFile || (state.formData.firstName && state.formData.lastName)) {
-        isValidSubmission = true;
-      }
-      
-      if (!isValidSubmission) {
-        throw new Error('Please provide at least your LinkedIn PDF, resume, or basic profile information');
-      }
-      
-      // Send POST request to webhook - UPDATED URL HERE
+      // Send POST request to webhook
       const response = await fetch('https://primary-production-1687b.up.railway.app/webhook-test/d4245ae6-e289-47aa-95b4-26a93b75f7d9', {
         method: 'POST',
         body: formDataToSubmit,
@@ -365,7 +410,6 @@ const ProfileCreation = () => {
         
         if (profileError) {
           console.error('Error updating profile_created flag:', profileError);
-          // Don't throw here, as the main profile submission was successful
         }
       }
       
@@ -451,7 +495,7 @@ const ProfileCreation = () => {
   };
 
   const addSupportingDocument = (e: React.MouseEvent) => {
-    e.preventDefault(); // Prevent form submission
+    e.preventDefault();
     
     if (state.currentDoc.type === 'document' && !state.currentDoc.fileName) {
       toast({
@@ -498,12 +542,22 @@ const ProfileCreation = () => {
   };
 
   const removeDocument = (index: number, e: React.MouseEvent) => {
-    e.preventDefault(); // Prevent form submission
+    e.preventDefault();
     dispatch({ type: 'REMOVE_SUPPORTING_DOCUMENT', index });
     
     toast({
       title: "Item removed",
       description: "The document or link has been removed from your profile."
+    });
+  };
+
+  const removeProfileDocument = (index: number, e: React.MouseEvent) => {
+    e.preventDefault();
+    dispatch({ type: 'REMOVE_PROFILE_DOCUMENT', index });
+    
+    toast({
+      title: "Document removed",
+      description: "The profile document has been removed."
     });
   };
 
@@ -528,6 +582,23 @@ const ProfileCreation = () => {
 
             <StepCardContent>
 
+              {/* VALIDATION ERRORS */}
+              {state.validationErrors.length > 0 && (
+                <Alert className="mb-4 bg-red-50 border-red-200">
+                  <AlertCircle className="h-5 w-5 text-red-600" />
+                  <AlertTitle className="mb-1 font-semibold text-red-800">
+                    Validation Error
+                  </AlertTitle>
+                  <AlertDescription className="text-sm text-red-900">
+                    <ul className="list-disc ml-4">
+                      {state.validationErrors.map((error, index) => (
+                        <li key={index}>{error}</li>
+                      ))}
+                    </ul>
+                  </AlertDescription>
+                </Alert>
+              )}
+
               {/* COMBINED INSTRUCTIONAL HELPER TEXT */}
               <Alert className="mb-4 bg-blue-50 border-blue-200">
                 <div className="flex gap-2">
@@ -543,10 +614,7 @@ const ProfileCreation = () => {
                       <ul className="list-disc ml-6 mb-2">
                         <li>Upload your resume <span className="font-semibold">(PDF or DOCX)</span></li>
                         <li>Upload your LinkedIn profile as a <span className="font-semibold">PDF</span></li>
-                        <li>Or manually enter your basic information</li>
                       </ul>
-                      
-                      <p className="mb-1"><strong>Note:</strong> You can upload both your resume AND LinkedIn PDF if you wish.</p>
                       
                       {state.isLinkedInUser && (
                         <p className="p-1.5 bg-blue-100/50 rounded border border-blue-200 text-xs">
@@ -583,6 +651,41 @@ const ProfileCreation = () => {
               {!state.showManualEntry ? (
                 <div className="space-y-6">
 
+                  {/* UPLOADED DOCUMENTS DISPLAY */}
+                  {state.profileDocuments.length > 0 && (
+                    <div className="border rounded-lg p-4 bg-green-50 border-green-200">
+                      <h3 className="font-medium mb-3 text-green-800">Uploaded Documents</h3>
+                      <div className="space-y-2">
+                        {state.profileDocuments.map((doc, index) => (
+                          <div key={index} className="flex items-center justify-between p-2 rounded bg-green-100 border border-green-200">
+                            <div className="flex items-center gap-2">
+                              <div className="p-1 rounded bg-green-200">
+                                {doc.type === 'linkedin' ? (
+                                  <Linkedin className="h-4 w-4 text-green-700" />
+                                ) : (
+                                  <File className="h-4 w-4 text-green-700" />
+                                )}
+                              </div>
+                              <div>
+                                <p className="font-medium text-green-800 capitalize">{doc.type}</p>
+                                <p className="text-xs text-green-600">{doc.file.name}</p>
+                              </div>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={(e) => removeProfileDocument(index, e)}
+                              className="text-red-600 hover:text-red-700 hover:bg-red-100"
+                              type="button"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   {/* LINKEDIN PDF UPLOAD SEGMENT */}
                   <div className="border rounded-lg p-6 mb-2">
                     <div className="flex items-center mb-4">
@@ -606,21 +709,20 @@ const ProfileCreation = () => {
                         </div>
                       </div>
                     </div>
-                    {/* LinkedIn PDF Upload Input */}
                     <div className="border-2 border-dashed border-muted rounded-lg p-6 text-center">
-                      {state.linkedinPdfFile ? (
+                      {hasLinkedInDoc ? (
                         <div className="flex flex-col items-center">
                           <div className="bg-primary/10 p-3 rounded-full mb-3">
                             <File className="h-6 w-6 text-primary" />
                           </div>
                           <p className="mb-1 font-medium">LinkedIn PDF uploaded successfully</p>
                           <p className="text-sm text-muted-foreground mb-3">
-                            {state.linkedinPdfFile.name}
+                            {state.profileDocuments.find(doc => doc.type === 'linkedin')?.file.name}
                           </p>
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => dispatch({ type: 'SET_LINKEDIN_PDF', file: null })}
+                            onClick={() => document.getElementById('linkedin-pdf-upload')?.click()}
                             type="button"
                           >
                             Replace
@@ -648,7 +750,7 @@ const ProfileCreation = () => {
                                 type="file"
                                 className="hidden"
                                 accept=".pdf"
-                                onChange={handleLinkedInPdfUpload}
+                                onChange={handleLinkedInUpload}
                               />
                             </label>
                           </div>
@@ -671,19 +773,19 @@ const ProfileCreation = () => {
                       </div>
                     </div>
                     <div className="border-2 border-dashed border-muted rounded-lg p-6 text-center">
-                      {state.resumeFile ? (
+                      {hasResumeDoc ? (
                         <div className="flex flex-col items-center">
                           <div className="bg-primary/10 p-3 rounded-full mb-3">
                             <File className="h-6 w-6 text-primary" />
                           </div>
                           <p className="mb-1 font-medium">Resume uploaded successfully</p>
                           <p className="text-sm text-muted-foreground mb-3">
-                            {state.resumeFile.name}
+                            {state.profileDocuments.find(doc => doc.type === 'resume')?.file.name}
                           </p>
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => dispatch({ type: 'SET_RESUME_FILE', file: null })}
+                            onClick={() => document.getElementById('resume')?.click()}
                             type="button"
                           >
                             Replace
@@ -723,7 +825,7 @@ const ProfileCreation = () => {
                   </div>
 
                   {/* DISPLAY WHEN BOTH FILES ARE UPLOADED */}
-                  {bothFilesUploaded && (
+                  {hasLinkedInDoc && hasResumeDoc && (
                     <Alert className="mb-4 bg-green-50 border-green-200">
                       <div className="flex gap-2">
                         <div className="mt-0.5">
@@ -1175,7 +1277,7 @@ const ProfileCreation = () => {
 
             <Button
               type="submit"
-              disabled={state.isSubmitting}
+              disabled={state.isSubmitting || !hasRequiredDocuments}
             >
               {state.isSubmitting ? 'Saving...' : 'Continue'}
               <ArrowRight className="ml-2 h-4 w-4" />
