@@ -324,7 +324,7 @@ const ProfileCreation = () => {
       const responseData = await response.json();
       console.log('Webhook response:', responseData);
       
-      // Update profile_created flag in Supabase
+      // Update profile_created flag in Supabase BEFORE redirecting
       const { error: profileError } = await supabase
         .from('profiles')
         .update({ 
@@ -342,7 +342,8 @@ const ProfileCreation = () => {
               fileName: doc.file.name
             })),
             supportingLinks: profile.links,
-            submittedAt: new Date().toISOString()
+            submittedAt: new Date().toISOString(),
+            webhookResponse: responseData
           },
           profile_version: '0.1'
         })
@@ -363,8 +364,11 @@ const ProfileCreation = () => {
         description: "Your profile information has been submitted and processed."
       });
       
-      // Redirect to profile snapshot page
-      navigate('/dashboard/profile-snapshot');
+      // Add a small delay to ensure the database update is fully committed
+      setTimeout(() => {
+        // Redirect to profile snapshot page
+        navigate('/dashboard/profile-snapshot');
+      }, 100);
       
     } catch (error) {
       console.error('Error submitting profile:', error);
