@@ -12,20 +12,23 @@ import {
   GraduationCap,
   CheckCircle,
   Pencil,
-  // History,
-  WandSparkles, // [AI SUGGESTION FEATURE] Lucide icon for suggestions
-  Info // for highlight
+  WandSparkles,
+  Info,
+  MapPin,
+  Mail,
+  Phone
 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
 import VersionControlledSection from '@/components/profile/VersionControlledSection';
 import { GlobalVersionHistory } from '@/components/profile/GlobalVersionHistory';
 import { VersionEntry } from '@/components/profile/types/version-types';
-// [AI SUGGESTION FEATURE] Dialog + Tooltip for guide and tooltips.
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 // Helper function to generate unique IDs
 const generateId = () => Math.random().toString(36).substring(2, 15);
@@ -475,222 +478,347 @@ const ProfileSnapshot = () => {
         </DialogContent>
       </Dialog>
 
-      <div className="space-y-6">
-        <StepCard>
-          <StepCardHeader>
-            <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-              <div>
-                <StepCardTitle>Profile Snapshot</StepCardTitle>
-                <StepCardDescription>
-                  Review your professional profile before proceeding to the next step
-                </StepCardDescription>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-2">
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button size="sm" variant="outline" onClick={() => setShowAIGuide(true)}>
-                        <WandSparkles className="mr-2 h-4 w-4 text-primary/70" />
-                        What are AI Suggestions?
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      Learn about suggestions for enhancing your profile.
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-                <GlobalVersionHistory
-                  sectionVersions={allSectionVersions}
-                  onRevert={handleGlobalRevert}
-                />
-              </div>
-            </div>
-          </StepCardHeader>
-
-          <StepCardContent>
-            <div className="flex flex-col md:flex-row items-start gap-6">
-              <div className="md:w-1/3 flex flex-col items-center text-center">
-                <Avatar className="h-32 w-32 mb-4 animate-scale-in">
-                  <AvatarFallback className="text-3xl bg-primary/10 text-primary">
-                    {profile.name.split(' ').map((n: string) => n[0]).join('')}
-                  </AvatarFallback>
-                </Avatar>
-                <h3 className="text-xl font-medium">{profile.name}</h3>
-                <p className="text-muted-foreground">{profile.title}</p>
-                <p className="text-sm text-muted-foreground">{profile.company}</p>
-
-                <div className="mt-4 space-y-1 text-sm w-full">
-                  <p>{profile.email}</p>
-                  <p>{profile.phone}</p>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="mt-4"
-                  onClick={() => navigate('/dashboard/profile-creation')}
-                >
-                  <Pencil className="h-3.5 w-3.5 mr-1.5" />
-                  Edit Basic Info
-                </Button>
-              </div>
-
-              <div className="md:w-2/3 space-y-6">
-                {/* SUMMARY SECTION */}
-                <div className={`rounded transition-all p-2 ${highlightClass('summary')}`}>
-                  <VersionControlledSection
-                    title="Professional Summary"
-                    icon={<User className="h-4 w-4 text-primary" />}
-                    versions={summaryVersions}
-                    currentVersionId={currentVersionIds.summary}
-                    onRevert={handleRevertSummary}
-                    onEdit={() => navigate('/dashboard/profile-creation')}
-                  >
-                    <div>
-                      <p className="text-sm text-muted-foreground mt-2">{profile.summary}</p>
-                      
-                      {/* [AI SUGGESTION FEATURE] Button and suggestion display - moved after content */}
-                      <div className="flex items-start mt-1 gap-1 justify-end">
-                        {renderAISuggestionButton('summary')}
-                      </div>
-                      {renderAISuggestionPanel('summary')}
-                    </div>
-                  </VersionControlledSection>
-                </div>
-
-                {/* SKILLS SECTION */}
-                <div className={`rounded transition-all p-2 ${highlightClass('skills')}`}>
-                  <VersionControlledSection
-                    title="Skills"
-                    icon={<CheckCircle className="h-4 w-4 text-primary" />}
-                    versions={skillsVersions}
-                    currentVersionId={currentVersionIds.skills}
-                    onRevert={handleRevertSkills}
-                    onEdit={() => navigate('/dashboard/profile-creation')}
-                  >
-                    <div>
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {profile.skills.map((skill: string, index: number) => (
-                          <Badge key={index} variant="secondary" className="animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
-                            {skill}
-                          </Badge>
-                        ))}
-                      </div>
-                      
-                      {/* [AI SUGGESTION FEATURE] Button and suggestion display - moved after content */}
-                      <div className="flex items-start mt-2 gap-1 justify-end">
-                        {renderAISuggestionButton('skills')}
-                      </div>
-                      {renderAISuggestionPanel('skills')}
-                    </div>
-                  </VersionControlledSection>
-                </div>
-
-                {/* EXPERIENCE SECTION */}
-                <div className={`rounded transition-all p-2 ${highlightClass('experience')}`}>
-                  <VersionControlledSection
-                    title="Work Experience"
-                    icon={<Briefcase className="h-4 w-4 text-primary" />}
-                    versions={experienceVersions}
-                    currentVersionId={currentVersionIds.experience}
-                    onRevert={handleRevertExperience}
-                    onEdit={() => navigate('/dashboard/profile-creation')}
-                  >
-                    <div>
-                      <div className="space-y-3 mt-2">
-                        {profile.experience.map((exp: any, index: number) => (
-                          <div key={index} className="animate-slide-up" style={{ animationDelay: `${index * 0.15}s` }}>
-                            <div className="flex justify-between items-start">
-                              <div>
-                                <h4 className="font-medium">{exp.title}</h4>
-                                <p className="text-sm text-muted-foreground">{exp.company}</p>
-                              </div>
-                              <span className="text-xs text-muted-foreground">{exp.duration}</span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                      
-                      {/* [AI SUGGESTION FEATURE] Button and suggestion display - moved after content */}
-                      <div className="flex items-start mt-2 gap-1 justify-end">
-                        {renderAISuggestionButton('experience')}
-                      </div>
-                      {renderAISuggestionPanel('experience')}
-                    </div>
-                  </VersionControlledSection>
-                </div>
-
-                {/* EDUCATION SECTION */}
-                <div className={`rounded transition-all p-2 ${highlightClass('education')}`}>
-                  <VersionControlledSection
-                    title="Education"
-                    icon={<GraduationCap className="h-4 w-4 text-primary" />}
-                    versions={educationVersions}
-                    currentVersionId={currentVersionIds.education}
-                    onRevert={handleRevertEducation}
-                    onEdit={() => navigate('/dashboard/profile-creation')}
-                  >
-                    <div>
-                      <div className="space-y-3 mt-2">
-                        {profile.education.map((edu: any, index: number) => (
-                          <div key={index} className="animate-slide-up" style={{ animationDelay: `${index * 0.15 + 0.3}s` }}>
-                            <div className="flex justify-between items-start">
-                              <div>
-                                <h4 className="font-medium">{edu.degree}</h4>
-                                <p className="text-sm text-muted-foreground">{edu.school}</p>
-                              </div>
-                              <span className="text-xs text-muted-foreground">{edu.year}</span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                      
-                      {/* [AI SUGGESTION FEATURE] Button and suggestion display - moved after content */}
-                      <div className="flex items-start mt-2 gap-1 justify-end">
-                        {renderAISuggestionButton('education')}
-                      </div>
-                      {renderAISuggestionPanel('education')}
-                    </div>
-                  </VersionControlledSection>
-                </div>
-              </div>
-            </div>
-          </StepCardContent>
-        </StepCard>
-
-        <StepCard>
-          <StepCardHeader>
-            <StepCardTitle>Confirm Your Profile</StepCardTitle>
-            <StepCardDescription>
-              This profile information will be used for job matching and presenting your candidacy to potential employers.
-            </StepCardDescription>
-          </StepCardHeader>
+      <div className="max-w-6xl mx-auto space-y-6">
+        {/* Main Profile Card */}
+        <Card className="overflow-hidden">
+          <div className="bg-gradient-to-r from-teal-500 to-teal-600 h-32"></div>
           
-          <StepCardContent>
-            <div className="bg-primary/5 border border-primary/20 rounded-lg p-6">
-              <p className="text-sm">
-                By proceeding, you confirm that the information provided in your profile is accurate and up-to-date. You can always come back and edit your profile later.
-              </p>
+          <CardContent className="relative px-8 pb-8">
+            {/* Profile Header */}
+            <div className="flex flex-col lg:flex-row items-start gap-8 -mt-16">
+              {/* Profile Image Section */}
+              <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
+                <div className="relative mb-4">
+                  <Avatar className="h-32 w-32 border-4 border-white shadow-lg">
+                    <AvatarImage src="/lovable-uploads/e6be1987-5c07-4a8d-ac51-3ad8aef10da5.png" alt={profile.name} />
+                    <AvatarFallback className="text-2xl bg-teal-100 text-teal-700">
+                      {profile.name.split(' ').map((n: string) => n[0]).join('')}
+                    </AvatarFallback>
+                  </Avatar>
+                  <Button
+                    size="icon"
+                    variant="secondary"
+                    className="absolute bottom-0 right-0 h-8 w-8 rounded-full shadow-md"
+                    onClick={() => navigate('/dashboard/branding')}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                </div>
+                
+                {/* Basic Info */}
+                <div className="bg-white rounded-lg p-4 shadow-sm border">
+                  <h1 className="text-2xl font-bold text-gray-900 mb-1">{profile.name}</h1>
+                  <p className="text-lg text-gray-600 mb-2">{profile.title}</p>
+                  <p className="text-sm text-gray-500 mb-4">{profile.company}</p>
+                  
+                  <div className="space-y-2 text-sm text-gray-600">
+                    <div className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-teal-600" />
+                      <span>San Francisco, CA</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Mail className="h-4 w-4 text-teal-600" />
+                      <span>{profile.email}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-teal-600" />
+                      <span>{profile.phone}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Main Content Area */}
+              <div className="flex-1 mt-8 lg:mt-0">
+                {/* Introduction Section */}
+                <div className="bg-teal-50 rounded-lg p-6 mb-6">
+                  <div className="flex items-start gap-4">
+                    <div className="bg-teal-600 text-white px-3 py-1 rounded-md text-sm font-medium">
+                      Meet {profile.name.split(' ')[0]}
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <p className="text-gray-700 leading-relaxed">{profile.summary}</p>
+                  </div>
+                  
+                  {/* Role Tags */}
+                  <div className="flex flex-wrap gap-2 mt-4">
+                    <Badge variant="outline" className="bg-white border-teal-200 text-teal-700">
+                      Growth Architect
+                    </Badge>
+                    <Badge variant="outline" className="bg-white border-teal-200 text-teal-700">
+                      Venture Builder
+                    </Badge>
+                    <Badge variant="outline" className="bg-white border-teal-200 text-teal-700">
+                      Leadership / Cultural Steward
+                    </Badge>
+                  </div>
+                </div>
+
+                {/* Experience Highlights */}
+                <div className="bg-white rounded-lg border p-6 mb-6">
+                  <h3 className="font-semibold text-gray-900 mb-4">Experience Highlights</h3>
+                  <div className="space-y-4">
+                    {profile.experience.map((exp: any, index: number) => (
+                      <div key={index} className="border-l-2 border-teal-200 pl-4">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h4 className="font-medium text-gray-900">{exp.title}</h4>
+                            <p className="text-teal-600">{exp.company}</p>
+                          </div>
+                          <span className="text-sm text-gray-500">{exp.duration}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Skills Section */}
+                <div className="bg-white rounded-lg border p-6 mb-6">
+                  <h3 className="font-semibold text-gray-900 mb-4">Core Competencies</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="text-center">
+                      <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                        <Briefcase className="h-6 w-6 text-teal-600" />
+                      </div>
+                      <h4 className="font-medium text-gray-900 mb-2">Strategic Problem-Solving</h4>
+                      <p className="text-sm text-gray-600">Connecting the dots. Crafting insights and tactical thinking. Driving business revenue growth and brand presence.</p>
+                    </div>
+                    
+                    <div className="text-center">
+                      <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                        <User className="h-6 w-6 text-teal-600" />
+                      </div>
+                      <h4 className="font-medium text-gray-900 mb-2">Conscious Leadership</h4>
+                      <p className="text-sm text-gray-600">Mentoring leaders, integrating mindful leadership practices that enhance connection, productivity, positivity and organizational culture.</p>
+                    </div>
+                    
+                    <div className="text-center">
+                      <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                        <CheckCircle className="h-6 w-6 text-teal-600" />
+                      </div>
+                      <h4 className="font-medium text-gray-900 mb-2">Scaling Ventures</h4>
+                      <p className="text-sm text-gray-600">Leading startups, corporate ventures through planning, fundraising, governance, scaling, professionalization, optimization and, ultimately, exits.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </StepCardContent>
+          </CardContent>
+        </Card>
+
+        {/* Detailed Information Cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Key Roles */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Key Roles</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="text-sm">
+                <p className="font-medium">Founder/CEO, multiple B2B startups</p>
+                <p className="font-medium">Venture Builder and APAC GTM Leader, Mach49</p>
+                <p className="font-medium">Managing Director, Yahoo! SE Asia</p>
+                <p className="font-medium">Venture Architect/Strategist, Vivint Corp</p>
+                <p className="font-medium">Data Science, Strategy and FP&A Leader, Intel Corp</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Focus Areas */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Focus Areas</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2">
+                {['Strategy', 'Venture Building', 'Biz Transformation', 'Execution', 'Coaching', 'Startup Scaling', 'Mentorship'].map((area) => (
+                  <Badge key={area} variant="secondary" className="bg-gray-100 text-gray-700">
+                    {area}
+                  </Badge>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Industries */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Industries</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2">
+                {['Tech', 'VC', 'Digital Media', 'Leadership Coaching'].map((industry) => (
+                  <Badge key={industry} variant="secondary" className="bg-teal-100 text-teal-700">
+                    {industry}
+                  </Badge>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Functional Skills */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg text-white bg-teal-600 -m-6 mb-6 p-6 rounded-t-lg">
+              Functional Skills
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="market-expansion">
+                <AccordionTrigger className="text-left">Market Expansion Strategy</AccordionTrigger>
+                <AccordionContent>
+                  <div className="space-y-3 text-sm">
+                    <div>
+                      <strong>Market Entry Expertise:</strong> Designed and executed strategies that expanded Yahoo's presence across six new countries in Southeast Asia.
+                    </div>
+                    <div>
+                      <strong>Scaling Across Borders:</strong> Guided startups and enterprises to navigate complex regulatory, cultural, and operational challenges when entering new regions.
+                    </div>
+                    <div>
+                      <strong>Tailored Strategies:</strong> Develops bespoke go-to-market plans that align with business objectives, leveraging local insights and global trends.
+                    </div>
+                    <div>
+                      <strong>Partnership Development:</strong> Establishes strategic alliances and partnerships to drive growth and strengthen market positioning.
+                    </div>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="operational-efficiency">
+                <AccordionTrigger className="text-left">Operational Efficiency</AccordionTrigger>
+                <AccordionContent>
+                  <p className="text-sm text-gray-600">Details about operational efficiency expertise...</p>
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="leadership-development">
+                <AccordionTrigger className="text-left">Leadership Development</AccordionTrigger>
+                <AccordionContent>
+                  <p className="text-sm text-gray-600">Details about leadership development expertise...</p>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </CardContent>
+        </Card>
+
+        {/* User Manual */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg text-white bg-teal-600 -m-6 mb-6 p-6 rounded-t-lg">
+              {profile.name.split(' ')[0]}'s User Manual
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4 text-sm text-gray-700">
+            <p>
+              {profile.name.split(' ')[0]} values direct communication, transparency, and early alignment on goals. He thrives 
+              in environments where challenges are addressed proactively and discussions are data-driven. Balancing creativity with analytical rigor, {profile.name.split(' ')[0]} integrates human-centric 
+              leadership with strategic execution to achieve impactful outcomes.
+            </p>
+            <p>
+              <strong>{profile.name.split(' ')[0]}'s Ways of Working:</strong> He's at his best as part of high-IQ, high EQ teams. His art manifests in human 
+              interactions, leadership, the creativity of plans, design, communication, persuasion, and 
+              inspiration. The science manifests in data-backed analysis, planning and decision-making. 
+              The art requires space and freedom to explore.
+            </p>
+            <p>
+              {profile.name.split(' ')[0]} is a passionate, purpose-driven leader who values self-awareness and modeling 
+              through behavior. He works best with people who are respectful and self-aware.
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Additional Details Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Geographical Coverage */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Geographical Coverage</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2">
+                <Badge variant="secondary">Southeast Asia</Badge>
+                <Badge variant="secondary">United States</Badge>
+                <Badge variant="secondary">Middle East</Badge>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Stage */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Stage</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2">
+                <Badge variant="secondary">Enterprise</Badge>
+                <Badge variant="secondary">Early Stage</Badge>
+                <Badge variant="secondary">Seed</Badge>
+                <Badge variant="secondary">Growth</Badge>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Personal Interests */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Personal Interests</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2">
+                <Badge variant="outline">Travel</Badge>
+                <Badge variant="outline">Polo</Badge>
+                <Badge variant="outline">Mindfulness</Badge>
+                <Badge variant="outline">Philosophy</Badge>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Certifications */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Certifications</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <Badge variant="outline" className="block w-fit">Yoga and Meditation Teacher</Badge>
+                <Badge variant="outline" className="block w-fit">Coaching</Badge>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Engagement Options */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Engagement Options</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-600">Fractional, Interim, Coach/Mentor</p>
+          </CardContent>
+        </Card>
+
+        {/* Action Buttons */}
+        <div className="flex justify-between items-center">
+          <Button
+            variant="outline"
+            onClick={() => navigate('/dashboard/profile-creation')}
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Profile
+          </Button>
           
-          <StepCardFooter className="flex justify-between pt-6">
-            <Button
-              variant="outline"
-              onClick={() => navigate('/dashboard/profile-creation')}
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Profile
-            </Button>
-            
-            <Button 
-              onClick={handleContinue}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Processing...' : 'Complete & Go to Dashboard'}
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </StepCardFooter>
-        </StepCard>
+          <Button 
+            onClick={handleContinue}
+            disabled={isSubmitting}
+            className="bg-teal-600 hover:bg-teal-700"
+          >
+            {isSubmitting ? 'Processing...' : 'Complete & Go to Dashboard'}
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
       </div>
     </DashboardLayout>
   );
