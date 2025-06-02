@@ -14,6 +14,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
+import { useQueryClient } from '@tanstack/react-query';
 
 const industries = [
   'Technology',
@@ -63,6 +64,7 @@ type FormData = {
 const ProfileCreation = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const queryClient = useQueryClient();
   
   const [profile, setProfile] = useState<ProfileData>({
     docs: [],
@@ -364,11 +366,11 @@ const ProfileCreation = () => {
         description: "Your profile information has been submitted and processed."
       });
       
-      // Add a small delay to ensure the database update is fully committed
-      setTimeout(() => {
-        // Redirect to profile snapshot page
-        navigate('/dashboard/profile-snapshot');
-      }, 100);
+      // Invalidate React Query cache for profile data to ensure fresh data
+      await queryClient.invalidateQueries(['profile', user.id]);
+      
+      // Redirect to profile snapshot page
+      navigate('/dashboard/profile-snapshot');
       
     } catch (error) {
       console.error('Error submitting profile:', error);
