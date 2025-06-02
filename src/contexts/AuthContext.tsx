@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -148,24 +147,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Clean up existing state
       cleanupAuthState();
 
-      // First, check if user already exists by attempting to sign in
-      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      // If sign in succeeds, user already exists
-      if (signInData.user && !signInError) {
-        // Sign out the user immediately since they were trying to sign up
-        await supabase.auth.signOut();
-        return { error: 'An account with this email already exists. Please try signing in instead.' };
-      }
-
-      // If sign in failed for reasons other than invalid credentials, user might exist
-      if (signInError && !signInError.message.includes('Invalid login credentials')) {
-        return { error: 'An account with this email already exists. Please try signing in instead.' };
-      }
-
       console.log('Redirecting to:', `${window.location.origin}/dashboard/profile-creation`);
       
       const { error, data } = await supabase.auth.signUp({
@@ -178,7 +159,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       if (error) {
         // Check if it's a "user already exists" error
-        if (error.message.includes('already registered') || error.message.includes('already exists')) {
+        if (error.message.includes('already registered') || 
+            error.message.includes('already exists') ||
+            error.message.includes('User already registered')) {
           return { error: 'An account with this email already exists. Please try signing in instead.' };
         }
         return { error: error.message };
