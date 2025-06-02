@@ -42,7 +42,7 @@ const SignUp = () => {
           </StepCardHeader>
           
           <StepCardContent>
-            <LinkedInSignUp />
+            <LinkedInSignUp isSubmitting={loading} />
             
             <div className="relative my-4">
               <Separator />
