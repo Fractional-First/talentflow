@@ -310,16 +310,37 @@ const ProfileCreation = () => {
         throw new Error(`Server error: ${response.status} ${response.statusText}`);
       }
       
-      // Update profile_created flag in Supabase
+      // Update profile_created flag and store profile data in Supabase
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
+        // Prepare profile data for JSONB storage
+        const profileData = {
+          formData,
+          uploadedFiles: {
+            hasLinkedIn: !!profile.linkedin,
+            hasResume: !!profile.resume,
+            linkedInFileName: profile.linkedin?.name,
+            resumeFileName: profile.resume?.name
+          },
+          supportingDocs: profile.docs.map(doc => ({
+            title: doc.title,
+            fileName: doc.file.name
+          })),
+          supportingLinks: profile.links,
+          submittedAt: new Date().toISOString()
+        };
+
         const { error: profileError } = await supabase
           .from('profiles')
-          .update({ profile_created: true })
+          .update({ 
+            profile_created: true,
+            profile_data: profileData,
+            profile_version: '0.1'
+          })
           .eq('id', user.id);
         
         if (profileError) {
-          console.error('Error updating profile_created flag:', profileError);
+          console.error('Error updating profile data:', profileError);
         }
       }
       
