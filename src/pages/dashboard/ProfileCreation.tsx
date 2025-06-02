@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
@@ -312,8 +311,16 @@ const ProfileCreation = () => {
         formDataToSubmit.append(`links[${index}][link]`, link.link);
       });
       
+      // Determine webhook URL based on submission type
+      const isManualSubmission = showManualEntry && (!profile.linkedin && !profile.resume);
+      const webhookUrl = isManualSubmission 
+        ? 'https://webhook-processor-production-48f8.up.railway.app/webhook-test/d4245ae6-e289-47aa-95b4-26a93b75f7d9'
+        : 'https://webhook-processor-production-48f8.up.railway.app/webhook/d4245ae6-e289-47aa-95b4-26a93b75f7d9';
+      
+      console.log('Submitting to webhook:', webhookUrl, 'Manual submission:', isManualSubmission);
+      
       // Send POST request to webhook
-      const response = await fetch('https://webhook-processor-production-48f8.up.railway.app/webhook/d4245ae6-e289-47aa-95b4-26a93b75f7d9', {
+      const response = await fetch(webhookUrl, {
         method: 'POST',
         body: formDataToSubmit,
       });
@@ -346,7 +353,8 @@ const ProfileCreation = () => {
             })),
             supportingLinks: profile.links,
             submittedAt: new Date().toISOString(),
-            webhookResponse: responseData
+            webhookResponse: responseData,
+            submissionType: isManualSubmission ? 'manual' : 'document_upload'
           },
           profile_version: '0.1'
         })
