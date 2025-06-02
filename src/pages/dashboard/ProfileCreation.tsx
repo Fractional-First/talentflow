@@ -6,7 +6,7 @@ import { StepCard, StepCardContent, StepCardDescription, StepCardFooter, StepCar
 import { Step } from '@/components/OnboardingProgress';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
-import { ArrowLeft, Clock, Copy } from 'lucide-react';
+import { ArrowLeft, Clock, Copy, Paperclip } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { supabase } from '@/integrations/supabase/client';
 import { useQueryClient } from '@tanstack/react-query';
@@ -272,6 +272,45 @@ const ProfileCreation = () => {
                   isSubmitting={isSubmitting}
                   isLinkedInUser={isLinkedInUser}
                 />
+                
+                {/* Supporting Documents & Links Section */}
+                <div className="border rounded-lg p-6 bg-blue-50/30 border-blue-200">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-start gap-3">
+                      <div className="bg-blue-100 p-2 rounded-full mt-1">
+                        <Paperclip className="h-5 w-5 text-blue-600" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-medium text-blue-900 mb-1">Supporting Documents & Links (Optional)</h3>
+                        <p className="text-sm text-blue-700 mb-3">
+                          Add publications, news articles, portfolios, or other resources that showcase your work
+                        </p>
+                        <div className="bg-blue-100/50 border border-blue-200 rounded-lg p-3">
+                          <div className="flex items-start gap-2">
+                            <div className="bg-blue-200 p-1 rounded-full mt-0.5">
+                              <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                            </div>
+                            <div>
+                              <h4 className="font-medium text-blue-800 text-sm mb-1">Enhanced Profile Quality</h4>
+                              <p className="text-xs text-blue-700">
+                                The more supporting materials you provide, the stronger and more complete your profile will be. 
+                                These additions help us present a well-rounded and accurate representation of your professional expertise.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="shrink-0 text-blue-700 border-blue-300 hover:bg-blue-100"
+                      type="button"
+                    >
+                      Add Documents
+                    </Button>
+                  </div>
+                </div>
                 
                 {/* Options to switch to manual entry */}
                 <div className="space-y-4">
