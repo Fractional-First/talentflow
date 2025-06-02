@@ -21,8 +21,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
-  const [isSigningIn, setIsSigningIn] = useState(false);
-  const [isSigningOut, setIsSigningOut] = useState(false);
   const navigate = useNavigate();
 
   // Clean up auth state in storage
@@ -52,6 +50,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setSession(newSession);
         setUser(newSession?.user ?? null);
         
+        // Always set loading to false when auth state changes
+        setLoading(false);
+        
         // Handle post-verification sign-in
         if (event === 'SIGNED_IN' && newSession?.user) {
           // Check if user has completed profile creation
@@ -80,9 +81,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             
             toast.success('Successfully signed in');
           }
-        } else if (event === 'SIGNED_OUT' && !isSigningIn && !isSigningOut) {
-          // Only show sign out toast if it's not part of a controlled sign-in/out process
-          toast.info('Signed out');
+        } else if (event === 'SIGNED_OUT') {
+          // Only show sign out toast if it's not part of initial load
+          if (!isInitialLoad) {
+            toast.info('Signed out');
+          }
         }
       }
     );
@@ -106,12 +109,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => {
       subscription.unsubscribe();
     };
-  }, [isSigningIn, isSigningOut, navigate]);
+  }, [navigate]);
 
   const signIn = async (email: string, password: string) => {
     try {
       setLoading(true);
-      setIsSigningIn(true);
       
       // Clean up existing state
       cleanupAuthState();
@@ -129,15 +131,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         password,
       });
       
-      if (error) throw error;
+      if (error) {
+        setLoading(false);
+        throw error;
+      }
       
+      // Don't set loading to false here - let the auth state change handle it
       // Navigation will be handled by the auth state change listener
     } catch (error: any) {
+      setLoading(false);
       toast.error(error.message || 'Error signing in');
       console.error('Sign in error:', error);
-    } finally {
-      setLoading(false);
-      setIsSigningIn(false);
     }
   };
 
@@ -180,7 +184,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signOut = async () => {
     try {
       setLoading(true);
-      setIsSigningOut(true);
       
       // Clean up auth state
       cleanupAuthState();
@@ -196,7 +199,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.error('Sign out error:', error);
     } finally {
       setLoading(false);
-      setIsSigningOut(false);
     }
   };
 
