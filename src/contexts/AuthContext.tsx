@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -46,13 +47,36 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, newSession) => {
+      async (event, newSession) => {
         setSession(newSession);
         setUser(newSession?.user ?? null);
         
-        // Only show toast for actual sign-in events, not during initial load or session restoration
-        if (event === 'SIGNED_IN' && !isInitialLoad) {
-          toast.success('Successfully signed in');
+        // Handle post-verification sign-in
+        if (event === 'SIGNED_IN' && newSession?.user) {
+          // Check if user has completed profile creation
+          if (newSession.user.email_confirmed_at && !isInitialLoad) {
+            try {
+              const { data: profile } = await supabase
+                .from('profiles')
+                .select('profile_created')
+                .eq('id', newSession.user.id)
+                .single();
+              
+              if (profile && !profile.profile_created) {
+                // User needs to complete profile creation
+                navigate('/dashboard/profile-creation');
+              } else {
+                // User has completed profile, go to dashboard
+                navigate('/dashboard');
+              }
+            } catch (error) {
+              console.error('Error checking profile status:', error);
+              // Fallback to profile creation if we can't check
+              navigate('/dashboard/profile-creation');
+            }
+            
+            toast.success('Successfully signed in');
+          }
         } else if (event === 'SIGNED_OUT' && !isSigningIn && !isSigningOut) {
           // Only show sign out toast if it's not part of a controlled sign-in/out process
           toast.info('Signed out');
@@ -79,7 +103,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => {
       subscription.unsubscribe();
     };
-  }, [isSigningIn, isSigningOut]);
+  }, [isSigningIn, isSigningOut, navigate]);
 
   const signIn = async (email: string, password: string) => {
     try {
@@ -104,8 +128,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       if (error) throw error;
       
-      // Redirect to dashboard on successful login
-      navigate('/dashboard');
+      // Navigation will be handled by the auth state change listener
     } catch (error: any) {
       toast.error(error.message || 'Error signing in');
       console.error('Sign in error:', error);
@@ -125,12 +148,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const { error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/dashboard/profile-creation`
+        }
       });
       
       if (error) throw error;
       
-      toast.success('Sign up successful! Check your email for verification.');
-      navigate('/dashboard/profile-creation');
+      // Navigate to check email page
+      navigate(`/check-email?email=${encodeURIComponent(email)}`);
     } catch (error: any) {
       toast.error(error.message || 'Error signing up');
       console.error('Sign up error:', error);

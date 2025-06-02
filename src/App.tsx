@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
+import CheckEmail from "./pages/CheckEmail";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/dashboard/Dashboard";
@@ -33,6 +34,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/check-email" element={<CheckEmail />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             
@@ -43,7 +45,7 @@ const App = () => (
               </ProtectedRoute>
             } />
             <Route path="/dashboard/profile-creation" element={
-              <ProtectedRoute>
+              <ProtectedRoute requireProfileCreation={false}>
                 <ProfileCreation />
               </ProtectedRoute>
             } />

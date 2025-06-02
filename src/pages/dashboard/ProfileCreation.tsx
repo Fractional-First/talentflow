@@ -15,6 +15,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import { supabase } from '@/lib/supabase';
 
 const industries = [
   'Technology',
@@ -352,6 +353,20 @@ const ProfileCreation = () => {
       
       if (!response.ok) {
         throw new Error(`Server error: ${response.status} ${response.statusText}`);
+      }
+      
+      // Update profile_created flag in Supabase
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({ profile_created: true })
+          .eq('id', user.id);
+        
+        if (profileError) {
+          console.error('Error updating profile_created flag:', profileError);
+          // Don't throw here, as the main profile submission was successful
+        }
       }
       
       // Store completion status in localStorage
