@@ -10,7 +10,7 @@ type AuthContextType = {
   user: User | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string) => Promise<{ error?: string }>;
   signOut: () => Promise<void>;
 };
 
@@ -20,6 +20,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [isSigningIn, setIsSigningIn] = useState(false);
+  const [isSigningOut, setIsSigningOut] = useState(false);
   const navigate = useNavigate();
 
   // Clean up auth state in storage
@@ -44,13 +47,41 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, newSession) => {
+      async (event, newSession) => {
+        console.log('Auth state change:', event, newSession?.user?.email);
         setSession(newSession);
         setUser(newSession?.user ?? null);
         
-        if (event === 'SIGNED_IN') {
-          toast.success('Successfully signed in');
-        } else if (event === 'SIGNED_OUT') {
+        // Handle post-verification sign-in
+        if (event === 'SIGNED_IN' && newSession?.user) {
+          // Check if user has completed profile creation
+          if (newSession.user.email_confirmed_at && !isInitialLoad) {
+            try {
+              const { data: profile } = await supabase
+                .from('profiles')
+                .select('profile_created')
+                .eq('id', newSession.user.id)
+                .single();
+              
+              if (profile && !profile.profile_created) {
+                // User needs to complete profile creation
+                console.log('Redirecting to profile creation');
+                navigate('/dashboard/profile-creation');
+              } else {
+                // User has completed profile, go to dashboard
+                console.log('Redirecting to dashboard');
+                navigate('/dashboard');
+              }
+            } catch (error) {
+              console.error('Error checking profile status:', error);
+              // Fallback to profile creation if we can't check
+              navigate('/dashboard/profile-creation');
+            }
+            
+            toast.success('Successfully signed in');
+          }
+        } else if (event === 'SIGNED_OUT' && !isSigningIn && !isSigningOut) {
+          // Only show sign out toast if it's not part of a controlled sign-in/out process
           toast.info('Signed out');
         }
       }
@@ -66,6 +97,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         console.error('Error fetching auth session:', error);
       } finally {
         setLoading(false);
+        setIsInitialLoad(false);
       }
     };
 
@@ -74,11 +106,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
+  }, [isSigningIn, isSigningOut, navigate]);
 
   const signIn = async (email: string, password: string) => {
     try {
       setLoading(true);
+      setIsSigningIn(true);
       
       // Clean up existing state
       cleanupAuthState();
@@ -98,13 +131,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       if (error) throw error;
       
-      // Redirect to dashboard on successful login
-      navigate('/dashboard');
+      // Navigation will be handled by the auth state change listener
     } catch (error: any) {
       toast.error(error.message || 'Error signing in');
       console.error('Sign in error:', error);
     } finally {
       setLoading(false);
+      setIsSigningIn(false);
     }
   };
 
@@ -115,18 +148,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Clean up existing state
       cleanupAuthState();
       
-      const { error } = await supabase.auth.signUp({
+      const { error, data } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/dashboard/profile-creation`
+        }
       });
       
-      if (error) throw error;
-      
-      toast.success('Sign up successful! Check your email for verification.');
-      navigate('/dashboard/profile-creation');
+      if (error) {
+        return { error: error.message };
+      }
+
+      // If data.user exists but no session, it means confirmation email was sent
+      if (data.user && !data.session) {
+        // Navigate to check email page only if signup was successful
+        navigate(`/check-email?email=${encodeURIComponent(email)}`);
+        return {};
+      }
+
+      // If we get here with a session, user was created and logged in immediately
+      return {};
     } catch (error: any) {
-      toast.error(error.message || 'Error signing up');
       console.error('Sign up error:', error);
+      return { error: error.message || 'Error signing up' };
     } finally {
       setLoading(false);
     }
@@ -135,6 +180,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signOut = async () => {
     try {
       setLoading(true);
+      setIsSigningOut(true);
       
       // Clean up auth state
       cleanupAuthState();
@@ -143,13 +189,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const { error } = await supabase.auth.signOut({ scope: 'global' });
       if (error) throw error;
       
-      // Force page reload for a clean state
-      window.location.href = '/';
+      // Use React Router navigation instead of window.location
+      navigate('/', { replace: true });
     } catch (error: any) {
       toast.error(error.message || 'Error signing out');
       console.error('Sign out error:', error);
     } finally {
       setLoading(false);
+      setIsSigningOut(false);
     }
   };
 
