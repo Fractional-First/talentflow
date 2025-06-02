@@ -9,6 +9,7 @@ import { SignUpForm } from '@/components/auth/SignUpForm';
 import { AuthBackground } from '@/components/auth/AuthBackground';
 import { BrandHeader } from '@/components/auth/BrandHeader';
 import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -17,12 +18,14 @@ const SignUp = () => {
 
   const handleSignUp = async (email: string, password: string, confirmPassword: string) => {
     if (password !== confirmPassword) {
-      // In a real app, you'd show an error toast
-      console.error("Passwords don't match");
+      toast.error("Passwords don't match");
       return;
     }
     
-    await signUp(email, password);
+    const result = await signUp(email, password);
+    if (result.error) {
+      toast.error(result.error);
+    }
   };
 
   const handleLinkedInSignUp = () => {

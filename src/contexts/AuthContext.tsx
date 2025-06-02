@@ -10,7 +10,7 @@ type AuthContextType = {
   user: User | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string) => Promise<{ error?: string }>;
   signOut: () => Promise<void>;
 };
 
@@ -158,13 +158,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
       });
       
-      if (error) throw error;
+      if (error) {
+        // Check if it's a "user already exists" error
+        if (error.message.includes('already registered') || error.message.includes('already exists')) {
+          return { error: 'An account with this email already exists. Please try signing in instead.' };
+        }
+        return { error: error.message };
+      }
       
-      // Navigate to check email page
+      // Navigate to check email page only if signup was successful
       navigate(`/check-email?email=${encodeURIComponent(email)}`);
+      return {};
     } catch (error: any) {
-      toast.error(error.message || 'Error signing up');
       console.error('Sign up error:', error);
+      return { error: error.message || 'Error signing up' };
     } finally {
       setLoading(false);
     }
