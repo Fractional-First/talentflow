@@ -271,7 +271,16 @@ const ProfileCreation = () => {
     setValidationErrors([]);
     
     try {
+      // Get the current user
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) {
+        throw new Error('User not authenticated');
+      }
+
       const formDataToSubmit = new FormData();
+
+      // Add user ID to the form data
+      formDataToSubmit.append('userId', user.id);
 
       // Add form data
       Object.entries(formData).forEach(([key, value]) => {
@@ -307,7 +316,41 @@ const ProfileCreation = () => {
       });
       
       if (!response.ok) {
-        throw new Error(`Server error: ${response.status} ${response.statusText}`);
+        const errorText = await response.text();
+        throw new Error(`Server error: ${response.status} ${response.statusText}. ${errorText}`);
+      }
+
+      // Parse the response to check for success
+      const responseData = await response.json();
+      console.log('Webhook response:', responseData);
+      
+      // Update profile_created flag in Supabase
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({ 
+          profile_created: true,
+          profile_data: {
+            formData,
+            uploadedFiles: {
+              hasLinkedIn: !!profile.linkedin,
+              hasResume: !!profile.resume,
+              linkedInFileName: profile.linkedin?.name,
+              resumeFileName: profile.resume?.name
+            },
+            supportingDocs: profile.docs.map(doc => ({
+              title: doc.title,
+              fileName: doc.file.name
+            })),
+            supportingLinks: profile.links,
+            submittedAt: new Date().toISOString()
+          },
+          profile_version: '0.1'
+        })
+        .eq('id', user.id);
+      
+      if (profileError) {
+        console.error('Error updating profile data:', profileError);
+        throw new Error('Failed to update profile status in database');
       }
       
       // Store completion status in localStorage
@@ -317,22 +360,27 @@ const ProfileCreation = () => {
       
       toast({
         title: "Profile saved successfully",
-        description: "Your profile information has been submitted."
+        description: "Your profile information has been submitted and processed."
       });
       
+      // Redirect to profile snapshot page
       navigate('/dashboard/profile-snapshot');
+      
     } catch (error) {
       console.error('Error submitting profile:', error);
-      let errorMessage = "There was a problem submitting your profile.";
+      let errorMessage = "There was a problem submitting your profile. Please try again.";
       
       if (error instanceof Error) {
-        errorMessage = error.message;
+        if (error.message.includes("Failed to fetch")) {
+          errorMessage = "Unable to connect to the server. Please check your internet connection and try submitting again.";
+        } else if (error.message.includes("Server error")) {
+          errorMessage = "The server encountered an error processing your profile. Please try submitting again.";
+        } else {
+          errorMessage = error.message;
+        }
       }
       
-      if (errorMessage.includes("Failed to fetch")) {
-        errorMessage = "Unable to connect to the server. Please check your internet connection and try again.";
-        setServerError(errorMessage);
-      }
+      setServerError(errorMessage);
       
       toast({
         title: "Error saving profile",

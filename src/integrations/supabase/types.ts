@@ -9,6 +9,45 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      profile_documents: {
+        Row: {
+          created_at: string
+          file_size: number | null
+          id: string
+          mime_type: string | null
+          original_filename: string
+          storage_path: string
+          title: string | null
+          type: Database["public"]["Enums"]["document_type"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          file_size?: number | null
+          id?: string
+          mime_type?: string | null
+          original_filename: string
+          storage_path: string
+          title?: string | null
+          type: Database["public"]["Enums"]["document_type"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          file_size?: number | null
+          id?: string
+          mime_type?: string | null
+          original_filename?: string
+          storage_path?: string
+          title?: string | null
+          type?: Database["public"]["Enums"]["document_type"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -47,7 +86,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      document_type: "resume" | "linkedin" | "other"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -162,6 +201,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      document_type: ["resume", "linkedin", "other"],
+    },
   },
 } as const
