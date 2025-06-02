@@ -9,6 +9,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { AuthBackground } from '@/components/auth/AuthBackground';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -17,15 +19,27 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [isLinkedInSubmitting, setIsLinkedInSubmitting] = useState(false);
 
-  const handleLinkedInLogin = () => {
-    // In a real app, this would trigger OAuth
-    setIsLinkedInSubmitting(true);
-    
-    // Simulate API call
-    setTimeout(() => {
+  const handleLinkedInLogin = async () => {
+    try {
+      setIsLinkedInSubmitting(true);
+      
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'linkedin_oidc',
+        options: {
+          redirectTo: `${window.location.origin}/dashboard`
+        }
+      });
+      
+      if (error) {
+        toast.error('Failed to sign in with LinkedIn');
+        console.error('LinkedIn OAuth error:', error);
+      }
+    } catch (error) {
+      toast.error('Failed to sign in with LinkedIn');
+      console.error('LinkedIn OAuth error:', error);
+    } finally {
       setIsLinkedInSubmitting(false);
-      navigate('/dashboard');
-    }, 1000);
+    }
   };
 
   const handleEmailLogin = async (e: React.FormEvent) => {

@@ -14,7 +14,6 @@ import { toast } from 'sonner';
 const SignUp = () => {
   const navigate = useNavigate();
   const { signUp, loading } = useAuth();
-  const [isLinkedInSubmitting, setIsLinkedInSubmitting] = useState(false);
 
   const handleSignUp = async (email: string, password: string, confirmPassword: string) => {
     if (password !== confirmPassword) {
@@ -26,23 +25,6 @@ const SignUp = () => {
     if (result.error) {
       toast.error(result.error);
     }
-  };
-
-  const handleLinkedInSignUp = () => {
-    // In a real app, this would trigger OAuth
-    setIsLinkedInSubmitting(true);
-    
-    // Store auth method in localStorage
-    localStorage.setItem('authMethod', 'linkedin');
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsLinkedInSubmitting(false);
-      // Navigate to profile creation with state indicating LinkedIn signup
-      navigate('/dashboard/profile-creation', { 
-        state: { linkedInSignUp: true } 
-      });
-    }, 1000);
   };
 
   return (
@@ -60,10 +42,7 @@ const SignUp = () => {
           </StepCardHeader>
           
           <StepCardContent>
-            <LinkedInSignUp 
-              onClick={handleLinkedInSignUp}
-              isSubmitting={isLinkedInSubmitting}
-            />
+            <LinkedInSignUp />
             
             <div className="relative my-4">
               <Separator />
