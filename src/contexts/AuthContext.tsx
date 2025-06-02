@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -22,6 +21,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [isSigningIn, setIsSigningIn] = useState(false);
+  const [isSigningOut, setIsSigningOut] = useState(false);
   const navigate = useNavigate();
 
   // Clean up auth state in storage
@@ -53,8 +53,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         // Only show toast for actual sign-in events, not during initial load or session restoration
         if (event === 'SIGNED_IN' && !isInitialLoad) {
           toast.success('Successfully signed in');
-        } else if (event === 'SIGNED_OUT' && !isSigningIn) {
-          // Only show sign out toast if it's not part of the sign-in cleanup process
+        } else if (event === 'SIGNED_OUT' && !isSigningIn && !isSigningOut) {
+          // Only show sign out toast if it's not part of a controlled sign-in/out process
           toast.info('Signed out');
         }
       }
@@ -79,7 +79,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => {
       subscription.unsubscribe();
     };
-  }, [isSigningIn]);
+  }, [isSigningIn, isSigningOut]);
 
   const signIn = async (email: string, password: string) => {
     try {
@@ -142,6 +142,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signOut = async () => {
     try {
       setLoading(true);
+      setIsSigningOut(true);
       
       // Clean up auth state
       cleanupAuthState();
@@ -150,13 +151,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const { error } = await supabase.auth.signOut({ scope: 'global' });
       if (error) throw error;
       
-      // Force page reload for a clean state
-      window.location.href = '/';
+      // Use React Router navigation instead of window.location
+      navigate('/', { replace: true });
     } catch (error: any) {
       toast.error(error.message || 'Error signing out');
       console.error('Sign out error:', error);
     } finally {
       setLoading(false);
+      setIsSigningOut(false);
     }
   };
 
