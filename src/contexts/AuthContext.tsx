@@ -115,17 +115,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       setLoading(true);
       
-      // Clean up existing state
-      cleanupAuthState();
-      
-      // Attempt global sign out first
-      try {
-        await supabase.auth.signOut({ scope: 'global' });
-      } catch (err) {
-        // Continue even if this fails
-        console.error('Error during global sign out:', err);
-      }
-      
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
