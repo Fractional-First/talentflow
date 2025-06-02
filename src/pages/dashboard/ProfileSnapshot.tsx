@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
@@ -29,6 +28,7 @@ import { toast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const AIGUIDE_KEY = 'aiSuggestionsGuideSeen';
 
@@ -231,53 +231,63 @@ const ProfileSnapshot = () => {
               <p className="text-sm leading-relaxed">
                 Hello, I'm Reza! Over the years, I've built and scaled successful ventures, transformed businesses, and coached leaders to realize their potential. I'm passionate about blending business growth with conscious leadership where people are treated as a whole. When I'm not guiding ventures or building new companies, you'll find me practicing mindfulness or enjoying polo, a sport that connects me to my Persian heritage.
               </p>
-              
-              <div className="flex flex-wrap gap-2 mt-4">
-                <Badge variant="outline" className="bg-white/20 text-white border-white/30">
-                  Growth Architect
-                </Badge>
-                <Badge variant="outline" className="bg-white/20 text-white border-white/30">
-                  Venture Builder
-                </Badge>
-                <Badge variant="outline" className="bg-white/20 text-white border-white/30">
-                  Leadership / Cultural Steward
-                </Badge>
-              </div>
             </div>
 
-            {/* Summary Card */}
+            {/* Personas Tabbed Section */}
             <div className="bg-gray-50 p-6 rounded-lg">
-              <p className="text-sm text-gray-700 leading-relaxed mb-4">
-                Reza is a dynamic leader with a unique blend of strategic vision and operational excellence, driving growth and innovation across Southeast Asia.
-              </p>
-              
-              <div className="space-y-3 text-sm">
-                <div>
-                  <span className="font-medium">• Startup Leader:</span>
-                  <span className="text-gray-600"> Led and scaled startups across Southeast Asia to successful exits, while serving as VC Partner, Operator, and Strategic Consultant.</span>
-                </div>
-                <div>
-                  <span className="font-medium">• Expansion Specialist:</span>
-                  <span className="text-gray-600"> Orchestrated Yahoo!'s expansion into six new Southeast Asian markets, unlocking regional opportunities.</span>
-                </div>
-                <div>
-                  <span className="font-medium">• Value Creator:</span>
-                  <span className="text-gray-600"> Delivered measurable impact through strategic leadership and operational excellence across startups and established enterprises.</span>
-                </div>
-                <div>
-                  <span className="font-medium">• Sustainability Advocate:</span>
-                  <span className="text-gray-600"> Integrating analytical thinking with mindful-based coaching to support sustainable growth and conscious leadership.</span>
-                </div>
-              </div>
+              <Tabs defaultValue="growth-architect" className="w-full">
+                <TabsList className="grid w-full grid-cols-3 mb-6">
+                  <TabsTrigger value="growth-architect" className="text-xs">Growth Architect</TabsTrigger>
+                  <TabsTrigger value="venture-builder" className="text-xs">Venture Builder</TabsTrigger>
+                  <TabsTrigger value="leadership-steward" className="text-xs">Leadership / Cultural Steward</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="growth-architect" className="space-y-4">
+                  <p className="text-sm text-gray-700 leading-relaxed">
+                    Reza is a dynamic leader with a unique blend of strategic vision and operational excellence, driving growth and innovation across Southeast Asia.
+                  </p>
+                  
+                  <div className="space-y-3 text-sm">
+                    <div>
+                      <span className="font-medium">• Startup Leader:</span>
+                      <span className="text-gray-600"> Led and scaled startups across Southeast Asia to successful exits, while serving as VC Partner, Operator, and Strategic Consultant.</span>
+                    </div>
+                    <div>
+                      <span className="font-medium">• Expansion Specialist:</span>
+                      <span className="text-gray-600"> Orchestrated Yahoo!'s expansion into six new Southeast Asian markets, unlocking regional opportunities.</span>
+                    </div>
+                    <div>
+                      <span className="font-medium">• Value Creator:</span>
+                      <span className="text-gray-600"> Delivered measurable impact through strategic leadership and operational excellence across startups and established enterprises.</span>
+                    </div>
+                    <div>
+                      <span className="font-medium">• Sustainability Advocate:</span>
+                      <span className="text-gray-600"> Integrating analytical thinking with mindful-based coaching to support sustainable growth and conscious leadership.</span>
+                    </div>
+                  </div>
 
-              <div className="flex gap-2 mt-4">
-                <Badge variant="outline" className="bg-teal-100 text-teal-700 border-teal-200">
-                  Superpowers
-                </Badge>
-                <Badge variant="outline" className="bg-yellow-100 text-yellow-700 border-yellow-200">
-                  Sweet Spot
-                </Badge>
-              </div>
+                  <div className="flex gap-2 mt-4">
+                    <Badge variant="outline" className="bg-teal-100 text-teal-700 border-teal-200">
+                      Superpowers
+                    </Badge>
+                    <Badge variant="outline" className="bg-yellow-100 text-yellow-700 border-yellow-200">
+                      Sweet Spot
+                    </Badge>
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="venture-builder" className="space-y-4">
+                  <p className="text-sm text-gray-700 leading-relaxed">
+                    Content for Venture Builder persona will be displayed here.
+                  </p>
+                </TabsContent>
+                
+                <TabsContent value="leadership-steward" className="space-y-4">
+                  <p className="text-sm text-gray-700 leading-relaxed">
+                    Content for Leadership / Cultural Steward persona will be displayed here.
+                  </p>
+                </TabsContent>
+              </Tabs>
             </div>
 
             {/* Core Competencies */}
