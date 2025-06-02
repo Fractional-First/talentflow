@@ -1,9 +1,12 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
 import { StepCard, StepCardContent, StepCardDescription, StepCardFooter, StepCardHeader, StepCardTitle } from '@/components/StepCard';
 import { Step } from '@/components/OnboardingProgress';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import {
   ArrowRight,
   ArrowLeft,
@@ -18,7 +21,9 @@ import {
   Mail,
   Phone,
   Plus,
-  Minus
+  Minus,
+  Save,
+  X
 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
@@ -29,14 +34,89 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Label } from '@/components/ui/label';
 
 const AIGUIDE_KEY = 'aiSuggestionsGuideSeen';
+
+interface ProfileData {
+  name: string;
+  title: string;
+  subtitle: string;
+  location: string;
+  description: string;
+  keyRoles: string[];
+  focusAreas: string[];
+  industries: string[];
+  geographicalCoverage: string[];
+  stages: string[];
+  personalInterests: string[];
+  certifications: string[];
+  engagementOptions: string;
+  meetIntro: string;
+  growthArchitectContent: string;
+  ventureBuilderContent: string;
+  leadershipStewardContent: string;
+  strategicProblemSolving: string;
+  consciousLeadership: string;
+  scalingVentures: string;
+  sweetSpotContent: string;
+  userManual: string;
+  functionalSkills: {
+    marketExpansion: string[];
+    operationalEfficiency: string[];
+    leadershipDevelopment: string[];
+  };
+}
 
 const ProfileSnapshot = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showAIGuide, setShowAIGuide] = useState(false);
   const [expandedFunctionalSkill, setExpandedFunctionalSkill] = useState<string | null>(null);
+  const [hasChanges, setHasChanges] = useState(false);
+
+  const [originalData] = useState<ProfileData>({
+    name: 'Reza Behnam',
+    title: 'Venture Builder, CEO',
+    subtitle: 'Holistic Leadership Coach',
+    location: 'Based in Southeast Asia',
+    description: 'Reza is a seasoned, visionary venture builder and CEO with a proven track record of scaling startups and transforming enterprises in Southeast Asia and the US. He\'s a strategic problem-solver and an efficient operator with innovation and inspiration. With expertise in both entrepreneurship and leadership coaching, Reza empowers executives to integrate mindfulness and purpose into their organizations, fostering resilience and long-term success.',
+    keyRoles: [
+      'Founder/CEO, multiple B2B startups',
+      'Venture Builder and APAC GTM Leader, Mach49',
+      'Managing Director, Yahoo! SE Asia',
+      'Venture Architect/Strategist, Vivint Corp',
+      'Data Science, Strategy and FP&A Leader, Intel Corp'
+    ],
+    focusAreas: ['Strategy', 'Venture Building', 'Biz Transformation', 'Execution', 'Coaching', 'Startup Scaling', 'Mentorship'],
+    industries: ['Tech', 'VC', 'Digital Media', 'Leadership Coaching'],
+    geographicalCoverage: ['Southeast Asia', 'United States', 'Middle East'],
+    stages: ['Enterprise', 'Early Stage', 'Seed', 'Growth'],
+    personalInterests: ['Travel', 'Polo', 'Mindfulness', 'Philosophy'],
+    certifications: ['Yoga and Meditation Teacher', 'Coaching'],
+    engagementOptions: 'Fractional, Interim, Coach/Mentor',
+    meetIntro: 'Hello, I\'m Reza! Over the years, I\'ve built and scaled successful ventures, transformed businesses, and coached leaders to realize their potential. I\'m passionate about blending business growth with conscious leadership where people are treated as a whole. When I\'m not guiding ventures or building new companies, you\'ll find me practicing mindfulness or enjoying polo, a sport that connects me to my Persian heritage.',
+    growthArchitectContent: 'Reza is a dynamic leader with a unique blend of strategic vision and operational excellence, driving growth and innovation across Southeast Asia.\n\n• Startup Leader: Led and scaled startups across Southeast Asia to successful exits, while serving as VC Partner, Operator, and Strategic Consultant.\n• Expansion Specialist: Orchestrated Yahoo!\'s expansion into six new Southeast Asian markets, unlocking regional opportunities.\n• Value Creator: Delivered measurable impact through strategic leadership and operational excellence across startups and established enterprises.\n• Sustainability Advocate: Integrating analytical thinking with mindful-based coaching to support sustainable growth and conscious leadership.',
+    ventureBuilderContent: 'Content for Venture Builder persona will be displayed here.',
+    leadershipStewardContent: 'Content for Leadership / Cultural Steward persona will be displayed here.',
+    strategicProblemSolving: 'Connecting the dots. Crafting insights and tactical thinking. Driving business revenue growth and brand presence.',
+    consciousLeadership: 'Mentoring leaders, integrating mindful leadership practices that enhance connection, productivity, positivity and organizational culture.',
+    scalingVentures: 'Leading startups, corporate ventures through planning, fundraising, governance, scaling, professionalization, optimization and, ultimately, exits.',
+    sweetSpotContent: 'Content for Sweet Spot will be displayed here.',
+    userManual: 'Reza values direct communication, transparency, and early alignment on goals. He thrives in environments where challenges are addressed proactively and discussions are data-driven. Balancing creativity with analytical rigor, Reza integrates human-centric leadership with strategic execution to achieve impactful outcomes.\n\nReza\'s Ways of Working: He\'s at his best as part of high-IQ, high EQ teams. His art manifests in human interactions, leadership, the creativity of plans, design, communication, persuasion, and inspiration. The science manifests in data-backed analysis, planning and decision-making. The art requires space and freedom to explore.\n\nReza is a passionate, purpose-driven leader who values self-awareness and modeling through behavior. He works best with people who are respectful and self-aware.',
+    functionalSkills: {
+      marketExpansion: [
+        '• Market Entry Expertise: Designed and executed strategies that expanded Yahoo\'s presence across six new countries in Southeast Asia.',
+        '• Scaling Across Borders: Guided startups and enterprises to navigate complex regulatory, cultural, and operational challenges when entering new regions.',
+        '• Tailored Strategies: Develops bespoke go-to-market plans that align with business objectives, leveraging local insights and global trends.',
+        '• Partnership Development: Establishes strategic alliances and partnerships to drive growth and strengthen market positioning.'
+      ],
+      operationalEfficiency: [],
+      leadershipDevelopment: []
+    }
+  });
+
+  const [formData, setFormData] = useState<ProfileData>(originalData);
 
   const steps: Step[] = [
     { id: 1, name: 'Sign Up', description: 'Create your account', status: 'completed' },
@@ -53,6 +133,55 @@ const ProfileSnapshot = () => {
   const handleDismissGuide = () => {
     localStorage.setItem(AIGUIDE_KEY, 'seen');
     setShowAIGuide(false);
+  };
+
+  const handleInputChange = (field: keyof ProfileData, value: any) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    setHasChanges(true);
+  };
+
+  const handleArrayChange = (field: keyof ProfileData, index: number, value: string) => {
+    const currentArray = formData[field] as string[];
+    const newArray = [...currentArray];
+    newArray[index] = value;
+    setFormData(prev => ({ ...prev, [field]: newArray }));
+    setHasChanges(true);
+  };
+
+  const addArrayItem = (field: keyof ProfileData) => {
+    const currentArray = formData[field] as string[];
+    setFormData(prev => ({ ...prev, [field]: [...currentArray, ''] }));
+    setHasChanges(true);
+  };
+
+  const removeArrayItem = (field: keyof ProfileData, index: number) => {
+    const currentArray = formData[field] as string[];
+    const newArray = currentArray.filter((_, i) => i !== index);
+    setFormData(prev => ({ ...prev, [field]: newArray }));
+    setHasChanges(true);
+  };
+
+  const handleSave = () => {
+    setIsSubmitting(true);
+    
+    // Simulate save operation
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setHasChanges(false);
+      toast({
+        title: "Profile Saved",
+        description: "Your profile changes have been saved successfully.",
+      });
+    }, 1000);
+  };
+
+  const handleDiscardChanges = () => {
+    setFormData(originalData);
+    setHasChanges(false);
+    toast({
+      title: "Changes Discarded",
+      description: "Your changes have been discarded.",
+    });
   };
 
   const handleContinue = () => {
@@ -111,115 +240,285 @@ const ProfileSnapshot = () => {
             <div className="text-center">
               <div className="relative mb-4 inline-block">
                 <Avatar className="h-48 w-48 border-4 border-white shadow-lg">
-                  <AvatarImage src="/lovable-uploads/06e0df8d-b26a-472b-b073-64583b551789.png" alt="Reza Behnam" />
+                  <AvatarImage src="/lovable-uploads/06e0df8d-b26a-472b-b073-64583b551789.png" alt={formData.name} />
                   <AvatarFallback className="text-4xl bg-teal-100 text-teal-700">
-                    RB
+                    {formData.name.split(' ').map(n => n[0]).join('')}
                   </AvatarFallback>
                 </Avatar>
               </div>
               
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">Reza Behnam</h1>
-              <p className="text-lg text-gray-600 mb-1">Venture Builder, CEO</p>
-              <p className="text-sm text-gray-500 mb-4">Holistic Leadership Coach</p>
-              <p className="text-sm text-gray-500">Based in Southeast Asia</p>
+              <div className="space-y-2">
+                <Input
+                  value={formData.name}
+                  onChange={(e) => handleInputChange('name', e.target.value)}
+                  className="text-2xl font-bold text-center"
+                />
+                <Input
+                  value={formData.title}
+                  onChange={(e) => handleInputChange('title', e.target.value)}
+                  className="text-lg text-center"
+                />
+                <Input
+                  value={formData.subtitle}
+                  onChange={(e) => handleInputChange('subtitle', e.target.value)}
+                  className="text-sm text-center"
+                />
+                <Input
+                  value={formData.location}
+                  onChange={(e) => handleInputChange('location', e.target.value)}
+                  className="text-sm text-center"
+                />
+              </div>
             </div>
 
             {/* Description */}
-            <div className="text-sm text-gray-600 leading-relaxed">
-              <p>
-                Reza is a seasoned, visionary venture builder and CEO with a proven track record of scaling startups and transforming enterprises in Southeast Asia and the US. He's a strategic problem-solver and an efficient operator with innovation and inspiration. With expertise in both entrepreneurship and leadership coaching, Reza empowers executives to integrate mindfulness and purpose into their organizations, fostering resilience and long-term success.
-              </p>
+            <div>
+              <Label className="text-sm font-medium">Description</Label>
+              <Textarea
+                value={formData.description}
+                onChange={(e) => handleInputChange('description', e.target.value)}
+                className="text-sm leading-relaxed mt-2"
+                rows={6}
+              />
             </div>
 
             {/* Key Roles */}
             <div>
-              <h3 className="font-semibold text-gray-900 mb-3">Key Roles</h3>
-              <div className="text-sm text-gray-600 space-y-1">
-                <p>Founder/CEO, multiple B2B startups</p>
-                <p>Venture Builder and APAC GTM Leader, Mach49</p>
-                <p>Managing Director, Yahoo! SE Asia</p>
-                <p>Venture Architect/Strategist, Vivint Corp</p>
-                <p>Data Science, Strategy and FP&A Leader, Intel Corp</p>
+              <div className="flex items-center justify-between mb-3">
+                <Label className="font-semibold">Key Roles</Label>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => addArrayItem('keyRoles')}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="space-y-2">
+                {formData.keyRoles.map((role, index) => (
+                  <div key={index} className="flex gap-2">
+                    <Input
+                      value={role}
+                      onChange={(e) => handleArrayChange('keyRoles', index, e.target.value)}
+                      className="text-sm"
+                    />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeArrayItem('keyRoles', index)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
               </div>
             </div>
 
             {/* Focus Areas */}
             <div>
-              <h3 className="font-semibold text-gray-900 mb-3">Focus Areas</h3>
+              <div className="flex items-center justify-between mb-3">
+                <Label className="font-semibold">Focus Areas</Label>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => addArrayItem('focusAreas')}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
               <div className="flex flex-wrap gap-2">
-                {['Strategy', 'Venture Building', 'Biz Transformation', 'Execution', 'Coaching', 'Startup Scaling', 'Mentorship'].map((area) => (
-                  <Badge key={area} variant="outline" className="bg-teal-100 text-teal-700 border-teal-200">
-                    {area}
-                  </Badge>
+                {formData.focusAreas.map((area, index) => (
+                  <div key={index} className="flex items-center gap-1">
+                    <Input
+                      value={area}
+                      onChange={(e) => handleArrayChange('focusAreas', index, e.target.value)}
+                      className="text-xs h-8 w-32"
+                    />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeArrayItem('focusAreas', index)}
+                      className="h-6 w-6 p-0"
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
                 ))}
               </div>
             </div>
 
             {/* Industries */}
             <div>
-              <h3 className="font-semibold text-gray-900 mb-3">Industries</h3>
+              <div className="flex items-center justify-between mb-3">
+                <Label className="font-semibold">Industries</Label>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => addArrayItem('industries')}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
               <div className="flex flex-wrap gap-2">
-                {['Tech', 'VC', 'Digital Media', 'Leadership Coaching'].map((industry) => (
-                  <Badge key={industry} variant="outline" className="bg-teal-100 text-teal-700 border-teal-200">
-                    {industry}
-                  </Badge>
+                {formData.industries.map((industry, index) => (
+                  <div key={index} className="flex items-center gap-1">
+                    <Input
+                      value={industry}
+                      onChange={(e) => handleArrayChange('industries', index, e.target.value)}
+                      className="text-xs h-8 w-32"
+                    />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeArrayItem('industries', index)}
+                      className="h-6 w-6 p-0"
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
                 ))}
               </div>
             </div>
 
             {/* Geographical Coverage */}
             <div>
-              <h3 className="font-semibold text-gray-900 mb-3">Geographical Coverage</h3>
+              <div className="flex items-center justify-between mb-3">
+                <Label className="font-semibold">Geographical Coverage</Label>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => addArrayItem('geographicalCoverage')}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
               <div className="flex flex-wrap gap-2">
-                {['Southeast Asia', 'United States', 'Middle East'].map((region) => (
-                  <Badge key={region} variant="outline" className="bg-gray-100 text-gray-700 border-gray-200">
-                    {region}
-                  </Badge>
+                {formData.geographicalCoverage.map((region, index) => (
+                  <div key={index} className="flex items-center gap-1">
+                    <Input
+                      value={region}
+                      onChange={(e) => handleArrayChange('geographicalCoverage', index, e.target.value)}
+                      className="text-xs h-8 w-32"
+                    />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeArrayItem('geographicalCoverage', index)}
+                      className="h-6 w-6 p-0"
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
                 ))}
               </div>
             </div>
 
             {/* Stage */}
             <div>
-              <h3 className="font-semibold text-gray-900 mb-3">Stage</h3>
+              <div className="flex items-center justify-between mb-3">
+                <Label className="font-semibold">Stage</Label>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => addArrayItem('stages')}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
               <div className="flex flex-wrap gap-2">
-                {['Enterprise', 'Early Stage', 'Seed', 'Growth'].map((stage) => (
-                  <Badge key={stage} variant="outline" className="bg-gray-100 text-gray-700 border-gray-200">
-                    {stage}
-                  </Badge>
+                {formData.stages.map((stage, index) => (
+                  <div key={index} className="flex items-center gap-1">
+                    <Input
+                      value={stage}
+                      onChange={(e) => handleArrayChange('stages', index, e.target.value)}
+                      className="text-xs h-8 w-32"
+                    />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeArrayItem('stages', index)}
+                      className="h-6 w-6 p-0"
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
                 ))}
               </div>
             </div>
 
             {/* Personal Interests */}
             <div>
-              <h3 className="font-semibold text-gray-900 mb-3">Personal Interests</h3>
+              <div className="flex items-center justify-between mb-3">
+                <Label className="font-semibold">Personal Interests</Label>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => addArrayItem('personalInterests')}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
               <div className="flex flex-wrap gap-2">
-                {['Travel', 'Polo', 'Mindfulness', 'Philosophy'].map((interest) => (
-                  <Badge key={interest} variant="outline" className="bg-gray-100 text-gray-700 border-gray-200">
-                    {interest}
-                  </Badge>
+                {formData.personalInterests.map((interest, index) => (
+                  <div key={index} className="flex items-center gap-1">
+                    <Input
+                      value={interest}
+                      onChange={(e) => handleArrayChange('personalInterests', index, e.target.value)}
+                      className="text-xs h-8 w-32"
+                    />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeArrayItem('personalInterests', index)}
+                      className="h-6 w-6 p-0"
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
                 ))}
               </div>
             </div>
 
             {/* Certifications */}
             <div>
-              <h3 className="font-semibold text-gray-900 mb-3">Certifications</h3>
+              <div className="flex items-center justify-between mb-3">
+                <Label className="font-semibold">Certifications</Label>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => addArrayItem('certifications')}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
               <div className="space-y-2">
-                <Badge variant="outline" className="block w-fit bg-gray-100 text-gray-700 border-gray-200">
-                  Yoga and Meditation Teacher
-                </Badge>
-                <Badge variant="outline" className="block w-fit bg-gray-100 text-gray-700 border-gray-200">
-                  Coaching
-                </Badge>
+                {formData.certifications.map((cert, index) => (
+                  <div key={index} className="flex gap-2">
+                    <Input
+                      value={cert}
+                      onChange={(e) => handleArrayChange('certifications', index, e.target.value)}
+                      className="text-sm"
+                    />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeArrayItem('certifications', index)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
               </div>
             </div>
 
             {/* Engagement Options */}
             <div>
-              <h3 className="font-semibold text-gray-900 mb-3">Engagement Options</h3>
-              <p className="text-sm text-gray-600">Fractional, Interim, Coach/Mentor</p>
+              <Label className="font-semibold">Engagement Options</Label>
+              <Input
+                value={formData.engagementOptions}
+                onChange={(e) => handleInputChange('engagementOptions', e.target.value)}
+                className="text-sm mt-2"
+              />
             </div>
           </div>
 
@@ -228,9 +527,12 @@ const ProfileSnapshot = () => {
             {/* Meet Reza Section */}
             <div className="bg-teal-600 text-white p-6 rounded-lg">
               <h2 className="text-xl font-semibold mb-4">Meet Reza</h2>
-              <p className="text-sm leading-relaxed">
-                Hello, I'm Reza! Over the years, I've built and scaled successful ventures, transformed businesses, and coached leaders to realize their potential. I'm passionate about blending business growth with conscious leadership where people are treated as a whole. When I'm not guiding ventures or building new companies, you'll find me practicing mindfulness or enjoying polo, a sport that connects me to my Persian heritage.
-              </p>
+              <Textarea
+                value={formData.meetIntro}
+                onChange={(e) => handleInputChange('meetIntro', e.target.value)}
+                className="text-sm leading-relaxed bg-white/10 border-white/20 text-white placeholder:text-white/70"
+                rows={4}
+              />
             </div>
 
             {/* Personas Section */}
@@ -248,40 +550,30 @@ const ProfileSnapshot = () => {
                   </TabsList>
                   
                   <TabsContent value="growth-architect" className="space-y-4">
-                    <p className="text-sm text-gray-700 leading-relaxed">
-                      Reza is a dynamic leader with a unique blend of strategic vision and operational excellence, driving growth and innovation across Southeast Asia.
-                    </p>
-                    
-                    <div className="space-y-3 text-sm">
-                      <div>
-                        <span className="font-medium">• Startup Leader:</span>
-                        <span className="text-gray-600"> Led and scaled startups across Southeast Asia to successful exits, while serving as VC Partner, Operator, and Strategic Consultant.</span>
-                      </div>
-                      <div>
-                        <span className="font-medium">• Expansion Specialist:</span>
-                        <span className="text-gray-600"> Orchestrated Yahoo!'s expansion into six new Southeast Asian markets, unlocking regional opportunities.</span>
-                      </div>
-                      <div>
-                        <span className="font-medium">• Value Creator:</span>
-                        <span className="text-gray-600"> Delivered measurable impact through strategic leadership and operational excellence across startups and established enterprises.</span>
-                      </div>
-                      <div>
-                        <span className="font-medium">• Sustainability Advocate:</span>
-                        <span className="text-gray-600"> Integrating analytical thinking with mindful-based coaching to support sustainable growth and conscious leadership.</span>
-                      </div>
-                    </div>
+                    <Textarea
+                      value={formData.growthArchitectContent}
+                      onChange={(e) => handleInputChange('growthArchitectContent', e.target.value)}
+                      className="text-sm leading-relaxed"
+                      rows={8}
+                    />
                   </TabsContent>
                   
                   <TabsContent value="venture-builder" className="space-y-4">
-                    <p className="text-sm text-gray-700 leading-relaxed">
-                      Content for Venture Builder persona will be displayed here.
-                    </p>
+                    <Textarea
+                      value={formData.ventureBuilderContent}
+                      onChange={(e) => handleInputChange('ventureBuilderContent', e.target.value)}
+                      className="text-sm leading-relaxed"
+                      rows={4}
+                    />
                   </TabsContent>
                   
                   <TabsContent value="leadership-steward" className="space-y-4">
-                    <p className="text-sm text-gray-700 leading-relaxed">
-                      Content for Leadership / Cultural Steward persona will be displayed here.
-                    </p>
+                    <Textarea
+                      value={formData.leadershipStewardContent}
+                      onChange={(e) => handleInputChange('leadershipStewardContent', e.target.value)}
+                      className="text-sm leading-relaxed"
+                      rows={4}
+                    />
                   </TabsContent>
                 </Tabs>
               </div>
@@ -301,28 +593,46 @@ const ProfileSnapshot = () => {
                   </TabsList>
                   
                   <TabsContent value="superpowers" className="space-y-4">
-                    <div className="space-y-4 text-sm">
+                    <div className="space-y-4">
                       <div>
-                        <h4 className="font-medium text-gray-900 mb-2">Strategic Problem-Solving</h4>
-                        <p className="text-gray-600">Connecting the dots. Crafting insights and tactical thinking. Driving business revenue growth and brand presence.</p>
+                        <Label className="font-medium text-gray-900 mb-2 block">Strategic Problem-Solving</Label>
+                        <Textarea
+                          value={formData.strategicProblemSolving}
+                          onChange={(e) => handleInputChange('strategicProblemSolving', e.target.value)}
+                          className="text-sm"
+                          rows={2}
+                        />
                       </div>
                       
                       <div>
-                        <h4 className="font-medium text-gray-900 mb-2">Conscious Leadership</h4>
-                        <p className="text-gray-600">Mentoring leaders, integrating mindful leadership practices that enhance connection, productivity, positivity and organizational culture.</p>
+                        <Label className="font-medium text-gray-900 mb-2 block">Conscious Leadership</Label>
+                        <Textarea
+                          value={formData.consciousLeadership}
+                          onChange={(e) => handleInputChange('consciousLeadership', e.target.value)}
+                          className="text-sm"
+                          rows={2}
+                        />
                       </div>
                       
                       <div>
-                        <h4 className="font-medium text-gray-900 mb-2">Scaling Ventures</h4>
-                        <p className="text-gray-600">Leading startups, corporate ventures through planning, fundraising, governance, scaling, professionalization, optimization and, ultimately, exits.</p>
+                        <Label className="font-medium text-gray-900 mb-2 block">Scaling Ventures</Label>
+                        <Textarea
+                          value={formData.scalingVentures}
+                          onChange={(e) => handleInputChange('scalingVentures', e.target.value)}
+                          className="text-sm"
+                          rows={2}
+                        />
                       </div>
                     </div>
                   </TabsContent>
                   
                   <TabsContent value="sweet-spot" className="space-y-4">
-                    <p className="text-sm text-gray-700 leading-relaxed">
-                      Content for Sweet Spot will be displayed here.
-                    </p>
+                    <Textarea
+                      value={formData.sweetSpotContent}
+                      onChange={(e) => handleInputChange('sweetSpotContent', e.target.value)}
+                      className="text-sm leading-relaxed"
+                      rows={4}
+                    />
                   </TabsContent>
                 </Tabs>
               </div>
@@ -349,19 +659,65 @@ const ProfileSnapshot = () => {
                   </button>
                   
                   {expandedFunctionalSkill === 'market-expansion' && (
-                    <div className="mt-3 space-y-3 text-sm text-gray-600">
-                      <div>
-                        <strong>• Market Entry Expertise:</strong> Designed and executed strategies that expanded Yahoo's presence across six new countries in Southeast Asia.
+                    <div className="mt-3 space-y-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <Label className="text-sm font-medium">Market Expansion Skills</Label>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            const newSkills = [...formData.functionalSkills.marketExpansion, ''];
+                            setFormData(prev => ({ 
+                              ...prev, 
+                              functionalSkills: { 
+                                ...prev.functionalSkills, 
+                                marketExpansion: newSkills 
+                              } 
+                            }));
+                            setHasChanges(true);
+                          }}
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
                       </div>
-                      <div>
-                        <strong>• Scaling Across Borders:</strong> Guided startups and enterprises to navigate complex regulatory, cultural, and operational challenges when entering new regions.
-                      </div>
-                      <div>
-                        <strong>• Tailored Strategies:</strong> Develops bespoke go-to-market plans that align with business objectives, leveraging local insights and global trends.
-                      </div>
-                      <div>
-                        <strong>• Partnership Development:</strong> Establishes strategic alliances and partnerships to drive growth and strengthen market positioning.
-                      </div>
+                      {formData.functionalSkills.marketExpansion.map((skill, index) => (
+                        <div key={index} className="flex gap-2">
+                          <Textarea
+                            value={skill}
+                            onChange={(e) => {
+                              const newSkills = [...formData.functionalSkills.marketExpansion];
+                              newSkills[index] = e.target.value;
+                              setFormData(prev => ({ 
+                                ...prev, 
+                                functionalSkills: { 
+                                  ...prev.functionalSkills, 
+                                  marketExpansion: newSkills 
+                                } 
+                              }));
+                              setHasChanges(true);
+                            }}
+                            className="text-sm"
+                            rows={2}
+                          />
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              const newSkills = formData.functionalSkills.marketExpansion.filter((_, i) => i !== index);
+                              setFormData(prev => ({ 
+                                ...prev, 
+                                functionalSkills: { 
+                                  ...prev.functionalSkills, 
+                                  marketExpansion: newSkills 
+                                } 
+                              }));
+                              setHasChanges(true);
+                            }}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>
@@ -380,8 +736,8 @@ const ProfileSnapshot = () => {
                   </button>
                   
                   {expandedFunctionalSkill === 'operational-efficiency' && (
-                    <div className="mt-3 space-y-3 text-sm text-gray-600">
-                      <div></div>
+                    <div className="mt-3 space-y-3">
+                      <Label className="text-sm">Add operational efficiency skills here</Label>
                     </div>
                   )}
                 </div>
@@ -400,8 +756,8 @@ const ProfileSnapshot = () => {
                   </button>
                   
                   {expandedFunctionalSkill === 'leadership-development' && (
-                    <div className="mt-3 space-y-3 text-sm text-gray-600">
-                      <div></div>
+                    <div className="mt-3 space-y-3">
+                      <Label className="text-sm">Add leadership development skills here</Label>
                     </div>
                   )}
                 </div>
@@ -414,20 +770,44 @@ const ProfileSnapshot = () => {
                 <h3 className="text-lg font-semibold">Reza's User Manual</h3>
               </div>
               
-              <div className="p-4 space-y-4 text-sm text-gray-700">
-                <p>
-                  Reza values direct communication, transparency, and early alignment on goals. He thrives in environments where challenges are addressed proactively and discussions are data-driven. Balancing creativity with analytical rigor, Reza integrates human-centric leadership with strategic execution to achieve impactful outcomes.
-                </p>
-                <p>
-                  <strong>Reza's Ways of Working:</strong> He's at his best as part of high-IQ, high EQ teams. His art manifests in human interactions, leadership, the creativity of plans, design, communication, persuasion, and inspiration. The science manifests in data-backed analysis, planning and decision-making. The art requires space and freedom to explore.
-                </p>
-                <p>
-                  Reza is a passionate, purpose-driven leader who values self-awareness and modeling through behavior. He works best with people who are respectful and self-aware.
-                </p>
+              <div className="p-4">
+                <Textarea
+                  value={formData.userManual}
+                  onChange={(e) => handleInputChange('userManual', e.target.value)}
+                  className="text-sm leading-relaxed"
+                  rows={8}
+                />
               </div>
             </div>
           </div>
         </div>
+
+        {/* Save/Discard Buttons */}
+        {hasChanges && (
+          <div className="flex justify-center gap-4 p-4 bg-gray-50 rounded-lg border">
+            <Button
+              variant="outline"
+              onClick={handleDiscardChanges}
+              disabled={isSubmitting}
+            >
+              <X className="mr-2 h-4 w-4" />
+              Discard Changes
+            </Button>
+            
+            <Button 
+              onClick={handleSave}
+              disabled={isSubmitting}
+              className="bg-teal-600 hover:bg-teal-700"
+            >
+              {isSubmitting ? 'Saving...' : (
+                <>
+                  <Save className="mr-2 h-4 w-4" />
+                  Save Changes
+                </>
+              )}
+            </Button>
+          </div>
+        )}
 
         {/* Action Buttons */}
         <div className="flex justify-between items-center pt-6">
