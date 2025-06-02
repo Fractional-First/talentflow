@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -156,12 +157,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
       
       if (error) {
-        // Check if it's a "user already exists" error
-        if (error.message.includes('already registered') || 
-            error.message.includes('already exists') ||
-            error.message.includes('User already registered')) {
-          return { error: 'An account with this email already exists. Please try signing in instead.' };
-        }
         return { error: error.message };
       }
 
