@@ -147,6 +147,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       // Clean up existing state
       cleanupAuthState();
+
+      console.log('Redirecting to:', `${window.location.origin}/dashboard/profile-creation`);
       
       const { error } = await supabase.auth.signUp({
         email,
