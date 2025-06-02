@@ -148,9 +148,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Clean up existing state
       cleanupAuthState();
 
+      // First, check if user already exists by attempting to sign in
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      // If sign in succeeds, user already exists
+      if (signInData.user && !signInError) {
+        // Sign out the user immediately since they were trying to sign up
+        await supabase.auth.signOut();
+        return { error: 'An account with this email already exists. Please try signing in instead.' };
+      }
+
+      // If sign in failed for reasons other than invalid credentials, user might exist
+      if (signInError && !signInError.message.includes('Invalid login credentials')) {
+        return { error: 'An account with this email already exists. Please try signing in instead.' };
+      }
+
       console.log('Redirecting to:', `${window.location.origin}/dashboard/profile-creation`);
       
-      const { error } = await supabase.auth.signUp({
+      const { error, data } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -165,9 +183,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
         return { error: error.message };
       }
-      
-      // Navigate to check email page only if signup was successful
-      navigate(`/check-email?email=${encodeURIComponent(email)}`);
+
+      // If data.user exists but no session, it means confirmation email was sent
+      if (data.user && !data.session) {
+        // Navigate to check email page only if signup was successful
+        navigate(`/check-email?email=${encodeURIComponent(email)}`);
+        return {};
+      }
+
+      // If we get here with a session, user was created and logged in immediately
       return {};
     } catch (error: any) {
       console.error('Sign up error:', error);
