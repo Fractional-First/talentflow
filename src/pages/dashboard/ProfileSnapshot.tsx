@@ -233,93 +233,98 @@ const ProfileSnapshot = () => {
               </p>
             </div>
 
-            {/* Personas Tabbed Section */}
-            <div className="bg-gray-50 p-6 rounded-lg">
-              <Tabs defaultValue="growth-architect" className="w-full">
-                <TabsList className="grid w-full grid-cols-3 mb-6">
-                  <TabsTrigger value="growth-architect" className="text-xs">Growth Architect</TabsTrigger>
-                  <TabsTrigger value="venture-builder" className="text-xs">Venture Builder</TabsTrigger>
-                  <TabsTrigger value="leadership-steward" className="text-xs">Leadership / Cultural Steward</TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="growth-architect" className="space-y-4">
-                  <p className="text-sm text-gray-700 leading-relaxed">
-                    Reza is a dynamic leader with a unique blend of strategic vision and operational excellence, driving growth and innovation across Southeast Asia.
-                  </p>
+            {/* Personas Section */}
+            <div className="bg-white rounded-lg border">
+              <div className="bg-teal-600 text-white p-4 rounded-t-lg">
+                <h3 className="text-lg font-semibold">Personas</h3>
+              </div>
+              
+              <div className="p-4">
+                <Tabs defaultValue="growth-architect" className="w-full">
+                  <TabsList className="grid w-full grid-cols-3 mb-6">
+                    <TabsTrigger value="growth-architect" className="text-xs">Growth Architect</TabsTrigger>
+                    <TabsTrigger value="venture-builder" className="text-xs">Venture Builder</TabsTrigger>
+                    <TabsTrigger value="leadership-steward" className="text-xs">Leadership / Cultural Steward</TabsTrigger>
+                  </TabsList>
                   
-                  <div className="space-y-3 text-sm">
-                    <div>
-                      <span className="font-medium">• Startup Leader:</span>
-                      <span className="text-gray-600"> Led and scaled startups across Southeast Asia to successful exits, while serving as VC Partner, Operator, and Strategic Consultant.</span>
+                  <TabsContent value="growth-architect" className="space-y-4">
+                    <p className="text-sm text-gray-700 leading-relaxed">
+                      Reza is a dynamic leader with a unique blend of strategic vision and operational excellence, driving growth and innovation across Southeast Asia.
+                    </p>
+                    
+                    <div className="space-y-3 text-sm">
+                      <div>
+                        <span className="font-medium">• Startup Leader:</span>
+                        <span className="text-gray-600"> Led and scaled startups across Southeast Asia to successful exits, while serving as VC Partner, Operator, and Strategic Consultant.</span>
+                      </div>
+                      <div>
+                        <span className="font-medium">• Expansion Specialist:</span>
+                        <span className="text-gray-600"> Orchestrated Yahoo!'s expansion into six new Southeast Asian markets, unlocking regional opportunities.</span>
+                      </div>
+                      <div>
+                        <span className="font-medium">• Value Creator:</span>
+                        <span className="text-gray-600"> Delivered measurable impact through strategic leadership and operational excellence across startups and established enterprises.</span>
+                      </div>
+                      <div>
+                        <span className="font-medium">• Sustainability Advocate:</span>
+                        <span className="text-gray-600"> Integrating analytical thinking with mindful-based coaching to support sustainable growth and conscious leadership.</span>
+                      </div>
                     </div>
-                    <div>
-                      <span className="font-medium">• Expansion Specialist:</span>
-                      <span className="text-gray-600"> Orchestrated Yahoo!'s expansion into six new Southeast Asian markets, unlocking regional opportunities.</span>
-                    </div>
-                    <div>
-                      <span className="font-medium">• Value Creator:</span>
-                      <span className="text-gray-600"> Delivered measurable impact through strategic leadership and operational excellence across startups and established enterprises.</span>
-                    </div>
-                    <div>
-                      <span className="font-medium">• Sustainability Advocate:</span>
-                      <span className="text-gray-600"> Integrating analytical thinking with mindful-based coaching to support sustainable growth and conscious leadership.</span>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-2 mt-4">
-                    <Badge variant="outline" className="bg-teal-100 text-teal-700 border-teal-200">
-                      Superpowers
-                    </Badge>
-                    <Badge variant="outline" className="bg-yellow-100 text-yellow-700 border-yellow-200">
-                      Sweet Spot
-                    </Badge>
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="venture-builder" className="space-y-4">
-                  <p className="text-sm text-gray-700 leading-relaxed">
-                    Content for Venture Builder persona will be displayed here.
-                  </p>
-                </TabsContent>
-                
-                <TabsContent value="leadership-steward" className="space-y-4">
-                  <p className="text-sm text-gray-700 leading-relaxed">
-                    Content for Leadership / Cultural Steward persona will be displayed here.
-                  </p>
-                </TabsContent>
-              </Tabs>
+                  </TabsContent>
+                  
+                  <TabsContent value="venture-builder" className="space-y-4">
+                    <p className="text-sm text-gray-700 leading-relaxed">
+                      Content for Venture Builder persona will be displayed here.
+                    </p>
+                  </TabsContent>
+                  
+                  <TabsContent value="leadership-steward" className="space-y-4">
+                    <p className="text-sm text-gray-700 leading-relaxed">
+                      Content for Leadership / Cultural Steward persona will be displayed here.
+                    </p>
+                  </TabsContent>
+                </Tabs>
+              </div>
             </div>
 
-            {/* Core Competencies */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="text-center p-4 bg-white rounded-lg border">
-                <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <CheckCircle className="h-6 w-6 text-teal-600" />
-                </div>
-                <h4 className="font-medium text-gray-900 mb-2">Strategic Problem-Solving</h4>
-                <p className="text-xs text-gray-600">
-                  Connecting the dots. Crafting insights and tactical thinking. Driving business revenue growth and brand presence.
-                </p>
+            {/* Superpowers Section */}
+            <div className="bg-white rounded-lg border">
+              <div className="bg-teal-600 text-white p-4 rounded-t-lg">
+                <h3 className="text-lg font-semibold">Superpowers</h3>
               </div>
               
-              <div className="text-center p-4 bg-white rounded-lg border">
-                <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <User className="h-6 w-6 text-teal-600" />
-                </div>
-                <h4 className="font-medium text-gray-900 mb-2">Conscious Leadership</h4>
-                <p className="text-xs text-gray-600">
-                  Mentoring leaders, integrating mindful leadership practices that enhance connection, productivity, positivity and organizational culture.
-                </p>
-              </div>
-              
-              <div className="text-center p-4 bg-white rounded-lg border">
-                <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <Briefcase className="h-6 w-6 text-teal-600" />
-                </div>
-                <h4 className="font-medium text-gray-900 mb-2">Scaling Ventures</h4>
-                <p className="text-xs text-gray-600">
-                  Leading startups, corporate ventures through planning, fundraising, governance, scaling, professionalization, optimization and, ultimately, exits.
-                </p>
+              <div className="p-4">
+                <Tabs defaultValue="superpowers" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2 mb-6">
+                    <TabsTrigger value="superpowers" className="text-xs">Superpowers</TabsTrigger>
+                    <TabsTrigger value="sweet-spot" className="text-xs">Sweet Spot</TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="superpowers" className="space-y-4">
+                    <div className="space-y-4 text-sm">
+                      <div>
+                        <h4 className="font-medium text-gray-900 mb-2">Strategic Problem-Solving</h4>
+                        <p className="text-gray-600">Connecting the dots. Crafting insights and tactical thinking. Driving business revenue growth and brand presence.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-medium text-gray-900 mb-2">Conscious Leadership</h4>
+                        <p className="text-gray-600">Mentoring leaders, integrating mindful leadership practices that enhance connection, productivity, positivity and organizational culture.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-medium text-gray-900 mb-2">Scaling Ventures</h4>
+                        <p className="text-gray-600">Leading startups, corporate ventures through planning, fundraising, governance, scaling, professionalization, optimization and, ultimately, exits.</p>
+                      </div>
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="sweet-spot" className="space-y-4">
+                    <p className="text-sm text-gray-700 leading-relaxed">
+                      Content for Sweet Spot will be displayed here.
+                    </p>
+                  </TabsContent>
+                </Tabs>
               </div>
             </div>
 
@@ -373,6 +378,12 @@ const ProfileSnapshot = () => {
                       <Plus className="h-5 w-5 text-gray-400" />
                     }
                   </button>
+                  
+                  {expandedFunctionalSkill === 'operational-efficiency' && (
+                    <div className="mt-3 space-y-3 text-sm text-gray-600">
+                      <div></div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Leadership Development */}
@@ -387,6 +398,12 @@ const ProfileSnapshot = () => {
                       <Plus className="h-5 w-5 text-gray-400" />
                     }
                   </button>
+                  
+                  {expandedFunctionalSkill === 'leadership-development' && (
+                    <div className="mt-3 space-y-3 text-sm text-gray-600">
+                      <div></div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
