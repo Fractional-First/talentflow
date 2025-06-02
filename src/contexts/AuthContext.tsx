@@ -48,6 +48,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, newSession) => {
+        console.log('Auth state change:', event, newSession?.user?.email);
         setSession(newSession);
         setUser(newSession?.user ?? null);
         
@@ -64,9 +65,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
               
               if (profile && !profile.profile_created) {
                 // User needs to complete profile creation
+                console.log('Redirecting to profile creation');
                 navigate('/dashboard/profile-creation');
               } else {
                 // User has completed profile, go to dashboard
+                console.log('Redirecting to dashboard');
                 navigate('/dashboard');
               }
             } catch (error) {
