@@ -115,25 +115,28 @@ const ProfileCreation = () => {
       const responseData = await response.json();
       console.log('Webhook response:', responseData);
       
+      // Prepare profile data for database storage
+      const profileDataForDB = {
+        submittedAt: new Date().toISOString(),
+        webhookResponse: responseData,
+        submissionType: isManual ? 'manual' : 'document_upload',
+        ...(isManual ? { formData: data } : {}),
+        ...(!isManual ? { 
+          uploadedFiles: {
+            hasLinkedIn: !!(data as any).linkedin,
+            hasResume: !!(data as any).resume,
+            linkedInFileName: (data as any).linkedin?.name,
+            resumeFileName: (data as any).resume?.name
+          }
+        } : {})
+      };
+      
       // Update profile_created flag in Supabase
       const { error: profileError } = await supabase
         .from('profiles')
         .update({ 
           profile_created: true,
-          profile_data: {
-            ...(isManual ? { formData: data } : {}),
-            ...(!isManual ? { 
-              uploadedFiles: {
-                hasLinkedIn: !!(data as any).linkedin,
-                hasResume: !!(data as any).resume,
-                linkedInFileName: (data as any).linkedin?.name,
-                resumeFileName: (data as any).resume?.name
-              }
-            } : {}),
-            submittedAt: new Date().toISOString(),
-            webhookResponse: responseData,
-            submissionType: isManual ? 'manual' : 'document_upload'
-          },
+          profile_data: JSON.stringify(profileDataForDB),
           profile_version: '0.1'
         })
         .eq('id', user.id);
