@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
@@ -325,36 +324,10 @@ const ProfileCreation = () => {
 
       // Parse the response to check for success
       const responseData = await response.json();
-      console.log('Webhook response:', responseData);
       
-      // Update profile_created flag in Supabase BEFORE redirecting
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .update({ 
-          profile_created: true,
-          profile_data: {
-            formData,
-            uploadedFiles: {
-              hasLinkedIn: !!profile.linkedin,
-              hasResume: !!profile.resume,
-              linkedInFileName: profile.linkedin?.name,
-              resumeFileName: profile.resume?.name
-            },
-            supportingDocs: profile.docs.map(doc => ({
-              title: doc.title,
-              fileName: doc.file.name
-            })),
-            supportingLinks: profile.links,
-            submittedAt: new Date().toISOString(),
-            webhookResponse: responseData
-          },
-          profile_version: '0.1'
-        })
-        .eq('id', user.id);
-      
-      if (profileError) {
-        console.error('Error updating profile data:', profileError);
-        throw new Error('Failed to update profile status in database');
+      // Check if the API response indicates an error
+      if (responseData.error || responseData.status === 'error') {
+        throw new Error(responseData.message || 'Server reported an error processing your profile');
       }
       
       // Store completion status in localStorage
