@@ -5,19 +5,66 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Pencil, Briefcase, MapPin, Calendar } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import { useEffect, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+
+interface ProfileData {
+  name: string;
+  title: string;
+  company: string;
+  location: string;
+  about: string;
+  skills: string[];
+}
 
 export const ProfileSummaryCard = () => {
   const navigate = useNavigate();
-  
-  // Mock profile data - in a real app, this would come from API/state
-  const profile = {
+  const [profile, setProfile] = useState<ProfileData>({
     name: 'Alex Johnson',
     title: 'Senior Product Manager',
     company: 'TechCorp Inc.',
     location: 'San Francisco, CA',
     about: 'Experienced product manager with 7+ years in technology companies. Strong background in user-centric design, agile methodologies, and product strategy.',
     skills: ['Product Strategy', 'User Research', 'Agile', 'Cross-functional Leadership', 'Data Analysis']
-  };
+  });
+
+  useEffect(() => {
+    const loadProfileData = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: profileData, error } = await supabase
+            .from('profiles')
+            .select('profile_data, profile_version')
+            .eq('id', user.id)
+            .single();
+
+          if (error) {
+            console.error('Error loading profile data:', error);
+            return;
+          }
+
+          if (profileData?.profile_data) {
+            const data = profileData.profile_data as any;
+            if (data.formData) {
+              setProfile({
+                name: `${data.formData.firstName || ''} ${data.formData.lastName || ''}`.trim() || 'User',
+                title: data.formData.currentPosition || 'Professional',
+                company: data.formData.company || 'Company',
+                location: 'Location', // You may want to add location to the form
+                about: data.formData.summary || 'Professional summary not provided.',
+                skills: data.formData.skills ? data.formData.skills.split(',').map((s: string) => s.trim()) : []
+              });
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error in loadProfileData:', error);
+      }
+    };
+
+    loadProfileData();
+  }, []);
   
   return (
     <StepCard>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useReducer } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
 import { StepCard, StepCardContent, StepCardDescription, StepCardFooter, StepCardHeader, StepCardTitle } from '@/components/StepCard';
@@ -9,13 +9,12 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
-import { Upload, ArrowRight, ArrowLeft, File, Clock, HelpCircle, Linkedin, FileSpreadsheet, Copy, AlertCircle, Link, FileText, Trash2, Plus, FileImage, Paperclip } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
+import { Upload, ArrowRight, ArrowLeft, File, Clock, HelpCircle, Linkedin, Copy, AlertCircle, Link, FileText, Trash2, Plus, Paperclip } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
+import { useQueryClient } from '@tanstack/react-query';
 
 const industries = [
   'Technology',
@@ -42,75 +41,37 @@ const experienceLevels = [
 const LINKEDIN_PDF_GUIDE_URL =
   "https://www.linkedin.com/help/linkedin/answer/a521735/how-to-save-a-profile-as-a-pdf?lang=en";
 
-// Supporting document type
-type SupportingDocument = {
-  type: 'document' | 'link';
-  title: string;
-  description?: string;
-  fileUrl?: string;
-  fileName?: string;
-  url?: string;
+type ProfileData = {
+  linkedin?: File;
+  resume?: File;
+  docs: Array<{ title: string; file: File }>;
+  links: Array<{ title: string; link: string }>;
 };
 
-// Define our state shape
-interface ProfileState {
-  // Form data
-  formData: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string;
-    currentPosition: string;
-    company: string;
-    industry: string;
-    experienceLevel: string;
-    summary: string;
-    skills: string;
-  };
-  // Files
-  resumeFile: File | null;
-  linkedinPdfFile: File | null;
-  supportingFiles: Map<string, File>;
-  // Supporting documents
-  supportingDocuments: SupportingDocument[];
-  currentDoc: {
-    type: 'document' | 'link';
-    title: string;
-    description: string;
-    url: string;
-    fileName: string;
-  };
-  // UI state
-  showManualEntry: boolean;
-  showSupportingDocs: boolean;
-  isEmailVerified: boolean;
-  isSubmitting: boolean;
-  serverError: string;
-  // Context state
-  isLinkedInUser: boolean;
-  isUsingLinkedInInfo: boolean;
-}
+type FormData = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  currentPosition: string;
+  company: string;
+  industry: string;
+  experienceLevel: string;
+  summary: string;
+  skills: string;
+};
 
-// Define actions for our reducer
-type ProfileAction =
-  | { type: 'UPDATE_FORM_FIELD'; field: string; value: string }
-  | { type: 'SET_RESUME_FILE'; file: File | null }
-  | { type: 'SET_LINKEDIN_PDF'; file: File | null }
-  | { type: 'SET_SUPPORTING_FILE'; title: string; file: File }
-  | { type: 'UPDATE_DOC_FIELD'; field: keyof ProfileState['currentDoc']; value: string }
-  | { type: 'TOGGLE_MANUAL_ENTRY'; value: boolean }
-  | { type: 'TOGGLE_SUPPORTING_DOCS' }
-  | { type: 'ADD_SUPPORTING_DOCUMENT'; document: SupportingDocument }
-  | { type: 'REMOVE_SUPPORTING_DOCUMENT'; index: number }
-  | { type: 'SET_EMAIL_VERIFIED'; value: boolean }
-  | { type: 'SET_SUBMITTING'; value: boolean }
-  | { type: 'SET_SERVER_ERROR'; error: string }
-  | { type: 'SET_LINKEDIN_USER'; value: boolean }
-  | { type: 'USE_LINKEDIN_INFO'; value: boolean };
-
-// Initial state for our reducer
-const initialState: ProfileState = {
-  formData: {
+const ProfileCreation = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const queryClient = useQueryClient();
+  
+  const [profile, setProfile] = useState<ProfileData>({
+    docs: [],
+    links: []
+  });
+  
+  const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
     email: '',
@@ -121,122 +82,31 @@ const initialState: ProfileState = {
     experienceLevel: '',
     summary: '',
     skills: ''
-  },
-  resumeFile: null,
-  linkedinPdfFile: null,
-  supportingFiles: new Map(),
-  supportingDocuments: [],
-  currentDoc: {
-    type: 'document',
+  });
+  
+  const [showManualEntry, setShowManualEntry] = useState(false);
+  const [showSupportingDocs, setShowSupportingDocs] = useState(false);
+  const [isLinkedInUser, setIsLinkedInUser] = useState(false);
+  const [isUsingLinkedInInfo, setIsUsingLinkedInInfo] = useState(false);
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [serverError, setServerError] = useState('');
+  
+  // Current document being added
+  const [currentDoc, setCurrentDoc] = useState({
+    type: 'document' as 'document' | 'link',
     title: '',
     description: '',
     url: '',
     fileName: ''
-  },
-  showManualEntry: false,
-  showSupportingDocs: false,
-  isEmailVerified: false,
-  isSubmitting: false,
-  serverError: '',
-  isLinkedInUser: false,
-  isUsingLinkedInInfo: false
-};
-
-// Reducer function to handle all state changes
-function profileReducer(state: ProfileState, action: ProfileAction): ProfileState {
-  switch (action.type) {
-    case 'UPDATE_FORM_FIELD':
-      return {
-        ...state,
-        formData: {
-          ...state.formData,
-          [action.field]: action.value
-        }
-      };
-    case 'SET_RESUME_FILE':
-      return { ...state, resumeFile: action.file };
-    case 'SET_LINKEDIN_PDF':
-      return { ...state, linkedinPdfFile: action.file };
-    case 'SET_SUPPORTING_FILE': {
-      const newMap = new Map(state.supportingFiles);
-      newMap.set(action.title, action.file);
-      return { ...state, supportingFiles: newMap };
-    }
-    case 'UPDATE_DOC_FIELD':
-      return {
-        ...state,
-        currentDoc: { ...state.currentDoc, [action.field]: action.value }
-      };
-    case 'TOGGLE_MANUAL_ENTRY':
-      return { ...state, showManualEntry: action.value };
-    case 'TOGGLE_SUPPORTING_DOCS':
-      return { ...state, showSupportingDocs: !state.showSupportingDocs };
-    case 'ADD_SUPPORTING_DOCUMENT':
-      return {
-        ...state,
-        supportingDocuments: [...state.supportingDocuments, action.document],
-        // Reset current document fields
-        currentDoc: {
-          type: 'document',
-          title: '',
-          description: '',
-          url: '',
-          fileName: ''
-        }
-      };
-    case 'REMOVE_SUPPORTING_DOCUMENT': {
-      const newDocs = [...state.supportingDocuments];
-      newDocs.splice(action.index, 1);
-      return { ...state, supportingDocuments: newDocs };
-    }
-    case 'SET_EMAIL_VERIFIED':
-      return { ...state, isEmailVerified: action.value };
-    case 'SET_SUBMITTING':
-      return { ...state, isSubmitting: action.value };
-    case 'SET_SERVER_ERROR':
-      return { ...state, serverError: action.error };
-    case 'SET_LINKEDIN_USER':
-      return { ...state, isLinkedInUser: action.value };
-    case 'USE_LINKEDIN_INFO':
-      // In a real implementation, we would also update the form data here
-      // with the LinkedIn information
-      return {
-        ...state,
-        isUsingLinkedInInfo: action.value,
-        showManualEntry: true,
-        formData: action.value ? {
-          firstName: "John",
-          lastName: "Doe",
-          email: "john.doe@example.com",
-          phone: "+1 (555) 123-4567",
-          currentPosition: "Product Manager",
-          company: "Tech Innovations Inc.",
-          industry: "technology",
-          experienceLevel: "mid level (3-5 years)",
-          summary: "Experienced product manager with 5 years in the technology sector. Skilled in agile methodologies, user experience design, and cross-functional team leadership. Passionate about creating innovative solutions that solve real-world problems.",
-          skills: "Product Strategy, User Research, Agile/Scrum, Roadmap Planning, Cross-functional Leadership"
-        } : state.formData
-      };
-    default:
-      return state;
-  }
-}
-
-const ProfileCreation = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [state, dispatch] = useReducer(profileReducer, initialState);
-  
-  // Derived state
-  const bothFilesUploaded = state.resumeFile !== null && state.linkedinPdfFile !== null;
-  const showLinkedInOption = !state.isLinkedInUser;
-  const resumeUploaded = state.resumeFile !== null;
+  });
   
   // Effect to check if the user signed up with LinkedIn
   useEffect(() => {
     const authMethod = localStorage.getItem('authMethod');
     if (authMethod === 'linkedin' || location.state?.linkedInSignUp) {
-      dispatch({ type: 'SET_LINKEDIN_USER', value: true });
+      setIsLinkedInUser(true);
     }
   }, [location]);
   
@@ -247,126 +117,217 @@ const ProfileCreation = () => {
   ];
   
   // Handlers
-  const handleResumeUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLinkedInUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-      dispatch({ type: 'SET_RESUME_FILE', file });
-      toast({
-        title: "Resume uploaded",
-        description: "Your resume was successfully uploaded."
-      });
-    }
-  };
-
-  const handleLinkedInPdfUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
-      dispatch({ type: 'SET_LINKEDIN_PDF', file });
+      setProfile(prev => ({ ...prev, linkedin: file }));
+      
       toast({
         title: "LinkedIn PDF uploaded",
         description: "Your LinkedIn profile PDF was successfully uploaded."
       });
     }
   };
+
+  const handleResumeUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      setProfile(prev => ({ ...prev, resume: file }));
+      
+      toast({
+        title: "Resume uploaded",
+        description: "Your resume was successfully uploaded."
+      });
+    }
+  };
   
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
-    dispatch({ type: 'UPDATE_FORM_FIELD', field: id, value });
+    setFormData(prev => ({ ...prev, [id]: value }));
   };
 
   const handleSelectChange = (field: string, value: string) => {
-    dispatch({ type: 'UPDATE_FORM_FIELD', field, value });
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+  
+  const handleDocumentUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      setCurrentDoc(prev => ({ ...prev, fileName: file.name }));
+    }
+  };
+
+  const addSupportingDocument = (e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    if (currentDoc.type === 'document' && !currentDoc.fileName) {
+      toast({
+        title: "Please select a file",
+        description: "You must upload a document before adding it.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (currentDoc.type === 'link' && !currentDoc.url) {
+      toast({
+        title: "Please enter a URL",
+        description: "You must provide a valid URL for your link.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!currentDoc.title) {
+      toast({
+        title: "Title required",
+        description: "Please provide a title for your document or link.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (currentDoc.type === 'document') {
+      const fileInput = document.getElementById('doc-upload') as HTMLInputElement;
+      if (fileInput?.files?.[0]) {
+        setProfile(prev => ({
+          ...prev,
+          docs: [...prev.docs, { title: currentDoc.title, file: fileInput.files![0] }]
+        }));
+      }
+    } else {
+      setProfile(prev => ({
+        ...prev,
+        links: [...prev.links, { title: currentDoc.title, link: currentDoc.url }]
+      }));
+    }
+
+    // Reset current document
+    setCurrentDoc({
+      type: 'document',
+      title: '',
+      description: '',
+      url: '',
+      fileName: ''
+    });
+    
+    toast({
+      title: "Added successfully",
+      description: `Your ${currentDoc.type} has been added to your profile.`
+    });
+  };
+
+  const removeDocument = (index: number, type: 'docs' | 'links') => {
+    setProfile(prev => ({
+      ...prev,
+      [type]: prev[type].filter((_, i) => i !== index)
+    }));
+    
+    toast({
+      title: "Item removed",
+      description: "The document or link has been removed from your profile."
+    });
+  };
+
+  const removeProfileDocument = (type: 'linkedin' | 'resume') => {
+    setProfile(prev => {
+      const newProfile = { ...prev };
+      delete newProfile[type];
+      return newProfile;
+    });
+    
+    toast({
+      title: "Document removed",
+      description: "The profile document has been removed."
+    });
+  };
+  
+  const validateProfile = (): string[] => {
+    const errors: string[] = [];
+    
+    if (!profile.linkedin && !profile.resume) {
+      errors.push('At least one of the following is required: LinkedIn PDF or Resume');
+    }
+    
+    if (!profile.linkedin && !profile.resume && (!formData.firstName || !formData.lastName)) {
+      errors.push('First name and last name are required when not uploading documents');
+    }
+    
+    return errors;
   };
   
   const submitProfileData = async () => {
-    dispatch({ type: 'SET_SUBMITTING', value: true });
-    dispatch({ type: 'SET_SERVER_ERROR', error: '' });
+    const errors = validateProfile();
+    if (errors.length > 0) {
+      setValidationErrors(errors);
+      toast({
+        title: "Validation Error",
+        description: errors[0],
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setIsSubmitting(true);
+    setServerError('');
+    setValidationErrors([]);
     
     try {
+      // Get the current user
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) {
+        throw new Error('User not authenticated');
+      }
+
       const formDataToSubmit = new FormData();
 
-      // Only submit fields that have values
-      Object.entries(state.formData).forEach(([key, value]) => {
+      // Add user ID to the form data
+      formDataToSubmit.append('userId', user.id);
+
+      // Add form data
+      Object.entries(formData).forEach(([key, value]) => {
         if (value) {
           formDataToSubmit.append(key, value);
         }
       });
       
-      // Determine profile method based on what files are available
-      let profileMethod = 'manual';
-      if (state.linkedinPdfFile && state.resumeFile) {
-        profileMethod = 'both';
-      } else if (state.linkedinPdfFile) {
-        profileMethod = 'linkedin';
-      } else if (state.resumeFile) {
-        profileMethod = 'resume';
+      // Add profile documents
+      if (profile.linkedin) {
+        formDataToSubmit.append('linkedin', profile.linkedin);
       }
-      
-      formDataToSubmit.append('profileMethod', profileMethod);
-      
-      // Add files based on what's available
-      if (state.linkedinPdfFile) {
-        formDataToSubmit.append('linkedinPdf', state.linkedinPdfFile);
-      }
-      
-      if (state.resumeFile) {
-        formDataToSubmit.append('resume', state.resumeFile);
+      if (profile.resume) {
+        formDataToSubmit.append('resume', profile.resume);
       }
       
       // Add supporting documents
-      state.supportingDocuments.forEach((doc, index) => {
-        formDataToSubmit.append(`supportingDoc[${index}][type]`, doc.type);
-        formDataToSubmit.append(`supportingDoc[${index}][title]`, doc.title);
-        
-        if (doc.description) {
-          formDataToSubmit.append(`supportingDoc[${index}][description]`, doc.description);
-        }
-        
-        if (doc.type === 'document' && state.supportingFiles.has(doc.title)) {
-          const file = state.supportingFiles.get(doc.title);
-          if (file) {
-            formDataToSubmit.append(`supportingDoc[${index}][file]`, file);
-          }
-        }
-        
-        if (doc.type === 'link' && doc.url) {
-          formDataToSubmit.append(`supportingDoc[${index}][url]`, doc.url);
-        }
+      profile.docs.forEach((doc, index) => {
+        formDataToSubmit.append(`docs[${index}][title]`, doc.title);
+        formDataToSubmit.append(`docs[${index}][file]`, doc.file);
       });
       
-      // Check for required content
-      let isValidSubmission = false;
+      // Add links
+      profile.links.forEach((link, index) => {
+        formDataToSubmit.append(`links[${index}][title]`, link.title);
+        formDataToSubmit.append(`links[${index}][link]`, link.link);
+      });
       
-      if (state.linkedinPdfFile || state.resumeFile || (state.formData.firstName && state.formData.lastName)) {
-        isValidSubmission = true;
-      }
-      
-      if (!isValidSubmission) {
-        throw new Error('Please provide at least your LinkedIn PDF, resume, or basic profile information');
-      }
-      
-      // Send POST request to webhook - UPDATED URL HERE
-      const response = await fetch('https://primary-production-1687b.up.railway.app/webhook-test/d4245ae6-e289-47aa-95b4-26a93b75f7d9', {
+      // Send POST request to webhook
+      const response = await fetch('https://webhook-processor-production-48f8.up.railway.app/webhook/d4245ae6-e289-47aa-95b4-26a93b75f7d9', {
         method: 'POST',
         body: formDataToSubmit,
       });
       
       if (!response.ok) {
-        throw new Error(`Server error: ${response.status} ${response.statusText}`);
+        const errorText = await response.text();
+        throw new Error(`Server error: ${response.status} ${response.statusText}. ${errorText}`);
       }
+
+      // Parse the response to check for success
+      const responseData = await response.json();
       
-      // Update profile_created flag in Supabase
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .update({ profile_created: true })
-          .eq('id', user.id);
-        
-        if (profileError) {
-          console.error('Error updating profile_created flag:', profileError);
-          // Don't throw here, as the main profile submission was successful
-        }
+      // Check if the API response indicates an error
+      if (responseData.error || responseData.status === 'error') {
+        throw new Error(responseData.message || 'Server reported an error processing your profile');
       }
       
       // Store completion status in localStorage
@@ -376,22 +337,30 @@ const ProfileCreation = () => {
       
       toast({
         title: "Profile saved successfully",
-        description: "Your profile information has been submitted."
+        description: "Your profile information has been submitted and processed."
       });
       
+      // Invalidate React Query cache for profile data to ensure fresh data
+      await queryClient.invalidateQueries({ queryKey: ['profile', user.id] });
+      
+      // Redirect to profile snapshot page
       navigate('/dashboard/profile-snapshot');
+      
     } catch (error) {
       console.error('Error submitting profile:', error);
-      let errorMessage = "There was a problem submitting your profile.";
+      let errorMessage = "There was a problem submitting your profile. Please try again.";
       
       if (error instanceof Error) {
-        errorMessage = error.message;
+        if (error.message.includes("Failed to fetch")) {
+          errorMessage = "Unable to connect to the server. Please check your internet connection and try submitting again.";
+        } else if (error.message.includes("Server error")) {
+          errorMessage = "The server encountered an error processing your profile. Please try submitting again.";
+        } else {
+          errorMessage = error.message;
+        }
       }
       
-      if (errorMessage.includes("Failed to fetch")) {
-        errorMessage = "Unable to connect to the server. Please check your internet connection and try again.";
-        dispatch({ type: 'SET_SERVER_ERROR', error: errorMessage });
-      }
+      setServerError(errorMessage);
       
       toast({
         title: "Error saving profile",
@@ -399,7 +368,7 @@ const ProfileCreation = () => {
         variant: "destructive"
       });
     } finally {
-      dispatch({ type: 'SET_SUBMITTING', value: false });
+      setIsSubmitting(false);
     }
   };
   
@@ -410,7 +379,7 @@ const ProfileCreation = () => {
 
   const requestEmailVerification = () => {
     setTimeout(() => {
-      dispatch({ type: 'SET_EMAIL_VERIFIED', value: true });
+      setIsEmailVerified(true);
       toast({
         title: "Email verified",
         description: "Your email address has been verified successfully."
@@ -419,99 +388,33 @@ const ProfileCreation = () => {
   };
 
   const handleUseLinkedInInfo = () => {
-    dispatch({ type: 'USE_LINKEDIN_INFO', value: true });
+    setIsUsingLinkedInInfo(true);
+    setFormData({
+      firstName: "John",
+      lastName: "Doe",
+      email: "john.doe@example.com",
+      phone: "+1 (555) 123-4567",
+      currentPosition: "Product Manager",
+      company: "Tech Innovations Inc.",
+      industry: "technology",
+      experienceLevel: "mid level (3-5 years)",
+      summary: "Experienced product manager with 5 years in the technology sector. Skilled in agile methodologies, user experience design, and cross-functional team leadership. Passionate about creating innovative solutions that solve real-world problems.",
+      skills: "Product Strategy, User Research, Agile/Scrum, Roadmap Planning, Cross-functional Leadership"
+    });
+    setShowManualEntry(true);
+    
     toast({
       title: "LinkedIn information applied",
       description: "Your LinkedIn profile information has been used to pre-fill your profile."
     });
   };
 
-  const handleConnectLinkedIn = () => {
-    // In a real app, this would trigger OAuth
-    toast({
-      title: "LinkedIn Connected",
-      description: "Your LinkedIn account has been connected successfully."
-    });
-    
-    // Simulate connection
-    setTimeout(() => {
-      handleUseLinkedInInfo();
-    }, 1000);
-  };
-
-  const handleDocumentUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
-      dispatch({ type: 'UPDATE_DOC_FIELD', field: 'fileName', value: file.name });
-      
-      if (state.currentDoc.title) {
-        dispatch({ type: 'SET_SUPPORTING_FILE', title: state.currentDoc.title, file });
-      }
-    }
-  };
-
-  const addSupportingDocument = (e: React.MouseEvent) => {
-    e.preventDefault(); // Prevent form submission
-    
-    if (state.currentDoc.type === 'document' && !state.currentDoc.fileName) {
-      toast({
-        title: "Please select a file",
-        description: "You must upload a document before adding it.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (state.currentDoc.type === 'link' && !state.currentDoc.url) {
-      toast({
-        title: "Please enter a URL",
-        description: "You must provide a valid URL for your link.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (!state.currentDoc.title) {
-      toast({
-        title: "Title required",
-        description: "Please provide a title for your document or link.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    const newDoc: SupportingDocument = {
-      type: state.currentDoc.type,
-      title: state.currentDoc.title,
-      description: state.currentDoc.description || undefined,
-      fileUrl: state.currentDoc.type === 'document' ? 'file-url-would-go-here' : undefined,
-      fileName: state.currentDoc.type === 'document' ? state.currentDoc.fileName : undefined,
-      url: state.currentDoc.type === 'link' ? state.currentDoc.url : undefined,
-    };
-
-    dispatch({ type: 'ADD_SUPPORTING_DOCUMENT', document: newDoc });
-    
-    toast({
-      title: "Added successfully",
-      description: `Your ${state.currentDoc.type} has been added to your profile.`
-    });
-  };
-
-  const removeDocument = (index: number, e: React.MouseEvent) => {
-    e.preventDefault(); // Prevent form submission
-    dispatch({ type: 'REMOVE_SUPPORTING_DOCUMENT', index });
-    
-    toast({
-      title: "Item removed",
-      description: "The document or link has been removed from your profile."
-    });
-  };
+  const hasRequiredDocuments = profile.linkedin || profile.resume;
 
   return (
     <DashboardLayout steps={steps} currentStep={2}>
       <form onSubmit={handleSubmit}>
         <div className="space-y-6">
-
           <StepCard>
             <StepCardHeader>
               <StepCardTitle>Create Your Profile</StepCardTitle>
@@ -527,12 +430,28 @@ const ProfileCreation = () => {
             </StepCardHeader>
 
             <StepCardContent>
+              {/* VALIDATION ERRORS */}
+              {validationErrors.length > 0 && (
+                <Alert className="mb-4 bg-red-50 border-red-200">
+                  <AlertCircle className="h-5 w-5 text-red-600" />
+                  <AlertTitle className="mb-1 font-semibold text-red-800">
+                    Validation Error
+                  </AlertTitle>
+                  <AlertDescription className="text-sm text-red-900">
+                    <ul className="list-disc ml-4">
+                      {validationErrors.map((error, index) => (
+                        <li key={index}>{error}</li>
+                      ))}
+                    </ul>
+                  </AlertDescription>
+                </Alert>
+              )}
 
               {/* COMBINED INSTRUCTIONAL HELPER TEXT */}
               <Alert className="mb-4 bg-blue-50 border-blue-200">
                 <div className="flex gap-2">
                   <div className="mt-0.5">
-                    {state.isLinkedInUser ? <Linkedin className="h-5 w-5 text-[#0A66C2]" /> : <HelpCircle className="h-5 w-5 text-blue-600" />}
+                    {isLinkedInUser ? <Linkedin className="h-5 w-5 text-[#0A66C2]" /> : <HelpCircle className="h-5 w-5 text-blue-600" />}
                   </div>
                   <div>
                     <AlertTitle className="mb-1 font-semibold text-blue-800">
@@ -543,12 +462,9 @@ const ProfileCreation = () => {
                       <ul className="list-disc ml-6 mb-2">
                         <li>Upload your resume <span className="font-semibold">(PDF or DOCX)</span></li>
                         <li>Upload your LinkedIn profile as a <span className="font-semibold">PDF</span></li>
-                        <li>Or manually enter your basic information</li>
                       </ul>
                       
-                      <p className="mb-1"><strong>Note:</strong> You can upload both your resume AND LinkedIn PDF if you wish.</p>
-                      
-                      {state.isLinkedInUser && (
+                      {isLinkedInUser && (
                         <p className="p-1.5 bg-blue-100/50 rounded border border-blue-200 text-xs">
                           <strong>Note:</strong> LinkedIn sign-in provides only limited information. For your full experience, please upload your LinkedIn profile as a PDF.
                         </p>
@@ -565,14 +481,14 @@ const ProfileCreation = () => {
               </Alert>
 
               {/* Display any server connection errors */}
-              {state.serverError && (
+              {serverError && (
                 <Alert className="mb-4 bg-red-50 border-red-200">
                   <AlertCircle className="h-5 w-5 text-red-600" />
                   <AlertTitle className="mb-1 font-semibold text-red-800">
                     Connection Error
                   </AlertTitle>
                   <AlertDescription className="text-sm text-red-900">
-                    {state.serverError}
+                    {serverError}
                     <p className="mt-1 text-xs">
                       You can continue filling out the form and try submitting again later.
                     </p>
@@ -580,8 +496,60 @@ const ProfileCreation = () => {
                 </Alert>
               )}
 
-              {!state.showManualEntry ? (
+              {!showManualEntry ? (
                 <div className="space-y-6">
+                  {/* UPLOADED DOCUMENTS DISPLAY */}
+                  {(profile.linkedin || profile.resume) && (
+                    <div className="border rounded-lg p-4 bg-green-50 border-green-200">
+                      <h3 className="font-medium mb-3 text-green-800">Uploaded Documents</h3>
+                      <div className="space-y-2">
+                        {profile.linkedin && (
+                          <div className="flex items-center justify-between p-2 rounded bg-green-100 border border-green-200">
+                            <div className="flex items-center gap-2">
+                              <div className="p-1 rounded bg-green-200">
+                                <Linkedin className="h-4 w-4 text-green-700" />
+                              </div>
+                              <div>
+                                <p className="font-medium text-green-800">LinkedIn</p>
+                                <p className="text-xs text-green-600">{profile.linkedin.name}</p>
+                              </div>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeProfileDocument('linkedin')}
+                              className="text-red-600 hover:text-red-700 hover:bg-red-100"
+                              type="button"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        )}
+                        {profile.resume && (
+                          <div className="flex items-center justify-between p-2 rounded bg-green-100 border border-green-200">
+                            <div className="flex items-center gap-2">
+                              <div className="p-1 rounded bg-green-200">
+                                <File className="h-4 w-4 text-green-700" />
+                              </div>
+                              <div>
+                                <p className="font-medium text-green-800">Resume</p>
+                                <p className="text-xs text-green-600">{profile.resume.name}</p>
+                              </div>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeProfileDocument('resume')}
+                              className="text-red-600 hover:text-red-700 hover:bg-red-100"
+                              type="button"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
 
                   {/* LINKEDIN PDF UPLOAD SEGMENT */}
                   <div className="border rounded-lg p-6 mb-2">
@@ -606,21 +574,20 @@ const ProfileCreation = () => {
                         </div>
                       </div>
                     </div>
-                    {/* LinkedIn PDF Upload Input */}
                     <div className="border-2 border-dashed border-muted rounded-lg p-6 text-center">
-                      {state.linkedinPdfFile ? (
+                      {profile.linkedin ? (
                         <div className="flex flex-col items-center">
                           <div className="bg-primary/10 p-3 rounded-full mb-3">
                             <File className="h-6 w-6 text-primary" />
                           </div>
                           <p className="mb-1 font-medium">LinkedIn PDF uploaded successfully</p>
                           <p className="text-sm text-muted-foreground mb-3">
-                            {state.linkedinPdfFile.name}
+                            {profile.linkedin.name}
                           </p>
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => dispatch({ type: 'SET_LINKEDIN_PDF', file: null })}
+                            onClick={() => document.getElementById('linkedin-pdf-upload')?.click()}
                             type="button"
                           >
                             Replace
@@ -648,7 +615,7 @@ const ProfileCreation = () => {
                                 type="file"
                                 className="hidden"
                                 accept=".pdf"
-                                onChange={handleLinkedInPdfUpload}
+                                onChange={handleLinkedInUpload}
                               />
                             </label>
                           </div>
@@ -671,19 +638,19 @@ const ProfileCreation = () => {
                       </div>
                     </div>
                     <div className="border-2 border-dashed border-muted rounded-lg p-6 text-center">
-                      {state.resumeFile ? (
+                      {profile.resume ? (
                         <div className="flex flex-col items-center">
                           <div className="bg-primary/10 p-3 rounded-full mb-3">
                             <File className="h-6 w-6 text-primary" />
                           </div>
                           <p className="mb-1 font-medium">Resume uploaded successfully</p>
                           <p className="text-sm text-muted-foreground mb-3">
-                            {state.resumeFile.name}
+                            {profile.resume.name}
                           </p>
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => dispatch({ type: 'SET_RESUME_FILE', file: null })}
+                            onClick={() => document.getElementById('resume')?.click()}
                             type="button"
                           >
                             Replace
@@ -723,7 +690,7 @@ const ProfileCreation = () => {
                   </div>
 
                   {/* DISPLAY WHEN BOTH FILES ARE UPLOADED */}
-                  {bothFilesUploaded && (
+                  {profile.linkedin && profile.resume && (
                     <Alert className="mb-4 bg-green-50 border-green-200">
                       <div className="flex gap-2">
                         <div className="mt-0.5">
@@ -760,10 +727,10 @@ const ProfileCreation = () => {
                       </div>
                       <Button 
                         variant="outline" 
-                        onClick={() => dispatch({ type: 'TOGGLE_SUPPORTING_DOCS' })}
+                        onClick={() => setShowSupportingDocs(!showSupportingDocs)}
                         type="button"
                       >
-                        {state.showSupportingDocs ? 'Hide Form' : 'Add Documents'}
+                        {showSupportingDocs ? 'Hide Form' : 'Add Documents'}
                       </Button>
                     </div>
                     
@@ -783,7 +750,7 @@ const ProfileCreation = () => {
                       </div>
                     </Alert>
                     
-                    {state.showSupportingDocs && (
+                    {showSupportingDocs && (
                       <Card className="border border-border/60">
                         <CardContent className="p-6 space-y-4">
                           <div className="flex justify-between items-center">
@@ -791,11 +758,11 @@ const ProfileCreation = () => {
                             
                             <div className="flex gap-2">
                               <Button 
-                                variant={state.currentDoc.type === 'document' ? 'secondary' : 'outline'} 
+                                variant={currentDoc.type === 'document' ? 'secondary' : 'outline'} 
                                 size="sm"
                                 onClick={(e) => {
                                   e.preventDefault();
-                                  dispatch({ type: 'UPDATE_DOC_FIELD', field: 'type', value: 'document' });
+                                  setCurrentDoc(prev => ({ ...prev, type: 'document' }));
                                 }}
                                 type="button"
                               >
@@ -803,11 +770,11 @@ const ProfileCreation = () => {
                                 Document
                               </Button>
                               <Button 
-                                variant={state.currentDoc.type === 'link' ? 'secondary' : 'outline'} 
+                                variant={currentDoc.type === 'link' ? 'secondary' : 'outline'} 
                                 size="sm" 
                                 onClick={(e) => {
                                   e.preventDefault();
-                                  dispatch({ type: 'UPDATE_DOC_FIELD', field: 'type', value: 'link' });
+                                  setCurrentDoc(prev => ({ ...prev, type: 'link' }));
                                 }}
                                 type="button"
                               >
@@ -822,17 +789,13 @@ const ProfileCreation = () => {
                               <Label htmlFor="doc-title">Title*</Label>
                               <Input 
                                 id="doc-title" 
-                                placeholder={state.currentDoc.type === 'document' ? "Document Title" : "Link Title"}
-                                value={state.currentDoc.title}
-                                onChange={(e) => dispatch({ 
-                                  type: 'UPDATE_DOC_FIELD', 
-                                  field: 'title', 
-                                  value: e.target.value 
-                                })}
+                                placeholder={currentDoc.type === 'document' ? "Document Title" : "Link Title"}
+                                value={currentDoc.title}
+                                onChange={(e) => setCurrentDoc(prev => ({ ...prev, title: e.target.value }))}
                               />
                             </div>
                             
-                            {state.currentDoc.type === 'document' ? (
+                            {currentDoc.type === 'document' ? (
                               <div>
                                 <Label htmlFor="doc-upload">Upload File*</Label>
                                 <div className="mt-1 flex items-center">
@@ -846,7 +809,7 @@ const ProfileCreation = () => {
                                     className="w-full justify-start text-muted-foreground"
                                   >
                                     <Upload className="h-4 w-4 mr-2" />
-                                    {state.currentDoc.fileName || "Select File"}
+                                    {currentDoc.fileName || "Select File"}
                                   </Button>
                                   <input 
                                     id="doc-upload" 
@@ -866,12 +829,8 @@ const ProfileCreation = () => {
                                 <Input 
                                   id="doc-url" 
                                   placeholder="https://"
-                                  value={state.currentDoc.url}
-                                  onChange={(e) => dispatch({ 
-                                    type: 'UPDATE_DOC_FIELD', 
-                                    field: 'url', 
-                                    value: e.target.value 
-                                  })}
+                                  value={currentDoc.url}
+                                  onChange={(e) => setCurrentDoc(prev => ({ ...prev, url: e.target.value }))}
                                 />
                               </div>
                             )}
@@ -882,12 +841,8 @@ const ProfileCreation = () => {
                             <Textarea 
                               id="doc-description" 
                               placeholder="Briefly describe this resource..."
-                              value={state.currentDoc.description}
-                              onChange={(e) => dispatch({ 
-                                type: 'UPDATE_DOC_FIELD', 
-                                field: 'description', 
-                                value: e.target.value 
-                              })}
+                              value={currentDoc.description}
+                              onChange={(e) => setCurrentDoc(prev => ({ ...prev, description: e.target.value }))}
                               className="resize-none"
                             />
                           </div>
@@ -898,51 +853,66 @@ const ProfileCreation = () => {
                               type="button"
                             >
                               <Plus className="h-4 w-4 mr-1" />
-                              Add {state.currentDoc.type === 'document' ? 'Document' : 'Link'}
+                              Add {currentDoc.type === 'document' ? 'Document' : 'Link'}
                             </Button>
                           </div>
                         </CardContent>
                       </Card>
                     )}
                     
-                    {state.supportingDocuments.length > 0 && (
+                    {(profile.docs.length > 0 || profile.links.length > 0) && (
                       <div className="space-y-3 mt-6">
                         <h3 className="font-medium">Added Documents & Links</h3>
                         <div className="space-y-3">
-                          {state.supportingDocuments.map((doc, index) => (
+                          {profile.docs.map((doc, index) => (
                             <div 
                               key={index} 
                               className="flex items-center justify-between p-3 rounded-md border border-border/60 bg-background"
                             >
                               <div className="flex items-center gap-3">
                                 <div className="p-2 rounded-md bg-primary/10">
-                                  {doc.type === 'document' ? (
-                                    <FileText className="h-5 w-5 text-primary" />
-                                  ) : (
-                                    <Link className="h-5 w-5 text-primary" />
-                                  )}
+                                  <FileText className="h-5 w-5 text-primary" />
                                 </div>
                                 
                                 <div>
                                   <p className="font-medium">{doc.title}</p>
-                                  {doc.description && (
-                                    <p className="text-sm text-muted-foreground line-clamp-1">{doc.description}</p>
-                                  )}
-                                  {doc.type === 'document' && doc.fileName && (
-                                    <p className="text-xs text-muted-foreground">{doc.fileName}</p>
-                                  )}
-                                  {doc.type === 'link' && doc.url && (
-                                    <p className="text-xs text-primary truncate max-w-[200px] md:max-w-[300px]">
-                                      {doc.url}
-                                    </p>
-                                  )}
+                                  <p className="text-xs text-muted-foreground">{doc.file.name}</p>
                                 </div>
                               </div>
                               
                               <Button
                                 variant="ghost" 
                                 size="sm"
-                                onClick={(e) => removeDocument(index, e)}
+                                onClick={() => removeDocument(index, 'docs')}
+                                className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                                type="button"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          ))}
+                          {profile.links.map((link, index) => (
+                            <div 
+                              key={index} 
+                              className="flex items-center justify-between p-3 rounded-md border border-border/60 bg-background"
+                            >
+                              <div className="flex items-center gap-3">
+                                <div className="p-2 rounded-md bg-primary/10">
+                                  <Link className="h-5 w-5 text-primary" />
+                                </div>
+                                
+                                <div>
+                                  <p className="font-medium">{link.title}</p>
+                                  <p className="text-xs text-primary truncate max-w-[200px] md:max-w-[300px]">
+                                    {link.link}
+                                  </p>
+                                </div>
+                              </div>
+                              
+                              <Button
+                                variant="ghost" 
+                                size="sm"
+                                onClick={() => removeDocument(index, 'links')}
                                 className="text-destructive hover:text-destructive hover:bg-destructive/10"
                                 type="button"
                               >
@@ -959,7 +929,7 @@ const ProfileCreation = () => {
                   <div className="text-center mt-6">
                     <Button
                       variant="link"
-                      onClick={() => dispatch({ type: 'TOGGLE_MANUAL_ENTRY', value: true })}
+                      onClick={() => setShowManualEntry(true)}
                       className="text-sm"
                       type="button"
                     >
@@ -975,14 +945,14 @@ const ProfileCreation = () => {
                     <Button 
                       variant="outline" 
                       size="sm" 
-                      onClick={() => dispatch({ type: 'TOGGLE_MANUAL_ENTRY', value: false })}
+                      onClick={() => setShowManualEntry(false)}
                       type="button"
                     >
                       Back to import options
                     </Button>
                   </div>
                   
-                  {state.isUsingLinkedInInfo && (
+                  {isUsingLinkedInInfo && (
                     <Alert variant="default" className="bg-[#0A66C2]/10 border-[#0A66C2]/30 mb-4">
                       <Linkedin className="h-4 w-4 text-[#0A66C2]" />
                       <AlertTitle>LinkedIn Profile Information Applied</AlertTitle>
@@ -995,22 +965,10 @@ const ProfileCreation = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4">
                       <div>
-                        <div className="flex items-center justify-between">
-                          <Label htmlFor="firstName">First Name</Label>
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p className="w-80">Your first name as it appears on official documents.</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </div>
+                        <Label htmlFor="firstName">First Name</Label>
                         <Input 
                           id="firstName" 
-                          value={state.formData.firstName} 
+                          value={formData.firstName} 
                           onChange={handleFormChange}
                         />
                       </div>
@@ -1018,24 +976,24 @@ const ProfileCreation = () => {
                       <div>
                         <div className="flex items-center justify-between">
                           <Label htmlFor="email">Email</Label>
-                          <Badge variant={state.isEmailVerified ? "success" : "outline"} className="ml-2">
-                            {state.isEmailVerified ? "Verified" : "Unverified"}
+                          <Badge variant={isEmailVerified ? "default" : "outline"} className="ml-2">
+                            {isEmailVerified ? "Verified" : "Unverified"}
                           </Badge>
                         </div>
                         <div className="flex space-x-2">
                           <Input 
                             id="email" 
                             type="email" 
-                            value={state.formData.email} 
+                            value={formData.email} 
                             onChange={handleFormChange}
                           />
-                          {!state.isEmailVerified && (
+                          {!isEmailVerified && (
                             <Button type="button" variant="outline" size="sm" onClick={requestEmailVerification}>
                               Verify
                             </Button>
                           )}
                         </div>
-                        {!state.isEmailVerified && (
+                        {!isEmailVerified && (
                           <p className="text-xs text-muted-foreground mt-1">
                             Verification helps ensure profile authenticity
                           </p>
@@ -1043,32 +1001,18 @@ const ProfileCreation = () => {
                       </div>
                       
                       <div>
-                        <div className="flex items-center justify-between">
-                          <Label htmlFor="currentPosition">Current Position</Label>
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p className="w-80">Your current job title. If you're between jobs, enter your most recent position.</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </div>
+                        <Label htmlFor="currentPosition">Current Position</Label>
                         <Input 
                           id="currentPosition" 
-                          value={state.formData.currentPosition} 
+                          value={formData.currentPosition} 
                           onChange={handleFormChange}
                         />
                       </div>
                       
                       <div>
-                        <div className="flex items-center justify-between">
-                          <Label htmlFor="industry">Industry</Label>
-                        </div>
+                        <Label htmlFor="industry">Industry</Label>
                         <Select 
-                          value={state.formData.industry}
+                          value={formData.industry}
                           onValueChange={(value) => handleSelectChange('industry', value)}
                         >
                           <SelectTrigger id="industry">
@@ -1090,7 +1034,7 @@ const ProfileCreation = () => {
                         <Label htmlFor="lastName">Last Name</Label>
                         <Input 
                           id="lastName" 
-                          value={state.formData.lastName} 
+                          value={formData.lastName} 
                           onChange={handleFormChange}
                         />
                       </div>
@@ -1100,7 +1044,7 @@ const ProfileCreation = () => {
                         <Input 
                           id="phone" 
                           type="tel" 
-                          value={state.formData.phone} 
+                          value={formData.phone} 
                           onChange={handleFormChange}
                         />
                       </div>
@@ -1109,7 +1053,7 @@ const ProfileCreation = () => {
                         <Label htmlFor="company">Current Company</Label>
                         <Input 
                           id="company" 
-                          value={state.formData.company} 
+                          value={formData.company} 
                           onChange={handleFormChange}
                         />
                       </div>
@@ -1117,7 +1061,7 @@ const ProfileCreation = () => {
                       <div>
                         <Label htmlFor="experience">Experience Level</Label>
                         <Select 
-                          value={state.formData.experienceLevel}
+                          value={formData.experienceLevel}
                           onValueChange={(value) => handleSelectChange('experienceLevel', value)}
                         >
                           <SelectTrigger id="experience">
@@ -1142,7 +1086,7 @@ const ProfileCreation = () => {
                         id="summary" 
                         placeholder="Briefly describe your professional background, key skills, and career goals..."
                         className="min-h-[120px]"
-                        value={state.formData.summary}
+                        value={formData.summary}
                         onChange={handleFormChange}
                       />
                     </div>
@@ -1152,7 +1096,7 @@ const ProfileCreation = () => {
                       <Input 
                         id="skills" 
                         placeholder="e.g., Project Management, JavaScript, Data Analysis, Leadership"
-                        value={state.formData.skills}
+                        value={formData.skills}
                         onChange={handleFormChange}
                       />
                     </div>
@@ -1175,9 +1119,9 @@ const ProfileCreation = () => {
 
             <Button
               type="submit"
-              disabled={state.isSubmitting}
+              disabled={isSubmitting || !hasRequiredDocuments}
             >
-              {state.isSubmitting ? 'Saving...' : 'Continue'}
+              {isSubmitting ? 'Saving...' : 'Continue'}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </StepCardFooter>
