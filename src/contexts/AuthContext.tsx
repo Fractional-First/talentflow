@@ -20,6 +20,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const navigate = useNavigate();
 
   // Clean up auth state in storage
@@ -48,7 +49,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setSession(newSession);
         setUser(newSession?.user ?? null);
         
-        if (event === 'SIGNED_IN') {
+        // Only show toast for actual sign-in events, not during initial load or session restoration
+        if (event === 'SIGNED_IN' && !isInitialLoad) {
           toast.success('Successfully signed in');
         } else if (event === 'SIGNED_OUT') {
           toast.info('Signed out');
@@ -66,6 +68,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         console.error('Error fetching auth session:', error);
       } finally {
         setLoading(false);
+        setIsInitialLoad(false);
       }
     };
 
