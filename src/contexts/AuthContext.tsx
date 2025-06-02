@@ -21,6 +21,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [isSigningIn, setIsSigningIn] = useState(false);
   const navigate = useNavigate();
 
   // Clean up auth state in storage
@@ -52,7 +53,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         // Only show toast for actual sign-in events, not during initial load or session restoration
         if (event === 'SIGNED_IN' && !isInitialLoad) {
           toast.success('Successfully signed in');
-        } else if (event === 'SIGNED_OUT') {
+        } else if (event === 'SIGNED_OUT' && !isSigningIn) {
+          // Only show sign out toast if it's not part of the sign-in cleanup process
           toast.info('Signed out');
         }
       }
@@ -77,11 +79,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
+  }, [isSigningIn]);
 
   const signIn = async (email: string, password: string) => {
     try {
       setLoading(true);
+      setIsSigningIn(true);
       
       // Clean up existing state
       cleanupAuthState();
@@ -108,6 +111,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.error('Sign in error:', error);
     } finally {
       setLoading(false);
+      setIsSigningIn(false);
     }
   };
 
