@@ -165,21 +165,6 @@ const ProfileCreation = () => {
     submitProfileData(files, false);
   };
 
-  const getLinkedInPrefilledData = () => {
-    return {
-      firstName: "John",
-      lastName: "Doe",
-      email: "john.doe@example.com",
-      phone: "+1 (555) 123-4567",
-      currentPosition: "Product Manager",
-      company: "Tech Innovations Inc.",
-      industry: "technology",
-      experienceLevel: "mid level (3-5 years)",
-      summary: "Experienced product manager with 5 years in the technology sector. Skilled in agile methodologies, user experience design, and cross-functional team leadership. Passionate about creating innovative solutions that solve real-world problems.",
-      skills: "Product Strategy, User Research, Agile/Scrum, Roadmap Planning, Cross-functional Leadership"
-    };
-  };
-
   return (
     <DashboardLayout steps={steps} currentStep={2}>
       <div className="space-y-6">
@@ -228,7 +213,6 @@ const ProfileCreation = () => {
                 </div>
                 
                 <ManualProfileEntry
-                  initialData={isUsingLinkedInInfo ? getLinkedInPrefilledData() : {}}
                   onSubmit={handleManualSubmit}
                   isSubmitting={isSubmitting}
                   showLinkedInBadge={isUsingLinkedInInfo}
