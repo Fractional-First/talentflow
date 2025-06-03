@@ -23,7 +23,8 @@ import {
   Plus,
   Minus,
   Save,
-  X
+  X,
+  Edit
 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
@@ -68,12 +69,50 @@ interface ProfileData {
   };
 }
 
+interface EditStates {
+  basicInfo: boolean;
+  description: boolean;
+  keyRoles: boolean;
+  focusAreas: boolean;
+  industries: boolean;
+  geographicalCoverage: boolean;
+  stages: boolean;
+  personalInterests: boolean;
+  certifications: boolean;
+  engagementOptions: boolean;
+  meetIntro: boolean;
+  personas: boolean;
+  superpowers: boolean;
+  sweetSpot: boolean;
+  userManual: boolean;
+  functionalSkills: boolean;
+}
+
 const ProfileSnapshot = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showAIGuide, setShowAIGuide] = useState(false);
   const [expandedFunctionalSkill, setExpandedFunctionalSkill] = useState<string | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
+
+  const [editStates, setEditStates] = useState<EditStates>({
+    basicInfo: false,
+    description: false,
+    keyRoles: false,
+    focusAreas: false,
+    industries: false,
+    geographicalCoverage: false,
+    stages: false,
+    personalInterests: false,
+    certifications: false,
+    engagementOptions: false,
+    meetIntro: false,
+    personas: false,
+    superpowers: false,
+    sweetSpot: false,
+    userManual: false,
+    functionalSkills: false,
+  });
 
   const [originalData] = useState<ProfileData>({
     name: 'Reza Behnam',
@@ -135,6 +174,10 @@ const ProfileSnapshot = () => {
     setShowAIGuide(false);
   };
 
+  const toggleEdit = (section: keyof EditStates) => {
+    setEditStates(prev => ({ ...prev, [section]: !prev[section] }));
+  };
+
   const handleInputChange = (field: keyof ProfileData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     setHasChanges(true);
@@ -168,6 +211,25 @@ const ProfileSnapshot = () => {
     setTimeout(() => {
       setIsSubmitting(false);
       setHasChanges(false);
+      // Turn off all edit modes after saving
+      setEditStates({
+        basicInfo: false,
+        description: false,
+        keyRoles: false,
+        focusAreas: false,
+        industries: false,
+        geographicalCoverage: false,
+        stages: false,
+        personalInterests: false,
+        certifications: false,
+        engagementOptions: false,
+        meetIntro: false,
+        personas: false,
+        superpowers: false,
+        sweetSpot: false,
+        userManual: false,
+        functionalSkills: false,
+      });
       toast({
         title: "Profile Saved",
         description: "Your profile changes have been saved successfully.",
@@ -178,6 +240,25 @@ const ProfileSnapshot = () => {
   const handleDiscardChanges = () => {
     setFormData(originalData);
     setHasChanges(false);
+    // Turn off all edit modes after discarding
+    setEditStates({
+      basicInfo: false,
+      description: false,
+      keyRoles: false,
+      focusAreas: false,
+      industries: false,
+      geographicalCoverage: false,
+      stages: false,
+      personalInterests: false,
+      certifications: false,
+      engagementOptions: false,
+      meetIntro: false,
+      personas: false,
+      superpowers: false,
+      sweetSpot: false,
+      userManual: false,
+      functionalSkills: false,
+    });
     toast({
       title: "Changes Discarded",
       description: "Your changes have been discarded.",
@@ -248,38 +329,78 @@ const ProfileSnapshot = () => {
               </div>
               
               <div className="space-y-2">
-                <Input
-                  value={formData.name}
-                  onChange={(e) => handleInputChange('name', e.target.value)}
-                  className="text-2xl font-bold text-center"
-                />
-                <Input
-                  value={formData.title}
-                  onChange={(e) => handleInputChange('title', e.target.value)}
-                  className="text-lg text-center"
-                />
-                <Input
-                  value={formData.subtitle}
-                  onChange={(e) => handleInputChange('subtitle', e.target.value)}
-                  className="text-sm text-center"
-                />
-                <Input
-                  value={formData.location}
-                  onChange={(e) => handleInputChange('location', e.target.value)}
-                  className="text-sm text-center"
-                />
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    {editStates.basicInfo ? (
+                      <Input
+                        value={formData.name}
+                        onChange={(e) => handleInputChange('name', e.target.value)}
+                        className="text-2xl font-bold text-center"
+                      />
+                    ) : (
+                      <h1 className="text-2xl font-bold">{formData.name}</h1>
+                    )}
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => toggleEdit('basicInfo')}
+                    className="ml-2"
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                </div>
+
+                {editStates.basicInfo ? (
+                  <>
+                    <Input
+                      value={formData.title}
+                      onChange={(e) => handleInputChange('title', e.target.value)}
+                      className="text-lg text-center"
+                    />
+                    <Input
+                      value={formData.subtitle}
+                      onChange={(e) => handleInputChange('subtitle', e.target.value)}
+                      className="text-sm text-center"
+                    />
+                    <Input
+                      value={formData.location}
+                      onChange={(e) => handleInputChange('location', e.target.value)}
+                      className="text-sm text-center"
+                    />
+                  </>
+                ) : (
+                  <>
+                    <p className="text-lg text-gray-700">{formData.title}</p>
+                    <p className="text-sm text-gray-600">{formData.subtitle}</p>
+                    <p className="text-sm text-gray-500">{formData.location}</p>
+                  </>
+                )}
               </div>
             </div>
 
             {/* Description */}
             <div>
-              <Label className="text-sm font-medium">Description</Label>
-              <Textarea
-                value={formData.description}
-                onChange={(e) => handleInputChange('description', e.target.value)}
-                className="text-sm leading-relaxed mt-2"
-                rows={6}
-              />
+              <div className="flex items-center justify-between mb-2">
+                <Label className="text-sm font-medium">Description</Label>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => toggleEdit('description')}
+                >
+                  <Edit className="h-4 w-4" />
+                </Button>
+              </div>
+              {editStates.description ? (
+                <Textarea
+                  value={formData.description}
+                  onChange={(e) => handleInputChange('description', e.target.value)}
+                  className="text-sm leading-relaxed"
+                  rows={6}
+                />
+              ) : (
+                <p className="text-sm leading-relaxed text-gray-700">{formData.description}</p>
+              )}
             </div>
 
             {/* Key Roles */}
@@ -289,29 +410,46 @@ const ProfileSnapshot = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => addArrayItem('keyRoles')}
+                  onClick={() => toggleEdit('keyRoles')}
                 >
-                  <Plus className="h-4 w-4" />
+                  <Edit className="h-4 w-4" />
                 </Button>
               </div>
-              <div className="space-y-2">
-                {formData.keyRoles.map((role, index) => (
-                  <div key={index} className="flex gap-2">
-                    <Input
-                      value={role}
-                      onChange={(e) => handleArrayChange('keyRoles', index, e.target.value)}
-                      className="text-sm"
-                    />
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeArrayItem('keyRoles', index)}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
+              {editStates.keyRoles ? (
+                <div className="space-y-2">
+                  {formData.keyRoles.map((role, index) => (
+                    <div key={index} className="flex gap-2">
+                      <Input
+                        value={role}
+                        onChange={(e) => handleArrayChange('keyRoles', index, e.target.value)}
+                        className="text-sm"
+                      />
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeArrayItem('keyRoles', index)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => addArrayItem('keyRoles')}
+                    className="w-full"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Role
+                  </Button>
+                </div>
+              ) : (
+                <ul className="space-y-1">
+                  {formData.keyRoles.map((role, index) => (
+                    <li key={index} className="text-sm text-gray-700">• {role}</li>
+                  ))}
+                </ul>
+              )}
             </div>
 
             {/* Focus Areas */}
@@ -321,30 +459,50 @@ const ProfileSnapshot = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => addArrayItem('focusAreas')}
+                  onClick={() => toggleEdit('focusAreas')}
                 >
-                  <Plus className="h-4 w-4" />
+                  <Edit className="h-4 w-4" />
                 </Button>
               </div>
-              <div className="flex flex-wrap gap-2">
-                {formData.focusAreas.map((area, index) => (
-                  <div key={index} className="flex items-center gap-1">
-                    <Input
-                      value={area}
-                      onChange={(e) => handleArrayChange('focusAreas', index, e.target.value)}
-                      className="text-xs h-8 w-32"
-                    />
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeArrayItem('focusAreas', index)}
-                      className="h-6 w-6 p-0"
-                    >
-                      <X className="h-3 w-3" />
-                    </Button>
+              {editStates.focusAreas ? (
+                <div className="space-y-2">
+                  <div className="flex flex-wrap gap-2">
+                    {formData.focusAreas.map((area, index) => (
+                      <div key={index} className="flex items-center gap-1">
+                        <Input
+                          value={area}
+                          onChange={(e) => handleArrayChange('focusAreas', index, e.target.value)}
+                          className="text-xs h-8 w-32"
+                        />
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeArrayItem('focusAreas', index)}
+                          className="h-6 w-6 p-0"
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => addArrayItem('focusAreas')}
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Area
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {formData.focusAreas.map((area, index) => (
+                    <Badge key={index} variant="secondary" className="text-xs">
+                      {area}
+                    </Badge>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Industries */}
@@ -354,30 +512,50 @@ const ProfileSnapshot = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => addArrayItem('industries')}
+                  onClick={() => toggleEdit('industries')}
                 >
-                  <Plus className="h-4 w-4" />
+                  <Edit className="h-4 w-4" />
                 </Button>
               </div>
-              <div className="flex flex-wrap gap-2">
-                {formData.industries.map((industry, index) => (
-                  <div key={index} className="flex items-center gap-1">
-                    <Input
-                      value={industry}
-                      onChange={(e) => handleArrayChange('industries', index, e.target.value)}
-                      className="text-xs h-8 w-32"
-                    />
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeArrayItem('industries', index)}
-                      className="h-6 w-6 p-0"
-                    >
-                      <X className="h-3 w-3" />
-                    </Button>
+              {editStates.industries ? (
+                <div className="space-y-2">
+                  <div className="flex flex-wrap gap-2">
+                    {formData.industries.map((industry, index) => (
+                      <div key={index} className="flex items-center gap-1">
+                        <Input
+                          value={industry}
+                          onChange={(e) => handleArrayChange('industries', index, e.target.value)}
+                          className="text-xs h-8 w-32"
+                        />
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeArrayItem('industries', index)}
+                          className="h-6 w-6 p-0"
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => addArrayItem('industries')}
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Industry
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {formData.industries.map((industry, index) => (
+                    <Badge key={index} variant="secondary" className="text-xs">
+                      {industry}
+                    </Badge>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Geographical Coverage */}
@@ -387,30 +565,50 @@ const ProfileSnapshot = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => addArrayItem('geographicalCoverage')}
+                  onClick={() => toggleEdit('geographicalCoverage')}
                 >
-                  <Plus className="h-4 w-4" />
+                  <Edit className="h-4 w-4" />
                 </Button>
               </div>
-              <div className="flex flex-wrap gap-2">
-                {formData.geographicalCoverage.map((region, index) => (
-                  <div key={index} className="flex items-center gap-1">
-                    <Input
-                      value={region}
-                      onChange={(e) => handleArrayChange('geographicalCoverage', index, e.target.value)}
-                      className="text-xs h-8 w-32"
-                    />
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeArrayItem('geographicalCoverage', index)}
-                      className="h-6 w-6 p-0"
-                    >
-                      <X className="h-3 w-3" />
-                    </Button>
+              {editStates.geographicalCoverage ? (
+                <div className="space-y-2">
+                  <div className="flex flex-wrap gap-2">
+                    {formData.geographicalCoverage.map((region, index) => (
+                      <div key={index} className="flex items-center gap-1">
+                        <Input
+                          value={region}
+                          onChange={(e) => handleArrayChange('geographicalCoverage', index, e.target.value)}
+                          className="text-xs h-8 w-32"
+                        />
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeArrayItem('geographicalCoverage', index)}
+                          className="h-6 w-6 p-0"
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => addArrayItem('geographicalCoverage')}
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Region
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {formData.geographicalCoverage.map((region, index) => (
+                    <Badge key={index} variant="secondary" className="text-xs">
+                      {region}
+                    </Badge>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Stage */}
@@ -420,30 +618,50 @@ const ProfileSnapshot = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => addArrayItem('stages')}
+                  onClick={() => toggleEdit('stages')}
                 >
-                  <Plus className="h-4 w-4" />
+                  <Edit className="h-4 w-4" />
                 </Button>
               </div>
-              <div className="flex flex-wrap gap-2">
-                {formData.stages.map((stage, index) => (
-                  <div key={index} className="flex items-center gap-1">
-                    <Input
-                      value={stage}
-                      onChange={(e) => handleArrayChange('stages', index, e.target.value)}
-                      className="text-xs h-8 w-32"
-                    />
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeArrayItem('stages', index)}
-                      className="h-6 w-6 p-0"
-                    >
-                      <X className="h-3 w-3" />
-                    </Button>
+              {editStates.stages ? (
+                <div className="space-y-2">
+                  <div className="flex flex-wrap gap-2">
+                    {formData.stages.map((stage, index) => (
+                      <div key={index} className="flex items-center gap-1">
+                        <Input
+                          value={stage}
+                          onChange={(e) => handleArrayChange('stages', index, e.target.value)}
+                          className="text-xs h-8 w-32"
+                        />
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeArrayItem('stages', index)}
+                          className="h-6 w-6 p-0"
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => addArrayItem('stages')}
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Stage
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {formData.stages.map((stage, index) => (
+                    <Badge key={index} variant="secondary" className="text-xs">
+                      {stage}
+                    </Badge>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Personal Interests */}
@@ -453,30 +671,50 @@ const ProfileSnapshot = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => addArrayItem('personalInterests')}
+                  onClick={() => toggleEdit('personalInterests')}
                 >
-                  <Plus className="h-4 w-4" />
+                  <Edit className="h-4 w-4" />
                 </Button>
               </div>
-              <div className="flex flex-wrap gap-2">
-                {formData.personalInterests.map((interest, index) => (
-                  <div key={index} className="flex items-center gap-1">
-                    <Input
-                      value={interest}
-                      onChange={(e) => handleArrayChange('personalInterests', index, e.target.value)}
-                      className="text-xs h-8 w-32"
-                    />
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeArrayItem('personalInterests', index)}
-                      className="h-6 w-6 p-0"
-                    >
-                      <X className="h-3 w-3" />
-                    </Button>
+              {editStates.personalInterests ? (
+                <div className="space-y-2">
+                  <div className="flex flex-wrap gap-2">
+                    {formData.personalInterests.map((interest, index) => (
+                      <div key={index} className="flex items-center gap-1">
+                        <Input
+                          value={interest}
+                          onChange={(e) => handleArrayChange('personalInterests', index, e.target.value)}
+                          className="text-xs h-8 w-32"
+                        />
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeArrayItem('personalInterests', index)}
+                          className="h-6 w-6 p-0"
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => addArrayItem('personalInterests')}
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Interest
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {formData.personalInterests.map((interest, index) => (
+                    <Badge key={index} variant="secondary" className="text-xs">
+                      {interest}
+                    </Badge>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Certifications */}
@@ -486,59 +724,115 @@ const ProfileSnapshot = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => addArrayItem('certifications')}
+                  onClick={() => toggleEdit('certifications')}
                 >
-                  <Plus className="h-4 w-4" />
+                  <Edit className="h-4 w-4" />
                 </Button>
               </div>
-              <div className="space-y-2">
-                {formData.certifications.map((cert, index) => (
-                  <div key={index} className="flex gap-2">
-                    <Input
-                      value={cert}
-                      onChange={(e) => handleArrayChange('certifications', index, e.target.value)}
-                      className="text-sm"
-                    />
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeArrayItem('certifications', index)}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
+              {editStates.certifications ? (
+                <div className="space-y-2">
+                  {formData.certifications.map((cert, index) => (
+                    <div key={index} className="flex gap-2">
+                      <Input
+                        value={cert}
+                        onChange={(e) => handleArrayChange('certifications', index, e.target.value)}
+                        className="text-sm"
+                      />
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeArrayItem('certifications', index)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => addArrayItem('certifications')}
+                    className="w-full"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Certification
+                  </Button>
+                </div>
+              ) : (
+                <ul className="space-y-1">
+                  {formData.certifications.map((cert, index) => (
+                    <li key={index} className="text-sm text-gray-700">• {cert}</li>
+                  ))}
+                </ul>
+              )}
             </div>
 
             {/* Engagement Options */}
             <div>
-              <Label className="font-semibold">Engagement Options</Label>
-              <Input
-                value={formData.engagementOptions}
-                onChange={(e) => handleInputChange('engagementOptions', e.target.value)}
-                className="text-sm mt-2"
-              />
+              <div className="flex items-center justify-between mb-2">
+                <Label className="font-semibold">Engagement Options</Label>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => toggleEdit('engagementOptions')}
+                >
+                  <Edit className="h-4 w-4" />
+                </Button>
+              </div>
+              {editStates.engagementOptions ? (
+                <Input
+                  value={formData.engagementOptions}
+                  onChange={(e) => handleInputChange('engagementOptions', e.target.value)}
+                  className="text-sm"
+                />
+              ) : (
+                <p className="text-sm text-gray-700">{formData.engagementOptions}</p>
+              )}
             </div>
           </div>
 
           {/* Right Column - Main Content */}
           <div className="lg:col-span-2 space-y-6">
             {/* Meet Reza Section */}
-            <div className="bg-teal-600 text-white p-6 rounded-lg">
-              <h2 className="text-xl font-semibold mb-4">Meet Reza</h2>
-              <Textarea
-                value={formData.meetIntro}
-                onChange={(e) => handleInputChange('meetIntro', e.target.value)}
-                className="text-sm leading-relaxed bg-white/10 border-white/20 text-white placeholder:text-white/70"
-                rows={4}
-              />
+            <div className="bg-teal-600 text-white rounded-lg">
+              <div className="flex items-center justify-between p-4 pb-2">
+                <h2 className="text-xl font-semibold">Meet Reza</h2>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => toggleEdit('meetIntro')}
+                  className="text-white hover:bg-white/20"
+                >
+                  <Edit className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="px-4 pb-4">
+                {editStates.meetIntro ? (
+                  <Textarea
+                    value={formData.meetIntro}
+                    onChange={(e) => handleInputChange('meetIntro', e.target.value)}
+                    className="text-sm leading-relaxed bg-white/10 border-white/20 text-white placeholder:text-white/70"
+                    rows={4}
+                  />
+                ) : (
+                  <p className="text-sm leading-relaxed">{formData.meetIntro}</p>
+                )}
+              </div>
             </div>
 
             {/* Personas Section */}
             <div className="bg-white rounded-lg border">
-              <div className="bg-teal-600 text-white p-4 rounded-t-lg">
-                <h3 className="text-lg font-semibold">Personas</h3>
+              <div className="bg-teal-600 text-white rounded-t-lg">
+                <div className="flex items-center justify-between p-4">
+                  <h3 className="text-lg font-semibold">Personas</h3>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => toggleEdit('personas')}
+                    className="text-white hover:bg-white/20"
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
               
               <div className="p-4">
@@ -550,30 +844,48 @@ const ProfileSnapshot = () => {
                   </TabsList>
                   
                   <TabsContent value="growth-architect" className="space-y-4">
-                    <Textarea
-                      value={formData.growthArchitectContent}
-                      onChange={(e) => handleInputChange('growthArchitectContent', e.target.value)}
-                      className="text-sm leading-relaxed"
-                      rows={8}
-                    />
+                    {editStates.personas ? (
+                      <Textarea
+                        value={formData.growthArchitectContent}
+                        onChange={(e) => handleInputChange('growthArchitectContent', e.target.value)}
+                        className="text-sm leading-relaxed"
+                        rows={8}
+                      />
+                    ) : (
+                      <div className="text-sm leading-relaxed text-gray-700 whitespace-pre-line">
+                        {formData.growthArchitectContent}
+                      </div>
+                    )}
                   </TabsContent>
                   
                   <TabsContent value="venture-builder" className="space-y-4">
-                    <Textarea
-                      value={formData.ventureBuilderContent}
-                      onChange={(e) => handleInputChange('ventureBuilderContent', e.target.value)}
-                      className="text-sm leading-relaxed"
-                      rows={4}
-                    />
+                    {editStates.personas ? (
+                      <Textarea
+                        value={formData.ventureBuilderContent}
+                        onChange={(e) => handleInputChange('ventureBuilderContent', e.target.value)}
+                        className="text-sm leading-relaxed"
+                        rows={4}
+                      />
+                    ) : (
+                      <div className="text-sm leading-relaxed text-gray-700">
+                        {formData.ventureBuilderContent}
+                      </div>
+                    )}
                   </TabsContent>
                   
                   <TabsContent value="leadership-steward" className="space-y-4">
-                    <Textarea
-                      value={formData.leadershipStewardContent}
-                      onChange={(e) => handleInputChange('leadershipStewardContent', e.target.value)}
-                      className="text-sm leading-relaxed"
-                      rows={4}
-                    />
+                    {editStates.personas ? (
+                      <Textarea
+                        value={formData.leadershipStewardContent}
+                        onChange={(e) => handleInputChange('leadershipStewardContent', e.target.value)}
+                        className="text-sm leading-relaxed"
+                        rows={4}
+                      />
+                    ) : (
+                      <div className="text-sm leading-relaxed text-gray-700">
+                        {formData.leadershipStewardContent}
+                      </div>
+                    )}
                   </TabsContent>
                 </Tabs>
               </div>
@@ -581,67 +893,113 @@ const ProfileSnapshot = () => {
 
             {/* Superpowers Section */}
             <div className="bg-white rounded-lg border">
-              <div className="bg-teal-600 text-white p-4 rounded-t-lg">
-                <h3 className="text-lg font-semibold">Superpowers</h3>
+              <div className="bg-teal-600 text-white rounded-t-lg">
+                <div className="flex items-center justify-between p-4">
+                  <h3 className="text-lg font-semibold">Superpowers</h3>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => toggleEdit('superpowers')}
+                    className="text-white hover:bg-white/20"
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
               
               <div className="p-4">
-                <Tabs defaultValue="superpowers" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2 mb-6">
-                    <TabsTrigger value="superpowers" className="text-xs">Superpowers</TabsTrigger>
-                    <TabsTrigger value="sweet-spot" className="text-xs">Sweet Spot</TabsTrigger>
-                  </TabsList>
+                <div className="space-y-4">
+                  <div>
+                    <Label className="font-medium text-gray-900 mb-2 block">Strategic Problem-Solving</Label>
+                    {editStates.superpowers ? (
+                      <Textarea
+                        value={formData.strategicProblemSolving}
+                        onChange={(e) => handleInputChange('strategicProblemSolving', e.target.value)}
+                        className="text-sm"
+                        rows={2}
+                      />
+                    ) : (
+                      <p className="text-sm text-gray-700">{formData.strategicProblemSolving}</p>
+                    )}
+                  </div>
                   
-                  <TabsContent value="superpowers" className="space-y-4">
-                    <div className="space-y-4">
-                      <div>
-                        <Label className="font-medium text-gray-900 mb-2 block">Strategic Problem-Solving</Label>
-                        <Textarea
-                          value={formData.strategicProblemSolving}
-                          onChange={(e) => handleInputChange('strategicProblemSolving', e.target.value)}
-                          className="text-sm"
-                          rows={2}
-                        />
-                      </div>
-                      
-                      <div>
-                        <Label className="font-medium text-gray-900 mb-2 block">Conscious Leadership</Label>
-                        <Textarea
-                          value={formData.consciousLeadership}
-                          onChange={(e) => handleInputChange('consciousLeadership', e.target.value)}
-                          className="text-sm"
-                          rows={2}
-                        />
-                      </div>
-                      
-                      <div>
-                        <Label className="font-medium text-gray-900 mb-2 block">Scaling Ventures</Label>
-                        <Textarea
-                          value={formData.scalingVentures}
-                          onChange={(e) => handleInputChange('scalingVentures', e.target.value)}
-                          className="text-sm"
-                          rows={2}
-                        />
-                      </div>
-                    </div>
-                  </TabsContent>
+                  <div>
+                    <Label className="font-medium text-gray-900 mb-2 block">Conscious Leadership</Label>
+                    {editStates.superpowers ? (
+                      <Textarea
+                        value={formData.consciousLeadership}
+                        onChange={(e) => handleInputChange('consciousLeadership', e.target.value)}
+                        className="text-sm"
+                        rows={2}
+                      />
+                    ) : (
+                      <p className="text-sm text-gray-700">{formData.consciousLeadership}</p>
+                    )}
+                  </div>
                   
-                  <TabsContent value="sweet-spot" className="space-y-4">
-                    <Textarea
-                      value={formData.sweetSpotContent}
-                      onChange={(e) => handleInputChange('sweetSpotContent', e.target.value)}
-                      className="text-sm leading-relaxed"
-                      rows={4}
-                    />
-                  </TabsContent>
-                </Tabs>
+                  <div>
+                    <Label className="font-medium text-gray-900 mb-2 block">Scaling Ventures</Label>
+                    {editStates.superpowers ? (
+                      <Textarea
+                        value={formData.scalingVentures}
+                        onChange={(e) => handleInputChange('scalingVentures', e.target.value)}
+                        className="text-sm"
+                        rows={2}
+                      />
+                    ) : (
+                      <p className="text-sm text-gray-700">{formData.scalingVentures}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Sweet Spot Section */}
+            <div className="bg-white rounded-lg border">
+              <div className="bg-teal-600 text-white rounded-t-lg">
+                <div className="flex items-center justify-between p-4">
+                  <h3 className="text-lg font-semibold">Sweet Spot</h3>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => toggleEdit('sweetSpot')}
+                    className="text-white hover:bg-white/20"
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="p-4">
+                {editStates.sweetSpot ? (
+                  <Textarea
+                    value={formData.sweetSpotContent}
+                    onChange={(e) => handleInputChange('sweetSpotContent', e.target.value)}
+                    className="text-sm leading-relaxed"
+                    rows={4}
+                  />
+                ) : (
+                  <div className="text-sm leading-relaxed text-gray-700">
+                    {formData.sweetSpotContent}
+                  </div>
+                )}
               </div>
             </div>
 
             {/* Functional Skills */}
             <div className="bg-white rounded-lg border">
-              <div className="bg-teal-600 text-white p-4 rounded-t-lg">
-                <h3 className="text-lg font-semibold">Functional Skills</h3>
+              <div className="bg-teal-600 text-white rounded-t-lg">
+                <div className="flex items-center justify-between p-4">
+                  <h3 className="text-lg font-semibold">Functional Skills</h3>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => toggleEdit('functionalSkills')}
+                    className="text-white hover:bg-white/20"
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
               
               <div className="p-4 space-y-3">
@@ -660,64 +1018,74 @@ const ProfileSnapshot = () => {
                   
                   {expandedFunctionalSkill === 'market-expansion' && (
                     <div className="mt-3 space-y-3">
-                      <div className="flex items-center justify-between mb-2">
-                        <Label className="text-sm font-medium">Market Expansion Skills</Label>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            const newSkills = [...formData.functionalSkills.marketExpansion, ''];
-                            setFormData(prev => ({ 
-                              ...prev, 
-                              functionalSkills: { 
-                                ...prev.functionalSkills, 
-                                marketExpansion: newSkills 
-                              } 
-                            }));
-                            setHasChanges(true);
-                          }}
-                        >
-                          <Plus className="h-4 w-4" />
-                        </Button>
-                      </div>
-                      {formData.functionalSkills.marketExpansion.map((skill, index) => (
-                        <div key={index} className="flex gap-2">
-                          <Textarea
-                            value={skill}
-                            onChange={(e) => {
-                              const newSkills = [...formData.functionalSkills.marketExpansion];
-                              newSkills[index] = e.target.value;
-                              setFormData(prev => ({ 
-                                ...prev, 
-                                functionalSkills: { 
-                                  ...prev.functionalSkills, 
-                                  marketExpansion: newSkills 
-                                } 
-                              }));
-                              setHasChanges(true);
-                            }}
-                            className="text-sm"
-                            rows={2}
-                          />
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => {
-                              const newSkills = formData.functionalSkills.marketExpansion.filter((_, i) => i !== index);
-                              setFormData(prev => ({ 
-                                ...prev, 
-                                functionalSkills: { 
-                                  ...prev.functionalSkills, 
-                                  marketExpansion: newSkills 
-                                } 
-                              }));
-                              setHasChanges(true);
-                            }}
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
+                      {editStates.functionalSkills ? (
+                        <>
+                          <div className="flex items-center justify-between mb-2">
+                            <Label className="text-sm font-medium">Market Expansion Skills</Label>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                const newSkills = [...formData.functionalSkills.marketExpansion, ''];
+                                setFormData(prev => ({ 
+                                  ...prev, 
+                                  functionalSkills: { 
+                                    ...prev.functionalSkills, 
+                                    marketExpansion: newSkills 
+                                  } 
+                                }));
+                                setHasChanges(true);
+                              }}
+                            >
+                              <Plus className="h-4 w-4" />
+                            </Button>
+                          </div>
+                          {formData.functionalSkills.marketExpansion.map((skill, index) => (
+                            <div key={index} className="flex gap-2">
+                              <Textarea
+                                value={skill}
+                                onChange={(e) => {
+                                  const newSkills = [...formData.functionalSkills.marketExpansion];
+                                  newSkills[index] = e.target.value;
+                                  setFormData(prev => ({ 
+                                    ...prev, 
+                                    functionalSkills: { 
+                                      ...prev.functionalSkills, 
+                                      marketExpansion: newSkills 
+                                    } 
+                                  }));
+                                  setHasChanges(true);
+                                }}
+                                className="text-sm"
+                                rows={2}
+                              />
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  const newSkills = formData.functionalSkills.marketExpansion.filter((_, i) => i !== index);
+                                  setFormData(prev => ({ 
+                                    ...prev, 
+                                    functionalSkills: { 
+                                      ...prev.functionalSkills, 
+                                      marketExpansion: newSkills 
+                                    } 
+                                  }));
+                                  setHasChanges(true);
+                                }}
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          ))}
+                        </>
+                      ) : (
+                        <div className="space-y-2">
+                          {formData.functionalSkills.marketExpansion.map((skill, index) => (
+                            <p key={index} className="text-sm text-gray-700">{skill}</p>
+                          ))}
                         </div>
-                      ))}
+                      )}
                     </div>
                   )}
                 </div>
@@ -766,17 +1134,33 @@ const ProfileSnapshot = () => {
 
             {/* User Manual */}
             <div className="bg-white rounded-lg border">
-              <div className="bg-teal-600 text-white p-4 rounded-t-lg">
-                <h3 className="text-lg font-semibold">Reza's User Manual</h3>
+              <div className="bg-teal-600 text-white rounded-t-lg">
+                <div className="flex items-center justify-between p-4">
+                  <h3 className="text-lg font-semibold">Reza's User Manual</h3>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => toggleEdit('userManual')}
+                    className="text-white hover:bg-white/20"
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
               
               <div className="p-4">
-                <Textarea
-                  value={formData.userManual}
-                  onChange={(e) => handleInputChange('userManual', e.target.value)}
-                  className="text-sm leading-relaxed"
-                  rows={8}
-                />
+                {editStates.userManual ? (
+                  <Textarea
+                    value={formData.userManual}
+                    onChange={(e) => handleInputChange('userManual', e.target.value)}
+                    className="text-sm leading-relaxed"
+                    rows={8}
+                  />
+                ) : (
+                  <div className="text-sm leading-relaxed text-gray-700 whitespace-pre-line">
+                    {formData.userManual}
+                  </div>
+                )}
               </div>
             </div>
           </div>
