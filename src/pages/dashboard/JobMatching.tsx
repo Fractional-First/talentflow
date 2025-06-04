@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
@@ -9,10 +8,11 @@ import JobMatchingPreferencesSection from '@/components/job-matching/JobMatching
 import JobRankingSection from '@/components/job-matching/JobRankingSection';
 import JobRecommendationsSection from '@/components/job-matching/JobRecommendationsSection';
 import { PlacementTypeStep } from '@/components/job-matching/PlacementTypeStep';
+import { JobMatchingConfirmation } from '@/components/job-matching/JobMatchingConfirmation';
 
 const JobMatching = () => {
   const navigate = useNavigate();
-  const [currentStep, setCurrentStep] = useState<'placement-type' | 'preferences'>('placement-type');
+  const [currentStep, setCurrentStep] = useState<'placement-type' | 'preferences' | 'confirmation'>('placement-type');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activelyLooking, setActivelyLooking] = useState(true);
   
@@ -115,8 +115,14 @@ const JobMatching = () => {
     setIsSubmitting(true);
     setTimeout(() => {
       setIsSubmitting(false);
-      navigate('/dashboard/waiting-room');
+      setCurrentStep('confirmation');
+      // Mark onboarding as complete when reaching confirmation
+      localStorage.setItem('onboardingComplete', 'true');
     }, 1000);
+  };
+
+  const handleGoToDashboard = () => {
+    navigate('/dashboard');
   };
 
   const [onboardingComplete, setOnboardingComplete] = useState(false);
@@ -178,6 +184,14 @@ const JobMatching = () => {
       );
     }
 
+    if (currentStep === 'confirmation') {
+      return (
+        <JobMatchingConfirmation 
+          onGoToDashboard={handleGoToDashboard}
+        />
+      );
+    }
+
     return (
       <>
         <JobMatchingPreferencesSection
@@ -230,7 +244,7 @@ const JobMatching = () => {
   return (
     <DashboardLayout sidebar={false} className="space-y-6">
       <div className="space-y-6">
-        {onboardingComplete && (
+        {onboardingComplete && currentStep !== 'confirmation' && (
           <div className="mb-4">
             <Button variant="outline" onClick={() => navigate('/dashboard')} className="gap-2">
               <Home className="h-4 w-4" />
@@ -255,7 +269,7 @@ const JobMatching = () => {
               onClick={handleContinue}
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Processing...' : 'Enter Waiting Room'}
+              {isSubmitting ? 'Processing...' : 'Complete Setup'}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </StepCardFooter>
