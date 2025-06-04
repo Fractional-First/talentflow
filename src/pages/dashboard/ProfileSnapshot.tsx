@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
-import { StepCard, StepCardContent, StepCardDescription, StepCardFooter, StepCardHeader, StepCardTitle } from '@/components/StepCard';
 import { Step } from '@/components/OnboardingProgress';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,31 +8,18 @@ import { Textarea } from '@/components/ui/textarea';
 import {
   ArrowRight,
   ArrowLeft,
-  User,
-  Briefcase,
-  GraduationCap,
-  CheckCircle,
-  Pencil,
-  WandSparkles,
-  Info,
-  MapPin,
-  Mail,
-  Phone,
   Plus,
   Minus,
   Save,
   X,
   Edit,
-  History
+  History,
+  WandSparkles,
+  Info
 } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
 import ProfilePictureUpload from '@/components/ProfilePictureUpload';
@@ -64,6 +50,16 @@ interface ProfileData {
   sweetSpotContent: string;
   userManual: string;
   profilePicture?: string;
+  superpowerTitles: {
+    strategicProblemSolving: string;
+    consciousLeadership: string;
+    scalingVentures: string;
+  };
+  functionalSkillTitles: {
+    marketExpansion: string;
+    operationalEfficiency: string;
+    leadershipDevelopment: string;
+  };
   functionalSkills: {
     marketExpansion: string[];
     operationalEfficiency: string[];
@@ -88,6 +84,8 @@ interface EditStates {
   sweetSpot: boolean;
   userManual: boolean;
   functionalSkills: boolean;
+  superpowerTitles: boolean;
+  functionalSkillTitles: boolean;
 }
 
 const AIGUIDE_KEY = 'aiSuggestionsGuideSeen';
@@ -120,6 +118,8 @@ const ProfileSnapshot = () => {
     sweetSpot: false,
     userManual: false,
     functionalSkills: false,
+    superpowerTitles: false,
+    functionalSkillTitles: false,
   });
 
   const [originalData] = useState<ProfileData>({
@@ -152,6 +152,16 @@ const ProfileSnapshot = () => {
     sweetSpotContent: 'Content for Sweet Spot will be displayed here.',
     userManual: 'Reza values direct communication, transparency, and early alignment on goals. He thrives in environments where challenges are addressed proactively and discussions are data-driven. Balancing creativity with analytical rigor, Reza integrates human-centric leadership with strategic execution to achieve impactful outcomes.\n\nReza\'s Ways of Working: He\'s at his best as part of high-IQ, high EQ teams. His art manifests in human interactions, leadership, the creativity of plans, design, communication, persuasion, and inspiration. The science manifests in data-backed analysis, planning and decision-making. The art requires space and freedom to explore.\n\nReza is a passionate, purpose-driven leader who values self-awareness and modeling through behavior. He works best with people who are respectful and self-aware.',
     profilePicture: '/lovable-uploads/06e0df8d-b26a-472b-b073-64583b551789.png',
+    superpowerTitles: {
+      strategicProblemSolving: 'Strategic Problem-Solving',
+      consciousLeadership: 'Conscious Leadership',
+      scalingVentures: 'Scaling Ventures'
+    },
+    functionalSkillTitles: {
+      marketExpansion: 'Market Expansion Strategy',
+      operationalEfficiency: 'Operational Efficiency',
+      leadershipDevelopment: 'Leadership Development'
+    },
     functionalSkills: {
       marketExpansion: [
         '• Market Entry Expertise: Designed and executed strategies that expanded Yahoo\'s presence across six new countries in Southeast Asia.',
@@ -222,18 +232,48 @@ const ProfileSnapshot = () => {
     initialValue: originalData.engagementOptions
   });
 
+  // Version history hooks for superpower titles
+  const strategicProblemSolvingTitleHistory = useVersionHistory({
+    fieldName: 'Strategic Problem-Solving Title',
+    initialValue: originalData.superpowerTitles.strategicProblemSolving
+  });
+
+  const consciousLeadershipTitleHistory = useVersionHistory({
+    fieldName: 'Conscious Leadership Title',
+    initialValue: originalData.superpowerTitles.consciousLeadership
+  });
+
+  const scalingVenturesTitleHistory = useVersionHistory({
+    fieldName: 'Scaling Ventures Title',
+    initialValue: originalData.superpowerTitles.scalingVentures
+  });
+
+  // Version history hooks for functional skill titles
+  const marketExpansionTitleHistory = useVersionHistory({
+    fieldName: 'Market Expansion Title',
+    initialValue: originalData.functionalSkillTitles.marketExpansion
+  });
+
+  const operationalEfficiencyTitleHistory = useVersionHistory({
+    fieldName: 'Operational Efficiency Title',
+    initialValue: originalData.functionalSkillTitles.operationalEfficiency
+  });
+
+  const leadershipDevelopmentTitleHistory = useVersionHistory({
+    fieldName: 'Leadership Development Title',
+    initialValue: originalData.functionalSkillTitles.leadershipDevelopment
+  });
+
   const steps: Step[] = [
     { id: 1, name: 'Sign Up', description: 'Create your account', status: 'completed' },
     { id: 2, name: 'Create Profile', description: 'Enter your information', status: 'completed' },
     { id: 3, name: 'Review Profile', description: 'Review your profile', status: 'current' }
   ];
 
-  // Show popup on first load
   useEffect(() => {
     if (!localStorage.getItem(AIGUIDE_KEY)) setShowAIGuide(true);
   }, []);
 
-  // When guide is dismissed, remember for future visits
   const handleDismissGuide = () => {
     localStorage.setItem(AIGUIDE_KEY, 'seen');
     setShowAIGuide(false);
@@ -281,6 +321,54 @@ const ProfileSnapshot = () => {
         break;
       case 'engagementOptions':
         engagementOptionsHistory.updateValue(value);
+        break;
+    }
+  };
+
+  const handleSuperpowerTitleChange = (titleKey: keyof ProfileData['superpowerTitles'], value: string) => {
+    setFormData(prev => ({ 
+      ...prev, 
+      superpowerTitles: { 
+        ...prev.superpowerTitles, 
+        [titleKey]: value 
+      } 
+    }));
+    setHasChanges(true);
+
+    // Update version history for title changes
+    switch (titleKey) {
+      case 'strategicProblemSolving':
+        strategicProblemSolvingTitleHistory.updateValue(value);
+        break;
+      case 'consciousLeadership':
+        consciousLeadershipTitleHistory.updateValue(value);
+        break;
+      case 'scalingVentures':
+        scalingVenturesTitleHistory.updateValue(value);
+        break;
+    }
+  };
+
+  const handleFunctionalSkillTitleChange = (titleKey: keyof ProfileData['functionalSkillTitles'], value: string) => {
+    setFormData(prev => ({ 
+      ...prev, 
+      functionalSkillTitles: { 
+        ...prev.functionalSkillTitles, 
+        [titleKey]: value 
+      } 
+    }));
+    setHasChanges(true);
+
+    // Update version history for title changes
+    switch (titleKey) {
+      case 'marketExpansion':
+        marketExpansionTitleHistory.updateValue(value);
+        break;
+      case 'operationalEfficiency':
+        operationalEfficiencyTitleHistory.updateValue(value);
+        break;
+      case 'leadershipDevelopment':
+        leadershipDevelopmentTitleHistory.updateValue(value);
         break;
     }
   };
@@ -343,6 +431,18 @@ const ProfileSnapshot = () => {
         return sweetSpotHistory;
       case 'Engagement Options':
         return engagementOptionsHistory;
+      case 'Strategic Problem-Solving Title':
+        return strategicProblemSolvingTitleHistory;
+      case 'Conscious Leadership Title':
+        return consciousLeadershipTitleHistory;
+      case 'Scaling Ventures Title':
+        return scalingVenturesTitleHistory;
+      case 'Market Expansion Title':
+        return marketExpansionTitleHistory;
+      case 'Operational Efficiency Title':
+        return operationalEfficiencyTitleHistory;
+      case 'Leadership Development Title':
+        return leadershipDevelopmentTitleHistory;
       default:
         return descriptionHistory; // fallback
     }
@@ -387,6 +487,60 @@ const ProfileSnapshot = () => {
       case 'Engagement Options':
         setFormData(prev => ({ ...prev, engagementOptions: hook.currentValue }));
         break;
+      case 'Strategic Problem-Solving Title':
+        setFormData(prev => ({ 
+          ...prev, 
+          superpowerTitles: { 
+            ...prev.superpowerTitles, 
+            strategicProblemSolving: hook.currentValue 
+          } 
+        }));
+        break;
+      case 'Conscious Leadership Title':
+        setFormData(prev => ({ 
+          ...prev, 
+          superpowerTitles: { 
+            ...prev.superpowerTitles, 
+            consciousLeadership: hook.currentValue 
+          } 
+        }));
+        break;
+      case 'Scaling Ventures Title':
+        setFormData(prev => ({ 
+          ...prev, 
+          superpowerTitles: { 
+            ...prev.superpowerTitles, 
+            scalingVentures: hook.currentValue 
+          } 
+        }));
+        break;
+      case 'Market Expansion Title':
+        setFormData(prev => ({ 
+          ...prev, 
+          functionalSkillTitles: { 
+            ...prev.functionalSkillTitles, 
+            marketExpansion: hook.currentValue 
+          } 
+        }));
+        break;
+      case 'Operational Efficiency Title':
+        setFormData(prev => ({ 
+          ...prev, 
+          functionalSkillTitles: { 
+            ...prev.functionalSkillTitles, 
+            operationalEfficiency: hook.currentValue 
+          } 
+        }));
+        break;
+      case 'Leadership Development Title':
+        setFormData(prev => ({ 
+          ...prev, 
+          functionalSkillTitles: { 
+            ...prev.functionalSkillTitles, 
+            leadershipDevelopment: hook.currentValue 
+          } 
+        }));
+        break;
     }
     
     setHasChanges(true);
@@ -417,6 +571,8 @@ const ProfileSnapshot = () => {
         sweetSpot: false,
         userManual: false,
         functionalSkills: false,
+        superpowerTitles: false,
+        functionalSkillTitles: false,
       });
       toast({
         title: "Profile Saved",
@@ -446,6 +602,8 @@ const ProfileSnapshot = () => {
       sweetSpot: false,
       userManual: false,
       functionalSkills: false,
+      superpowerTitles: false,
+      functionalSkillTitles: false,
     });
     toast({
       title: "Changes Discarded",
@@ -1148,14 +1306,25 @@ const ProfileSnapshot = () => {
               <div className="bg-teal-600 text-white rounded-t-lg">
                 <div className="flex items-center justify-between p-4">
                   <h3 className="text-lg font-semibold">Superpowers</h3>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => toggleEdit('superpowers')}
-                    className="text-white hover:bg-white/20"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
+                  <div className="flex gap-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => toggleEdit('superpowerTitles')}
+                      className="text-white hover:bg-white/20"
+                      title="Edit titles"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => toggleEdit('superpowers')}
+                      className="text-white hover:bg-white/20"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </div>
               
@@ -1163,15 +1332,35 @@ const ProfileSnapshot = () => {
                 <div className="space-y-4">
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <Label className="font-medium text-gray-900">Strategic Problem-Solving</Label>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => openVersionHistory('Strategic Problem Solving')}
-                        title="View version history"
-                      >
-                        <History className="h-4 w-4" />
-                      </Button>
+                      {editStates.superpowerTitles ? (
+                        <div className="flex items-center gap-2 flex-1">
+                          <Input
+                            value={strategicProblemSolvingTitleHistory.currentValue}
+                            onChange={(e) => handleSuperpowerTitleChange('strategicProblemSolving', e.target.value)}
+                            className="font-medium text-gray-900"
+                          />
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => openVersionHistory('Strategic Problem-Solving Title')}
+                            title="View version history"
+                          >
+                            <History className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <>
+                          <Label className="font-medium text-gray-900">{strategicProblemSolvingTitleHistory.currentValue}</Label>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => openVersionHistory('Strategic Problem Solving')}
+                            title="View version history"
+                          >
+                            <History className="h-4 w-4" />
+                          </Button>
+                        </>
+                      )}
                     </div>
                     {editStates.superpowers ? (
                       <Textarea
@@ -1187,15 +1376,35 @@ const ProfileSnapshot = () => {
                   
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <Label className="font-medium text-gray-900">Conscious Leadership</Label>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => openVersionHistory('Conscious Leadership')}
-                        title="View version history"
-                      >
-                        <History className="h-4 w-4" />
-                      </Button>
+                      {editStates.superpowerTitles ? (
+                        <div className="flex items-center gap-2 flex-1">
+                          <Input
+                            value={consciousLeadershipTitleHistory.currentValue}
+                            onChange={(e) => handleSuperpowerTitleChange('consciousLeadership', e.target.value)}
+                            className="font-medium text-gray-900"
+                          />
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => openVersionHistory('Conscious Leadership Title')}
+                            title="View version history"
+                          >
+                            <History className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <>
+                          <Label className="font-medium text-gray-900">{consciousLeadershipTitleHistory.currentValue}</Label>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => openVersionHistory('Conscious Leadership')}
+                            title="View version history"
+                          >
+                            <History className="h-4 w-4" />
+                          </Button>
+                        </>
+                      )}
                     </div>
                     {editStates.superpowers ? (
                       <Textarea
@@ -1211,15 +1420,35 @@ const ProfileSnapshot = () => {
                   
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <Label className="font-medium text-gray-900">Scaling Ventures</Label>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => openVersionHistory('Scaling Ventures')}
-                        title="View version history"
-                      >
-                        <History className="h-4 w-4" />
-                      </Button>
+                      {editStates.superpowerTitles ? (
+                        <div className="flex items-center gap-2 flex-1">
+                          <Input
+                            value={scalingVenturesTitleHistory.currentValue}
+                            onChange={(e) => handleSuperpowerTitleChange('scalingVentures', e.target.value)}
+                            className="font-medium text-gray-900"
+                          />
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => openVersionHistory('Scaling Ventures Title')}
+                            title="View version history"
+                          >
+                            <History className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <>
+                          <Label className="font-medium text-gray-900">{scalingVenturesTitleHistory.currentValue}</Label>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => openVersionHistory('Scaling Ventures')}
+                            title="View version history"
+                          >
+                            <History className="h-4 w-4" />
+                          </Button>
+                        </>
+                      )}
                     </div>
                     {editStates.superpowers ? (
                       <Textarea
@@ -1284,14 +1513,25 @@ const ProfileSnapshot = () => {
               <div className="bg-teal-600 text-white rounded-t-lg">
                 <div className="flex items-center justify-between p-4">
                   <h3 className="text-lg font-semibold">Functional Skills</h3>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => toggleEdit('functionalSkills')}
-                    className="text-white hover:bg-white/20"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
+                  <div className="flex gap-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => toggleEdit('functionalSkillTitles')}
+                      className="text-white hover:bg-white/20"
+                      title="Edit titles"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => toggleEdit('functionalSkills')}
+                      className="text-white hover:bg-white/20"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </div>
               
@@ -1302,7 +1542,29 @@ const ProfileSnapshot = () => {
                     className="flex justify-between items-center w-full text-left"
                     onClick={() => toggleFunctionalSkill('market-expansion')}
                   >
-                    <span className="font-medium text-gray-900">Market Expansion Strategy</span>
+                    {editStates.functionalSkillTitles ? (
+                      <div className="flex items-center gap-2 flex-1">
+                        <Input
+                          value={marketExpansionTitleHistory.currentValue}
+                          onChange={(e) => handleFunctionalSkillTitleChange('marketExpansion', e.target.value)}
+                          className="font-medium text-gray-900"
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openVersionHistory('Market Expansion Title');
+                          }}
+                          title="View version history"
+                        >
+                          <History className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <span className="font-medium text-gray-900">{marketExpansionTitleHistory.currentValue}</span>
+                    )}
                     {expandedFunctionalSkill === 'market-expansion' ? 
                       <Minus className="h-5 w-5 text-gray-400" /> : 
                       <Plus className="h-5 w-5 text-gray-400" />
@@ -1389,7 +1651,29 @@ const ProfileSnapshot = () => {
                     className="flex justify-between items-center w-full text-left"
                     onClick={() => toggleFunctionalSkill('operational-efficiency')}
                   >
-                    <span className="font-medium text-gray-900">Operational Efficiency</span>
+                    {editStates.functionalSkillTitles ? (
+                      <div className="flex items-center gap-2 flex-1">
+                        <Input
+                          value={operationalEfficiencyTitleHistory.currentValue}
+                          onChange={(e) => handleFunctionalSkillTitleChange('operationalEfficiency', e.target.value)}
+                          className="font-medium text-gray-900"
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openVersionHistory('Operational Efficiency Title');
+                          }}
+                          title="View version history"
+                        >
+                          <History className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <span className="font-medium text-gray-900">{operationalEfficiencyTitleHistory.currentValue}</span>
+                    )}
                     {expandedFunctionalSkill === 'operational-efficiency' ? 
                       <Minus className="h-5 w-5 text-gray-400" /> : 
                       <Plus className="h-5 w-5 text-gray-400" />
@@ -1409,7 +1693,29 @@ const ProfileSnapshot = () => {
                     className="flex justify-between items-center w-full text-left"
                     onClick={() => toggleFunctionalSkill('leadership-development')}
                   >
-                    <span className="font-medium text-gray-900">Leadership Development</span>
+                    {editStates.functionalSkillTitles ? (
+                      <div className="flex items-center gap-2 flex-1">
+                        <Input
+                          value={leadershipDevelopmentTitleHistory.currentValue}
+                          onChange={(e) => handleFunctionalSkillTitleChange('leadershipDevelopment', e.target.value)}
+                          className="font-medium text-gray-900"
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openVersionHistory('Leadership Development Title');
+                          }}
+                          title="View version history"
+                        >
+                          <History className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <span className="font-medium text-gray-900">{leadershipDevelopmentTitleHistory.currentValue}</span>
+                    )}
                     {expandedFunctionalSkill === 'leadership-development' ? 
                       <Minus className="h-5 w-5 text-gray-400" /> : 
                       <Plus className="h-5 w-5 text-gray-400" />
