@@ -23,7 +23,8 @@ import {
   Minus,
   Save,
   X,
-  Edit
+  Edit,
+  History
 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
@@ -36,6 +37,8 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
 import ProfilePictureUpload from '@/components/ProfilePictureUpload';
+import { VersionHistorySidebar } from '@/components/profile/VersionHistorySidebar';
+import { useVersionHistory } from '@/hooks/useVersionHistory';
 
 interface ProfileData {
   name: string;
@@ -95,6 +98,10 @@ const ProfileSnapshot = () => {
   const [showAIGuide, setShowAIGuide] = useState(false);
   const [expandedFunctionalSkill, setExpandedFunctionalSkill] = useState<string | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
+  const [versionHistorySidebar, setVersionHistorySidebar] = useState<{
+    isOpen: boolean;
+    fieldName: string;
+  }>({ isOpen: false, fieldName: '' });
 
   const [editStates, setEditStates] = useState<EditStates>({
     basicInfo: false,
@@ -159,6 +166,22 @@ const ProfileSnapshot = () => {
 
   const [formData, setFormData] = useState<ProfileData>(originalData);
 
+  // Version history hooks for different fields
+  const descriptionHistory = useVersionHistory({
+    fieldName: 'Description',
+    initialValue: originalData.description
+  });
+
+  const meetIntroHistory = useVersionHistory({
+    fieldName: 'Meet Intro',
+    initialValue: originalData.meetIntro
+  });
+
+  const userManualHistory = useVersionHistory({
+    fieldName: 'User Manual',
+    initialValue: originalData.userManual
+  });
+
   const steps: Step[] = [
     { id: 1, name: 'Sign Up', description: 'Create your account', status: 'completed' },
     { id: 2, name: 'Create Profile', description: 'Enter your information', status: 'completed' },
@@ -183,6 +206,19 @@ const ProfileSnapshot = () => {
   const handleInputChange = (field: keyof ProfileData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     setHasChanges(true);
+
+    // Update version history for specific fields
+    switch (field) {
+      case 'description':
+        descriptionHistory.updateValue(value);
+        break;
+      case 'meetIntro':
+        meetIntroHistory.updateValue(value);
+        break;
+      case 'userManual':
+        userManualHistory.updateValue(value);
+        break;
+    }
   };
 
   const handleProfilePictureUpdate = (imageUrl: string) => {
@@ -208,6 +244,47 @@ const ProfileSnapshot = () => {
     const currentArray = formData[field] as string[];
     const newArray = currentArray.filter((_, i) => i !== index);
     setFormData(prev => ({ ...prev, [field]: newArray }));
+    setHasChanges(true);
+  };
+
+  const openVersionHistory = (fieldName: string) => {
+    setVersionHistorySidebar({ isOpen: true, fieldName });
+  };
+
+  const closeVersionHistory = () => {
+    setVersionHistorySidebar({ isOpen: false, fieldName: '' });
+  };
+
+  const getVersionHistoryHook = (fieldName: string) => {
+    switch (fieldName) {
+      case 'Description':
+        return descriptionHistory;
+      case 'Meet Intro':
+        return meetIntroHistory;
+      case 'User Manual':
+        return userManualHistory;
+      default:
+        return descriptionHistory; // fallback
+    }
+  };
+
+  const handleVersionRevert = (versionId: string) => {
+    const hook = getVersionHistoryHook(versionHistorySidebar.fieldName);
+    hook.revertToVersion(versionId);
+    
+    // Update form data based on field
+    switch (versionHistorySidebar.fieldName) {
+      case 'Description':
+        setFormData(prev => ({ ...prev, description: hook.currentValue }));
+        break;
+      case 'Meet Intro':
+        setFormData(prev => ({ ...prev, meetIntro: hook.currentValue }));
+        break;
+      case 'User Manual':
+        setFormData(prev => ({ ...prev, userManual: hook.currentValue }));
+        break;
+    }
+    
     setHasChanges(true);
   };
 
@@ -389,23 +466,33 @@ const ProfileSnapshot = () => {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <Label className="text-sm font-medium">Description</Label>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => toggleEdit('description')}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
+                <div className="flex gap-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => openVersionHistory('Description')}
+                    title="View version history"
+                  >
+                    <History className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => toggleEdit('description')}
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
               {editStates.description ? (
                 <Textarea
-                  value={formData.description}
+                  value={descriptionHistory.currentValue}
                   onChange={(e) => handleInputChange('description', e.target.value)}
                   className="text-sm leading-relaxed"
                   rows={6}
                 />
               ) : (
-                <p className="text-sm leading-relaxed text-gray-700">{formData.description}</p>
+                <p className="text-sm leading-relaxed text-gray-700">{descriptionHistory.currentValue}</p>
               )}
             </div>
 
@@ -802,25 +889,36 @@ const ProfileSnapshot = () => {
             <div className="bg-teal-600 text-white rounded-lg">
               <div className="flex items-center justify-between p-4 pb-2">
                 <h2 className="text-xl font-semibold">Meet Reza</h2>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => toggleEdit('meetIntro')}
-                  className="text-white hover:bg-white/20"
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
+                <div className="flex gap-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => openVersionHistory('Meet Intro')}
+                    className="text-white hover:bg-white/20"
+                    title="View version history"
+                  >
+                    <History className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => toggleEdit('meetIntro')}
+                    className="text-white hover:bg-white/20"
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
               <div className="px-4 pb-4">
                 {editStates.meetIntro ? (
                   <Textarea
-                    value={formData.meetIntro}
+                    value={meetIntroHistory.currentValue}
                     onChange={(e) => handleInputChange('meetIntro', e.target.value)}
                     className="text-sm leading-relaxed bg-white/10 border-white/20 text-white placeholder:text-white/70"
                     rows={4}
                   />
                 ) : (
-                  <p className="text-sm leading-relaxed">{formData.meetIntro}</p>
+                  <p className="text-sm leading-relaxed">{meetIntroHistory.currentValue}</p>
                 )}
               </div>
             </div>
@@ -1143,28 +1241,39 @@ const ProfileSnapshot = () => {
               <div className="bg-teal-600 text-white rounded-t-lg">
                 <div className="flex items-center justify-between p-4">
                   <h3 className="text-lg font-semibold">Reza's User Manual</h3>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => toggleEdit('userManual')}
-                    className="text-white hover:bg-white/20"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
+                  <div className="flex gap-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => openVersionHistory('User Manual')}
+                      className="text-white hover:bg-white/20"
+                      title="View version history"
+                    >
+                      <History className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => toggleEdit('userManual')}
+                      className="text-white hover:bg-white/20"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </div>
               
               <div className="p-4">
                 {editStates.userManual ? (
                   <Textarea
-                    value={formData.userManual}
+                    value={userManualHistory.currentValue}
                     onChange={(e) => handleInputChange('userManual', e.target.value)}
                     className="text-sm leading-relaxed"
                     rows={8}
                   />
                 ) : (
                   <div className="text-sm leading-relaxed text-gray-700 whitespace-pre-line">
-                    {formData.userManual}
+                    {userManualHistory.currentValue}
                   </div>
                 )}
               </div>
@@ -1219,6 +1328,18 @@ const ProfileSnapshot = () => {
           </Button>
         </div>
       </div>
+
+      {/* Version History Sidebar */}
+      <VersionHistorySidebar
+        isOpen={versionHistorySidebar.isOpen}
+        onClose={closeVersionHistory}
+        fieldName={versionHistorySidebar.fieldName}
+        versions={getVersionHistoryHook(versionHistorySidebar.fieldName).versions}
+        currentVersionId={getVersionHistoryHook(versionHistorySidebar.fieldName).currentVersionId}
+        onRevert={handleVersionRevert}
+        onSaveVersion={(summary) => getVersionHistoryHook(versionHistorySidebar.fieldName).saveVersion(summary)}
+        onRenameVersion={(versionId, newSummary) => getVersionHistoryHook(versionHistorySidebar.fieldName).renameVersion(versionId, newSummary)}
+      />
     </DashboardLayout>
   );
 };
