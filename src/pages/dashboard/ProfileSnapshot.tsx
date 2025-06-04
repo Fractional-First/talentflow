@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
@@ -36,8 +35,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
-
-const AIGUIDE_KEY = 'aiSuggestionsGuideSeen';
+import ProfilePictureUpload from '@/components/ProfilePictureUpload';
 
 interface ProfileData {
   name: string;
@@ -62,6 +60,7 @@ interface ProfileData {
   scalingVentures: string;
   sweetSpotContent: string;
   userManual: string;
+  profilePicture?: string;
   functionalSkills: {
     marketExpansion: string[];
     operationalEfficiency: string[];
@@ -87,6 +86,8 @@ interface EditStates {
   userManual: boolean;
   functionalSkills: boolean;
 }
+
+const AIGUIDE_KEY = 'aiSuggestionsGuideSeen';
 
 const ProfileSnapshot = () => {
   const navigate = useNavigate();
@@ -143,6 +144,7 @@ const ProfileSnapshot = () => {
     scalingVentures: 'Leading startups, corporate ventures through planning, fundraising, governance, scaling, professionalization, optimization and, ultimately, exits.',
     sweetSpotContent: 'Content for Sweet Spot will be displayed here.',
     userManual: 'Reza values direct communication, transparency, and early alignment on goals. He thrives in environments where challenges are addressed proactively and discussions are data-driven. Balancing creativity with analytical rigor, Reza integrates human-centric leadership with strategic execution to achieve impactful outcomes.\n\nReza\'s Ways of Working: He\'s at his best as part of high-IQ, high EQ teams. His art manifests in human interactions, leadership, the creativity of plans, design, communication, persuasion, and inspiration. The science manifests in data-backed analysis, planning and decision-making. The art requires space and freedom to explore.\n\nReza is a passionate, purpose-driven leader who values self-awareness and modeling through behavior. He works best with people who are respectful and self-aware.',
+    profilePicture: '/lovable-uploads/06e0df8d-b26a-472b-b073-64583b551789.png',
     functionalSkills: {
       marketExpansion: [
         '• Market Entry Expertise: Designed and executed strategies that expanded Yahoo\'s presence across six new countries in Southeast Asia.',
@@ -180,6 +182,11 @@ const ProfileSnapshot = () => {
 
   const handleInputChange = (field: keyof ProfileData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    setHasChanges(true);
+  };
+
+  const handleProfilePictureUpdate = (imageUrl: string) => {
+    setFormData(prev => ({ ...prev, profilePicture: imageUrl }));
     setHasChanges(true);
   };
 
@@ -320,12 +327,11 @@ const ProfileSnapshot = () => {
             {/* Profile Image and Basic Info */}
             <div className="text-center">
               <div className="relative mb-4 inline-block">
-                <Avatar className="h-48 w-48 border-4 border-white shadow-lg">
-                  <AvatarImage src="/lovable-uploads/06e0df8d-b26a-472b-b073-64583b551789.png" alt={formData.name} />
-                  <AvatarFallback className="text-4xl bg-teal-100 text-teal-700">
-                    {formData.name.split(' ').map(n => n[0]).join('')}
-                  </AvatarFallback>
-                </Avatar>
+                <ProfilePictureUpload
+                  currentImage={formData.profilePicture}
+                  userName={formData.name}
+                  onImageUpdate={handleProfilePictureUpdate}
+                />
               </div>
               
               <div className="space-y-2">
