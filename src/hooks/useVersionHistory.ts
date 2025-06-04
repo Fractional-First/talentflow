@@ -40,7 +40,10 @@ export const useVersionHistory = ({
     }
 
     // Only auto-save if value has changed significantly
-    if (JSON.stringify(currentValue) !== JSON.stringify(lastSavedValueRef.current)) {
+    const currentStr = typeof currentValue === 'string' ? currentValue : JSON.stringify(currentValue);
+    const lastSavedStr = typeof lastSavedValueRef.current === 'string' ? lastSavedValueRef.current : JSON.stringify(lastSavedValueRef.current);
+    
+    if (currentStr !== lastSavedStr && currentStr.trim() !== '') {
       autoSaveTimerRef.current = setTimeout(() => {
         saveVersion('Auto-saved version', 'system');
       }, autoSaveInterval);

@@ -166,7 +166,7 @@ const ProfileSnapshot = () => {
 
   const [formData, setFormData] = useState<ProfileData>(originalData);
 
-  // Version history hooks for different fields
+  // Version history hooks for all text fields
   const descriptionHistory = useVersionHistory({
     fieldName: 'Description',
     initialValue: originalData.description
@@ -180,6 +180,46 @@ const ProfileSnapshot = () => {
   const userManualHistory = useVersionHistory({
     fieldName: 'User Manual',
     initialValue: originalData.userManual
+  });
+
+  const growthArchitectHistory = useVersionHistory({
+    fieldName: 'Growth Architect',
+    initialValue: originalData.growthArchitectContent
+  });
+
+  const ventureBuilderHistory = useVersionHistory({
+    fieldName: 'Venture Builder',
+    initialValue: originalData.ventureBuilderContent
+  });
+
+  const leadershipStewardHistory = useVersionHistory({
+    fieldName: 'Leadership Steward',
+    initialValue: originalData.leadershipStewardContent
+  });
+
+  const strategicProblemSolvingHistory = useVersionHistory({
+    fieldName: 'Strategic Problem Solving',
+    initialValue: originalData.strategicProblemSolving
+  });
+
+  const consciousLeadershipHistory = useVersionHistory({
+    fieldName: 'Conscious Leadership',
+    initialValue: originalData.consciousLeadership
+  });
+
+  const scalingVenturesHistory = useVersionHistory({
+    fieldName: 'Scaling Ventures',
+    initialValue: originalData.scalingVentures
+  });
+
+  const sweetSpotHistory = useVersionHistory({
+    fieldName: 'Sweet Spot',
+    initialValue: originalData.sweetSpotContent
+  });
+
+  const engagementOptionsHistory = useVersionHistory({
+    fieldName: 'Engagement Options',
+    initialValue: originalData.engagementOptions
   });
 
   const steps: Step[] = [
@@ -217,6 +257,30 @@ const ProfileSnapshot = () => {
         break;
       case 'userManual':
         userManualHistory.updateValue(value);
+        break;
+      case 'growthArchitectContent':
+        growthArchitectHistory.updateValue(value);
+        break;
+      case 'ventureBuilderContent':
+        ventureBuilderHistory.updateValue(value);
+        break;
+      case 'leadershipStewardContent':
+        leadershipStewardHistory.updateValue(value);
+        break;
+      case 'strategicProblemSolving':
+        strategicProblemSolvingHistory.updateValue(value);
+        break;
+      case 'consciousLeadership':
+        consciousLeadershipHistory.updateValue(value);
+        break;
+      case 'scalingVentures':
+        scalingVenturesHistory.updateValue(value);
+        break;
+      case 'sweetSpotContent':
+        sweetSpotHistory.updateValue(value);
+        break;
+      case 'engagementOptions':
+        engagementOptionsHistory.updateValue(value);
         break;
     }
   };
@@ -263,6 +327,22 @@ const ProfileSnapshot = () => {
         return meetIntroHistory;
       case 'User Manual':
         return userManualHistory;
+      case 'Growth Architect':
+        return growthArchitectHistory;
+      case 'Venture Builder':
+        return ventureBuilderHistory;
+      case 'Leadership Steward':
+        return leadershipStewardHistory;
+      case 'Strategic Problem Solving':
+        return strategicProblemSolvingHistory;
+      case 'Conscious Leadership':
+        return consciousLeadershipHistory;
+      case 'Scaling Ventures':
+        return scalingVenturesHistory;
+      case 'Sweet Spot':
+        return sweetSpotHistory;
+      case 'Engagement Options':
+        return engagementOptionsHistory;
       default:
         return descriptionHistory; // fallback
     }
@@ -282,6 +362,30 @@ const ProfileSnapshot = () => {
         break;
       case 'User Manual':
         setFormData(prev => ({ ...prev, userManual: hook.currentValue }));
+        break;
+      case 'Growth Architect':
+        setFormData(prev => ({ ...prev, growthArchitectContent: hook.currentValue }));
+        break;
+      case 'Venture Builder':
+        setFormData(prev => ({ ...prev, ventureBuilderContent: hook.currentValue }));
+        break;
+      case 'Leadership Steward':
+        setFormData(prev => ({ ...prev, leadershipStewardContent: hook.currentValue }));
+        break;
+      case 'Strategic Problem Solving':
+        setFormData(prev => ({ ...prev, strategicProblemSolving: hook.currentValue }));
+        break;
+      case 'Conscious Leadership':
+        setFormData(prev => ({ ...prev, consciousLeadership: hook.currentValue }));
+        break;
+      case 'Scaling Ventures':
+        setFormData(prev => ({ ...prev, scalingVentures: hook.currentValue }));
+        break;
+      case 'Sweet Spot':
+        setFormData(prev => ({ ...prev, sweetSpotContent: hook.currentValue }));
+        break;
+      case 'Engagement Options':
+        setFormData(prev => ({ ...prev, engagementOptions: hook.currentValue }));
         break;
     }
     
@@ -863,22 +967,33 @@ const ProfileSnapshot = () => {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <Label className="font-semibold">Engagement Options</Label>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => toggleEdit('engagementOptions')}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
+                <div className="flex gap-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => openVersionHistory('Engagement Options')}
+                    title="View version history"
+                  >
+                    <History className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => toggleEdit('engagementOptions')}
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
               {editStates.engagementOptions ? (
-                <Input
-                  value={formData.engagementOptions}
+                <Textarea
+                  value={engagementOptionsHistory.currentValue}
                   onChange={(e) => handleInputChange('engagementOptions', e.target.value)}
                   className="text-sm"
+                  rows={2}
                 />
               ) : (
-                <p className="text-sm text-gray-700">{formData.engagementOptions}</p>
+                <p className="text-sm text-gray-700">{engagementOptionsHistory.currentValue}</p>
               )}
             </div>
           </div>
@@ -948,46 +1063,79 @@ const ProfileSnapshot = () => {
                   </TabsList>
                   
                   <TabsContent value="growth-architect" className="space-y-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-medium">Growth Architect</h4>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => openVersionHistory('Growth Architect')}
+                        title="View version history"
+                      >
+                        <History className="h-4 w-4" />
+                      </Button>
+                    </div>
                     {editStates.personas ? (
                       <Textarea
-                        value={formData.growthArchitectContent}
+                        value={growthArchitectHistory.currentValue}
                         onChange={(e) => handleInputChange('growthArchitectContent', e.target.value)}
                         className="text-sm leading-relaxed"
                         rows={8}
                       />
                     ) : (
                       <div className="text-sm leading-relaxed text-gray-700 whitespace-pre-line">
-                        {formData.growthArchitectContent}
+                        {growthArchitectHistory.currentValue}
                       </div>
                     )}
                   </TabsContent>
                   
                   <TabsContent value="venture-builder" className="space-y-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-medium">Venture Builder</h4>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => openVersionHistory('Venture Builder')}
+                        title="View version history"
+                      >
+                        <History className="h-4 w-4" />
+                      </Button>
+                    </div>
                     {editStates.personas ? (
                       <Textarea
-                        value={formData.ventureBuilderContent}
+                        value={ventureBuilderHistory.currentValue}
                         onChange={(e) => handleInputChange('ventureBuilderContent', e.target.value)}
                         className="text-sm leading-relaxed"
                         rows={4}
                       />
                     ) : (
                       <div className="text-sm leading-relaxed text-gray-700">
-                        {formData.ventureBuilderContent}
+                        {ventureBuilderHistory.currentValue}
                       </div>
                     )}
                   </TabsContent>
                   
                   <TabsContent value="leadership-steward" className="space-y-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-medium">Leadership / Cultural Steward</h4>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => openVersionHistory('Leadership Steward')}
+                        title="View version history"
+                      >
+                        <History className="h-4 w-4" />
+                      </Button>
+                    </div>
                     {editStates.personas ? (
                       <Textarea
-                        value={formData.leadershipStewardContent}
+                        value={leadershipStewardHistory.currentValue}
                         onChange={(e) => handleInputChange('leadershipStewardContent', e.target.value)}
                         className="text-sm leading-relaxed"
                         rows={4}
                       />
                     ) : (
                       <div className="text-sm leading-relaxed text-gray-700">
-                        {formData.leadershipStewardContent}
+                        {leadershipStewardHistory.currentValue}
                       </div>
                     )}
                   </TabsContent>
@@ -1014,44 +1162,74 @@ const ProfileSnapshot = () => {
               <div className="p-4">
                 <div className="space-y-4">
                   <div>
-                    <Label className="font-medium text-gray-900 mb-2 block">Strategic Problem-Solving</Label>
+                    <div className="flex items-center justify-between mb-2">
+                      <Label className="font-medium text-gray-900">Strategic Problem-Solving</Label>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => openVersionHistory('Strategic Problem Solving')}
+                        title="View version history"
+                      >
+                        <History className="h-4 w-4" />
+                      </Button>
+                    </div>
                     {editStates.superpowers ? (
                       <Textarea
-                        value={formData.strategicProblemSolving}
+                        value={strategicProblemSolvingHistory.currentValue}
                         onChange={(e) => handleInputChange('strategicProblemSolving', e.target.value)}
                         className="text-sm"
                         rows={2}
                       />
                     ) : (
-                      <p className="text-sm text-gray-700">{formData.strategicProblemSolving}</p>
+                      <p className="text-sm text-gray-700">{strategicProblemSolvingHistory.currentValue}</p>
                     )}
                   </div>
                   
                   <div>
-                    <Label className="font-medium text-gray-900 mb-2 block">Conscious Leadership</Label>
+                    <div className="flex items-center justify-between mb-2">
+                      <Label className="font-medium text-gray-900">Conscious Leadership</Label>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => openVersionHistory('Conscious Leadership')}
+                        title="View version history"
+                      >
+                        <History className="h-4 w-4" />
+                      </Button>
+                    </div>
                     {editStates.superpowers ? (
                       <Textarea
-                        value={formData.consciousLeadership}
+                        value={consciousLeadershipHistory.currentValue}
                         onChange={(e) => handleInputChange('consciousLeadership', e.target.value)}
                         className="text-sm"
                         rows={2}
                       />
                     ) : (
-                      <p className="text-sm text-gray-700">{formData.consciousLeadership}</p>
+                      <p className="text-sm text-gray-700">{consciousLeadershipHistory.currentValue}</p>
                     )}
                   </div>
                   
                   <div>
-                    <Label className="font-medium text-gray-900 mb-2 block">Scaling Ventures</Label>
+                    <div className="flex items-center justify-between mb-2">
+                      <Label className="font-medium text-gray-900">Scaling Ventures</Label>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => openVersionHistory('Scaling Ventures')}
+                        title="View version history"
+                      >
+                        <History className="h-4 w-4" />
+                      </Button>
+                    </div>
                     {editStates.superpowers ? (
                       <Textarea
-                        value={formData.scalingVentures}
+                        value={scalingVenturesHistory.currentValue}
                         onChange={(e) => handleInputChange('scalingVentures', e.target.value)}
                         className="text-sm"
                         rows={2}
                       />
                     ) : (
-                      <p className="text-sm text-gray-700">{formData.scalingVentures}</p>
+                      <p className="text-sm text-gray-700">{scalingVenturesHistory.currentValue}</p>
                     )}
                   </div>
                 </div>
@@ -1063,28 +1241,39 @@ const ProfileSnapshot = () => {
               <div className="bg-teal-600 text-white rounded-t-lg">
                 <div className="flex items-center justify-between p-4">
                   <h3 className="text-lg font-semibold">Sweet Spot</h3>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => toggleEdit('sweetSpot')}
-                    className="text-white hover:bg-white/20"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
+                  <div className="flex gap-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => openVersionHistory('Sweet Spot')}
+                      className="text-white hover:bg-white/20"
+                      title="View version history"
+                    >
+                      <History className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => toggleEdit('sweetSpot')}
+                      className="text-white hover:bg-white/20"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </div>
               
               <div className="p-4">
                 {editStates.sweetSpot ? (
                   <Textarea
-                    value={formData.sweetSpotContent}
+                    value={sweetSpotHistory.currentValue}
                     onChange={(e) => handleInputChange('sweetSpotContent', e.target.value)}
                     className="text-sm leading-relaxed"
                     rows={4}
                   />
                 ) : (
                   <div className="text-sm leading-relaxed text-gray-700">
-                    {formData.sweetSpotContent}
+                    {sweetSpotHistory.currentValue}
                   </div>
                 )}
               </div>
