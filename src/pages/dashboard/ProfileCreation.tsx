@@ -460,7 +460,7 @@ const ProfileCreation = () => {
                     <AlertDescription className="text-sm text-blue-900">
                       <p className="mb-1">At least <strong>one</strong> of the following is required:</p>
                       <ul className="list-disc ml-6 mb-2">
-                        <li>Upload your resume <span className="font-semibold">(PDF or DOCX)</span></li>
+                        <li>Upload your resume/CV <span className="font-semibold">(PDF or DOCX)</span></li>
                         <li>Upload your LinkedIn profile as a <span className="font-semibold">PDF</span></li>
                       </ul>
                       
