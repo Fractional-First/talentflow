@@ -42,6 +42,47 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
+  // Function to redirect user based on onboarding status
+  const redirectBasedOnStatus = async (user: User) => {
+    try {
+      // Update onboarding status to EMAIL_CONFIRMED if email is confirmed but status is still SIGNED_UP
+      if (user.email_confirmed_at) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('onboarding_status')
+          .eq('id', user.id)
+          .single();
+        
+        if (profile?.onboarding_status === 'SIGNED_UP') {
+          await supabase
+            .from('profiles')
+            .update({ onboarding_status: 'EMAIL_CONFIRMED' })
+            .eq('id', user.id);
+        }
+        
+        const currentStatus = profile?.onboarding_status === 'SIGNED_UP' ? 'EMAIL_CONFIRMED' : profile?.onboarding_status;
+        
+        // Redirect based on onboarding status
+        switch (currentStatus) {
+          case 'EMAIL_CONFIRMED':
+            navigate('/dashboard/profile-creation');
+            break;
+          case 'PROFILE_GENERATED':
+            navigate('/dashboard/profile-snapshot');
+            break;
+          case 'PROFILE_CONFIRMED':
+            navigate('/dashboard');
+            break;
+          default:
+            navigate('/dashboard/profile-creation');
+        }
+      }
+    } catch (error) {
+      console.error('Error checking onboarding status:', error);
+      navigate('/dashboard/profile-creation');
+    }
+  };
+
   useEffect(() => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -54,33 +95,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setLoading(false);
         
         // Handle post-verification sign-in
-        if (event === 'SIGNED_IN' && newSession?.user) {
-          // Check if user has completed profile creation
-          if (newSession.user.email_confirmed_at && !isInitialLoad) {
-            try {
-              const { data: profile } = await supabase
-                .from('profiles')
-                .select('profile_created')
-                .eq('id', newSession.user.id)
-                .single();
-              
-              if (profile && !profile.profile_created) {
-                // User needs to complete profile creation
-                console.log('Redirecting to profile creation');
-                navigate('/dashboard/profile-creation');
-              } else {
-                // User has completed profile, go to dashboard
-                console.log('Redirecting to dashboard');
-                navigate('/dashboard');
-              }
-            } catch (error) {
-              console.error('Error checking profile status:', error);
-              // Fallback to profile creation if we can't check
-              navigate('/dashboard/profile-creation');
-            }
-            
-            toast.success('Successfully signed in');
-          }
+        if (event === 'SIGNED_IN' && newSession?.user && !isInitialLoad) {
+          await redirectBasedOnStatus(newSession.user);
+          toast.success('Successfully signed in');
         } else if (event === 'SIGNED_OUT') {
           // Only show sign out toast if it's not part of initial load
           if (!isInitialLoad) {

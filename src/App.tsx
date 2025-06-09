@@ -34,38 +34,48 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/check-email" element={<CheckEmail />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             
-            {/* Protected routes */}
-            <Route path="/dashboard" element={
-              <ProtectedRoute>
-                <Dashboard />
+            {/* Check email - for users with SIGNED_UP status */}
+            <Route path="/check-email" element={
+              <ProtectedRoute allowedStatuses={['SIGNED_UP']}>
+                <CheckEmail />
               </ProtectedRoute>
             } />
+            
+            {/* Profile creation - for users with EMAIL_CONFIRMED status */}
             <Route path="/dashboard/profile-creation" element={
-              <ProtectedRoute requireProfileCreation={false}>
+              <ProtectedRoute allowedStatuses={['EMAIL_CONFIRMED']}>
                 <ProfileCreation />
               </ProtectedRoute>
             } />
+            
+            {/* Profile snapshot - for users with PROFILE_GENERATED status */}
             <Route path="/dashboard/profile-snapshot" element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedStatuses={['PROFILE_GENERATED']}>
                 <ProfileSnapshot />
               </ProtectedRoute>
             } />
+            
+            {/* Dashboard and other routes - for users with PROFILE_CONFIRMED status */}
+            <Route path="/dashboard" element={
+              <ProtectedRoute allowedStatuses={['PROFILE_CONFIRMED']}>
+                <Dashboard />
+              </ProtectedRoute>
+            } />
             <Route path="/dashboard/branding" element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedStatuses={['PROFILE_CONFIRMED']}>
                 <Branding />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/job-matching" element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedStatuses={['PROFILE_CONFIRMED']}>
                 <JobMatching />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/waiting-room" element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedStatuses={['PROFILE_CONFIRMED']}>
                 <WaitingRoom />
               </ProtectedRoute>
             } />

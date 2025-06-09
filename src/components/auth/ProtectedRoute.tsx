@@ -7,14 +7,14 @@ import { supabase } from '@/integrations/supabase/client';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requireProfileCreation?: boolean;
+  allowedStatuses?: string[];
 }
 
-export const ProtectedRoute = ({ children, requireProfileCreation = true }: ProtectedRouteProps) => {
+export const ProtectedRoute = ({ children, allowedStatuses }: ProtectedRouteProps) => {
   const { user, loading } = useAuth();
   const location = useLocation();
 
-  // Query to check profile creation status
+  // Query to check onboarding status
   const { data: profileData, isLoading: profileLoading } = useQuery({
     queryKey: ['profile', user?.id],
     queryFn: async () => {
@@ -22,7 +22,7 @@ export const ProtectedRoute = ({ children, requireProfileCreation = true }: Prot
       
       const { data, error } = await supabase
         .from('profiles')
-        .select('profile_created')
+        .select('onboarding_status')
         .eq('id', user.id)
         .single();
       
@@ -49,11 +49,32 @@ export const ProtectedRoute = ({ children, requireProfileCreation = true }: Prot
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // If this route requires profile creation and user hasn't completed it yet
-  if (requireProfileCreation && profileData && !profileData.profile_created) {
-    // Don't redirect if we're already on the profile creation page
-    if (location.pathname !== '/dashboard/profile-creation') {
-      return <Navigate to="/dashboard/profile-creation" replace />;
+  // If user doesn't have email confirmed, they should only see check-email page
+  if (!user.email_confirmed_at && location.pathname !== '/check-email') {
+    return <Navigate to="/check-email" replace />;
+  }
+
+  const currentStatus = profileData?.onboarding_status;
+
+  // If no profile data, something went wrong - send to profile creation
+  if (!currentStatus) {
+    return <Navigate to="/dashboard/profile-creation" replace />;
+  }
+
+  // If allowedStatuses is provided, check if current status is allowed
+  if (allowedStatuses && !allowedStatuses.includes(currentStatus)) {
+    // Redirect based on current onboarding status
+    switch (currentStatus) {
+      case 'SIGNED_UP':
+        return <Navigate to="/check-email" replace />;
+      case 'EMAIL_CONFIRMED':
+        return <Navigate to="/dashboard/profile-creation" replace />;
+      case 'PROFILE_GENERATED':
+        return <Navigate to="/dashboard/profile-snapshot" replace />;
+      case 'PROFILE_CONFIRMED':
+        return <Navigate to="/dashboard" replace />;
+      default:
+        return <Navigate to="/dashboard/profile-creation" replace />;
     }
   }
 
