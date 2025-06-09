@@ -8,25 +8,53 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, ArrowRight, User, Briefcase, MapPin, Calendar, GraduationCap, Award, Target } from 'lucide-react';
+import { ArrowLeft, ArrowRight, User, Briefcase, MapPin, Calendar, GraduationCap, Award, Target, Star, Users, Globe } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 
+interface Persona {
+  title: string;
+  bullets: string[];
+}
+
+interface Superpower {
+  title: string;
+  description: string;
+}
+
+interface FunctionalSkill {
+  title: string;
+  description: string;
+}
+
+interface FunctionalSkills {
+  [category: string]: FunctionalSkill[];
+}
+
+interface NonObviousRole {
+  title: string;
+  description: string;
+}
+
 interface ProfileData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  currentPosition: string;
-  company: string;
-  yearsExperience: string;
-  industry: string;
-  location: string;
+  name: string;
+  role: string;
   summary: string;
-  skills: string;
-  education: string;
-  certifications: string;
-  careerGoals: string;
-  linkedinUrl?: string;
+  location: string;
+  personas: Persona[];
+  meet_them: string;
+  sweetspot: string;
+  highlights: string[];
+  industries: string[];
+  focus_areas: string[];
+  stage_focus: string[];
+  superpowers: Superpower[];
+  user_manual: string;
+  certifications: string[];
+  non_obvious_role: NonObviousRole;
+  functional_skills: FunctionalSkills;
+  personal_interests: string[];
+  geographical_coverage: string[];
 }
 
 const ProfileSnapshot = () => {
@@ -45,7 +73,7 @@ const ProfileSnapshot = () => {
 
         const { data: profile, error } = await supabase
           .from('profiles')
-          .select('profile_data, email')
+          .select('profile_data')
           .eq('id', user.id)
           .single();
 
@@ -60,25 +88,7 @@ const ProfileSnapshot = () => {
         }
 
         if (profile?.profile_data) {
-          const data = profile.profile_data as any;
-          if (data.formData) {
-            setProfileData({
-              firstName: data.formData.firstName || '',
-              lastName: data.formData.lastName || '',
-              email: profile.email || '',
-              currentPosition: data.formData.currentPosition || '',
-              company: data.formData.company || '',
-              yearsExperience: data.formData.yearsExperience || '',
-              industry: data.formData.industry || '',
-              location: data.formData.location || '',
-              summary: data.formData.summary || '',
-              skills: data.formData.skills || '',
-              education: data.formData.education || '',
-              certifications: data.formData.certifications || '',
-              careerGoals: data.formData.careerGoals || '',
-              linkedinUrl: data.formData.linkedinUrl || ''
-            });
-          }
+          setProfileData(profile.profile_data as ProfileData);
         }
       } catch (error) {
         console.error('Error in loadProfileData:', error);
@@ -132,13 +142,12 @@ const ProfileSnapshot = () => {
     }
   };
 
-  const getInitials = (firstName: string, lastName: string) => {
-    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
-  };
-
-  const parseSkillsArray = (skills: string) => {
-    if (!skills) return [];
-    return skills.split(',').map(skill => skill.trim()).filter(skill => skill.length > 0);
+  const getInitials = (name: string) => {
+    const nameParts = name.split(' ');
+    if (nameParts.length >= 2) {
+      return `${nameParts[0].charAt(0)}${nameParts[nameParts.length - 1].charAt(0)}`.toUpperCase();
+    }
+    return name.charAt(0).toUpperCase();
   };
 
   if (loading) {
@@ -192,24 +201,15 @@ const ProfileSnapshot = () => {
             <div className="flex items-start gap-6">
               <Avatar className="h-24 w-24 border-2 border-primary/10">
                 <AvatarFallback className="bg-primary/10 text-primary text-xl">
-                  {profileData.firstName && profileData.lastName 
-                    ? getInitials(profileData.firstName, profileData.lastName)
-                    : <User className="h-8 w-8" />
-                  }
+                  {getInitials(profileData.name)}
                 </AvatarFallback>
               </Avatar>
               
               <div className="flex-1">
-                <h2 className="text-2xl font-semibold">
-                  {profileData.firstName} {profileData.lastName}
-                </h2>
-                <p className="text-lg text-muted-foreground">{profileData.currentPosition}</p>
+                <h2 className="text-2xl font-semibold">{profileData.name}</h2>
+                <p className="text-lg text-muted-foreground">{profileData.role}</p>
                 
                 <div className="flex flex-wrap gap-4 mt-3 text-sm text-muted-foreground">
-                  <div className="flex items-center">
-                    <Briefcase className="h-4 w-4 mr-1" />
-                    <span>{profileData.company}</span>
-                  </div>
                   {profileData.location && (
                     <div className="flex items-center">
                       <MapPin className="h-4 w-4 mr-1" />
@@ -217,8 +217,8 @@ const ProfileSnapshot = () => {
                     </div>
                   )}
                   <div className="flex items-center">
-                    <Calendar className="h-4 w-4 mr-1" />
-                    <span>{profileData.yearsExperience} years experience</span>
+                    <Globe className="h-4 w-4 mr-1" />
+                    <span>{profileData.geographical_coverage.join(', ')}</span>
                   </div>
                 </div>
               </div>
@@ -228,101 +228,188 @@ const ProfileSnapshot = () => {
           {/* Profile Content */}
           <div className="p-6 space-y-6">
             {/* Summary */}
-            {profileData.summary && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <User className="h-5 w-5 mr-2" />
-                    Professional Summary
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm leading-relaxed">{profileData.summary}</p>
-                </CardContent>
-              </Card>
-            )}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <User className="h-5 w-5 mr-2" />
+                  Professional Summary
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm leading-relaxed">{profileData.summary}</p>
+              </CardContent>
+            </Card>
 
-            {/* Skills */}
-            {profileData.skills && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Target className="h-5 w-5 mr-2" />
-                    Key Skills
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    {parseSkillsArray(profileData.skills).map((skill, index) => (
-                      <Badge key={index} variant="secondary">
-                        {skill}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
+            {/* Sweet Spot */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Target className="h-5 w-5 mr-2" />
+                  Sweet Spot
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm leading-relaxed">{profileData.sweetspot}</p>
+              </CardContent>
+            </Card>
 
-            {/* Experience & Industry */}
+            {/* Highlights */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Star className="h-5 w-5 mr-2" />
+                  Key Highlights
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2">
+                  {profileData.highlights.map((highlight, index) => (
+                    <li key={index} className="text-sm flex items-start">
+                      <span className="text-primary mr-2">•</span>
+                      {highlight}
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+
+            {/* Superpowers */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Award className="h-5 w-5 mr-2" />
+                  Superpowers
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {profileData.superpowers.map((superpower, index) => (
+                    <div key={index}>
+                      <h4 className="font-medium text-sm">{superpower.title}</h4>
+                      <p className="text-sm text-muted-foreground mt-1">{superpower.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Industries & Focus Areas */}
             <div className="grid md:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center">
                     <Briefcase className="h-5 w-5 mr-2" />
-                    Experience
+                    Industries
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm"><strong>Industry:</strong> {profileData.industry}</p>
-                  <p className="text-sm mt-1"><strong>Years:</strong> {profileData.yearsExperience}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {profileData.industries.map((industry, index) => (
+                      <Badge key={index} variant="secondary">
+                        {industry}
+                      </Badge>
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
 
-              {profileData.education && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Target className="h-5 w-5 mr-2" />
+                    Focus Areas
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    {profileData.focus_areas.map((area, index) => (
+                      <Badge key={index} variant="secondary">
+                        {area}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Personas */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Users className="h-5 w-5 mr-2" />
+                  Professional Personas
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {profileData.personas.map((persona, index) => (
+                    <div key={index}>
+                      <h4 className="font-medium text-sm mb-2">{persona.title}</h4>
+                      <ul className="space-y-1">
+                        {persona.bullets.map((bullet, bulletIndex) => (
+                          <li key={bulletIndex} className="text-sm text-muted-foreground flex items-start">
+                            <span className="text-primary mr-2 mt-1">•</span>
+                            {bullet}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Certifications & Stage Focus */}
+            <div className="grid md:grid-cols-2 gap-6">
+              {profileData.certifications.length > 0 && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center">
                       <GraduationCap className="h-5 w-5 mr-2" />
-                      Education
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm">{profileData.education}</p>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-
-            {/* Certifications & Career Goals */}
-            <div className="grid md:grid-cols-2 gap-6">
-              {profileData.certifications && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center">
-                      <Award className="h-5 w-5 mr-2" />
                       Certifications
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm">{profileData.certifications}</p>
+                    <ul className="space-y-1">
+                      {profileData.certifications.map((cert, index) => (
+                        <li key={index} className="text-sm">{cert}</li>
+                      ))}
+                    </ul>
                   </CardContent>
                 </Card>
               )}
 
-              {profileData.careerGoals && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center">
-                      <Target className="h-5 w-5 mr-2" />
-                      Career Goals
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm">{profileData.careerGoals}</p>
-                  </CardContent>
-                </Card>
-              )}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Calendar className="h-5 w-5 mr-2" />
+                    Stage Focus
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    {profileData.stage_focus.map((stage, index) => (
+                      <Badge key={index} variant="secondary">
+                        {stage}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
             </div>
+
+            {/* Meet Them */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <User className="h-5 w-5 mr-2" />
+                  Meet {profileData.name.split(' ')[0]}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm leading-relaxed">{profileData.meet_them}</p>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Footer Actions */}
