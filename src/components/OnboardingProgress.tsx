@@ -56,13 +56,13 @@ export function OnboardingProgress({
             </div>
 
             {index < steps.length - 1 && (
-              <div className="relative flex-1 max-w-[100px] mx-4">
+              <div className="flex-1 flex items-center justify-center mx-4">
                 <div
                   className={cn(
-                    "progress-connector",
+                    "h-0.5 w-full bg-muted-foreground/30 transition-all duration-300 ease-in-out",
                     (steps[index].status === 'completed' && steps[index + 1].status === 'completed') ||
                     (steps[index].status === 'completed' && steps[index + 1].status === 'current')
-                      ? "progress-connector-active"
+                      ? "bg-primary"
                       : ""
                   )}
                 />
