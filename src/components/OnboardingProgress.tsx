@@ -35,16 +35,16 @@ export function OnboardingProgress({
                 )}
               >
                 {step.status === 'completed' ? (
-                  <Check className="h-5 w-5 text-primary-foreground" />
+                  <Check className="h-5 w-5 text-white" />
                 ) : (
                   <span>{step.id}</span>
                 )}
                 
                 <div className="absolute -bottom-[48px] left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 min-w-max z-20">
-                  <div className="bg-primary text-primary-foreground px-3 py-2 rounded-md text-xs font-medium shadow-medium">
+                  <div className="glassmorphism px-3 py-2 rounded-md text-xs font-medium">
                     <div>{step.name}</div>
                     {step.estimatedTime && (
-                      <div className="text-xs opacity-90 mt-1">Est. time: {step.estimatedTime}</div>
+                      <div className="text-xs opacity-80 mt-1">Est. time: {step.estimatedTime}</div>
                     )}
                   </div>
                 </div>
