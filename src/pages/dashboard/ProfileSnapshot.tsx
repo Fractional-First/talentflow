@@ -266,6 +266,24 @@ const ProfileSnapshot = () => {
     }
   };
 
+  // Handle persona updates
+  const handlePersonaUpdate = (personaIndex: number, field: 'title' | 'bullets', value: string | string[]) => {
+    const updatedPersonas = [...(formData.personas || [])];
+    if (field === 'title') {
+      updatedPersonas[personaIndex] = { ...updatedPersonas[personaIndex], title: value as string };
+    } else {
+      updatedPersonas[personaIndex] = { ...updatedPersonas[personaIndex], bullets: value as string[] };
+    }
+    setFormData(prev => ({ ...prev, personas: updatedPersonas }));
+    setHasChanges(true);
+  };
+
+  const handlePersonaBulletsTextChange = (personaIndex: number, textValue: string) => {
+    // Convert text back to bullets array (split by lines and filter empty)
+    const bullets = textValue.split('\n').map(line => line.replace(/^•\s*/, '').trim()).filter(line => line.length > 0);
+    handlePersonaUpdate(personaIndex, 'bullets', bullets);
+  };
+
   const handleProfilePictureUpdate = (imageUrl: string) => {
     setFormData(prev => ({ ...prev, profilePicture: imageUrl }));
     setHasChanges(true);
@@ -1098,7 +1116,16 @@ const ProfileSnapshot = () => {
                           value={index.toString()} 
                           className="text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900"
                         >
-                          {persona.title}
+                          {editStates.personas ? (
+                            <Input
+                              value={persona.title}
+                              onChange={(e) => handlePersonaUpdate(index, 'title', e.target.value)}
+                              className="text-xs h-6 w-full min-w-0"
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                          ) : (
+                            persona.title
+                          )}
                         </TabsTrigger>
                       ))}
                     </TabsList>
@@ -1107,11 +1134,20 @@ const ProfileSnapshot = () => {
                       <TabsContent key={index} value={index.toString()} className="space-y-4">
                         <h4 className="font-medium">{persona.title}</h4>
                         <div className="text-sm leading-relaxed text-gray-700">
-                          <ul className="space-y-2">
-                            {persona.bullets?.map((bullet, bulletIndex) => (
-                              <li key={bulletIndex}>• {bullet}</li>
-                            ))}
-                          </ul>
+                          {editStates.personas ? (
+                            <Textarea
+                              value={persona.bullets?.map(bullet => `• ${bullet}`).join('\n') || ''}
+                              onChange={(e) => handlePersonaBulletsTextChange(index, e.target.value)}
+                              className="min-h-[120px]"
+                              placeholder="Enter bullet points, one per line. Start each line with '•' or it will be added automatically."
+                            />
+                          ) : (
+                            <ul className="space-y-2">
+                              {persona.bullets?.map((bullet, bulletIndex) => (
+                                <li key={bulletIndex}>• {bullet}</li>
+                              ))}
+                            </ul>
+                          )}
                         </div>
                       </TabsContent>
                     ))}
