@@ -1199,23 +1199,23 @@ const ProfileSnapshot = () => {
                           value={index.toString()} 
                           className="text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900"
                         >
-                          {editStates.personas ? (
-                            <Input
-                              value={personaEditStates[index]?.title || persona.title}
-                              onChange={(e) => handlePersonaLocalUpdate(index, 'title', e.target.value)}
-                              className="text-xs h-6 w-full min-w-0"
-                              onClick={(e) => e.stopPropagation()}
-                            />
-                          ) : (
-                            persona.title
-                          )}
+                          {persona.title}
                         </TabsTrigger>
                       ))}
                     </TabsList>
                     
                     {formData.personas.map((persona, index) => (
                       <TabsContent key={index} value={index.toString()} className="space-y-4">
-                        <h4 className="font-medium">{editStates.personas ? personaEditStates[index]?.title || persona.title : persona.title}</h4>
+                        {editStates.personas ? (
+                          <Input
+                            value={personaEditStates[index]?.title || persona.title}
+                            onChange={(e) => handlePersonaLocalUpdate(index, 'title', e.target.value)}
+                            className="font-medium"
+                            placeholder="Persona title"
+                          />
+                        ) : (
+                          <h4 className="font-medium">{persona.title}</h4>
+                        )}
                         <div className="text-sm leading-relaxed text-gray-700">
                           {editStates.personas ? (
                             <Textarea
