@@ -533,9 +533,9 @@ const ProfileSnapshot = () => {
             {/* Profile Image and Basic Info */}
             <div className="text-center">
               <div className="relative mb-4 inline-block">
-                <Avatar className="h-24 w-24">
+                <Avatar className="h-32 w-32 shadow-lg">
                   <AvatarImage src={formData?.profilePicture} />
-                  <AvatarFallback className="text-xl bg-[#449889] text-white">
+                  <AvatarFallback className="text-2xl bg-[#449889] text-white">
                     {getUserInitials(formData?.name)}
                   </AvatarFallback>
                 </Avatar>
@@ -658,7 +658,7 @@ const ProfileSnapshot = () => {
                     onClick={() => addArrayItem('highlights')}
                     className="w-full"
                   >
-                    <Plus className="h-4 w-4 mr-2" />
+                    <Plus className="h-4 w-4" />
                     Add Role
                   </Button>
                 </div>
@@ -1073,8 +1073,8 @@ const ProfileSnapshot = () => {
             </div>
 
             {/* Personas Section */}
-            <div className="bg-white rounded-lg border">
-              <div className="bg-teal-600 text-white rounded-t-lg">
+            <div className="bg-white rounded-lg border shadow-sm">
+              <div className="bg-[#449889] text-white rounded-t-lg">
                 <div className="flex items-center justify-between p-4">
                   <h3 className="text-lg font-semibold">Personas</h3>
                   <Button
@@ -1091,9 +1091,13 @@ const ProfileSnapshot = () => {
               <div className="p-4">
                 {formData?.personas && formData.personas.length > 0 ? (
                   <Tabs defaultValue="0" className="w-full">
-                    <TabsList className="grid w-full mb-6" style={{gridTemplateColumns: `repeat(${formData.personas.length}, minmax(0, 1fr))`}}>
+                    <TabsList className="grid w-full mb-6 bg-gray-100" style={{gridTemplateColumns: `repeat(${formData.personas.length}, minmax(0, 1fr))`}}>
                       {formData.personas.map((persona, index) => (
-                        <TabsTrigger key={index} value={index.toString()} className="text-xs">
+                        <TabsTrigger 
+                          key={index} 
+                          value={index.toString()} 
+                          className="text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900"
+                        >
                           {persona.title}
                         </TabsTrigger>
                       ))}

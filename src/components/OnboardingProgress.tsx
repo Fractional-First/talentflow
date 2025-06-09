@@ -56,7 +56,7 @@ export function OnboardingProgress({
             </div>
 
             {index < steps.length - 1 && (
-              <div className="relative flex-1 max-w-[100px]">
+              <div className="relative flex-1 max-w-[100px] mx-4">
                 <div
                   className={cn(
                     "progress-connector",
