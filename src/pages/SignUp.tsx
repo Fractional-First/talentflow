@@ -15,13 +15,13 @@ const SignUp = () => {
   const navigate = useNavigate();
   const { signUp, loading } = useAuth();
 
-  const handleSignUp = async (email: string, password: string, confirmPassword: string) => {
+  const handleSignUp = async (email: string, password: string, confirmPassword: string, firstName: string, lastName: string) => {
     if (password !== confirmPassword) {
       toast.error("Passwords don't match");
       return;
     }
     
-    const result = await signUp(email, password);
+    const result = await signUp(email, password, firstName, lastName);
     if (result.error) {
       toast.error(result.error);
     }
