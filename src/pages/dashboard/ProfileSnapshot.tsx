@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
@@ -39,36 +40,44 @@ import { Label } from '@/components/ui/label';
 import ProfilePictureUpload from '@/components/ProfilePictureUpload';
 import { VersionHistorySidebar } from '@/components/profile/VersionHistorySidebar';
 import { useVersionHistory } from '@/hooks/useVersionHistory';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { useQuery } from '@tanstack/react-query';
 
 interface ProfileData {
-  name: string;
-  title: string;
-  subtitle: string;
-  location: string;
-  description: string;
-  keyRoles: string[];
-  focusAreas: string[];
-  industries: string[];
-  geographicalCoverage: string[];
-  stages: string[];
-  personalInterests: string[];
-  certifications: string[];
-  engagementOptions: string;
-  meetIntro: string;
-  growthArchitectContent: string;
-  ventureBuilderContent: string;
-  leadershipStewardContent: string;
-  strategicProblemSolving: string;
-  consciousLeadership: string;
-  scalingVentures: string;
-  sweetSpotContent: string;
-  userManual: string;
-  profilePicture?: string;
-  functionalSkills: {
-    marketExpansion: string[];
-    operationalEfficiency: string[];
-    leadershipDevelopment: string[];
+  name?: string;
+  role?: string;
+  summary?: string;
+  location?: string;
+  personas?: Array<{
+    title: string;
+    bullets: string[];
+  }>;
+  meet_them?: string;
+  sweetspot?: string;
+  highlights?: string[];
+  industries?: string[];
+  focus_areas?: string[];
+  stage_focus?: string[];
+  superpowers?: Array<{
+    title: string;
+    description: string;
+  }>;
+  user_manual?: string;
+  certifications?: string[];
+  non_obvious_role?: {
+    title: string;
+    description: string;
   };
+  functional_skills?: {
+    [key: string]: Array<{
+      title: string;
+      description: string;
+    }>;
+  };
+  personal_interests?: string[];
+  geographical_coverage?: string[];
+  profilePicture?: string;
 }
 
 interface EditStates {
@@ -94,6 +103,7 @@ const AIGUIDE_KEY = 'aiSuggestionsGuideSeen';
 
 const ProfileSnapshot = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showAIGuide, setShowAIGuide] = useState(false);
   const [expandedFunctionalSkill, setExpandedFunctionalSkill] = useState<string | null>(null);
@@ -122,104 +132,62 @@ const ProfileSnapshot = () => {
     functionalSkills: false,
   });
 
-  const [originalData] = useState<ProfileData>({
-    name: 'Reza Behnam',
-    title: 'Venture Builder, CEO',
-    subtitle: 'Holistic Leadership Coach',
-    location: 'Based in Southeast Asia',
-    description: 'Reza is a seasoned, visionary venture builder and CEO with a proven track record of scaling startups and transforming enterprises in Southeast Asia and the US. He\'s a strategic problem-solver and an efficient operator with innovation and inspiration. With expertise in both entrepreneurship and leadership coaching, Reza empowers executives to integrate mindfulness and purpose into their organizations, fostering resilience and long-term success.',
-    keyRoles: [
-      'Founder/CEO, multiple B2B startups',
-      'Venture Builder and APAC GTM Leader, Mach49',
-      'Managing Director, Yahoo! SE Asia',
-      'Venture Architect/Strategist, Vivint Corp',
-      'Data Science, Strategy and FP&A Leader, Intel Corp'
-    ],
-    focusAreas: ['Strategy', 'Venture Building', 'Biz Transformation', 'Execution', 'Coaching', 'Startup Scaling', 'Mentorship'],
-    industries: ['Tech', 'VC', 'Digital Media', 'Leadership Coaching'],
-    geographicalCoverage: ['Southeast Asia', 'United States', 'Middle East'],
-    stages: ['Enterprise', 'Early Stage', 'Seed', 'Growth'],
-    personalInterests: ['Travel', 'Polo', 'Mindfulness', 'Philosophy'],
-    certifications: ['Yoga and Meditation Teacher', 'Coaching'],
-    engagementOptions: 'Fractional, Interim, Coach/Mentor',
-    meetIntro: 'Hello, I\'m Reza! Over the years, I\'ve built and scaled successful ventures, transformed businesses, and coached leaders to realize their potential. I\'m passionate about blending business growth with conscious leadership where people are treated as a whole. When I\'m not guiding ventures or building new companies, you\'ll find me practicing mindfulness or enjoying polo, a sport that connects me to my Persian heritage.',
-    growthArchitectContent: 'Reza is a dynamic leader with a unique blend of strategic vision and operational excellence, driving growth and innovation across Southeast Asia.\n\n• Startup Leader: Led and scaled startups across Southeast Asia to successful exits, while serving as VC Partner, Operator, and Strategic Consultant.\n• Expansion Specialist: Orchestrated Yahoo!\'s expansion into six new Southeast Asian markets, unlocking regional opportunities.\n• Value Creator: Delivered measurable impact through strategic leadership and operational excellence across startups and established enterprises.\n• Sustainability Advocate: Integrating analytical thinking with mindful-based coaching to support sustainable growth and conscious leadership.',
-    ventureBuilderContent: 'Content for Venture Builder persona will be displayed here.',
-    leadershipStewardContent: 'Content for Leadership / Cultural Steward persona will be displayed here.',
-    strategicProblemSolving: 'Connecting the dots. Crafting insights and tactical thinking. Driving business revenue growth and brand presence.',
-    consciousLeadership: 'Mentoring leaders, integrating mindful leadership practices that enhance connection, productivity, positivity and organizational culture.',
-    scalingVentures: 'Leading startups, corporate ventures through planning, fundraising, governance, scaling, professionalization, optimization and, ultimately, exits.',
-    sweetSpotContent: 'Content for Sweet Spot will be displayed here.',
-    userManual: 'Reza values direct communication, transparency, and early alignment on goals. He thrives in environments where challenges are addressed proactively and discussions are data-driven. Balancing creativity with analytical rigor, Reza integrates human-centric leadership with strategic execution to achieve impactful outcomes.\n\nReza\'s Ways of Working: He\'s at his best as part of high-IQ, high EQ teams. His art manifests in human interactions, leadership, the creativity of plans, design, communication, persuasion, and inspiration. The science manifests in data-backed analysis, planning and decision-making. The art requires space and freedom to explore.\n\nReza is a passionate, purpose-driven leader who values self-awareness and modeling through behavior. He works best with people who are respectful and self-aware.',
-    profilePicture: '/lovable-uploads/06e0df8d-b26a-472b-b073-64583b551789.png',
-    functionalSkills: {
-      marketExpansion: [
-        '• Market Entry Expertise: Designed and executed strategies that expanded Yahoo\'s presence across six new countries in Southeast Asia.',
-        '• Scaling Across Borders: Guided startups and enterprises to navigate complex regulatory, cultural, and operational challenges when entering new regions.',
-        '• Tailored Strategies: Develops bespoke go-to-market plans that align with business objectives, leveraging local insights and global trends.',
-        '• Partnership Development: Establishes strategic alliances and partnerships to drive growth and strengthen market positioning.'
-      ],
-      operationalEfficiency: [],
-      leadershipDevelopment: []
-    }
+  // Fetch profile data from Supabase
+  const { data: profileData, isLoading } = useQuery({
+    queryKey: ['profile', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('profile_data')
+        .eq('id', user.id)
+        .single();
+      
+      if (error) {
+        console.error('Error fetching profile:', error);
+        return null;
+      }
+      
+      return data?.profile_data as ProfileData || {};
+    },
+    enabled: !!user?.id,
   });
 
-  const [formData, setFormData] = useState<ProfileData>(originalData);
+  const [formData, setFormData] = useState<ProfileData>({});
+
+  // Update formData when profileData is loaded
+  useEffect(() => {
+    if (profileData) {
+      setFormData(profileData);
+    }
+  }, [profileData]);
+
+  // Helper function to get user initials
+  const getUserInitials = (name?: string) => {
+    if (!name) return 'U';
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  };
 
   // Version history hooks for all text fields
   const descriptionHistory = useVersionHistory({
     fieldName: 'Description',
-    initialValue: originalData.description
+    initialValue: formData?.summary || ''
   });
 
   const meetIntroHistory = useVersionHistory({
     fieldName: 'Meet Intro',
-    initialValue: originalData.meetIntro
+    initialValue: formData?.meet_them || ''
   });
 
   const userManualHistory = useVersionHistory({
     fieldName: 'User Manual',
-    initialValue: originalData.userManual
-  });
-
-  const growthArchitectHistory = useVersionHistory({
-    fieldName: 'Growth Architect',
-    initialValue: originalData.growthArchitectContent
-  });
-
-  const ventureBuilderHistory = useVersionHistory({
-    fieldName: 'Venture Builder',
-    initialValue: originalData.ventureBuilderContent
-  });
-
-  const leadershipStewardHistory = useVersionHistory({
-    fieldName: 'Leadership Steward',
-    initialValue: originalData.leadershipStewardContent
-  });
-
-  const strategicProblemSolvingHistory = useVersionHistory({
-    fieldName: 'Strategic Problem Solving',
-    initialValue: originalData.strategicProblemSolving
-  });
-
-  const consciousLeadershipHistory = useVersionHistory({
-    fieldName: 'Conscious Leadership',
-    initialValue: originalData.consciousLeadership
-  });
-
-  const scalingVenturesHistory = useVersionHistory({
-    fieldName: 'Scaling Ventures',
-    initialValue: originalData.scalingVentures
+    initialValue: formData?.user_manual || ''
   });
 
   const sweetSpotHistory = useVersionHistory({
     fieldName: 'Sweet Spot',
-    initialValue: originalData.sweetSpotContent
-  });
-
-  const engagementOptionsHistory = useVersionHistory({
-    fieldName: 'Engagement Options',
-    initialValue: originalData.engagementOptions
+    initialValue: formData?.sweetspot || ''
   });
 
   const steps: Step[] = [
@@ -249,38 +217,17 @@ const ProfileSnapshot = () => {
 
     // Update version history for specific fields
     switch (field) {
-      case 'description':
+      case 'summary':
         descriptionHistory.updateValue(value);
         break;
-      case 'meetIntro':
+      case 'meet_them':
         meetIntroHistory.updateValue(value);
         break;
-      case 'userManual':
+      case 'user_manual':
         userManualHistory.updateValue(value);
         break;
-      case 'growthArchitectContent':
-        growthArchitectHistory.updateValue(value);
-        break;
-      case 'ventureBuilderContent':
-        ventureBuilderHistory.updateValue(value);
-        break;
-      case 'leadershipStewardContent':
-        leadershipStewardHistory.updateValue(value);
-        break;
-      case 'strategicProblemSolving':
-        strategicProblemSolvingHistory.updateValue(value);
-        break;
-      case 'consciousLeadership':
-        consciousLeadershipHistory.updateValue(value);
-        break;
-      case 'scalingVentures':
-        scalingVenturesHistory.updateValue(value);
-        break;
-      case 'sweetSpotContent':
+      case 'sweetspot':
         sweetSpotHistory.updateValue(value);
-        break;
-      case 'engagementOptions':
-        engagementOptionsHistory.updateValue(value);
         break;
     }
   };
@@ -292,6 +239,7 @@ const ProfileSnapshot = () => {
 
   const handleArrayChange = (field: keyof ProfileData, index: number, value: string) => {
     const currentArray = formData[field] as string[];
+    if (!currentArray) return;
     const newArray = [...currentArray];
     newArray[index] = value;
     setFormData(prev => ({ ...prev, [field]: newArray }));
@@ -299,13 +247,14 @@ const ProfileSnapshot = () => {
   };
 
   const addArrayItem = (field: keyof ProfileData) => {
-    const currentArray = formData[field] as string[];
+    const currentArray = (formData[field] as string[]) || [];
     setFormData(prev => ({ ...prev, [field]: [...currentArray, ''] }));
     setHasChanges(true);
   };
 
   const removeArrayItem = (field: keyof ProfileData, index: number) => {
     const currentArray = formData[field] as string[];
+    if (!currentArray) return;
     const newArray = currentArray.filter((_, i) => i !== index);
     setFormData(prev => ({ ...prev, [field]: newArray }));
     setHasChanges(true);
@@ -327,22 +276,8 @@ const ProfileSnapshot = () => {
         return meetIntroHistory;
       case 'User Manual':
         return userManualHistory;
-      case 'Growth Architect':
-        return growthArchitectHistory;
-      case 'Venture Builder':
-        return ventureBuilderHistory;
-      case 'Leadership Steward':
-        return leadershipStewardHistory;
-      case 'Strategic Problem Solving':
-        return strategicProblemSolvingHistory;
-      case 'Conscious Leadership':
-        return consciousLeadershipHistory;
-      case 'Scaling Ventures':
-        return scalingVenturesHistory;
       case 'Sweet Spot':
         return sweetSpotHistory;
-      case 'Engagement Options':
-        return engagementOptionsHistory;
       default:
         return descriptionHistory; // fallback
     }
@@ -355,49 +290,33 @@ const ProfileSnapshot = () => {
     // Update form data based on field
     switch (versionHistorySidebar.fieldName) {
       case 'Description':
-        setFormData(prev => ({ ...prev, description: hook.currentValue }));
+        setFormData(prev => ({ ...prev, summary: hook.currentValue }));
         break;
       case 'Meet Intro':
-        setFormData(prev => ({ ...prev, meetIntro: hook.currentValue }));
+        setFormData(prev => ({ ...prev, meet_them: hook.currentValue }));
         break;
       case 'User Manual':
-        setFormData(prev => ({ ...prev, userManual: hook.currentValue }));
-        break;
-      case 'Growth Architect':
-        setFormData(prev => ({ ...prev, growthArchitectContent: hook.currentValue }));
-        break;
-      case 'Venture Builder':
-        setFormData(prev => ({ ...prev, ventureBuilderContent: hook.currentValue }));
-        break;
-      case 'Leadership Steward':
-        setFormData(prev => ({ ...prev, leadershipStewardContent: hook.currentValue }));
-        break;
-      case 'Strategic Problem Solving':
-        setFormData(prev => ({ ...prev, strategicProblemSolving: hook.currentValue }));
-        break;
-      case 'Conscious Leadership':
-        setFormData(prev => ({ ...prev, consciousLeadership: hook.currentValue }));
-        break;
-      case 'Scaling Ventures':
-        setFormData(prev => ({ ...prev, scalingVentures: hook.currentValue }));
+        setFormData(prev => ({ ...prev, user_manual: hook.currentValue }));
         break;
       case 'Sweet Spot':
-        setFormData(prev => ({ ...prev, sweetSpotContent: hook.currentValue }));
-        break;
-      case 'Engagement Options':
-        setFormData(prev => ({ ...prev, engagementOptions: hook.currentValue }));
+        setFormData(prev => ({ ...prev, sweetspot: hook.currentValue }));
         break;
     }
     
     setHasChanges(true);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setIsSubmitting(true);
     
-    // Simulate save operation
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ profile_data: formData })
+        .eq('id', user?.id);
+
+      if (error) throw error;
+
       setHasChanges(false);
       // Turn off all edit modes after saving
       setEditStates({
@@ -422,11 +341,22 @@ const ProfileSnapshot = () => {
         title: "Profile Saved",
         description: "Your profile changes have been saved successfully.",
       });
-    }, 1000);
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save profile changes.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleDiscardChanges = () => {
-    setFormData(originalData);
+    if (profileData) {
+      setFormData(profileData);
+    }
     setHasChanges(false);
     // Turn off all edit modes after discarding
     setEditStates({
@@ -453,21 +383,46 @@ const ProfileSnapshot = () => {
     });
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     setIsSubmitting(true);
     
-    // Mark onboarding as complete and navigate to dashboard
-    localStorage.setItem('onboardingComplete', 'true');
-    
-    setTimeout(() => {
+    try {
+      // Update onboarding status to completed
+      const { error } = await supabase
+        .from('profiles')
+        .update({ onboarding_status: 'PROFILE_CONFIRMED' })
+        .eq('id', user?.id);
+
+      if (error) throw error;
+
+      setTimeout(() => {
+        setIsSubmitting(false);
+        navigate('/dashboard');
+      }, 1000);
+    } catch (error) {
+      console.error('Error updating onboarding status:', error);
       setIsSubmitting(false);
-      navigate('/dashboard');
-    }, 1000);
+      toast({
+        title: "Error",
+        description: "Failed to complete onboarding.",
+        variant: "destructive",
+      });
+    }
   };
 
   const toggleFunctionalSkill = (skill: string) => {
     setExpandedFunctionalSkill(expandedFunctionalSkill === skill ? null : skill);
   };
+
+  if (isLoading) {
+    return (
+      <DashboardLayout steps={steps} currentStep={3}>
+        <div className="max-w-6xl mx-auto space-y-6 p-6">
+          <div className="text-center">Loading profile...</div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout steps={steps} currentStep={3}>
@@ -508,11 +463,12 @@ const ProfileSnapshot = () => {
             {/* Profile Image and Basic Info */}
             <div className="text-center">
               <div className="relative mb-4 inline-block">
-                <ProfilePictureUpload
-                  currentImage={formData.profilePicture}
-                  userName={formData.name}
-                  onImageUpdate={handleProfilePictureUpdate}
-                />
+                <Avatar className="h-24 w-24">
+                  <AvatarImage src={formData?.profilePicture} />
+                  <AvatarFallback className="text-xl">
+                    {getUserInitials(formData?.name)}
+                  </AvatarFallback>
+                </Avatar>
               </div>
               
               <div className="space-y-2">
@@ -520,12 +476,12 @@ const ProfileSnapshot = () => {
                   <div className="flex-1">
                     {editStates.basicInfo ? (
                       <Input
-                        value={formData.name}
+                        value={formData?.name || ''}
                         onChange={(e) => handleInputChange('name', e.target.value)}
                         className="text-2xl font-bold text-center"
                       />
                     ) : (
-                      <h1 className="text-2xl font-bold">{formData.name}</h1>
+                      <h1 className="text-2xl font-bold">{formData?.name || 'TODO - needs data'}</h1>
                     )}
                   </div>
                   <Button
@@ -541,26 +497,20 @@ const ProfileSnapshot = () => {
                 {editStates.basicInfo ? (
                   <>
                     <Input
-                      value={formData.title}
-                      onChange={(e) => handleInputChange('title', e.target.value)}
+                      value={formData?.role || ''}
+                      onChange={(e) => handleInputChange('role', e.target.value)}
                       className="text-lg text-center"
                     />
                     <Input
-                      value={formData.subtitle}
-                      onChange={(e) => handleInputChange('subtitle', e.target.value)}
-                      className="text-sm text-center"
-                    />
-                    <Input
-                      value={formData.location}
+                      value={formData?.location || ''}
                       onChange={(e) => handleInputChange('location', e.target.value)}
                       className="text-sm text-center"
                     />
                   </>
                 ) : (
                   <>
-                    <p className="text-lg text-gray-700">{formData.title}</p>
-                    <p className="text-sm text-gray-600">{formData.subtitle}</p>
-                    <p className="text-sm text-gray-500">{formData.location}</p>
+                    <p className="text-lg text-gray-700">{formData?.role || 'TODO - needs data'}</p>
+                    <p className="text-sm text-gray-500">{formData?.location || 'TODO - needs data'}</p>
                   </>
                 )}
               </div>
@@ -591,12 +541,14 @@ const ProfileSnapshot = () => {
               {editStates.description ? (
                 <Textarea
                   value={descriptionHistory.currentValue}
-                  onChange={(e) => handleInputChange('description', e.target.value)}
+                  onChange={(e) => handleInputChange('summary', e.target.value)}
                   className="text-sm leading-relaxed"
                   rows={6}
                 />
               ) : (
-                <p className="text-sm leading-relaxed text-gray-700">{descriptionHistory.currentValue}</p>
+                <p className="text-sm leading-relaxed text-gray-700">
+                  {descriptionHistory.currentValue || formData?.summary || 'TODO - needs data'}
+                </p>
               )}
             </div>
 
@@ -614,17 +566,17 @@ const ProfileSnapshot = () => {
               </div>
               {editStates.keyRoles ? (
                 <div className="space-y-2">
-                  {formData.keyRoles.map((role, index) => (
+                  {(formData?.highlights || []).map((highlight, index) => (
                     <div key={index} className="flex gap-2">
                       <Input
-                        value={role}
-                        onChange={(e) => handleArrayChange('keyRoles', index, e.target.value)}
+                        value={highlight}
+                        onChange={(e) => handleArrayChange('highlights', index, e.target.value)}
                         className="text-sm"
                       />
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => removeArrayItem('keyRoles', index)}
+                        onClick={() => removeArrayItem('highlights', index)}
                       >
                         <X className="h-4 w-4" />
                       </Button>
@@ -633,7 +585,7 @@ const ProfileSnapshot = () => {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => addArrayItem('keyRoles')}
+                    onClick={() => addArrayItem('highlights')}
                     className="w-full"
                   >
                     <Plus className="h-4 w-4 mr-2" />
@@ -642,8 +594,8 @@ const ProfileSnapshot = () => {
                 </div>
               ) : (
                 <ul className="space-y-1">
-                  {formData.keyRoles.map((role, index) => (
-                    <li key={index} className="text-sm text-gray-700">• {role}</li>
+                  {(formData?.highlights || ['TODO - needs data']).map((highlight, index) => (
+                    <li key={index} className="text-sm text-gray-700">• {highlight}</li>
                   ))}
                 </ul>
               )}
@@ -664,17 +616,17 @@ const ProfileSnapshot = () => {
               {editStates.focusAreas ? (
                 <div className="space-y-2">
                   <div className="flex flex-wrap gap-2">
-                    {formData.focusAreas.map((area, index) => (
+                    {(formData?.focus_areas || []).map((area, index) => (
                       <div key={index} className="flex items-center gap-1">
                         <Input
                           value={area}
-                          onChange={(e) => handleArrayChange('focusAreas', index, e.target.value)}
+                          onChange={(e) => handleArrayChange('focus_areas', index, e.target.value)}
                           className="text-xs h-8 w-32"
                         />
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => removeArrayItem('focusAreas', index)}
+                          onClick={() => removeArrayItem('focus_areas', index)}
                           className="h-6 w-6 p-0"
                         >
                           <X className="h-3 w-3" />
@@ -685,7 +637,7 @@ const ProfileSnapshot = () => {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => addArrayItem('focusAreas')}
+                    onClick={() => addArrayItem('focus_areas')}
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     Add Area
@@ -693,7 +645,7 @@ const ProfileSnapshot = () => {
                 </div>
               ) : (
                 <div className="flex flex-wrap gap-2">
-                  {formData.focusAreas.map((area, index) => (
+                  {(formData?.focus_areas || ['TODO - needs data']).map((area, index) => (
                     <Badge key={index} variant="secondary" className="text-xs">
                       {area}
                     </Badge>
@@ -717,7 +669,7 @@ const ProfileSnapshot = () => {
               {editStates.industries ? (
                 <div className="space-y-2">
                   <div className="flex flex-wrap gap-2">
-                    {formData.industries.map((industry, index) => (
+                    {(formData?.industries || []).map((industry, index) => (
                       <div key={index} className="flex items-center gap-1">
                         <Input
                           value={industry}
@@ -746,7 +698,7 @@ const ProfileSnapshot = () => {
                 </div>
               ) : (
                 <div className="flex flex-wrap gap-2">
-                  {formData.industries.map((industry, index) => (
+                  {(formData?.industries || ['TODO - needs data']).map((industry, index) => (
                     <Badge key={index} variant="secondary" className="text-xs">
                       {industry}
                     </Badge>
@@ -770,17 +722,17 @@ const ProfileSnapshot = () => {
               {editStates.geographicalCoverage ? (
                 <div className="space-y-2">
                   <div className="flex flex-wrap gap-2">
-                    {formData.geographicalCoverage.map((region, index) => (
+                    {(formData?.geographical_coverage || []).map((region, index) => (
                       <div key={index} className="flex items-center gap-1">
                         <Input
                           value={region}
-                          onChange={(e) => handleArrayChange('geographicalCoverage', index, e.target.value)}
+                          onChange={(e) => handleArrayChange('geographical_coverage', index, e.target.value)}
                           className="text-xs h-8 w-32"
                         />
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => removeArrayItem('geographicalCoverage', index)}
+                          onClick={() => removeArrayItem('geographical_coverage', index)}
                           className="h-6 w-6 p-0"
                         >
                           <X className="h-3 w-3" />
@@ -791,7 +743,7 @@ const ProfileSnapshot = () => {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => addArrayItem('geographicalCoverage')}
+                    onClick={() => addArrayItem('geographical_coverage')}
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     Add Region
@@ -799,7 +751,7 @@ const ProfileSnapshot = () => {
                 </div>
               ) : (
                 <div className="flex flex-wrap gap-2">
-                  {formData.geographicalCoverage.map((region, index) => (
+                  {(formData?.geographical_coverage || ['TODO - needs data']).map((region, index) => (
                     <Badge key={index} variant="secondary" className="text-xs">
                       {region}
                     </Badge>
@@ -823,17 +775,17 @@ const ProfileSnapshot = () => {
               {editStates.stages ? (
                 <div className="space-y-2">
                   <div className="flex flex-wrap gap-2">
-                    {formData.stages.map((stage, index) => (
+                    {(formData?.stage_focus || []).map((stage, index) => (
                       <div key={index} className="flex items-center gap-1">
                         <Input
                           value={stage}
-                          onChange={(e) => handleArrayChange('stages', index, e.target.value)}
+                          onChange={(e) => handleArrayChange('stage_focus', index, e.target.value)}
                           className="text-xs h-8 w-32"
                         />
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => removeArrayItem('stages', index)}
+                          onClick={() => removeArrayItem('stage_focus', index)}
                           className="h-6 w-6 p-0"
                         >
                           <X className="h-3 w-3" />
@@ -844,7 +796,7 @@ const ProfileSnapshot = () => {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => addArrayItem('stages')}
+                    onClick={() => addArrayItem('stage_focus')}
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     Add Stage
@@ -852,7 +804,7 @@ const ProfileSnapshot = () => {
                 </div>
               ) : (
                 <div className="flex flex-wrap gap-2">
-                  {formData.stages.map((stage, index) => (
+                  {(formData?.stage_focus || ['TODO - needs data']).map((stage, index) => (
                     <Badge key={index} variant="secondary" className="text-xs">
                       {stage}
                     </Badge>
@@ -876,17 +828,17 @@ const ProfileSnapshot = () => {
               {editStates.personalInterests ? (
                 <div className="space-y-2">
                   <div className="flex flex-wrap gap-2">
-                    {formData.personalInterests.map((interest, index) => (
+                    {(formData?.personal_interests || []).map((interest, index) => (
                       <div key={index} className="flex items-center gap-1">
                         <Input
                           value={interest}
-                          onChange={(e) => handleArrayChange('personalInterests', index, e.target.value)}
+                          onChange={(e) => handleArrayChange('personal_interests', index, e.target.value)}
                           className="text-xs h-8 w-32"
                         />
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => removeArrayItem('personalInterests', index)}
+                          onClick={() => removeArrayItem('personal_interests', index)}
                           className="h-6 w-6 p-0"
                         >
                           <X className="h-3 w-3" />
@@ -897,7 +849,7 @@ const ProfileSnapshot = () => {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => addArrayItem('personalInterests')}
+                    onClick={() => addArrayItem('personal_interests')}
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     Add Interest
@@ -905,7 +857,7 @@ const ProfileSnapshot = () => {
                 </div>
               ) : (
                 <div className="flex flex-wrap gap-2">
-                  {formData.personalInterests.map((interest, index) => (
+                  {(formData?.personal_interests || ['TODO - needs data']).map((interest, index) => (
                     <Badge key={index} variant="secondary" className="text-xs">
                       {interest}
                     </Badge>
@@ -928,7 +880,7 @@ const ProfileSnapshot = () => {
               </div>
               {editStates.certifications ? (
                 <div className="space-y-2">
-                  {formData.certifications.map((cert, index) => (
+                  {(formData?.certifications || []).map((cert, index) => (
                     <div key={index} className="flex gap-2">
                       <Input
                         value={cert}
@@ -956,7 +908,7 @@ const ProfileSnapshot = () => {
                 </div>
               ) : (
                 <ul className="space-y-1">
-                  {formData.certifications.map((cert, index) => (
+                  {(formData?.certifications || ['TODO - needs data']).map((cert, index) => (
                     <li key={index} className="text-sm text-gray-700">• {cert}</li>
                   ))}
                 </ul>
@@ -967,43 +919,32 @@ const ProfileSnapshot = () => {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <Label className="font-semibold">Engagement Options</Label>
-                <div className="flex gap-1">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => openVersionHistory('Engagement Options')}
-                    title="View version history"
-                  >
-                    <History className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => toggleEdit('engagementOptions')}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => toggleEdit('engagementOptions')}
+                >
+                  <Edit className="h-4 w-4" />
+                </Button>
               </div>
               {editStates.engagementOptions ? (
                 <Textarea
-                  value={engagementOptionsHistory.currentValue}
-                  onChange={(e) => handleInputChange('engagementOptions', e.target.value)}
+                  value="TODO - needs data"
                   className="text-sm"
                   rows={2}
                 />
               ) : (
-                <p className="text-sm text-gray-700">{engagementOptionsHistory.currentValue}</p>
+                <p className="text-sm text-gray-700">TODO - needs data</p>
               )}
             </div>
           </div>
 
           {/* Right Column - Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Meet Reza Section */}
+            {/* Meet Section */}
             <div className="bg-teal-600 text-white rounded-lg">
               <div className="flex items-center justify-between p-4 pb-2">
-                <h2 className="text-xl font-semibold">Meet Reza</h2>
+                <h2 className="text-xl font-semibold">Meet {formData?.name?.split(' ')[0] || 'Professional'}</h2>
                 <div className="flex gap-1">
                   <Button
                     variant="ghost"
@@ -1028,12 +969,14 @@ const ProfileSnapshot = () => {
                 {editStates.meetIntro ? (
                   <Textarea
                     value={meetIntroHistory.currentValue}
-                    onChange={(e) => handleInputChange('meetIntro', e.target.value)}
+                    onChange={(e) => handleInputChange('meet_them', e.target.value)}
                     className="text-sm leading-relaxed bg-white/10 border-white/20 text-white placeholder:text-white/70"
                     rows={4}
                   />
                 ) : (
-                  <p className="text-sm leading-relaxed">{meetIntroHistory.currentValue}</p>
+                  <p className="text-sm leading-relaxed">
+                    {meetIntroHistory.currentValue || formData?.meet_them || 'TODO - needs data'}
+                  </p>
                 )}
               </div>
             </div>
@@ -1055,91 +998,32 @@ const ProfileSnapshot = () => {
               </div>
               
               <div className="p-4">
-                <Tabs defaultValue="growth-architect" className="w-full">
-                  <TabsList className="grid w-full grid-cols-3 mb-6">
-                    <TabsTrigger value="growth-architect" className="text-xs">Growth Architect</TabsTrigger>
-                    <TabsTrigger value="venture-builder" className="text-xs">Venture Builder</TabsTrigger>
-                    <TabsTrigger value="leadership-steward" className="text-xs">Leadership / Cultural Steward</TabsTrigger>
-                  </TabsList>
-                  
-                  <TabsContent value="growth-architect" className="space-y-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-medium">Growth Architect</h4>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => openVersionHistory('Growth Architect')}
-                        title="View version history"
-                      >
-                        <History className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    {editStates.personas ? (
-                      <Textarea
-                        value={growthArchitectHistory.currentValue}
-                        onChange={(e) => handleInputChange('growthArchitectContent', e.target.value)}
-                        className="text-sm leading-relaxed"
-                        rows={8}
-                      />
-                    ) : (
-                      <div className="text-sm leading-relaxed text-gray-700 whitespace-pre-line">
-                        {growthArchitectHistory.currentValue}
-                      </div>
-                    )}
-                  </TabsContent>
-                  
-                  <TabsContent value="venture-builder" className="space-y-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-medium">Venture Builder</h4>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => openVersionHistory('Venture Builder')}
-                        title="View version history"
-                      >
-                        <History className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    {editStates.personas ? (
-                      <Textarea
-                        value={ventureBuilderHistory.currentValue}
-                        onChange={(e) => handleInputChange('ventureBuilderContent', e.target.value)}
-                        className="text-sm leading-relaxed"
-                        rows={4}
-                      />
-                    ) : (
-                      <div className="text-sm leading-relaxed text-gray-700">
-                        {ventureBuilderHistory.currentValue}
-                      </div>
-                    )}
-                  </TabsContent>
-                  
-                  <TabsContent value="leadership-steward" className="space-y-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-medium">Leadership / Cultural Steward</h4>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => openVersionHistory('Leadership Steward')}
-                        title="View version history"
-                      >
-                        <History className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    {editStates.personas ? (
-                      <Textarea
-                        value={leadershipStewardHistory.currentValue}
-                        onChange={(e) => handleInputChange('leadershipStewardContent', e.target.value)}
-                        className="text-sm leading-relaxed"
-                        rows={4}
-                      />
-                    ) : (
-                      <div className="text-sm leading-relaxed text-gray-700">
-                        {leadershipStewardHistory.currentValue}
-                      </div>
-                    )}
-                  </TabsContent>
-                </Tabs>
+                {formData?.personas && formData.personas.length > 0 ? (
+                  <Tabs defaultValue="0" className="w-full">
+                    <TabsList className="grid w-full mb-6" style={{gridTemplateColumns: `repeat(${formData.personas.length}, minmax(0, 1fr))`}}>
+                      {formData.personas.map((persona, index) => (
+                        <TabsTrigger key={index} value={index.toString()} className="text-xs">
+                          {persona.title}
+                        </TabsTrigger>
+                      ))}
+                    </TabsList>
+                    
+                    {formData.personas.map((persona, index) => (
+                      <TabsContent key={index} value={index.toString()} className="space-y-4">
+                        <h4 className="font-medium">{persona.title}</h4>
+                        <div className="text-sm leading-relaxed text-gray-700">
+                          <ul className="space-y-2">
+                            {persona.bullets.map((bullet, bulletIndex) => (
+                              <li key={bulletIndex}>• {bullet}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </TabsContent>
+                    ))}
+                  </Tabs>
+                ) : (
+                  <div className="text-sm text-gray-700">TODO - needs data</div>
+                )}
               </div>
             </div>
 
@@ -1161,77 +1045,16 @@ const ProfileSnapshot = () => {
               
               <div className="p-4">
                 <div className="space-y-4">
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <Label className="font-medium text-gray-900">Strategic Problem-Solving</Label>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => openVersionHistory('Strategic Problem Solving')}
-                        title="View version history"
-                      >
-                        <History className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    {editStates.superpowers ? (
-                      <Textarea
-                        value={strategicProblemSolvingHistory.currentValue}
-                        onChange={(e) => handleInputChange('strategicProblemSolving', e.target.value)}
-                        className="text-sm"
-                        rows={2}
-                      />
-                    ) : (
-                      <p className="text-sm text-gray-700">{strategicProblemSolvingHistory.currentValue}</p>
-                    )}
-                  </div>
-                  
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <Label className="font-medium text-gray-900">Conscious Leadership</Label>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => openVersionHistory('Conscious Leadership')}
-                        title="View version history"
-                      >
-                        <History className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    {editStates.superpowers ? (
-                      <Textarea
-                        value={consciousLeadershipHistory.currentValue}
-                        onChange={(e) => handleInputChange('consciousLeadership', e.target.value)}
-                        className="text-sm"
-                        rows={2}
-                      />
-                    ) : (
-                      <p className="text-sm text-gray-700">{consciousLeadershipHistory.currentValue}</p>
-                    )}
-                  </div>
-                  
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <Label className="font-medium text-gray-900">Scaling Ventures</Label>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => openVersionHistory('Scaling Ventures')}
-                        title="View version history"
-                      >
-                        <History className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    {editStates.superpowers ? (
-                      <Textarea
-                        value={scalingVenturesHistory.currentValue}
-                        onChange={(e) => handleInputChange('scalingVentures', e.target.value)}
-                        className="text-sm"
-                        rows={2}
-                      />
-                    ) : (
-                      <p className="text-sm text-gray-700">{scalingVenturesHistory.currentValue}</p>
-                    )}
-                  </div>
+                  {formData?.superpowers && formData.superpowers.length > 0 ? (
+                    formData.superpowers.map((superpower, index) => (
+                      <div key={index}>
+                        <Label className="font-medium text-gray-900">{superpower.title}</Label>
+                        <p className="text-sm text-gray-700">{superpower.description}</p>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-sm text-gray-700">TODO - needs data</div>
+                  )}
                 </div>
               </div>
             </div>
@@ -1267,13 +1090,13 @@ const ProfileSnapshot = () => {
                 {editStates.sweetSpot ? (
                   <Textarea
                     value={sweetSpotHistory.currentValue}
-                    onChange={(e) => handleInputChange('sweetSpotContent', e.target.value)}
+                    onChange={(e) => handleInputChange('sweetspot', e.target.value)}
                     className="text-sm leading-relaxed"
                     rows={4}
                   />
                 ) : (
                   <div className="text-sm leading-relaxed text-gray-700">
-                    {sweetSpotHistory.currentValue}
+                    {sweetSpotHistory.currentValue || formData?.sweetspot || 'TODO - needs data'}
                   </div>
                 )}
               </div>
@@ -1296,132 +1119,37 @@ const ProfileSnapshot = () => {
               </div>
               
               <div className="p-4 space-y-3">
-                {/* Market Expansion Strategy */}
-                <div className="border-b border-gray-200 pb-3">
-                  <button 
-                    className="flex justify-between items-center w-full text-left"
-                    onClick={() => toggleFunctionalSkill('market-expansion')}
-                  >
-                    <span className="font-medium text-gray-900">Market Expansion Strategy</span>
-                    {expandedFunctionalSkill === 'market-expansion' ? 
-                      <Minus className="h-5 w-5 text-gray-400" /> : 
-                      <Plus className="h-5 w-5 text-gray-400" />
-                    }
-                  </button>
-                  
-                  {expandedFunctionalSkill === 'market-expansion' && (
-                    <div className="mt-3 space-y-3">
-                      {editStates.functionalSkills ? (
-                        <>
-                          <div className="flex items-center justify-between mb-2">
-                            <Label className="text-sm font-medium">Market Expansion Skills</Label>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => {
-                                const newSkills = [...formData.functionalSkills.marketExpansion, ''];
-                                setFormData(prev => ({ 
-                                  ...prev, 
-                                  functionalSkills: { 
-                                    ...prev.functionalSkills, 
-                                    marketExpansion: newSkills 
-                                  } 
-                                }));
-                                setHasChanges(true);
-                              }}
-                            >
-                              <Plus className="h-4 w-4" />
-                            </Button>
+                {formData?.functional_skills && Object.keys(formData.functional_skills).length > 0 ? (
+                  Object.entries(formData.functional_skills).map(([categoryName, skills]) => (
+                    <div key={categoryName} className="border-b border-gray-200 pb-3">
+                      <button 
+                        className="flex justify-between items-center w-full text-left"
+                        onClick={() => toggleFunctionalSkill(categoryName)}
+                      >
+                        <span className="font-medium text-gray-900">{categoryName}</span>
+                        {expandedFunctionalSkill === categoryName ? 
+                          <Minus className="h-5 w-5 text-gray-400" /> : 
+                          <Plus className="h-5 w-5 text-gray-400" />
+                        }
+                      </button>
+                      
+                      {expandedFunctionalSkill === categoryName && (
+                        <div className="mt-3 space-y-3">
+                          <div className="space-y-2">
+                            {skills.map((skill, index) => (
+                              <div key={index}>
+                                <h5 className="font-medium text-sm">{skill.title}</h5>
+                                <p className="text-sm text-gray-700">{skill.description}</p>
+                              </div>
+                            ))}
                           </div>
-                          {formData.functionalSkills.marketExpansion.map((skill, index) => (
-                            <div key={index} className="flex gap-2">
-                              <Textarea
-                                value={skill}
-                                onChange={(e) => {
-                                  const newSkills = [...formData.functionalSkills.marketExpansion];
-                                  newSkills[index] = e.target.value;
-                                  setFormData(prev => ({ 
-                                    ...prev, 
-                                    functionalSkills: { 
-                                      ...prev.functionalSkills, 
-                                      marketExpansion: newSkills 
-                                    } 
-                                  }));
-                                  setHasChanges(true);
-                                }}
-                                className="text-sm"
-                                rows={2}
-                              />
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => {
-                                  const newSkills = formData.functionalSkills.marketExpansion.filter((_, i) => i !== index);
-                                  setFormData(prev => ({ 
-                                    ...prev, 
-                                    functionalSkills: { 
-                                      ...prev.functionalSkills, 
-                                      marketExpansion: newSkills 
-                                    } 
-                                  }));
-                                  setHasChanges(true);
-                                }}
-                              >
-                                <X className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          ))}
-                        </>
-                      ) : (
-                        <div className="space-y-2">
-                          {formData.functionalSkills.marketExpansion.map((skill, index) => (
-                            <p key={index} className="text-sm text-gray-700">{skill}</p>
-                          ))}
                         </div>
                       )}
                     </div>
-                  )}
-                </div>
-
-                {/* Operational Efficiency */}
-                <div className="border-b border-gray-200 pb-3">
-                  <button 
-                    className="flex justify-between items-center w-full text-left"
-                    onClick={() => toggleFunctionalSkill('operational-efficiency')}
-                  >
-                    <span className="font-medium text-gray-900">Operational Efficiency</span>
-                    {expandedFunctionalSkill === 'operational-efficiency' ? 
-                      <Minus className="h-5 w-5 text-gray-400" /> : 
-                      <Plus className="h-5 w-5 text-gray-400" />
-                    }
-                  </button>
-                  
-                  {expandedFunctionalSkill === 'operational-efficiency' && (
-                    <div className="mt-3 space-y-3">
-                      <Label className="text-sm">Add operational efficiency skills here</Label>
-                    </div>
-                  )}
-                </div>
-
-                {/* Leadership Development */}
-                <div>
-                  <button 
-                    className="flex justify-between items-center w-full text-left"
-                    onClick={() => toggleFunctionalSkill('leadership-development')}
-                  >
-                    <span className="font-medium text-gray-900">Leadership Development</span>
-                    {expandedFunctionalSkill === 'leadership-development' ? 
-                      <Minus className="h-5 w-5 text-gray-400" /> : 
-                      <Plus className="h-5 w-5 text-gray-400" />
-                    }
-                  </button>
-                  
-                  {expandedFunctionalSkill === 'leadership-development' && (
-                    <div className="mt-3 space-y-3">
-                      <Label className="text-sm">Add leadership development skills here</Label>
-                    </div>
-                  )}
-                </div>
+                  ))
+                ) : (
+                  <div className="text-sm text-gray-700">TODO - needs data</div>
+                )}
               </div>
             </div>
 
@@ -1429,7 +1157,7 @@ const ProfileSnapshot = () => {
             <div className="bg-white rounded-lg border">
               <div className="bg-teal-600 text-white rounded-t-lg">
                 <div className="flex items-center justify-between p-4">
-                  <h3 className="text-lg font-semibold">Reza's User Manual</h3>
+                  <h3 className="text-lg font-semibold">{formData?.name?.split(' ')[0] || 'Professional'}'s User Manual</h3>
                   <div className="flex gap-1">
                     <Button
                       variant="ghost"
@@ -1456,13 +1184,13 @@ const ProfileSnapshot = () => {
                 {editStates.userManual ? (
                   <Textarea
                     value={userManualHistory.currentValue}
-                    onChange={(e) => handleInputChange('userManual', e.target.value)}
+                    onChange={(e) => handleInputChange('user_manual', e.target.value)}
                     className="text-sm leading-relaxed"
                     rows={8}
                   />
                 ) : (
                   <div className="text-sm leading-relaxed text-gray-700 whitespace-pre-line">
-                    {userManualHistory.currentValue}
+                    {userManualHistory.currentValue || formData?.user_manual || 'TODO - needs data'}
                   </div>
                 )}
               </div>
