@@ -164,16 +164,23 @@ const ProfileSnapshot = () => {
 
   const [formData, setFormData] = useState<ProfileData>({});
 
-  // Update formData when profileData is loaded
+  // Update formData when profileData is loaded - FIX: Ensure data actually gets set
   useEffect(() => {
-    if (profileDataResponse) {
+    if (profileDataResponse && Object.keys(profileDataResponse).length > 0) {
       console.log('Setting form data from profileDataResponse:', profileDataResponse);
+      console.log('Before setting formData:', formData);
       setFormData(profileDataResponse);
+      console.log('After setting formData (next render will show this)');
     }
   }, [profileDataResponse]);
 
-  console.log('Current formData state:', formData);
+  // Add debug effect to see when formData changes
+  useEffect(() => {
+    console.log('Current formData state:', formData);
+  }, [formData]);
+
   console.log('Component render - isLoading:', isLoading, 'error:', error, 'hasData:', !!profileDataResponse);
+  console.log('Rendering ProfileSnapshot with formData:', formData);
 
   // Helper function to get user initials
   const getUserInitials = (name?: string) => {
@@ -449,8 +456,8 @@ const ProfileSnapshot = () => {
     );
   }
 
-  // Show loading state if we don't have profile data yet
-  if (!profileDataResponse || Object.keys(formData).length === 0) {
+  // FIX: Change condition to check if formData has meaningful profile data, not just any data
+  if (!profileDataResponse || !formData.name) {
     return (
       <DashboardLayout steps={steps} currentStep={3}>
         <div className="max-w-6xl mx-auto space-y-6 p-6">

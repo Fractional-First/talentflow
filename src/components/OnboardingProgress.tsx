@@ -24,7 +24,7 @@ export function OnboardingProgress({
     <div className="py-6 px-1">
       <div className="flex items-center justify-between">
         {steps.map((step, index) => (
-          <React.Fragment key={step.id}>
+          <div key={step.id} className="flex items-center">
             <div className="flex flex-col items-center">
               <div
                 className={cn(
@@ -68,7 +68,7 @@ export function OnboardingProgress({
                 />
               </div>
             )}
-          </React.Fragment>
+          </div>
         ))}
       </div>
     </div>
