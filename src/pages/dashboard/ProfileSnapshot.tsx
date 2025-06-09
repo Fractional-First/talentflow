@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
@@ -134,7 +133,7 @@ const ProfileSnapshot = () => {
   });
 
   // Fetch profile data from Supabase
-  const { data: profileData, isLoading, error } = useQuery({
+  const { data: profileDataResponse, isLoading, error } = useQuery({
     queryKey: ['profile', user?.id],
     queryFn: async () => {
       if (!user?.id) return null;
@@ -152,8 +151,13 @@ const ProfileSnapshot = () => {
         return null;
       }
       
-      console.log('Raw profile data:', data);
-      return data?.profile_data as ProfileData || {};
+      console.log('Raw profile data from DB:', data);
+      
+      // Extract the nested profile_data
+      const profileData = data?.profile_data as ProfileData || {};
+      console.log('Extracted profile data:', profileData);
+      
+      return profileData;
     },
     enabled: !!user?.id,
   });
@@ -162,11 +166,14 @@ const ProfileSnapshot = () => {
 
   // Update formData when profileData is loaded
   useEffect(() => {
-    if (profileData) {
-      console.log('Setting form data:', profileData);
-      setFormData(profileData);
+    if (profileDataResponse) {
+      console.log('Setting form data from profileDataResponse:', profileDataResponse);
+      setFormData(profileDataResponse);
     }
-  }, [profileData]);
+  }, [profileDataResponse]);
+
+  console.log('Current formData state:', formData);
+  console.log('Component render - isLoading:', isLoading, 'error:', error, 'hasData:', !!profileDataResponse);
 
   // Helper function to get user initials
   const getUserInitials = (name?: string) => {
@@ -361,8 +368,8 @@ const ProfileSnapshot = () => {
   };
 
   const handleDiscardChanges = () => {
-    if (profileData) {
-      setFormData(profileData);
+    if (profileDataResponse) {
+      setFormData(profileDataResponse);
     }
     setHasChanges(false);
     // Turn off all edit modes after discarding
@@ -442,6 +449,17 @@ const ProfileSnapshot = () => {
     );
   }
 
+  // Show loading state if we don't have profile data yet
+  if (!profileDataResponse || Object.keys(formData).length === 0) {
+    return (
+      <DashboardLayout steps={steps} currentStep={3}>
+        <div className="max-w-6xl mx-auto space-y-6 p-6">
+          <div className="text-center">Loading profile data...</div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
   console.log('Rendering ProfileSnapshot with formData:', formData);
 
   return (
@@ -501,7 +519,7 @@ const ProfileSnapshot = () => {
                         className="text-2xl font-bold text-center"
                       />
                     ) : (
-                      <h1 className="text-2xl font-bold">{formData?.name || 'TODO - needs data'}</h1>
+                      <h1 className="text-2xl font-bold">{formData?.name || 'Name not available'}</h1>
                     )}
                   </div>
                   <Button
@@ -529,8 +547,8 @@ const ProfileSnapshot = () => {
                   </>
                 ) : (
                   <>
-                    <p className="text-lg text-gray-700">{formData?.role || 'TODO - needs data'}</p>
-                    <p className="text-sm text-gray-500">{formData?.location || 'TODO - needs data'}</p>
+                    <p className="text-lg text-gray-700">{formData?.role || 'Role not available'}</p>
+                    <p className="text-sm text-gray-500">{formData?.location || 'Location not available'}</p>
                   </>
                 )}
               </div>
@@ -567,7 +585,7 @@ const ProfileSnapshot = () => {
                 />
               ) : (
                 <p className="text-sm leading-relaxed text-gray-700">
-                  {descriptionHistory.currentValue || formData?.summary || 'TODO - needs data'}
+                  {descriptionHistory.currentValue || formData?.summary || 'Description not available'}
                 </p>
               )}
             </div>
@@ -616,7 +634,7 @@ const ProfileSnapshot = () => {
                 <ul className="space-y-1">
                   {(formData?.highlights && formData.highlights.length > 0 
                     ? formData.highlights 
-                    : ['TODO - needs data']
+                    : ['Key roles not available']
                   ).map((highlight, index) => (
                     <li key={index} className="text-sm text-gray-700">• {highlight}</li>
                   ))}
@@ -670,7 +688,7 @@ const ProfileSnapshot = () => {
                 <div className="flex flex-wrap gap-2">
                   {(formData?.focus_areas && formData.focus_areas.length > 0 
                     ? formData.focus_areas 
-                    : ['TODO - needs data']
+                    : ['Focus areas not available']
                   ).map((area, index) => (
                     <Badge key={index} variant="secondary" className="text-xs">
                       {area}
@@ -726,7 +744,7 @@ const ProfileSnapshot = () => {
                 <div className="flex flex-wrap gap-2">
                   {(formData?.industries && formData.industries.length > 0 
                     ? formData.industries 
-                    : ['TODO - needs data']
+                    : ['Industries not available']
                   ).map((industry, index) => (
                     <Badge key={index} variant="secondary" className="text-xs">
                       {industry}
@@ -782,7 +800,7 @@ const ProfileSnapshot = () => {
                 <div className="flex flex-wrap gap-2">
                   {(formData?.geographical_coverage && formData.geographical_coverage.length > 0 
                     ? formData.geographical_coverage 
-                    : ['TODO - needs data']
+                    : ['Geographical coverage not available']
                   ).map((region, index) => (
                     <Badge key={index} variant="secondary" className="text-xs">
                       {region}
@@ -838,7 +856,7 @@ const ProfileSnapshot = () => {
                 <div className="flex flex-wrap gap-2">
                   {(formData?.stage_focus && formData.stage_focus.length > 0 
                     ? formData.stage_focus 
-                    : ['TODO - needs data']
+                    : ['Stage focus not available']
                   ).map((stage, index) => (
                     <Badge key={index} variant="secondary" className="text-xs">
                       {stage}
@@ -894,7 +912,7 @@ const ProfileSnapshot = () => {
                 <div className="flex flex-wrap gap-2">
                   {(formData?.personal_interests && formData.personal_interests.length > 0 
                     ? formData.personal_interests 
-                    : ['TODO - needs data']
+                    : ['Personal interests not available']
                   ).map((interest, index) => (
                     <Badge key={index} variant="secondary" className="text-xs">
                       {interest}
@@ -948,7 +966,7 @@ const ProfileSnapshot = () => {
                 <ul className="space-y-1">
                   {(formData?.certifications && formData.certifications.length > 0 
                     ? formData.certifications 
-                    : ['TODO - needs data']
+                    : ['Certifications not available']
                   ).map((cert, index) => (
                     <li key={index} className="text-sm text-gray-700">• {cert}</li>
                   ))}
@@ -970,12 +988,12 @@ const ProfileSnapshot = () => {
               </div>
               {editStates.engagementOptions ? (
                 <Textarea
-                  value="TODO - needs data"
+                  value="Engagement options not available"
                   className="text-sm"
                   rows={2}
                 />
               ) : (
-                <p className="text-sm text-gray-700">TODO - needs data</p>
+                <p className="text-sm text-gray-700">Engagement options not available</p>
               )}
             </div>
           </div>
@@ -1016,7 +1034,7 @@ const ProfileSnapshot = () => {
                   />
                 ) : (
                   <p className="text-sm leading-relaxed">
-                    {meetIntroHistory.currentValue || formData?.meet_them || 'TODO - needs data'}
+                    {meetIntroHistory.currentValue || formData?.meet_them || 'Introduction not available'}
                   </p>
                 )}
               </div>
@@ -1054,7 +1072,7 @@ const ProfileSnapshot = () => {
                         <h4 className="font-medium">{persona.title}</h4>
                         <div className="text-sm leading-relaxed text-gray-700">
                           <ul className="space-y-2">
-                            {persona.bullets.map((bullet, bulletIndex) => (
+                            {persona.bullets?.map((bullet, bulletIndex) => (
                               <li key={bulletIndex}>• {bullet}</li>
                             ))}
                           </ul>
@@ -1063,7 +1081,7 @@ const ProfileSnapshot = () => {
                     ))}
                   </Tabs>
                 ) : (
-                  <div className="text-sm text-gray-700">TODO - needs data</div>
+                  <div className="text-sm text-gray-700">Personas not available</div>
                 )}
               </div>
             </div>
@@ -1094,7 +1112,7 @@ const ProfileSnapshot = () => {
                       </div>
                     ))
                   ) : (
-                    <div className="text-sm text-gray-700">TODO - needs data</div>
+                    <div className="text-sm text-gray-700">Superpowers not available</div>
                   )}
                 </div>
               </div>
@@ -1137,7 +1155,7 @@ const ProfileSnapshot = () => {
                   />
                 ) : (
                   <div className="text-sm leading-relaxed text-gray-700">
-                    {sweetSpotHistory.currentValue || formData?.sweetspot || 'TODO - needs data'}
+                    {sweetSpotHistory.currentValue || formData?.sweetspot || 'Sweet spot not available'}
                   </div>
                 )}
               </div>
@@ -1177,7 +1195,7 @@ const ProfileSnapshot = () => {
                       {expandedFunctionalSkill === categoryName && (
                         <div className="mt-3 space-y-3">
                           <div className="space-y-2">
-                            {skills.map((skill, index) => (
+                            {skills?.map((skill, index) => (
                               <div key={index}>
                                 <h5 className="font-medium text-sm">{skill.title}</h5>
                                 <p className="text-sm text-gray-700">{skill.description}</p>
@@ -1189,7 +1207,7 @@ const ProfileSnapshot = () => {
                     </div>
                   ))
                 ) : (
-                  <div className="text-sm text-gray-700">TODO - needs data</div>
+                  <div className="text-sm text-gray-700">Functional skills not available</div>
                 )}
               </div>
             </div>
@@ -1231,7 +1249,7 @@ const ProfileSnapshot = () => {
                   />
                 ) : (
                   <div className="text-sm leading-relaxed text-gray-700 whitespace-pre-line">
-                    {userManualHistory.currentValue || formData?.user_manual || 'TODO - needs data'}
+                    {userManualHistory.currentValue || formData?.user_manual || 'User manual not available'}
                   </div>
                 )}
               </div>
