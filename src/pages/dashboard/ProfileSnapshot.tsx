@@ -113,6 +113,14 @@ const ProfileSnapshot = () => {
     fieldName: string;
   }>({ isOpen: false, fieldName: '' });
 
+  // Local editing state for personas
+  const [personaEditStates, setPersonaEditStates] = useState<{
+    [key: number]: {
+      title: string;
+      bulletsText: string;
+    };
+  }>({});
+
   const [editStates, setEditStates] = useState<EditStates>({
     basicInfo: false,
     description: false,
@@ -131,6 +139,42 @@ const ProfileSnapshot = () => {
     userManual: false,
     functionalSkills: false,
   });
+
+  // Debounced update function
+  useEffect(() => {
+    const timeouts: { [key: number]: NodeJS.Timeout } = {};
+
+    Object.entries(personaEditStates).forEach(([personaIndex, editState]) => {
+      const index = parseInt(personaIndex);
+      
+      if (timeouts[index]) {
+        clearTimeout(timeouts[index]);
+      }
+      
+      timeouts[index] = setTimeout(() => {
+        // Update the main formData with the debounced changes
+        const bullets = editState.bulletsText
+          .split('\n')
+          .map(line => line.replace(/^•\s*/, '').trim())
+          .filter(line => line.length > 0);
+        
+        setFormData(prev => {
+          const updatedPersonas = [...(prev.personas || [])];
+          updatedPersonas[index] = {
+            ...updatedPersonas[index],
+            title: editState.title,
+            bullets: bullets
+          };
+          return { ...prev, personas: updatedPersonas };
+        });
+        setHasChanges(true);
+      }, 300); // 300ms debounce delay
+    });
+
+    return () => {
+      Object.values(timeouts).forEach(timeout => clearTimeout(timeout));
+    };
+  }, [personaEditStates]);
 
   // Fetch profile data from Supabase with more specific query
   const { data: profileDataResponse, isLoading, error } = useQuery({
@@ -185,6 +229,18 @@ const ProfileSnapshot = () => {
     if (profileDataResponse && typeof profileDataResponse === 'object') {
       console.log('Setting form data from profileDataResponse:', profileDataResponse);
       setFormData(profileDataResponse);
+      
+      // Initialize persona edit states when data is loaded
+      if (profileDataResponse.personas) {
+        const initialEditStates: { [key: number]: { title: string; bulletsText: string } } = {};
+        profileDataResponse.personas.forEach((persona, index) => {
+          initialEditStates[index] = {
+            title: persona.title,
+            bulletsText: persona.bullets?.map(bullet => `• ${bullet}`).join('\n') || ''
+          };
+        });
+        setPersonaEditStates(initialEditStates);
+      }
     }
   }, [profileDataResponse]);
 
@@ -242,7 +298,23 @@ const ProfileSnapshot = () => {
   };
 
   const toggleEdit = (section: keyof EditStates) => {
-    setEditStates(prev => ({ ...prev, [section]: !prev[section] }));
+    setEditStates(prev => {
+      const newState = { ...prev, [section]: !prev[section] };
+      
+      // When entering edit mode for personas, sync local state with current data
+      if (section === 'personas' && newState.personas && formData.personas) {
+        const syncedEditStates: { [key: number]: { title: string; bulletsText: string } } = {};
+        formData.personas.forEach((persona, index) => {
+          syncedEditStates[index] = {
+            title: persona.title,
+            bulletsText: persona.bullets?.map(bullet => `• ${bullet}`).join('\n') || ''
+          };
+        });
+        setPersonaEditStates(syncedEditStates);
+      }
+      
+      return newState;
+    });
   };
 
   const handleInputChange = (field: keyof ProfileData, value: any) => {
@@ -264,6 +336,17 @@ const ProfileSnapshot = () => {
         sweetSpotHistory.updateValue(value);
         break;
     }
+  };
+
+  // Handle persona local state updates
+  const handlePersonaLocalUpdate = (personaIndex: number, field: 'title' | 'bulletsText', value: string) => {
+    setPersonaEditStates(prev => ({
+      ...prev,
+      [personaIndex]: {
+        ...prev[personaIndex],
+        [field]: value
+      }
+    }));
   };
 
   // Handle persona updates
@@ -1118,8 +1201,8 @@ const ProfileSnapshot = () => {
                         >
                           {editStates.personas ? (
                             <Input
-                              value={persona.title}
-                              onChange={(e) => handlePersonaUpdate(index, 'title', e.target.value)}
+                              value={personaEditStates[index]?.title || persona.title}
+                              onChange={(e) => handlePersonaLocalUpdate(index, 'title', e.target.value)}
                               className="text-xs h-6 w-full min-w-0"
                               onClick={(e) => e.stopPropagation()}
                             />
@@ -1132,12 +1215,12 @@ const ProfileSnapshot = () => {
                     
                     {formData.personas.map((persona, index) => (
                       <TabsContent key={index} value={index.toString()} className="space-y-4">
-                        <h4 className="font-medium">{persona.title}</h4>
+                        <h4 className="font-medium">{editStates.personas ? personaEditStates[index]?.title || persona.title : persona.title}</h4>
                         <div className="text-sm leading-relaxed text-gray-700">
                           {editStates.personas ? (
                             <Textarea
-                              value={persona.bullets?.map(bullet => `• ${bullet}`).join('\n') || ''}
-                              onChange={(e) => handlePersonaBulletsTextChange(index, e.target.value)}
+                              value={personaEditStates[index]?.bulletsText || persona.bullets?.map(bullet => `• ${bullet}`).join('\n') || ''}
+                              onChange={(e) => handlePersonaLocalUpdate(index, 'bulletsText', e.target.value)}
                               className="min-h-[120px]"
                               placeholder="Enter bullet points, one per line. Start each line with '•' or it will be added automatically."
                             />
