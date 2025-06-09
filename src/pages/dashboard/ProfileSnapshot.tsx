@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
 import { StepCard, StepCardContent, StepCardDescription, StepCardFooter, StepCardHeader, StepCardTitle } from '@/components/StepCard';
@@ -107,7 +107,8 @@ const ProfileSnapshot = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showAIGuide, setShowAIGuide] = useState(false);
   const [expandedFunctionalSkill, setExpandedFunctionalSkill] = useState<string | null>(null);
-  const [hasChanges, setHasChanges] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [lastSaveTime, setLastSaveTime] = useState<Date | null>(null);
   const [versionHistorySidebar, setVersionHistorySidebar] = useState<{
     isOpen: boolean;
     fieldName: string;
@@ -140,7 +141,50 @@ const ProfileSnapshot = () => {
     functionalSkills: false,
   });
 
-  // Debounced update function
+  // Auto-save function
+  const autoSave = useCallback(async (dataToSave: ProfileData) => {
+    if (!user?.id || !dataToSave || Object.keys(dataToSave).length === 0) return;
+    
+    setIsSaving(true);
+    
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ profile_data: dataToSave as Json })
+        .eq('id', user.id);
+
+      if (error) throw error;
+
+      setLastSaveTime(new Date());
+      console.log('Auto-saved profile data');
+    } catch (error) {
+      console.error('Error auto-saving profile:', error);
+      toast({
+        title: "Auto-save failed",
+        description: "Your changes couldn't be saved automatically. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  }, [user?.id]);
+
+  // Debounced auto-save effect with 1000ms delay
+  useEffect(() => {
+    if (!formData || Object.keys(formData).length === 0 || !profileDataResponse) return;
+    
+    // Only save if data has changed from original
+    const hasChanges = JSON.stringify(formData) !== JSON.stringify(profileDataResponse);
+    if (!hasChanges) return;
+    
+    const timeoutId = setTimeout(() => {
+      autoSave(formData);
+    }, 1000); // 1 second debounce
+
+    return () => clearTimeout(timeoutId);
+  }, [formData, autoSave, profileDataResponse]);
+
+  // Debounced update function for personas
   useEffect(() => {
     const timeouts: { [key: number]: NodeJS.Timeout } = {};
 
@@ -167,7 +211,6 @@ const ProfileSnapshot = () => {
           };
           return { ...prev, personas: updatedPersonas };
         });
-        setHasChanges(true);
       }, 300); // 300ms debounce delay
     });
 
@@ -319,7 +362,6 @@ const ProfileSnapshot = () => {
 
   const handleInputChange = (field: keyof ProfileData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    setHasChanges(true);
 
     // Update version history for specific fields
     switch (field) {
@@ -358,7 +400,6 @@ const ProfileSnapshot = () => {
       updatedPersonas[personaIndex] = { ...updatedPersonas[personaIndex], bullets: value as string[] };
     }
     setFormData(prev => ({ ...prev, personas: updatedPersonas }));
-    setHasChanges(true);
   };
 
   const handlePersonaBulletsTextChange = (personaIndex: number, textValue: string) => {
@@ -369,7 +410,6 @@ const ProfileSnapshot = () => {
 
   const handleProfilePictureUpdate = (imageUrl: string) => {
     setFormData(prev => ({ ...prev, profilePicture: imageUrl }));
-    setHasChanges(true);
   };
 
   const handleArrayChange = (field: keyof ProfileData, index: number, value: string) => {
@@ -378,13 +418,11 @@ const ProfileSnapshot = () => {
     const newArray = [...currentArray];
     newArray[index] = value;
     setFormData(prev => ({ ...prev, [field]: newArray }));
-    setHasChanges(true);
   };
 
   const addArrayItem = (field: keyof ProfileData) => {
     const currentArray = (formData[field] as string[]) || [];
     setFormData(prev => ({ ...prev, [field]: [...currentArray, ''] }));
-    setHasChanges(true);
   };
 
   const removeArrayItem = (field: keyof ProfileData, index: number) => {
@@ -392,7 +430,6 @@ const ProfileSnapshot = () => {
     if (!currentArray) return;
     const newArray = currentArray.filter((_, i) => i !== index);
     setFormData(prev => ({ ...prev, [field]: newArray }));
-    setHasChanges(true);
   };
 
   const openVersionHistory = (fieldName: string) => {
@@ -437,85 +474,6 @@ const ProfileSnapshot = () => {
         setFormData(prev => ({ ...prev, sweetspot: hook.currentValue }));
         break;
     }
-    
-    setHasChanges(true);
-  };
-
-  const handleSave = async () => {
-    setIsSubmitting(true);
-    
-    try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ profile_data: formData as Json })
-        .eq('id', user?.id);
-
-      if (error) throw error;
-
-      setHasChanges(false);
-      // Turn off all edit modes after saving
-      setEditStates({
-        basicInfo: false,
-        description: false,
-        keyRoles: false,
-        focusAreas: false,
-        industries: false,
-        geographicalCoverage: false,
-        stages: false,
-        personalInterests: false,
-        certifications: false,
-        engagementOptions: false,
-        meetIntro: false,
-        personas: false,
-        superpowers: false,
-        sweetSpot: false,
-        userManual: false,
-        functionalSkills: false,
-      });
-      toast({
-        title: "Profile Saved",
-        description: "Your profile changes have been saved successfully.",
-      });
-    } catch (error) {
-      console.error('Error saving profile:', error);
-      toast({
-        title: "Error",
-        description: "Failed to save profile changes.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleDiscardChanges = () => {
-    if (profileDataResponse) {
-      setFormData(profileDataResponse);
-    }
-    setHasChanges(false);
-    // Turn off all edit modes after discarding
-    setEditStates({
-      basicInfo: false,
-      description: false,
-      keyRoles: false,
-      focusAreas: false,
-      industries: false,
-      geographicalCoverage: false,
-      stages: false,
-      personalInterests: false,
-      certifications: false,
-      engagementOptions: false,
-      meetIntro: false,
-      personas: false,
-      superpowers: false,
-      sweetSpot: false,
-      userManual: false,
-      functionalSkills: false,
-    });
-    toast({
-      title: "Changes Discarded",
-      description: "Your changes have been discarded.",
-    });
   };
 
   const handleContinue = async () => {
@@ -627,6 +585,25 @@ const ProfileSnapshot = () => {
       </Dialog>
 
       <div className="max-w-6xl mx-auto space-y-6 p-6">
+        {/* Auto-save status indicator */}
+        {(isSaving || lastSaveTime) && (
+          <div className="flex justify-center">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted px-3 py-1 rounded-full">
+              {isSaving ? (
+                <>
+                  <div className="h-3 w-3 rounded-full bg-yellow-500 animate-pulse" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <div className="h-3 w-3 rounded-full bg-green-500" />
+                  Saved {lastSaveTime && new Date(lastSaveTime).toLocaleTimeString()}
+                </>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Main Layout - Two Column */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Profile Info */}
@@ -1411,33 +1388,6 @@ const ProfileSnapshot = () => {
             </div>
           </div>
         </div>
-
-        {/* Save/Discard Buttons */}
-        {hasChanges && (
-          <div className="flex justify-center gap-4 p-4 bg-gray-50 rounded-lg border">
-            <Button
-              variant="outline"
-              onClick={handleDiscardChanges}
-              disabled={isSubmitting}
-            >
-              <X className="mr-2 h-4 w-4" />
-              Discard Changes
-            </Button>
-            
-            <Button 
-              onClick={handleSave}
-              disabled={isSubmitting}
-              className="bg-teal-600 hover:bg-teal-700"
-            >
-              {isSubmitting ? 'Saving...' : (
-                <>
-                  <Save className="mr-2 h-4 w-4" />
-                  Save Changes
-                </>
-              )}
-            </Button>
-          </div>
-        )}
 
         {/* Action Buttons */}
         <div className="flex justify-between items-center pt-6">
