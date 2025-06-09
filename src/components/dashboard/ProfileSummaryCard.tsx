@@ -3,10 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { StepCard } from '@/components/StepCard';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Pencil, Briefcase, MapPin, Calendar } from 'lucide-react';
+import { Pencil, Briefcase, MapPin, Calendar, CheckCircle } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { cn } from '@/lib/utils';
 
 interface ProfileData {
   name: string;
@@ -17,7 +18,11 @@ interface ProfileData {
   skills: string[];
 }
 
-export const ProfileSummaryCard = () => {
+interface ProfileSummaryCardProps {
+  readonly?: boolean;
+}
+
+export const ProfileSummaryCard = ({ readonly = false }: ProfileSummaryCardProps) => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<ProfileData>({
     name: 'Alex Johnson',
@@ -67,7 +72,14 @@ export const ProfileSummaryCard = () => {
   }, []);
   
   return (
-    <StepCard>
+    <StepCard className={cn(readonly && "bg-muted/30")}>
+      {readonly && (
+        <div className="flex items-center gap-2 p-4 border-b bg-green-50 text-green-800">
+          <CheckCircle className="h-4 w-4" />
+          <span className="text-sm font-medium">Profile Complete</span>
+        </div>
+      )}
+      
       <div className="md:flex gap-6">
         {/* Profile Left Section (Photo) */}
         <div className="md:w-1/4 p-6 flex flex-col items-center text-center border-r border-border/40">
@@ -77,14 +89,16 @@ export const ProfileSummaryCard = () => {
                 {profile.name.split(' ').map(n => n[0]).join('')}
               </AvatarFallback>
             </Avatar>
-            <Button 
-              size="icon" 
-              variant="secondary" 
-              className="absolute bottom-0 right-0 h-8 w-8 rounded-full"
-              onClick={() => navigate('/dashboard/branding')}
-            >
-              <Pencil className="h-4 w-4" />
-            </Button>
+            {!readonly && (
+              <Button 
+                size="icon" 
+                variant="secondary" 
+                className="absolute bottom-0 right-0 h-8 w-8 rounded-full"
+                onClick={() => navigate('/dashboard/branding')}
+              >
+                <Pencil className="h-4 w-4" />
+              </Button>
+            )}
           </div>
         </div>
         
@@ -111,15 +125,17 @@ export const ProfileSummaryCard = () => {
               </div>
             </div>
             
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={() => navigate('/dashboard/profile-creation')}>
-                <Pencil className="h-3.5 w-3.5 mr-1.5" />
-                Edit Profile
-              </Button>
-              <Button size="sm" onClick={() => navigate('/dashboard/waiting-room')}>
-                View Job Status
-              </Button>
-            </div>
+            {!readonly && (
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" onClick={() => navigate('/dashboard/profile-creation')}>
+                  <Pencil className="h-3.5 w-3.5 mr-1.5" />
+                  Edit Profile
+                </Button>
+                <Button size="sm" onClick={() => navigate('/dashboard/waiting-room')}>
+                  View Job Status
+                </Button>
+              </div>
+            )}
           </div>
           
           <Separator className="my-4" />
@@ -142,11 +158,13 @@ export const ProfileSummaryCard = () => {
             </div>
           </div>
           
-          <div className="mt-6 flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => navigate('/dashboard/profile-snapshot')}>
-              View Full Profile
-            </Button>
-          </div>
+          {!readonly && (
+            <div className="mt-6 flex gap-2">
+              <Button variant="outline" size="sm" onClick={() => navigate('/dashboard/profile-snapshot')}>
+                View Full Profile
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </StepCard>
