@@ -24,7 +24,7 @@ export function OnboardingProgress({
     <div className="py-6 px-1">
       <div className="flex items-center justify-between">
         {steps.map((step, index) => (
-          <React.Fragment key={step.id}>
+          <div key={step.id} className="flex items-center">
             <div className="flex flex-col items-center">
               <div
                 className={cn(
@@ -35,7 +35,7 @@ export function OnboardingProgress({
                 )}
               >
                 {step.status === 'completed' ? (
-                  <Check className="h-5 w-5 text-primary-foreground" />
+                  <Check className="h-5 w-5 text-white" />
                 ) : (
                   <span>{step.id}</span>
                 )}
@@ -56,19 +56,19 @@ export function OnboardingProgress({
             </div>
 
             {index < steps.length - 1 && (
-              <div className="relative flex-1 max-w-[100px]">
+              <div className="flex-1 flex items-center justify-center mx-4">
                 <div
                   className={cn(
-                    "progress-connector",
+                    "h-0.5 w-full bg-muted-foreground/30 transition-all duration-300 ease-in-out",
                     (steps[index].status === 'completed' && steps[index + 1].status === 'completed') ||
                     (steps[index].status === 'completed' && steps[index + 1].status === 'current')
-                      ? "progress-connector-active"
+                      ? "bg-primary"
                       : ""
                   )}
                 />
               </div>
             )}
-          </React.Fragment>
+          </div>
         ))}
       </div>
     </div>

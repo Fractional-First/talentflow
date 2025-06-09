@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
 import { StepCard, StepCardContent, StepCardDescription, StepCardFooter, StepCardHeader, StepCardTitle } from '@/components/StepCard';
@@ -39,36 +39,45 @@ import { Label } from '@/components/ui/label';
 import ProfilePictureUpload from '@/components/ProfilePictureUpload';
 import { VersionHistorySidebar } from '@/components/profile/VersionHistorySidebar';
 import { useVersionHistory } from '@/hooks/useVersionHistory';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { useQuery } from '@tanstack/react-query';
+import type { Json } from '@/integrations/supabase/types';
 
 interface ProfileData {
-  name: string;
-  title: string;
-  subtitle: string;
-  location: string;
-  description: string;
-  keyRoles: string[];
-  focusAreas: string[];
-  industries: string[];
-  geographicalCoverage: string[];
-  stages: string[];
-  personalInterests: string[];
-  certifications: string[];
-  engagementOptions: string;
-  meetIntro: string;
-  growthArchitectContent: string;
-  ventureBuilderContent: string;
-  leadershipStewardContent: string;
-  strategicProblemSolving: string;
-  consciousLeadership: string;
-  scalingVentures: string;
-  sweetSpotContent: string;
-  userManual: string;
-  profilePicture?: string;
-  functionalSkills: {
-    marketExpansion: string[];
-    operationalEfficiency: string[];
-    leadershipDevelopment: string[];
+  name?: string;
+  role?: string;
+  summary?: string;
+  location?: string;
+  personas?: Array<{
+    title: string;
+    bullets: string[];
+  }>;
+  meet_them?: string;
+  sweetspot?: string;
+  highlights?: string[];
+  industries?: string[];
+  focus_areas?: string[];
+  stage_focus?: string[];
+  superpowers?: Array<{
+    title: string;
+    description: string;
+  }>;
+  user_manual?: string;
+  certifications?: string[];
+  non_obvious_role?: {
+    title: string;
+    description: string;
   };
+  functional_skills?: {
+    [key: string]: Array<{
+      title: string;
+      description: string;
+    }>;
+  };
+  personal_interests?: string[];
+  geographical_coverage?: string[];
+  profilePicture?: string;
 }
 
 interface EditStates {
@@ -94,14 +103,35 @@ const AIGUIDE_KEY = 'aiSuggestionsGuideSeen';
 
 const ProfileSnapshot = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showAIGuide, setShowAIGuide] = useState(false);
   const [expandedFunctionalSkill, setExpandedFunctionalSkill] = useState<string | null>(null);
-  const [hasChanges, setHasChanges] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [lastSaveTime, setLastSaveTime] = useState<Date | null>(null);
   const [versionHistorySidebar, setVersionHistorySidebar] = useState<{
     isOpen: boolean;
     fieldName: string;
   }>({ isOpen: false, fieldName: '' });
+
+  // Initialize formData state first
+  const [formData, setFormData] = useState<ProfileData>({});
+
+  // Local editing state for personas
+  const [personaEditStates, setPersonaEditStates] = useState<{
+    [key: number]: {
+      title: string;
+      bulletsText: string;
+    };
+  }>({});
+
+  // Local editing state for superpowers
+  const [superpowerEditStates, setSuperpowerEditStates] = useState<{
+    [key: number]: {
+      title: string;
+      description: string;
+    };
+  }>({});
 
   const [editStates, setEditStates] = useState<EditStates>({
     basicInfo: false,
@@ -122,104 +152,223 @@ const ProfileSnapshot = () => {
     functionalSkills: false,
   });
 
-  const [originalData] = useState<ProfileData>({
-    name: 'Reza Behnam',
-    title: 'Venture Builder, CEO',
-    subtitle: 'Holistic Leadership Coach',
-    location: 'Based in Southeast Asia',
-    description: 'Reza is a seasoned, visionary venture builder and CEO with a proven track record of scaling startups and transforming enterprises in Southeast Asia and the US. He\'s a strategic problem-solver and an efficient operator with innovation and inspiration. With expertise in both entrepreneurship and leadership coaching, Reza empowers executives to integrate mindfulness and purpose into their organizations, fostering resilience and long-term success.',
-    keyRoles: [
-      'Founder/CEO, multiple B2B startups',
-      'Venture Builder and APAC GTM Leader, Mach49',
-      'Managing Director, Yahoo! SE Asia',
-      'Venture Architect/Strategist, Vivint Corp',
-      'Data Science, Strategy and FP&A Leader, Intel Corp'
-    ],
-    focusAreas: ['Strategy', 'Venture Building', 'Biz Transformation', 'Execution', 'Coaching', 'Startup Scaling', 'Mentorship'],
-    industries: ['Tech', 'VC', 'Digital Media', 'Leadership Coaching'],
-    geographicalCoverage: ['Southeast Asia', 'United States', 'Middle East'],
-    stages: ['Enterprise', 'Early Stage', 'Seed', 'Growth'],
-    personalInterests: ['Travel', 'Polo', 'Mindfulness', 'Philosophy'],
-    certifications: ['Yoga and Meditation Teacher', 'Coaching'],
-    engagementOptions: 'Fractional, Interim, Coach/Mentor',
-    meetIntro: 'Hello, I\'m Reza! Over the years, I\'ve built and scaled successful ventures, transformed businesses, and coached leaders to realize their potential. I\'m passionate about blending business growth with conscious leadership where people are treated as a whole. When I\'m not guiding ventures or building new companies, you\'ll find me practicing mindfulness or enjoying polo, a sport that connects me to my Persian heritage.',
-    growthArchitectContent: 'Reza is a dynamic leader with a unique blend of strategic vision and operational excellence, driving growth and innovation across Southeast Asia.\n\n• Startup Leader: Led and scaled startups across Southeast Asia to successful exits, while serving as VC Partner, Operator, and Strategic Consultant.\n• Expansion Specialist: Orchestrated Yahoo!\'s expansion into six new Southeast Asian markets, unlocking regional opportunities.\n• Value Creator: Delivered measurable impact through strategic leadership and operational excellence across startups and established enterprises.\n• Sustainability Advocate: Integrating analytical thinking with mindful-based coaching to support sustainable growth and conscious leadership.',
-    ventureBuilderContent: 'Content for Venture Builder persona will be displayed here.',
-    leadershipStewardContent: 'Content for Leadership / Cultural Steward persona will be displayed here.',
-    strategicProblemSolving: 'Connecting the dots. Crafting insights and tactical thinking. Driving business revenue growth and brand presence.',
-    consciousLeadership: 'Mentoring leaders, integrating mindful leadership practices that enhance connection, productivity, positivity and organizational culture.',
-    scalingVentures: 'Leading startups, corporate ventures through planning, fundraising, governance, scaling, professionalization, optimization and, ultimately, exits.',
-    sweetSpotContent: 'Content for Sweet Spot will be displayed here.',
-    userManual: 'Reza values direct communication, transparency, and early alignment on goals. He thrives in environments where challenges are addressed proactively and discussions are data-driven. Balancing creativity with analytical rigor, Reza integrates human-centric leadership with strategic execution to achieve impactful outcomes.\n\nReza\'s Ways of Working: He\'s at his best as part of high-IQ, high EQ teams. His art manifests in human interactions, leadership, the creativity of plans, design, communication, persuasion, and inspiration. The science manifests in data-backed analysis, planning and decision-making. The art requires space and freedom to explore.\n\nReza is a passionate, purpose-driven leader who values self-awareness and modeling through behavior. He works best with people who are respectful and self-aware.',
-    profilePicture: '/lovable-uploads/06e0df8d-b26a-472b-b073-64583b551789.png',
-    functionalSkills: {
-      marketExpansion: [
-        '• Market Entry Expertise: Designed and executed strategies that expanded Yahoo\'s presence across six new countries in Southeast Asia.',
-        '• Scaling Across Borders: Guided startups and enterprises to navigate complex regulatory, cultural, and operational challenges when entering new regions.',
-        '• Tailored Strategies: Develops bespoke go-to-market plans that align with business objectives, leveraging local insights and global trends.',
-        '• Partnership Development: Establishes strategic alliances and partnerships to drive growth and strengthen market positioning.'
-      ],
-      operationalEfficiency: [],
-      leadershipDevelopment: []
-    }
+  // Fetch profile data from Supabase with more specific query
+  const { data: profileDataResponse, isLoading, error } = useQuery({
+    queryKey: ['profile-snapshot', user?.id],
+    queryFn: async () => {
+      if (!user?.id) {
+        console.log('No user ID available');
+        return null;
+      }
+      
+      console.log('Fetching profile data for user:', user.id);
+      
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('profile_data, onboarding_status')
+        .eq('id', user.id)
+        .single();
+      
+      if (error) {
+        console.error('Error fetching profile:', error);
+        throw error;
+      }
+      
+      console.log('Raw profile data from DB:', data);
+      
+      // Check if we have profile_data and it's not just the onboarding_status
+      if (!data || !data.profile_data) {
+        console.log('No profile_data found in database');
+        return null;
+      }
+      
+      const profileData = data.profile_data as ProfileData;
+      console.log('Extracted profile data:', profileData);
+      
+      // Validate that we have meaningful profile data
+      if (!profileData || Object.keys(profileData).length === 0) {
+        console.log('Profile data is empty or invalid');
+        return null;
+      }
+      
+      return profileData;
+    },
+    enabled: !!user?.id,
+    retry: false, // Don't retry on error to avoid confusion
   });
 
-  const [formData, setFormData] = useState<ProfileData>(originalData);
+  // Auto-save function
+  const autoSave = useCallback(async (dataToSave: ProfileData) => {
+    if (!user?.id || !dataToSave || Object.keys(dataToSave).length === 0) return;
+    
+    setIsSaving(true);
+    
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ profile_data: dataToSave as Json })
+        .eq('id', user.id);
+
+      if (error) throw error;
+
+      setLastSaveTime(new Date());
+      console.log('Auto-saved profile data');
+    } catch (error) {
+      console.error('Error auto-saving profile:', error);
+      toast({
+        title: "Auto-save failed",
+        description: "Your changes couldn't be saved automatically. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  }, [user?.id]);
+
+  // Debounced auto-save effect with 1000ms delay
+  useEffect(() => {
+    if (!formData || Object.keys(formData).length === 0 || !profileDataResponse) return;
+    
+    // Only save if data has changed from original
+    const hasChanges = JSON.stringify(formData) !== JSON.stringify(profileDataResponse);
+    if (!hasChanges) return;
+    
+    const timeoutId = setTimeout(() => {
+      autoSave(formData);
+    }, 1000); // 1 second debounce
+
+    return () => clearTimeout(timeoutId);
+  }, [formData, autoSave, profileDataResponse]);
+
+  // Debounced update function for personas
+  useEffect(() => {
+    const timeouts: { [key: number]: NodeJS.Timeout } = {};
+
+    Object.entries(personaEditStates).forEach(([personaIndex, editState]) => {
+      const index = parseInt(personaIndex);
+      
+      if (timeouts[index]) {
+        clearTimeout(timeouts[index]);
+      }
+      
+      timeouts[index] = setTimeout(() => {
+        // Update the main formData with the debounced changes
+        const bullets = editState.bulletsText
+          .split('\n')
+          .map(line => line.replace(/^•\s*/, '').trim())
+          .filter(line => line.length > 0);
+        
+        setFormData(prev => {
+          const updatedPersonas = [...(prev.personas || [])];
+          updatedPersonas[index] = {
+            ...updatedPersonas[index],
+            title: editState.title,
+            bullets: bullets
+          };
+          return { ...prev, personas: updatedPersonas };
+        });
+      }, 300); // 300ms debounce delay
+    });
+
+    return () => {
+      Object.values(timeouts).forEach(timeout => clearTimeout(timeout));
+    };
+  }, [personaEditStates]);
+
+  // Debounced update function for superpowers
+  useEffect(() => {
+    const timeouts: { [key: number]: NodeJS.Timeout } = {};
+
+    Object.entries(superpowerEditStates).forEach(([superpowerIndex, editState]) => {
+      const index = parseInt(superpowerIndex);
+      
+      if (timeouts[index]) {
+        clearTimeout(timeouts[index]);
+      }
+      
+      timeouts[index] = setTimeout(() => {
+        // Update the main formData with the debounced changes
+        setFormData(prev => {
+          const updatedSuperpowers = [...(prev.superpowers || [])];
+          updatedSuperpowers[index] = {
+            title: editState.title,
+            description: editState.description
+          };
+          return { ...prev, superpowers: updatedSuperpowers };
+        });
+      }, 300); // 300ms debounce delay
+    });
+
+    return () => {
+      Object.values(timeouts).forEach(timeout => clearTimeout(timeout));
+    };
+  }, [superpowerEditStates]);
+
+  // Update formData when profileData is loaded
+  useEffect(() => {
+    console.log('useEffect triggered - profileDataResponse:', profileDataResponse);
+    if (profileDataResponse && typeof profileDataResponse === 'object') {
+      console.log('Setting form data from profileDataResponse:', profileDataResponse);
+      setFormData(profileDataResponse);
+      
+      // Initialize persona edit states when data is loaded
+      if (profileDataResponse.personas) {
+        const initialEditStates: { [key: number]: { title: string; bulletsText: string } } = {};
+        profileDataResponse.personas.forEach((persona, index) => {
+          initialEditStates[index] = {
+            title: persona.title,
+            bulletsText: persona.bullets?.map(bullet => `• ${bullet}`).join('\n') || ''
+          };
+        });
+        setPersonaEditStates(initialEditStates);
+      }
+
+      // Initialize superpower edit states when data is loaded
+      if (profileDataResponse.superpowers) {
+        const initialSuperpowerEditStates: { [key: number]: { title: string; description: string } } = {};
+        profileDataResponse.superpowers.forEach((superpower, index) => {
+          initialSuperpowerEditStates[index] = {
+            title: superpower.title,
+            description: superpower.description
+          };
+        });
+        setSuperpowerEditStates(initialSuperpowerEditStates);
+      }
+    }
+  }, [profileDataResponse]);
+
+  // Debug effect to track formData changes
+  useEffect(() => {
+    console.log('Current formData state:', formData);
+  }, [formData]);
+
+  console.log('Component render - isLoading:', isLoading, 'error:', error, 'profileDataResponse:', profileDataResponse);
+
+  // Helper function to get user initials
+  const getUserInitials = (name?: string) => {
+    if (!name) return 'U';
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  };
 
   // Version history hooks for all text fields
   const descriptionHistory = useVersionHistory({
     fieldName: 'Description',
-    initialValue: originalData.description
+    initialValue: formData?.summary || ''
   });
 
   const meetIntroHistory = useVersionHistory({
     fieldName: 'Meet Intro',
-    initialValue: originalData.meetIntro
+    initialValue: formData?.meet_them || ''
   });
 
   const userManualHistory = useVersionHistory({
     fieldName: 'User Manual',
-    initialValue: originalData.userManual
-  });
-
-  const growthArchitectHistory = useVersionHistory({
-    fieldName: 'Growth Architect',
-    initialValue: originalData.growthArchitectContent
-  });
-
-  const ventureBuilderHistory = useVersionHistory({
-    fieldName: 'Venture Builder',
-    initialValue: originalData.ventureBuilderContent
-  });
-
-  const leadershipStewardHistory = useVersionHistory({
-    fieldName: 'Leadership Steward',
-    initialValue: originalData.leadershipStewardContent
-  });
-
-  const strategicProblemSolvingHistory = useVersionHistory({
-    fieldName: 'Strategic Problem Solving',
-    initialValue: originalData.strategicProblemSolving
-  });
-
-  const consciousLeadershipHistory = useVersionHistory({
-    fieldName: 'Conscious Leadership',
-    initialValue: originalData.consciousLeadership
-  });
-
-  const scalingVenturesHistory = useVersionHistory({
-    fieldName: 'Scaling Ventures',
-    initialValue: originalData.scalingVentures
+    initialValue: formData?.user_manual || ''
   });
 
   const sweetSpotHistory = useVersionHistory({
     fieldName: 'Sweet Spot',
-    initialValue: originalData.sweetSpotContent
-  });
-
-  const engagementOptionsHistory = useVersionHistory({
-    fieldName: 'Engagement Options',
-    initialValue: originalData.engagementOptions
+    initialValue: formData?.sweetspot || ''
   });
 
   const steps: Step[] = [
@@ -230,85 +379,165 @@ const ProfileSnapshot = () => {
 
   // Show popup on first load
   useEffect(() => {
+    const AIGUIDE_KEY = 'aiSuggestionsGuideSeen';
     if (!localStorage.getItem(AIGUIDE_KEY)) setShowAIGuide(true);
   }, []);
 
   // When guide is dismissed, remember for future visits
   const handleDismissGuide = () => {
+    const AIGUIDE_KEY = 'aiSuggestionsGuideSeen';
     localStorage.setItem(AIGUIDE_KEY, 'seen');
     setShowAIGuide(false);
   };
 
   const toggleEdit = (section: keyof EditStates) => {
-    setEditStates(prev => ({ ...prev, [section]: !prev[section] }));
+    setEditStates(prev => {
+      const newState = { ...prev, [section]: !prev[section] };
+      
+      // When entering edit mode for personas, sync local state with current data
+      if (section === 'personas' && newState.personas && formData.personas) {
+        const syncedEditStates: { [key: number]: { title: string; bulletsText: string } } = {};
+        formData.personas.forEach((persona, index) => {
+          syncedEditStates[index] = {
+            title: persona.title,
+            bulletsText: persona.bullets?.map(bullet => `• ${bullet}`).join('\n') || ''
+          };
+        });
+        setPersonaEditStates(syncedEditStates);
+      }
+
+      // When entering edit mode for superpowers, sync local state with current data
+      if (section === 'superpowers' && newState.superpowers && formData.superpowers) {
+        const syncedSuperpowerEditStates: { [key: number]: { title: string; description: string } } = {};
+        formData.superpowers.forEach((superpower, index) => {
+          syncedSuperpowerEditStates[index] = {
+            title: superpower.title,
+            description: superpower.description
+          };
+        });
+        setSuperpowerEditStates(syncedSuperpowerEditStates);
+      }
+      
+      return newState;
+    });
   };
 
   const handleInputChange = (field: keyof ProfileData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    setHasChanges(true);
 
     // Update version history for specific fields
     switch (field) {
-      case 'description':
+      case 'summary':
         descriptionHistory.updateValue(value);
         break;
-      case 'meetIntro':
+      case 'meet_them':
         meetIntroHistory.updateValue(value);
         break;
-      case 'userManual':
+      case 'user_manual':
         userManualHistory.updateValue(value);
         break;
-      case 'growthArchitectContent':
-        growthArchitectHistory.updateValue(value);
-        break;
-      case 'ventureBuilderContent':
-        ventureBuilderHistory.updateValue(value);
-        break;
-      case 'leadershipStewardContent':
-        leadershipStewardHistory.updateValue(value);
-        break;
-      case 'strategicProblemSolving':
-        strategicProblemSolvingHistory.updateValue(value);
-        break;
-      case 'consciousLeadership':
-        consciousLeadershipHistory.updateValue(value);
-        break;
-      case 'scalingVentures':
-        scalingVenturesHistory.updateValue(value);
-        break;
-      case 'sweetSpotContent':
+      case 'sweetspot':
         sweetSpotHistory.updateValue(value);
-        break;
-      case 'engagementOptions':
-        engagementOptionsHistory.updateValue(value);
         break;
     }
   };
 
+  // Handle persona local state updates
+  const handlePersonaLocalUpdate = (personaIndex: number, field: 'title' | 'bulletsText', value: string) => {
+    setPersonaEditStates(prev => ({
+      ...prev,
+      [personaIndex]: {
+        ...prev[personaIndex],
+        [field]: value
+      }
+    }));
+  };
+
+  // Handle superpower local state updates
+  const handleSuperpowerLocalUpdate = (superpowerIndex: number, field: 'title' | 'description', value: string) => {
+    setSuperpowerEditStates(prev => ({
+      ...prev,
+      [superpowerIndex]: {
+        ...prev[superpowerIndex],
+        [field]: value
+      }
+    }));
+  };
+
+  // Handle persona updates
+  const handlePersonaUpdate = (personaIndex: number, field: 'title' | 'bullets', value: string | string[]) => {
+    const updatedPersonas = [...(formData.personas || [])];
+    if (field === 'title') {
+      updatedPersonas[personaIndex] = { ...updatedPersonas[personaIndex], title: value as string };
+    } else {
+      updatedPersonas[personaIndex] = { ...updatedPersonas[personaIndex], bullets: value as string[] };
+    }
+    setFormData(prev => ({ ...prev, personas: updatedPersonas }));
+  };
+
+  const handlePersonaBulletsTextChange = (personaIndex: number, textValue: string) => {
+    // Convert text back to bullets array (split by lines and filter empty)
+    const bullets = textValue.split('\n').map(line => line.replace(/^•\s*/, '').trim()).filter(line => line.length > 0);
+    handlePersonaUpdate(personaIndex, 'bullets', bullets);
+  };
+
   const handleProfilePictureUpdate = (imageUrl: string) => {
     setFormData(prev => ({ ...prev, profilePicture: imageUrl }));
-    setHasChanges(true);
   };
 
   const handleArrayChange = (field: keyof ProfileData, index: number, value: string) => {
     const currentArray = formData[field] as string[];
+    if (!currentArray) return;
     const newArray = [...currentArray];
     newArray[index] = value;
     setFormData(prev => ({ ...prev, [field]: newArray }));
-    setHasChanges(true);
   };
 
   const addArrayItem = (field: keyof ProfileData) => {
-    const currentArray = formData[field] as string[];
+    const currentArray = (formData[field] as string[]) || [];
     setFormData(prev => ({ ...prev, [field]: [...currentArray, ''] }));
-    setHasChanges(true);
   };
 
   const removeArrayItem = (field: keyof ProfileData, index: number) => {
     const currentArray = formData[field] as string[];
+    if (!currentArray) return;
     const newArray = currentArray.filter((_, i) => i !== index);
     setFormData(prev => ({ ...prev, [field]: newArray }));
-    setHasChanges(true);
+  };
+
+  // Add superpower item
+  const addSuperpowerItem = () => {
+    const currentSuperpowers = formData.superpowers || [];
+    const newSuperpower = { title: '', description: '' };
+    setFormData(prev => ({ ...prev, superpowers: [...currentSuperpowers, newSuperpower] }));
+    
+    // Initialize the edit state for the new superpower
+    const newIndex = currentSuperpowers.length;
+    setSuperpowerEditStates(prev => ({
+      ...prev,
+      [newIndex]: { title: '', description: '' }
+    }));
+  };
+
+  // Remove superpower item
+  const removeSuperpowerItem = (index: number) => {
+    const currentSuperpowers = formData.superpowers || [];
+    const newSuperpowers = currentSuperpowers.filter((_, i) => i !== index);
+    setFormData(prev => ({ ...prev, superpowers: newSuperpowers }));
+    
+    // Remove from edit state and reindex
+    const newEditStates: { [key: number]: { title: string; description: string } } = {};
+    newSuperpowers.forEach((superpower, newIndex) => {
+      if (superpowerEditStates[newIndex < index ? newIndex : newIndex + 1]) {
+        newEditStates[newIndex] = superpowerEditStates[newIndex < index ? newIndex : newIndex + 1];
+      } else {
+        newEditStates[newIndex] = {
+          title: superpower.title,
+          description: superpower.description
+        };
+      }
+    });
+    setSuperpowerEditStates(newEditStates);
   };
 
   const openVersionHistory = (fieldName: string) => {
@@ -327,22 +556,8 @@ const ProfileSnapshot = () => {
         return meetIntroHistory;
       case 'User Manual':
         return userManualHistory;
-      case 'Growth Architect':
-        return growthArchitectHistory;
-      case 'Venture Builder':
-        return ventureBuilderHistory;
-      case 'Leadership Steward':
-        return leadershipStewardHistory;
-      case 'Strategic Problem Solving':
-        return strategicProblemSolvingHistory;
-      case 'Conscious Leadership':
-        return consciousLeadershipHistory;
-      case 'Scaling Ventures':
-        return scalingVenturesHistory;
       case 'Sweet Spot':
         return sweetSpotHistory;
-      case 'Engagement Options':
-        return engagementOptionsHistory;
       default:
         return descriptionHistory; // fallback
     }
@@ -355,119 +570,95 @@ const ProfileSnapshot = () => {
     // Update form data based on field
     switch (versionHistorySidebar.fieldName) {
       case 'Description':
-        setFormData(prev => ({ ...prev, description: hook.currentValue }));
+        setFormData(prev => ({ ...prev, summary: hook.currentValue }));
         break;
       case 'Meet Intro':
-        setFormData(prev => ({ ...prev, meetIntro: hook.currentValue }));
+        setFormData(prev => ({ ...prev, meet_them: hook.currentValue }));
         break;
       case 'User Manual':
-        setFormData(prev => ({ ...prev, userManual: hook.currentValue }));
-        break;
-      case 'Growth Architect':
-        setFormData(prev => ({ ...prev, growthArchitectContent: hook.currentValue }));
-        break;
-      case 'Venture Builder':
-        setFormData(prev => ({ ...prev, ventureBuilderContent: hook.currentValue }));
-        break;
-      case 'Leadership Steward':
-        setFormData(prev => ({ ...prev, leadershipStewardContent: hook.currentValue }));
-        break;
-      case 'Strategic Problem Solving':
-        setFormData(prev => ({ ...prev, strategicProblemSolving: hook.currentValue }));
-        break;
-      case 'Conscious Leadership':
-        setFormData(prev => ({ ...prev, consciousLeadership: hook.currentValue }));
-        break;
-      case 'Scaling Ventures':
-        setFormData(prev => ({ ...prev, scalingVentures: hook.currentValue }));
+        setFormData(prev => ({ ...prev, user_manual: hook.currentValue }));
         break;
       case 'Sweet Spot':
-        setFormData(prev => ({ ...prev, sweetSpotContent: hook.currentValue }));
-        break;
-      case 'Engagement Options':
-        setFormData(prev => ({ ...prev, engagementOptions: hook.currentValue }));
+        setFormData(prev => ({ ...prev, sweetspot: hook.currentValue }));
         break;
     }
-    
-    setHasChanges(true);
   };
 
-  const handleSave = () => {
+  const handleContinue = async () => {
     setIsSubmitting(true);
     
-    // Simulate save operation
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setHasChanges(false);
-      // Turn off all edit modes after saving
-      setEditStates({
-        basicInfo: false,
-        description: false,
-        keyRoles: false,
-        focusAreas: false,
-        industries: false,
-        geographicalCoverage: false,
-        stages: false,
-        personalInterests: false,
-        certifications: false,
-        engagementOptions: false,
-        meetIntro: false,
-        personas: false,
-        superpowers: false,
-        sweetSpot: false,
-        userManual: false,
-        functionalSkills: false,
-      });
-      toast({
-        title: "Profile Saved",
-        description: "Your profile changes have been saved successfully.",
-      });
-    }, 1000);
-  };
+    try {
+      // Update onboarding status to completed
+      const { error } = await supabase
+        .from('profiles')
+        .update({ onboarding_status: 'PROFILE_CONFIRMED' })
+        .eq('id', user?.id);
 
-  const handleDiscardChanges = () => {
-    setFormData(originalData);
-    setHasChanges(false);
-    // Turn off all edit modes after discarding
-    setEditStates({
-      basicInfo: false,
-      description: false,
-      keyRoles: false,
-      focusAreas: false,
-      industries: false,
-      geographicalCoverage: false,
-      stages: false,
-      personalInterests: false,
-      certifications: false,
-      engagementOptions: false,
-      meetIntro: false,
-      personas: false,
-      superpowers: false,
-      sweetSpot: false,
-      userManual: false,
-      functionalSkills: false,
-    });
-    toast({
-      title: "Changes Discarded",
-      description: "Your changes have been discarded.",
-    });
-  };
+      if (error) throw error;
 
-  const handleContinue = () => {
-    setIsSubmitting(true);
-    
-    // Mark onboarding as complete and navigate to dashboard
-    localStorage.setItem('onboardingComplete', 'true');
-    
-    setTimeout(() => {
-      setIsSubmitting(false);
+      // Navigate immediately after successful update
       navigate('/dashboard');
-    }, 1000);
+    } catch (error) {
+      console.error('Error updating onboarding status:', error);
+      toast({
+        title: "Error",
+        description: "Failed to complete onboarding.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const toggleFunctionalSkill = (skill: string) => {
     setExpandedFunctionalSkill(expandedFunctionalSkill === skill ? null : skill);
   };
+
+  if (isLoading) {
+    return (
+      <DashboardLayout steps={steps} currentStep={3}>
+        <div className="max-w-6xl mx-auto space-y-6 p-6">
+          <div className="text-center">Loading profile...</div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  if (error) {
+    console.error('Profile query error:', error);
+    return (
+      <DashboardLayout steps={steps} currentStep={3}>
+        <div className="max-w-6xl mx-auto space-y-6 p-6">
+          <div className="text-center text-red-600">
+            <p>Error loading profile. Please try again.</p>
+            <p className="text-sm mt-2">Error: {error.message}</p>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  // Check if we have meaningful profile data
+  if (!profileDataResponse || !formData.name) {
+    return (
+      <DashboardLayout steps={steps} currentStep={3}>
+        <div className="max-w-6xl mx-auto space-y-6 p-6">
+          <div className="text-center">
+            <p>No profile data found.</p>
+            <p className="text-sm text-gray-600 mt-2">Please complete your profile creation first.</p>
+            <Button 
+              onClick={() => navigate('/dashboard/profile-creation')}
+              className="mt-4"
+            >
+              Go to Profile Creation
+            </Button>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  console.log('Rendering ProfileSnapshot with formData:', formData);
 
   return (
     <DashboardLayout steps={steps} currentStep={3}>
@@ -501,6 +692,25 @@ const ProfileSnapshot = () => {
       </Dialog>
 
       <div className="max-w-6xl mx-auto space-y-6 p-6">
+        {/* Auto-save status indicator */}
+        {(isSaving || lastSaveTime) && (
+          <div className="flex justify-center">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted px-3 py-1 rounded-full">
+              {isSaving ? (
+                <>
+                  <div className="h-3 w-3 rounded-full bg-yellow-500 animate-pulse" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <div className="h-3 w-3 rounded-full bg-green-500" />
+                  Saved {lastSaveTime && new Date(lastSaveTime).toLocaleTimeString()}
+                </>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Main Layout - Two Column */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Profile Info */}
@@ -508,11 +718,12 @@ const ProfileSnapshot = () => {
             {/* Profile Image and Basic Info */}
             <div className="text-center">
               <div className="relative mb-4 inline-block">
-                <ProfilePictureUpload
-                  currentImage={formData.profilePicture}
-                  userName={formData.name}
-                  onImageUpdate={handleProfilePictureUpdate}
-                />
+                <Avatar className="h-32 w-32 shadow-lg border-4 border-white">
+                  <AvatarImage src={formData?.profilePicture} />
+                  <AvatarFallback className="text-2xl bg-[#449889] text-white">
+                    {getUserInitials(formData?.name)}
+                  </AvatarFallback>
+                </Avatar>
               </div>
               
               <div className="space-y-2">
@@ -520,12 +731,12 @@ const ProfileSnapshot = () => {
                   <div className="flex-1">
                     {editStates.basicInfo ? (
                       <Input
-                        value={formData.name}
+                        value={formData?.name || ''}
                         onChange={(e) => handleInputChange('name', e.target.value)}
                         className="text-2xl font-bold text-center"
                       />
                     ) : (
-                      <h1 className="text-2xl font-bold">{formData.name}</h1>
+                      <h1 className="text-2xl font-bold">{formData?.name || 'Name not available'}</h1>
                     )}
                   </div>
                   <Button
@@ -541,26 +752,20 @@ const ProfileSnapshot = () => {
                 {editStates.basicInfo ? (
                   <>
                     <Input
-                      value={formData.title}
-                      onChange={(e) => handleInputChange('title', e.target.value)}
+                      value={formData?.role || ''}
+                      onChange={(e) => handleInputChange('role', e.target.value)}
                       className="text-lg text-center"
                     />
                     <Input
-                      value={formData.subtitle}
-                      onChange={(e) => handleInputChange('subtitle', e.target.value)}
-                      className="text-sm text-center"
-                    />
-                    <Input
-                      value={formData.location}
+                      value={formData?.location || ''}
                       onChange={(e) => handleInputChange('location', e.target.value)}
                       className="text-sm text-center"
                     />
                   </>
                 ) : (
                   <>
-                    <p className="text-lg text-gray-700">{formData.title}</p>
-                    <p className="text-sm text-gray-600">{formData.subtitle}</p>
-                    <p className="text-sm text-gray-500">{formData.location}</p>
+                    <p className="text-lg text-gray-700">{formData?.role || 'Role not available'}</p>
+                    <p className="text-sm text-gray-500">{formData?.location || 'Location not available'}</p>
                   </>
                 )}
               </div>
@@ -591,12 +796,14 @@ const ProfileSnapshot = () => {
               {editStates.description ? (
                 <Textarea
                   value={descriptionHistory.currentValue}
-                  onChange={(e) => handleInputChange('description', e.target.value)}
+                  onChange={(e) => handleInputChange('summary', e.target.value)}
                   className="text-sm leading-relaxed"
                   rows={6}
                 />
               ) : (
-                <p className="text-sm leading-relaxed text-gray-700">{descriptionHistory.currentValue}</p>
+                <p className="text-sm leading-relaxed text-gray-700">
+                  {descriptionHistory.currentValue || formData?.summary || 'Description not available'}
+                </p>
               )}
             </div>
 
@@ -614,17 +821,17 @@ const ProfileSnapshot = () => {
               </div>
               {editStates.keyRoles ? (
                 <div className="space-y-2">
-                  {formData.keyRoles.map((role, index) => (
+                  {(formData?.highlights || []).map((highlight, index) => (
                     <div key={index} className="flex gap-2">
                       <Input
-                        value={role}
-                        onChange={(e) => handleArrayChange('keyRoles', index, e.target.value)}
+                        value={highlight}
+                        onChange={(e) => handleArrayChange('highlights', index, e.target.value)}
                         className="text-sm"
                       />
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => removeArrayItem('keyRoles', index)}
+                        onClick={() => removeArrayItem('highlights', index)}
                       >
                         <X className="h-4 w-4" />
                       </Button>
@@ -633,17 +840,20 @@ const ProfileSnapshot = () => {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => addArrayItem('keyRoles')}
+                    onClick={() => addArrayItem('highlights')}
                     className="w-full"
                   >
-                    <Plus className="h-4 w-4 mr-2" />
+                    <Plus className="h-4 w-4" />
                     Add Role
                   </Button>
                 </div>
               ) : (
                 <ul className="space-y-1">
-                  {formData.keyRoles.map((role, index) => (
-                    <li key={index} className="text-sm text-gray-700">• {role}</li>
+                  {(formData?.highlights && formData.highlights.length > 0 
+                    ? formData.highlights 
+                    : ['Key roles not available']
+                  ).map((highlight, index) => (
+                    <li key={index} className="text-sm text-gray-700">• {highlight}</li>
                   ))}
                 </ul>
               )}
@@ -664,17 +874,17 @@ const ProfileSnapshot = () => {
               {editStates.focusAreas ? (
                 <div className="space-y-2">
                   <div className="flex flex-wrap gap-2">
-                    {formData.focusAreas.map((area, index) => (
+                    {(formData?.focus_areas || []).map((area, index) => (
                       <div key={index} className="flex items-center gap-1">
                         <Input
                           value={area}
-                          onChange={(e) => handleArrayChange('focusAreas', index, e.target.value)}
+                          onChange={(e) => handleArrayChange('focus_areas', index, e.target.value)}
                           className="text-xs h-8 w-32"
                         />
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => removeArrayItem('focusAreas', index)}
+                          onClick={() => removeArrayItem('focus_areas', index)}
                           className="h-6 w-6 p-0"
                         >
                           <X className="h-3 w-3" />
@@ -685,7 +895,7 @@ const ProfileSnapshot = () => {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => addArrayItem('focusAreas')}
+                    onClick={() => addArrayItem('focus_areas')}
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     Add Area
@@ -693,7 +903,10 @@ const ProfileSnapshot = () => {
                 </div>
               ) : (
                 <div className="flex flex-wrap gap-2">
-                  {formData.focusAreas.map((area, index) => (
+                  {(formData?.focus_areas && formData.focus_areas.length > 0 
+                    ? formData.focus_areas 
+                    : ['Focus areas not available']
+                  ).map((area, index) => (
                     <Badge key={index} variant="secondary" className="text-xs">
                       {area}
                     </Badge>
@@ -717,7 +930,7 @@ const ProfileSnapshot = () => {
               {editStates.industries ? (
                 <div className="space-y-2">
                   <div className="flex flex-wrap gap-2">
-                    {formData.industries.map((industry, index) => (
+                    {(formData?.industries || []).map((industry, index) => (
                       <div key={index} className="flex items-center gap-1">
                         <Input
                           value={industry}
@@ -746,7 +959,10 @@ const ProfileSnapshot = () => {
                 </div>
               ) : (
                 <div className="flex flex-wrap gap-2">
-                  {formData.industries.map((industry, index) => (
+                  {(formData?.industries && formData.industries.length > 0 
+                    ? formData.industries 
+                    : ['Industries not available']
+                  ).map((industry, index) => (
                     <Badge key={index} variant="secondary" className="text-xs">
                       {industry}
                     </Badge>
@@ -770,17 +986,17 @@ const ProfileSnapshot = () => {
               {editStates.geographicalCoverage ? (
                 <div className="space-y-2">
                   <div className="flex flex-wrap gap-2">
-                    {formData.geographicalCoverage.map((region, index) => (
+                    {(formData?.geographical_coverage || []).map((region, index) => (
                       <div key={index} className="flex items-center gap-1">
                         <Input
                           value={region}
-                          onChange={(e) => handleArrayChange('geographicalCoverage', index, e.target.value)}
+                          onChange={(e) => handleArrayChange('geographical_coverage', index, e.target.value)}
                           className="text-xs h-8 w-32"
                         />
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => removeArrayItem('geographicalCoverage', index)}
+                          onClick={() => removeArrayItem('geographical_coverage', index)}
                           className="h-6 w-6 p-0"
                         >
                           <X className="h-3 w-3" />
@@ -791,7 +1007,7 @@ const ProfileSnapshot = () => {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => addArrayItem('geographicalCoverage')}
+                    onClick={() => addArrayItem('geographical_coverage')}
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     Add Region
@@ -799,7 +1015,10 @@ const ProfileSnapshot = () => {
                 </div>
               ) : (
                 <div className="flex flex-wrap gap-2">
-                  {formData.geographicalCoverage.map((region, index) => (
+                  {(formData?.geographical_coverage && formData.geographical_coverage.length > 0 
+                    ? formData.geographical_coverage 
+                    : ['Geographical coverage not available']
+                  ).map((region, index) => (
                     <Badge key={index} variant="secondary" className="text-xs">
                       {region}
                     </Badge>
@@ -823,17 +1042,17 @@ const ProfileSnapshot = () => {
               {editStates.stages ? (
                 <div className="space-y-2">
                   <div className="flex flex-wrap gap-2">
-                    {formData.stages.map((stage, index) => (
+                    {(formData?.stage_focus || []).map((stage, index) => (
                       <div key={index} className="flex items-center gap-1">
                         <Input
                           value={stage}
-                          onChange={(e) => handleArrayChange('stages', index, e.target.value)}
+                          onChange={(e) => handleArrayChange('stage_focus', index, e.target.value)}
                           className="text-xs h-8 w-32"
                         />
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => removeArrayItem('stages', index)}
+                          onClick={() => removeArrayItem('stage_focus', index)}
                           className="h-6 w-6 p-0"
                         >
                           <X className="h-3 w-3" />
@@ -844,7 +1063,7 @@ const ProfileSnapshot = () => {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => addArrayItem('stages')}
+                    onClick={() => addArrayItem('stage_focus')}
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     Add Stage
@@ -852,7 +1071,10 @@ const ProfileSnapshot = () => {
                 </div>
               ) : (
                 <div className="flex flex-wrap gap-2">
-                  {formData.stages.map((stage, index) => (
+                  {(formData?.stage_focus && formData.stage_focus.length > 0 
+                    ? formData.stage_focus 
+                    : ['Stage focus not available']
+                  ).map((stage, index) => (
                     <Badge key={index} variant="secondary" className="text-xs">
                       {stage}
                     </Badge>
@@ -876,17 +1098,17 @@ const ProfileSnapshot = () => {
               {editStates.personalInterests ? (
                 <div className="space-y-2">
                   <div className="flex flex-wrap gap-2">
-                    {formData.personalInterests.map((interest, index) => (
+                    {(formData?.personal_interests || []).map((interest, index) => (
                       <div key={index} className="flex items-center gap-1">
                         <Input
                           value={interest}
-                          onChange={(e) => handleArrayChange('personalInterests', index, e.target.value)}
+                          onChange={(e) => handleArrayChange('personal_interests', index, e.target.value)}
                           className="text-xs h-8 w-32"
                         />
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => removeArrayItem('personalInterests', index)}
+                          onClick={() => removeArrayItem('personal_interests', index)}
                           className="h-6 w-6 p-0"
                         >
                           <X className="h-3 w-3" />
@@ -897,7 +1119,7 @@ const ProfileSnapshot = () => {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => addArrayItem('personalInterests')}
+                    onClick={() => addArrayItem('personal_interests')}
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     Add Interest
@@ -905,7 +1127,10 @@ const ProfileSnapshot = () => {
                 </div>
               ) : (
                 <div className="flex flex-wrap gap-2">
-                  {formData.personalInterests.map((interest, index) => (
+                  {(formData?.personal_interests && formData.personal_interests.length > 0 
+                    ? formData.personal_interests 
+                    : ['Personal interests not available']
+                  ).map((interest, index) => (
                     <Badge key={index} variant="secondary" className="text-xs">
                       {interest}
                     </Badge>
@@ -928,7 +1153,7 @@ const ProfileSnapshot = () => {
               </div>
               {editStates.certifications ? (
                 <div className="space-y-2">
-                  {formData.certifications.map((cert, index) => (
+                  {(formData?.certifications || []).map((cert, index) => (
                     <div key={index} className="flex gap-2">
                       <Input
                         value={cert}
@@ -956,7 +1181,10 @@ const ProfileSnapshot = () => {
                 </div>
               ) : (
                 <ul className="space-y-1">
-                  {formData.certifications.map((cert, index) => (
+                  {(formData?.certifications && formData.certifications.length > 0 
+                    ? formData.certifications 
+                    : ['Certifications not available']
+                  ).map((cert, index) => (
                     <li key={index} className="text-sm text-gray-700">• {cert}</li>
                   ))}
                 </ul>
@@ -967,43 +1195,32 @@ const ProfileSnapshot = () => {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <Label className="font-semibold">Engagement Options</Label>
-                <div className="flex gap-1">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => openVersionHistory('Engagement Options')}
-                    title="View version history"
-                  >
-                    <History className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => toggleEdit('engagementOptions')}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => toggleEdit('engagementOptions')}
+                >
+                  <Edit className="h-4 w-4" />
+                </Button>
               </div>
               {editStates.engagementOptions ? (
                 <Textarea
-                  value={engagementOptionsHistory.currentValue}
-                  onChange={(e) => handleInputChange('engagementOptions', e.target.value)}
+                  value="Engagement options not available"
                   className="text-sm"
                   rows={2}
                 />
               ) : (
-                <p className="text-sm text-gray-700">{engagementOptionsHistory.currentValue}</p>
+                <p className="text-sm text-gray-700">Engagement options not available</p>
               )}
             </div>
           </div>
 
           {/* Right Column - Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Meet Reza Section */}
+            {/* Meet Section */}
             <div className="bg-teal-600 text-white rounded-lg">
               <div className="flex items-center justify-between p-4 pb-2">
-                <h2 className="text-xl font-semibold">Meet Reza</h2>
+                <h2 className="text-xl font-semibold">Meet {formData?.name?.split(' ')[0] || 'Professional'}</h2>
                 <div className="flex gap-1">
                   <Button
                     variant="ghost"
@@ -1028,19 +1245,21 @@ const ProfileSnapshot = () => {
                 {editStates.meetIntro ? (
                   <Textarea
                     value={meetIntroHistory.currentValue}
-                    onChange={(e) => handleInputChange('meetIntro', e.target.value)}
+                    onChange={(e) => handleInputChange('meet_them', e.target.value)}
                     className="text-sm leading-relaxed bg-white/10 border-white/20 text-white placeholder:text-white/70"
                     rows={4}
                   />
                 ) : (
-                  <p className="text-sm leading-relaxed">{meetIntroHistory.currentValue}</p>
+                  <p className="text-sm leading-relaxed">
+                    {meetIntroHistory.currentValue || formData?.meet_them || 'Introduction not available'}
+                  </p>
                 )}
               </div>
             </div>
 
             {/* Personas Section */}
-            <div className="bg-white rounded-lg border">
-              <div className="bg-teal-600 text-white rounded-t-lg">
+            <div className="bg-white rounded-lg border shadow-sm">
+              <div className="bg-[#449889] text-white rounded-t-lg">
                 <div className="flex items-center justify-between p-4">
                   <h3 className="text-lg font-semibold">Personas</h3>
                   <Button
@@ -1055,91 +1274,54 @@ const ProfileSnapshot = () => {
               </div>
               
               <div className="p-4">
-                <Tabs defaultValue="growth-architect" className="w-full">
-                  <TabsList className="grid w-full grid-cols-3 mb-6">
-                    <TabsTrigger value="growth-architect" className="text-xs">Growth Architect</TabsTrigger>
-                    <TabsTrigger value="venture-builder" className="text-xs">Venture Builder</TabsTrigger>
-                    <TabsTrigger value="leadership-steward" className="text-xs">Leadership / Cultural Steward</TabsTrigger>
-                  </TabsList>
-                  
-                  <TabsContent value="growth-architect" className="space-y-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-medium">Growth Architect</h4>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => openVersionHistory('Growth Architect')}
-                        title="View version history"
-                      >
-                        <History className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    {editStates.personas ? (
-                      <Textarea
-                        value={growthArchitectHistory.currentValue}
-                        onChange={(e) => handleInputChange('growthArchitectContent', e.target.value)}
-                        className="text-sm leading-relaxed"
-                        rows={8}
-                      />
-                    ) : (
-                      <div className="text-sm leading-relaxed text-gray-700 whitespace-pre-line">
-                        {growthArchitectHistory.currentValue}
-                      </div>
-                    )}
-                  </TabsContent>
-                  
-                  <TabsContent value="venture-builder" className="space-y-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-medium">Venture Builder</h4>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => openVersionHistory('Venture Builder')}
-                        title="View version history"
-                      >
-                        <History className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    {editStates.personas ? (
-                      <Textarea
-                        value={ventureBuilderHistory.currentValue}
-                        onChange={(e) => handleInputChange('ventureBuilderContent', e.target.value)}
-                        className="text-sm leading-relaxed"
-                        rows={4}
-                      />
-                    ) : (
-                      <div className="text-sm leading-relaxed text-gray-700">
-                        {ventureBuilderHistory.currentValue}
-                      </div>
-                    )}
-                  </TabsContent>
-                  
-                  <TabsContent value="leadership-steward" className="space-y-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-medium">Leadership / Cultural Steward</h4>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => openVersionHistory('Leadership Steward')}
-                        title="View version history"
-                      >
-                        <History className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    {editStates.personas ? (
-                      <Textarea
-                        value={leadershipStewardHistory.currentValue}
-                        onChange={(e) => handleInputChange('leadershipStewardContent', e.target.value)}
-                        className="text-sm leading-relaxed"
-                        rows={4}
-                      />
-                    ) : (
-                      <div className="text-sm leading-relaxed text-gray-700">
-                        {leadershipStewardHistory.currentValue}
-                      </div>
-                    )}
-                  </TabsContent>
-                </Tabs>
+                {formData?.personas && formData.personas.length > 0 ? (
+                  <Tabs defaultValue="0" className="w-full">
+                    <TabsList className="grid w-full mb-6 bg-gray-100" style={{gridTemplateColumns: `repeat(${formData.personas.length}, minmax(0, 1fr))`}}>
+                      {formData.personas.map((persona, index) => (
+                        <TabsTrigger 
+                          key={index} 
+                          value={index.toString()} 
+                          className="text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900"
+                        >
+                          {persona.title}
+                        </TabsTrigger>
+                      ))}
+                    </TabsList>
+                    
+                    {formData.personas.map((persona, index) => (
+                      <TabsContent key={index} value={index.toString()} className="space-y-4">
+                        {editStates.personas ? (
+                          <Input
+                            value={personaEditStates[index]?.title || persona.title}
+                            onChange={(e) => handlePersonaLocalUpdate(index, 'title', e.target.value)}
+                            className="font-medium"
+                            placeholder="Persona title"
+                          />
+                        ) : (
+                          <h4 className="font-medium">{persona.title}</h4>
+                        )}
+                        <div className="text-sm leading-relaxed text-gray-700">
+                          {editStates.personas ? (
+                            <Textarea
+                              value={personaEditStates[index]?.bulletsText || persona.bullets?.map(bullet => `• ${bullet}`).join('\n') || ''}
+                              onChange={(e) => handlePersonaLocalUpdate(index, 'bulletsText', e.target.value)}
+                              className="min-h-[120px]"
+                              placeholder="Enter bullet points, one per line. Start each line with '•' or it will be added automatically."
+                            />
+                          ) : (
+                            <ul className="space-y-2">
+                              {persona.bullets?.map((bullet, bulletIndex) => (
+                                <li key={bulletIndex}>• {bullet}</li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      </TabsContent>
+                    ))}
+                  </Tabs>
+                ) : (
+                  <div className="text-sm text-gray-700">Personas not available</div>
+                )}
               </div>
             </div>
 
@@ -1161,77 +1343,58 @@ const ProfileSnapshot = () => {
               
               <div className="p-4">
                 <div className="space-y-4">
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <Label className="font-medium text-gray-900">Strategic Problem-Solving</Label>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => openVersionHistory('Strategic Problem Solving')}
-                        title="View version history"
-                      >
-                        <History className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    {editStates.superpowers ? (
-                      <Textarea
-                        value={strategicProblemSolvingHistory.currentValue}
-                        onChange={(e) => handleInputChange('strategicProblemSolving', e.target.value)}
-                        className="text-sm"
-                        rows={2}
-                      />
-                    ) : (
-                      <p className="text-sm text-gray-700">{strategicProblemSolvingHistory.currentValue}</p>
-                    )}
-                  </div>
+                  {formData?.superpowers && formData.superpowers.length > 0 ? (
+                    formData.superpowers.map((superpower, index) => (
+                      <div key={index} className="space-y-2">
+                        {editStates.superpowers ? (
+                          <div className="space-y-2">
+                            <div className="flex gap-2 items-center">
+                              <Input
+                                value={superpowerEditStates[index]?.title || superpower.title}
+                                onChange={(e) => handleSuperpowerLocalUpdate(index, 'title', e.target.value)}
+                                className="font-medium"
+                                placeholder="Superpower title"
+                              />
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeSuperpowerItem(index)}
+                                className="text-red-500 hover:text-red-700"
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                            <Textarea
+                              value={superpowerEditStates[index]?.description || superpower.description}
+                              onChange={(e) => handleSuperpowerLocalUpdate(index, 'description', e.target.value)}
+                              className="text-sm"
+                              placeholder="Superpower description"
+                              rows={3}
+                            />
+                          </div>
+                        ) : (
+                          <div>
+                            <Label className="font-medium text-gray-900">{superpower.title}</Label>
+                            <p className="text-sm text-gray-700">{superpower.description}</p>
+                          </div>
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-sm text-gray-700">Superpowers not available</div>
+                  )}
                   
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <Label className="font-medium text-gray-900">Conscious Leadership</Label>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => openVersionHistory('Conscious Leadership')}
-                        title="View version history"
-                      >
-                        <History className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    {editStates.superpowers ? (
-                      <Textarea
-                        value={consciousLeadershipHistory.currentValue}
-                        onChange={(e) => handleInputChange('consciousLeadership', e.target.value)}
-                        className="text-sm"
-                        rows={2}
-                      />
-                    ) : (
-                      <p className="text-sm text-gray-700">{consciousLeadershipHistory.currentValue}</p>
-                    )}
-                  </div>
-                  
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <Label className="font-medium text-gray-900">Scaling Ventures</Label>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => openVersionHistory('Scaling Ventures')}
-                        title="View version history"
-                      >
-                        <History className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    {editStates.superpowers ? (
-                      <Textarea
-                        value={scalingVenturesHistory.currentValue}
-                        onChange={(e) => handleInputChange('scalingVentures', e.target.value)}
-                        className="text-sm"
-                        rows={2}
-                      />
-                    ) : (
-                      <p className="text-sm text-gray-700">{scalingVenturesHistory.currentValue}</p>
-                    )}
-                  </div>
+                  {editStates.superpowers && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={addSuperpowerItem}
+                      className="w-full"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Superpower
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
@@ -1267,13 +1430,13 @@ const ProfileSnapshot = () => {
                 {editStates.sweetSpot ? (
                   <Textarea
                     value={sweetSpotHistory.currentValue}
-                    onChange={(e) => handleInputChange('sweetSpotContent', e.target.value)}
+                    onChange={(e) => handleInputChange('sweetspot', e.target.value)}
                     className="text-sm leading-relaxed"
                     rows={4}
                   />
                 ) : (
                   <div className="text-sm leading-relaxed text-gray-700">
-                    {sweetSpotHistory.currentValue}
+                    {sweetSpotHistory.currentValue || formData?.sweetspot || 'Sweet spot not available'}
                   </div>
                 )}
               </div>
@@ -1296,132 +1459,37 @@ const ProfileSnapshot = () => {
               </div>
               
               <div className="p-4 space-y-3">
-                {/* Market Expansion Strategy */}
-                <div className="border-b border-gray-200 pb-3">
-                  <button 
-                    className="flex justify-between items-center w-full text-left"
-                    onClick={() => toggleFunctionalSkill('market-expansion')}
-                  >
-                    <span className="font-medium text-gray-900">Market Expansion Strategy</span>
-                    {expandedFunctionalSkill === 'market-expansion' ? 
-                      <Minus className="h-5 w-5 text-gray-400" /> : 
-                      <Plus className="h-5 w-5 text-gray-400" />
-                    }
-                  </button>
-                  
-                  {expandedFunctionalSkill === 'market-expansion' && (
-                    <div className="mt-3 space-y-3">
-                      {editStates.functionalSkills ? (
-                        <>
-                          <div className="flex items-center justify-between mb-2">
-                            <Label className="text-sm font-medium">Market Expansion Skills</Label>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => {
-                                const newSkills = [...formData.functionalSkills.marketExpansion, ''];
-                                setFormData(prev => ({ 
-                                  ...prev, 
-                                  functionalSkills: { 
-                                    ...prev.functionalSkills, 
-                                    marketExpansion: newSkills 
-                                  } 
-                                }));
-                                setHasChanges(true);
-                              }}
-                            >
-                              <Plus className="h-4 w-4" />
-                            </Button>
+                {formData?.functional_skills && Object.keys(formData.functional_skills).length > 0 ? (
+                  Object.entries(formData.functional_skills).map(([categoryName, skills]) => (
+                    <div key={categoryName} className="border-b border-gray-200 pb-3">
+                      <button 
+                        className="flex justify-between items-center w-full text-left"
+                        onClick={() => toggleFunctionalSkill(categoryName)}
+                      >
+                        <span className="font-medium text-gray-900">{categoryName}</span>
+                        {expandedFunctionalSkill === categoryName ? 
+                          <Minus className="h-5 w-5 text-gray-400" /> : 
+                          <Plus className="h-5 w-5 text-gray-400" />
+                        }
+                      </button>
+                      
+                      {expandedFunctionalSkill === categoryName && (
+                        <div className="mt-3 space-y-3">
+                          <div className="space-y-2">
+                            {skills?.map((skill, index) => (
+                              <div key={index}>
+                                <h5 className="font-medium text-sm">{skill.title}</h5>
+                                <p className="text-sm text-gray-700">{skill.description}</p>
+                              </div>
+                            ))}
                           </div>
-                          {formData.functionalSkills.marketExpansion.map((skill, index) => (
-                            <div key={index} className="flex gap-2">
-                              <Textarea
-                                value={skill}
-                                onChange={(e) => {
-                                  const newSkills = [...formData.functionalSkills.marketExpansion];
-                                  newSkills[index] = e.target.value;
-                                  setFormData(prev => ({ 
-                                    ...prev, 
-                                    functionalSkills: { 
-                                      ...prev.functionalSkills, 
-                                      marketExpansion: newSkills 
-                                    } 
-                                  }));
-                                  setHasChanges(true);
-                                }}
-                                className="text-sm"
-                                rows={2}
-                              />
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => {
-                                  const newSkills = formData.functionalSkills.marketExpansion.filter((_, i) => i !== index);
-                                  setFormData(prev => ({ 
-                                    ...prev, 
-                                    functionalSkills: { 
-                                      ...prev.functionalSkills, 
-                                      marketExpansion: newSkills 
-                                    } 
-                                  }));
-                                  setHasChanges(true);
-                                }}
-                              >
-                                <X className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          ))}
-                        </>
-                      ) : (
-                        <div className="space-y-2">
-                          {formData.functionalSkills.marketExpansion.map((skill, index) => (
-                            <p key={index} className="text-sm text-gray-700">{skill}</p>
-                          ))}
                         </div>
                       )}
                     </div>
-                  )}
-                </div>
-
-                {/* Operational Efficiency */}
-                <div className="border-b border-gray-200 pb-3">
-                  <button 
-                    className="flex justify-between items-center w-full text-left"
-                    onClick={() => toggleFunctionalSkill('operational-efficiency')}
-                  >
-                    <span className="font-medium text-gray-900">Operational Efficiency</span>
-                    {expandedFunctionalSkill === 'operational-efficiency' ? 
-                      <Minus className="h-5 w-5 text-gray-400" /> : 
-                      <Plus className="h-5 w-5 text-gray-400" />
-                    }
-                  </button>
-                  
-                  {expandedFunctionalSkill === 'operational-efficiency' && (
-                    <div className="mt-3 space-y-3">
-                      <Label className="text-sm">Add operational efficiency skills here</Label>
-                    </div>
-                  )}
-                </div>
-
-                {/* Leadership Development */}
-                <div>
-                  <button 
-                    className="flex justify-between items-center w-full text-left"
-                    onClick={() => toggleFunctionalSkill('leadership-development')}
-                  >
-                    <span className="font-medium text-gray-900">Leadership Development</span>
-                    {expandedFunctionalSkill === 'leadership-development' ? 
-                      <Minus className="h-5 w-5 text-gray-400" /> : 
-                      <Plus className="h-5 w-5 text-gray-400" />
-                    }
-                  </button>
-                  
-                  {expandedFunctionalSkill === 'leadership-development' && (
-                    <div className="mt-3 space-y-3">
-                      <Label className="text-sm">Add leadership development skills here</Label>
-                    </div>
-                  )}
-                </div>
+                  ))
+                ) : (
+                  <div className="text-sm text-gray-700">Functional skills not available</div>
+                )}
               </div>
             </div>
 
@@ -1429,7 +1497,7 @@ const ProfileSnapshot = () => {
             <div className="bg-white rounded-lg border">
               <div className="bg-teal-600 text-white rounded-t-lg">
                 <div className="flex items-center justify-between p-4">
-                  <h3 className="text-lg font-semibold">Reza's User Manual</h3>
+                  <h3 className="text-lg font-semibold">{formData?.name?.split(' ')[0] || 'Professional'}'s User Manual</h3>
                   <div className="flex gap-1">
                     <Button
                       variant="ghost"
@@ -1456,46 +1524,19 @@ const ProfileSnapshot = () => {
                 {editStates.userManual ? (
                   <Textarea
                     value={userManualHistory.currentValue}
-                    onChange={(e) => handleInputChange('userManual', e.target.value)}
+                    onChange={(e) => handleInputChange('user_manual', e.target.value)}
                     className="text-sm leading-relaxed"
                     rows={8}
                   />
                 ) : (
                   <div className="text-sm leading-relaxed text-gray-700 whitespace-pre-line">
-                    {userManualHistory.currentValue}
+                    {userManualHistory.currentValue || formData?.user_manual || 'User manual not available'}
                   </div>
                 )}
               </div>
             </div>
           </div>
         </div>
-
-        {/* Save/Discard Buttons */}
-        {hasChanges && (
-          <div className="flex justify-center gap-4 p-4 bg-gray-50 rounded-lg border">
-            <Button
-              variant="outline"
-              onClick={handleDiscardChanges}
-              disabled={isSubmitting}
-            >
-              <X className="mr-2 h-4 w-4" />
-              Discard Changes
-            </Button>
-            
-            <Button 
-              onClick={handleSave}
-              disabled={isSubmitting}
-              className="bg-teal-600 hover:bg-teal-700"
-            >
-              {isSubmitting ? 'Saving...' : (
-                <>
-                  <Save className="mr-2 h-4 w-4" />
-                  Save Changes
-                </>
-              )}
-            </Button>
-          </div>
-        )}
 
         {/* Action Buttons */}
         <div className="flex justify-between items-center pt-6">

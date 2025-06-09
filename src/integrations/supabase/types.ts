@@ -55,7 +55,7 @@ export type Database = {
           first_name: string | null
           id: string
           last_name: string | null
-          profile_created: boolean
+          onboarding_status: Database["public"]["Enums"]["onboarding_status"]
           profile_data: Json
           profile_version: string
           updated_at: string
@@ -66,7 +66,7 @@ export type Database = {
           first_name?: string | null
           id: string
           last_name?: string | null
-          profile_created?: boolean
+          onboarding_status?: Database["public"]["Enums"]["onboarding_status"]
           profile_data?: Json
           profile_version?: string
           updated_at?: string
@@ -77,7 +77,7 @@ export type Database = {
           first_name?: string | null
           id?: string
           last_name?: string | null
-          profile_created?: boolean
+          onboarding_status?: Database["public"]["Enums"]["onboarding_status"]
           profile_data?: Json
           profile_version?: string
           updated_at?: string
@@ -93,6 +93,11 @@ export type Database = {
     }
     Enums: {
       document_type: "resume" | "linkedin" | "other"
+      onboarding_status:
+        | "SIGNED_UP"
+        | "EMAIL_CONFIRMED"
+        | "PROFILE_GENERATED"
+        | "PROFILE_CONFIRMED"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -209,6 +214,12 @@ export const Constants = {
   public: {
     Enums: {
       document_type: ["resume", "linkedin", "other"],
+      onboarding_status: [
+        "SIGNED_UP",
+        "EMAIL_CONFIRMED",
+        "PROFILE_GENERATED",
+        "PROFILE_CONFIRMED",
+      ],
     },
   },
 } as const
