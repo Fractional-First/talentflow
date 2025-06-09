@@ -125,6 +125,14 @@ const ProfileSnapshot = () => {
     };
   }>({});
 
+  // Local editing state for superpowers
+  const [superpowerEditStates, setSuperpowerEditStates] = useState<{
+    [key: number]: {
+      title: string;
+      description: string;
+    };
+  }>({});
+
   const [editStates, setEditStates] = useState<EditStates>({
     basicInfo: false,
     description: false,
@@ -267,6 +275,35 @@ const ProfileSnapshot = () => {
     };
   }, [personaEditStates]);
 
+  // Debounced update function for superpowers
+  useEffect(() => {
+    const timeouts: { [key: number]: NodeJS.Timeout } = {};
+
+    Object.entries(superpowerEditStates).forEach(([superpowerIndex, editState]) => {
+      const index = parseInt(superpowerIndex);
+      
+      if (timeouts[index]) {
+        clearTimeout(timeouts[index]);
+      }
+      
+      timeouts[index] = setTimeout(() => {
+        // Update the main formData with the debounced changes
+        setFormData(prev => {
+          const updatedSuperpowers = [...(prev.superpowers || [])];
+          updatedSuperpowers[index] = {
+            title: editState.title,
+            description: editState.description
+          };
+          return { ...prev, superpowers: updatedSuperpowers };
+        });
+      }, 300); // 300ms debounce delay
+    });
+
+    return () => {
+      Object.values(timeouts).forEach(timeout => clearTimeout(timeout));
+    };
+  }, [superpowerEditStates]);
+
   // Update formData when profileData is loaded
   useEffect(() => {
     console.log('useEffect triggered - profileDataResponse:', profileDataResponse);
@@ -284,6 +321,18 @@ const ProfileSnapshot = () => {
           };
         });
         setPersonaEditStates(initialEditStates);
+      }
+
+      // Initialize superpower edit states when data is loaded
+      if (profileDataResponse.superpowers) {
+        const initialSuperpowerEditStates: { [key: number]: { title: string; description: string } } = {};
+        profileDataResponse.superpowers.forEach((superpower, index) => {
+          initialSuperpowerEditStates[index] = {
+            title: superpower.title,
+            description: superpower.description
+          };
+        });
+        setSuperpowerEditStates(initialSuperpowerEditStates);
       }
     }
   }, [profileDataResponse]);
@@ -356,6 +405,18 @@ const ProfileSnapshot = () => {
         });
         setPersonaEditStates(syncedEditStates);
       }
+
+      // When entering edit mode for superpowers, sync local state with current data
+      if (section === 'superpowers' && newState.superpowers && formData.superpowers) {
+        const syncedSuperpowerEditStates: { [key: number]: { title: string; description: string } } = {};
+        formData.superpowers.forEach((superpower, index) => {
+          syncedSuperpowerEditStates[index] = {
+            title: superpower.title,
+            description: superpower.description
+          };
+        });
+        setSuperpowerEditStates(syncedSuperpowerEditStates);
+      }
       
       return newState;
     });
@@ -387,6 +448,17 @@ const ProfileSnapshot = () => {
       ...prev,
       [personaIndex]: {
         ...prev[personaIndex],
+        [field]: value
+      }
+    }));
+  };
+
+  // Handle superpower local state updates
+  const handleSuperpowerLocalUpdate = (superpowerIndex: number, field: 'title' | 'description', value: string) => {
+    setSuperpowerEditStates(prev => ({
+      ...prev,
+      [superpowerIndex]: {
+        ...prev[superpowerIndex],
         [field]: value
       }
     }));
@@ -431,6 +503,41 @@ const ProfileSnapshot = () => {
     if (!currentArray) return;
     const newArray = currentArray.filter((_, i) => i !== index);
     setFormData(prev => ({ ...prev, [field]: newArray }));
+  };
+
+  // Add superpower item
+  const addSuperpowerItem = () => {
+    const currentSuperpowers = formData.superpowers || [];
+    const newSuperpower = { title: '', description: '' };
+    setFormData(prev => ({ ...prev, superpowers: [...currentSuperpowers, newSuperpower] }));
+    
+    // Initialize the edit state for the new superpower
+    const newIndex = currentSuperpowers.length;
+    setSuperpowerEditStates(prev => ({
+      ...prev,
+      [newIndex]: { title: '', description: '' }
+    }));
+  };
+
+  // Remove superpower item
+  const removeSuperpowerItem = (index: number) => {
+    const currentSuperpowers = formData.superpowers || [];
+    const newSuperpowers = currentSuperpowers.filter((_, i) => i !== index);
+    setFormData(prev => ({ ...prev, superpowers: newSuperpowers }));
+    
+    // Remove from edit state and reindex
+    const newEditStates: { [key: number]: { title: string; description: string } } = {};
+    newSuperpowers.forEach((superpower, newIndex) => {
+      if (superpowerEditStates[newIndex < index ? newIndex : newIndex + 1]) {
+        newEditStates[newIndex] = superpowerEditStates[newIndex < index ? newIndex : newIndex + 1];
+      } else {
+        newEditStates[newIndex] = {
+          title: superpower.title,
+          description: superpower.description
+        };
+      }
+    });
+    setSuperpowerEditStates(newEditStates);
   };
 
   const openVersionHistory = (fieldName: string) => {
@@ -1238,13 +1345,55 @@ const ProfileSnapshot = () => {
                 <div className="space-y-4">
                   {formData?.superpowers && formData.superpowers.length > 0 ? (
                     formData.superpowers.map((superpower, index) => (
-                      <div key={index}>
-                        <Label className="font-medium text-gray-900">{superpower.title}</Label>
-                        <p className="text-sm text-gray-700">{superpower.description}</p>
+                      <div key={index} className="space-y-2">
+                        {editStates.superpowers ? (
+                          <div className="space-y-2">
+                            <div className="flex gap-2 items-center">
+                              <Input
+                                value={superpowerEditStates[index]?.title || superpower.title}
+                                onChange={(e) => handleSuperpowerLocalUpdate(index, 'title', e.target.value)}
+                                className="font-medium"
+                                placeholder="Superpower title"
+                              />
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeSuperpowerItem(index)}
+                                className="text-red-500 hover:text-red-700"
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                            <Textarea
+                              value={superpowerEditStates[index]?.description || superpower.description}
+                              onChange={(e) => handleSuperpowerLocalUpdate(index, 'description', e.target.value)}
+                              className="text-sm"
+                              placeholder="Superpower description"
+                              rows={3}
+                            />
+                          </div>
+                        ) : (
+                          <div>
+                            <Label className="font-medium text-gray-900">{superpower.title}</Label>
+                            <p className="text-sm text-gray-700">{superpower.description}</p>
+                          </div>
+                        )}
                       </div>
                     ))
                   ) : (
                     <div className="text-sm text-gray-700">Superpowers not available</div>
+                  )}
+                  
+                  {editStates.superpowers && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={addSuperpowerItem}
+                      className="w-full"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Superpower
+                    </Button>
                   )}
                 </div>
               </div>
