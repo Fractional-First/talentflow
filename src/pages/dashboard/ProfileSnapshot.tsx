@@ -535,7 +535,7 @@ const ProfileSnapshot = () => {
               <div className="relative mb-4 inline-block">
                 <Avatar className="h-24 w-24">
                   <AvatarImage src={formData?.profilePicture} />
-                  <AvatarFallback className="text-xl">
+                  <AvatarFallback className="text-xl bg-[#449889] text-white">
                     {getUserInitials(formData?.name)}
                   </AvatarFallback>
                 </Avatar>
