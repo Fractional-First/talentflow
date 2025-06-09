@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
@@ -43,6 +42,7 @@ import { useVersionHistory } from '@/hooks/useVersionHistory';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
+import type { Json } from '@/integrations/supabase/types';
 
 interface ProfileData {
   name?: string;
@@ -312,7 +312,7 @@ const ProfileSnapshot = () => {
     try {
       const { error } = await supabase
         .from('profiles')
-        .update({ profile_data: formData })
+        .update({ profile_data: formData as Json })
         .eq('id', user?.id);
 
       if (error) throw error;
