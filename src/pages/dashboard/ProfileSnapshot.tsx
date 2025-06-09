@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
@@ -133,10 +134,12 @@ const ProfileSnapshot = () => {
   });
 
   // Fetch profile data from Supabase
-  const { data: profileData, isLoading } = useQuery({
+  const { data: profileData, isLoading, error } = useQuery({
     queryKey: ['profile', user?.id],
     queryFn: async () => {
       if (!user?.id) return null;
+      
+      console.log('Fetching profile data for user:', user.id);
       
       const { data, error } = await supabase
         .from('profiles')
@@ -149,6 +152,7 @@ const ProfileSnapshot = () => {
         return null;
       }
       
+      console.log('Raw profile data:', data);
       return data?.profile_data as ProfileData || {};
     },
     enabled: !!user?.id,
@@ -159,6 +163,7 @@ const ProfileSnapshot = () => {
   // Update formData when profileData is loaded
   useEffect(() => {
     if (profileData) {
+      console.log('Setting form data:', profileData);
       setFormData(profileData);
     }
   }, [profileData]);
@@ -198,11 +203,13 @@ const ProfileSnapshot = () => {
 
   // Show popup on first load
   useEffect(() => {
+    const AIGUIDE_KEY = 'aiSuggestionsGuideSeen';
     if (!localStorage.getItem(AIGUIDE_KEY)) setShowAIGuide(true);
   }, []);
 
   // When guide is dismissed, remember for future visits
   const handleDismissGuide = () => {
+    const AIGUIDE_KEY = 'aiSuggestionsGuideSeen';
     localStorage.setItem(AIGUIDE_KEY, 'seen');
     setShowAIGuide(false);
   };
@@ -424,6 +431,19 @@ const ProfileSnapshot = () => {
     );
   }
 
+  if (error) {
+    console.error('Profile query error:', error);
+    return (
+      <DashboardLayout steps={steps} currentStep={3}>
+        <div className="max-w-6xl mx-auto space-y-6 p-6">
+          <div className="text-center text-red-600">Error loading profile. Please try again.</div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  console.log('Rendering ProfileSnapshot with formData:', formData);
+
   return (
     <DashboardLayout steps={steps} currentStep={3}>
       {/* AI Guide Dialog */}
@@ -594,7 +614,10 @@ const ProfileSnapshot = () => {
                 </div>
               ) : (
                 <ul className="space-y-1">
-                  {(formData?.highlights || ['TODO - needs data']).map((highlight, index) => (
+                  {(formData?.highlights && formData.highlights.length > 0 
+                    ? formData.highlights 
+                    : ['TODO - needs data']
+                  ).map((highlight, index) => (
                     <li key={index} className="text-sm text-gray-700">• {highlight}</li>
                   ))}
                 </ul>
@@ -645,7 +668,10 @@ const ProfileSnapshot = () => {
                 </div>
               ) : (
                 <div className="flex flex-wrap gap-2">
-                  {(formData?.focus_areas || ['TODO - needs data']).map((area, index) => (
+                  {(formData?.focus_areas && formData.focus_areas.length > 0 
+                    ? formData.focus_areas 
+                    : ['TODO - needs data']
+                  ).map((area, index) => (
                     <Badge key={index} variant="secondary" className="text-xs">
                       {area}
                     </Badge>
@@ -698,7 +724,10 @@ const ProfileSnapshot = () => {
                 </div>
               ) : (
                 <div className="flex flex-wrap gap-2">
-                  {(formData?.industries || ['TODO - needs data']).map((industry, index) => (
+                  {(formData?.industries && formData.industries.length > 0 
+                    ? formData.industries 
+                    : ['TODO - needs data']
+                  ).map((industry, index) => (
                     <Badge key={index} variant="secondary" className="text-xs">
                       {industry}
                     </Badge>
@@ -751,7 +780,10 @@ const ProfileSnapshot = () => {
                 </div>
               ) : (
                 <div className="flex flex-wrap gap-2">
-                  {(formData?.geographical_coverage || ['TODO - needs data']).map((region, index) => (
+                  {(formData?.geographical_coverage && formData.geographical_coverage.length > 0 
+                    ? formData.geographical_coverage 
+                    : ['TODO - needs data']
+                  ).map((region, index) => (
                     <Badge key={index} variant="secondary" className="text-xs">
                       {region}
                     </Badge>
@@ -804,7 +836,10 @@ const ProfileSnapshot = () => {
                 </div>
               ) : (
                 <div className="flex flex-wrap gap-2">
-                  {(formData?.stage_focus || ['TODO - needs data']).map((stage, index) => (
+                  {(formData?.stage_focus && formData.stage_focus.length > 0 
+                    ? formData.stage_focus 
+                    : ['TODO - needs data']
+                  ).map((stage, index) => (
                     <Badge key={index} variant="secondary" className="text-xs">
                       {stage}
                     </Badge>
@@ -857,7 +892,10 @@ const ProfileSnapshot = () => {
                 </div>
               ) : (
                 <div className="flex flex-wrap gap-2">
-                  {(formData?.personal_interests || ['TODO - needs data']).map((interest, index) => (
+                  {(formData?.personal_interests && formData.personal_interests.length > 0 
+                    ? formData.personal_interests 
+                    : ['TODO - needs data']
+                  ).map((interest, index) => (
                     <Badge key={index} variant="secondary" className="text-xs">
                       {interest}
                     </Badge>
@@ -908,7 +946,10 @@ const ProfileSnapshot = () => {
                 </div>
               ) : (
                 <ul className="space-y-1">
-                  {(formData?.certifications || ['TODO - needs data']).map((cert, index) => (
+                  {(formData?.certifications && formData.certifications.length > 0 
+                    ? formData.certifications 
+                    : ['TODO - needs data']
+                  ).map((cert, index) => (
                     <li key={index} className="text-sm text-gray-700">• {cert}</li>
                   ))}
                 </ul>
