@@ -144,6 +144,51 @@ const ProfileSnapshot = () => {
     functionalSkills: false,
   });
 
+  // Fetch profile data from Supabase with more specific query - MOVED UP
+  const { data: profileDataResponse, isLoading, error } = useQuery({
+    queryKey: ['profile-snapshot', user?.id],
+    queryFn: async () => {
+      if (!user?.id) {
+        console.log('No user ID available');
+        return null;
+      }
+      
+      console.log('Fetching profile data for user:', user.id);
+      
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('profile_data, onboarding_status')
+        .eq('id', user.id)
+        .single();
+      
+      if (error) {
+        console.error('Error fetching profile:', error);
+        throw error;
+      }
+      
+      console.log('Raw profile data from DB:', data);
+      
+      // Check if we have profile_data and it's not just the onboarding_status
+      if (!data || !data.profile_data) {
+        console.log('No profile_data found in database');
+        return null;
+      }
+      
+      const profileData = data.profile_data as ProfileData;
+      console.log('Extracted profile data:', profileData);
+      
+      // Validate that we have meaningful profile data
+      if (!profileData || Object.keys(profileData).length === 0) {
+        console.log('Profile data is empty or invalid');
+        return null;
+      }
+      
+      return profileData;
+    },
+    enabled: !!user?.id,
+    retry: false, // Don't retry on error to avoid confusion
+  });
+
   // Auto-save function
   const autoSave = useCallback(async (dataToSave: ProfileData) => {
     if (!user?.id || !dataToSave || Object.keys(dataToSave).length === 0) return;
@@ -221,51 +266,6 @@ const ProfileSnapshot = () => {
       Object.values(timeouts).forEach(timeout => clearTimeout(timeout));
     };
   }, [personaEditStates]);
-
-  // Fetch profile data from Supabase with more specific query
-  const { data: profileDataResponse, isLoading, error } = useQuery({
-    queryKey: ['profile-snapshot', user?.id],
-    queryFn: async () => {
-      if (!user?.id) {
-        console.log('No user ID available');
-        return null;
-      }
-      
-      console.log('Fetching profile data for user:', user.id);
-      
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('profile_data, onboarding_status')
-        .eq('id', user.id)
-        .single();
-      
-      if (error) {
-        console.error('Error fetching profile:', error);
-        throw error;
-      }
-      
-      console.log('Raw profile data from DB:', data);
-      
-      // Check if we have profile_data and it's not just the onboarding_status
-      if (!data || !data.profile_data) {
-        console.log('No profile_data found in database');
-        return null;
-      }
-      
-      const profileData = data.profile_data as ProfileData;
-      console.log('Extracted profile data:', profileData);
-      
-      // Validate that we have meaningful profile data
-      if (!profileData || Object.keys(profileData).length === 0) {
-        console.log('Profile data is empty or invalid');
-        return null;
-      }
-      
-      return profileData;
-    },
-    enabled: !!user?.id,
-    retry: false, // Don't retry on error to avoid confusion
-  });
 
   // Update formData when profileData is loaded
   useEffect(() => {
