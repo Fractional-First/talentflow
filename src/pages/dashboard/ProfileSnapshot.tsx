@@ -114,6 +114,9 @@ const ProfileSnapshot = () => {
     fieldName: string;
   }>({ isOpen: false, fieldName: '' });
 
+  // Initialize formData state first
+  const [formData, setFormData] = useState<ProfileData>({});
+
   // Local editing state for personas
   const [personaEditStates, setPersonaEditStates] = useState<{
     [key: number]: {
@@ -263,8 +266,6 @@ const ProfileSnapshot = () => {
     enabled: !!user?.id,
     retry: false, // Don't retry on error to avoid confusion
   });
-
-  const [formData, setFormData] = useState<ProfileData>({});
 
   // Update formData when profileData is loaded
   useEffect(() => {
