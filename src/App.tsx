@@ -44,16 +44,16 @@ const App = () => (
               </ProtectedRoute>
             } />
             
-            {/* Profile creation - for users with EMAIL_CONFIRMED or PROFILE_GENERATED status */}
+            {/* Profile creation - for users with EMAIL_CONFIRMED, PROFILE_GENERATED, or PROFILE_CONFIRMED status */}
             <Route path="/dashboard/profile-creation" element={
-              <ProtectedRoute allowedStatuses={['EMAIL_CONFIRMED', 'PROFILE_GENERATED']}>
+              <ProtectedRoute allowedStatuses={['EMAIL_CONFIRMED', 'PROFILE_GENERATED', 'PROFILE_CONFIRMED']}>
                 <ProfileCreation />
               </ProtectedRoute>
             } />
             
-            {/* Profile snapshot - for users with PROFILE_GENERATED status */}
+            {/* Profile snapshot - for users with PROFILE_GENERATED or PROFILE_CONFIRMED status */}
             <Route path="/dashboard/profile-snapshot" element={
-              <ProtectedRoute allowedStatuses={['PROFILE_GENERATED']}>
+              <ProtectedRoute allowedStatuses={['PROFILE_GENERATED', 'PROFILE_CONFIRMED']}>
                 <ProfileSnapshot />
               </ProtectedRoute>
             } />
