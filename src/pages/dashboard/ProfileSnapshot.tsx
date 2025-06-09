@@ -144,7 +144,7 @@ const ProfileSnapshot = () => {
     functionalSkills: false,
   });
 
-  // Fetch profile data from Supabase with more specific query - MOVED UP
+  // Fetch profile data from Supabase with more specific query
   const { data: profileDataResponse, isLoading, error } = useQuery({
     queryKey: ['profile-snapshot', user?.id],
     queryFn: async () => {
@@ -489,18 +489,17 @@ const ProfileSnapshot = () => {
 
       if (error) throw error;
 
-      setTimeout(() => {
-        setIsSubmitting(false);
-        navigate('/dashboard');
-      }, 1000);
+      // Navigate immediately after successful update
+      navigate('/dashboard');
     } catch (error) {
       console.error('Error updating onboarding status:', error);
-      setIsSubmitting(false);
       toast({
         title: "Error",
         description: "Failed to complete onboarding.",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
