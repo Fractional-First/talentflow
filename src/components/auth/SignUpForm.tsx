@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 interface SignUpFormProps {
-  onSubmit: (email: string, password: string, confirmPassword: string) => void;
+  onSubmit: (email: string, password: string, confirmPassword: string, firstName: string, lastName: string) => void;
   isSubmitting: boolean;
 }
 
@@ -13,14 +13,46 @@ export const SignUpForm = ({ onSubmit, isSubmitting }: SignUpFormProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(email, password, confirmPassword);
+    onSubmit(email, password, confirmPassword, firstName, lastName);
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="firstName">First Name</Label>
+          <Input
+            id="firstName"
+            name="firstName"
+            placeholder="John"
+            type="text"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            required
+            autoComplete="given-name"
+          />
+        </div>
+        
+        <div className="space-y-2">
+          <Label htmlFor="lastName">Last Name</Label>
+          <Input
+            id="lastName"
+            name="lastName"
+            placeholder="Doe"
+            type="text"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            required
+            autoComplete="family-name"
+          />
+        </div>
+      </div>
+      
       <div className="space-y-2">
         <Label htmlFor="email">Personal Email</Label>
         <Input
