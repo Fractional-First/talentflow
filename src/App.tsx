@@ -44,9 +44,9 @@ const App = () => (
               </ProtectedRoute>
             } />
             
-            {/* Profile creation - for users with EMAIL_CONFIRMED status */}
+            {/* Profile creation - for users with EMAIL_CONFIRMED or PROFILE_GENERATED status */}
             <Route path="/dashboard/profile-creation" element={
-              <ProtectedRoute allowedStatuses={['EMAIL_CONFIRMED']}>
+              <ProtectedRoute allowedStatuses={['EMAIL_CONFIRMED', 'PROFILE_GENERATED']}>
                 <ProfileCreation />
               </ProtectedRoute>
             } />
