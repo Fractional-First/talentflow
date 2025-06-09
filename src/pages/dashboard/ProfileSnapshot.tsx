@@ -132,55 +132,68 @@ const ProfileSnapshot = () => {
     functionalSkills: false,
   });
 
-  // Fetch profile data from Supabase
+  // Fetch profile data from Supabase with more specific query
   const { data: profileDataResponse, isLoading, error } = useQuery({
-    queryKey: ['profile', user?.id],
+    queryKey: ['profile-snapshot', user?.id],
     queryFn: async () => {
-      if (!user?.id) return null;
+      if (!user?.id) {
+        console.log('No user ID available');
+        return null;
+      }
       
       console.log('Fetching profile data for user:', user.id);
       
       const { data, error } = await supabase
         .from('profiles')
-        .select('profile_data')
+        .select('profile_data, onboarding_status')
         .eq('id', user.id)
         .single();
       
       if (error) {
         console.error('Error fetching profile:', error);
-        return null;
+        throw error;
       }
       
       console.log('Raw profile data from DB:', data);
       
-      // Extract the nested profile_data
-      const profileData = data?.profile_data as ProfileData || {};
+      // Check if we have profile_data and it's not just the onboarding_status
+      if (!data || !data.profile_data) {
+        console.log('No profile_data found in database');
+        return null;
+      }
+      
+      const profileData = data.profile_data as ProfileData;
       console.log('Extracted profile data:', profileData);
+      
+      // Validate that we have meaningful profile data
+      if (!profileData || Object.keys(profileData).length === 0) {
+        console.log('Profile data is empty or invalid');
+        return null;
+      }
       
       return profileData;
     },
     enabled: !!user?.id,
+    retry: false, // Don't retry on error to avoid confusion
   });
 
   const [formData, setFormData] = useState<ProfileData>({});
 
-  // Update formData when profileData is loaded - FIX: Ensure data actually gets set
+  // Update formData when profileData is loaded
   useEffect(() => {
-    if (profileDataResponse && Object.keys(profileDataResponse).length > 0) {
+    console.log('useEffect triggered - profileDataResponse:', profileDataResponse);
+    if (profileDataResponse && typeof profileDataResponse === 'object') {
       console.log('Setting form data from profileDataResponse:', profileDataResponse);
-      console.log('Before setting formData:', formData);
       setFormData(profileDataResponse);
-      console.log('After setting formData (next render will show this)');
     }
   }, [profileDataResponse]);
 
-  // Add debug effect to see when formData changes
+  // Debug effect to track formData changes
   useEffect(() => {
     console.log('Current formData state:', formData);
   }, [formData]);
 
-  console.log('Component render - isLoading:', isLoading, 'error:', error, 'hasData:', !!profileDataResponse);
-  console.log('Rendering ProfileSnapshot with formData:', formData);
+  console.log('Component render - isLoading:', isLoading, 'error:', error, 'profileDataResponse:', profileDataResponse);
 
   // Helper function to get user initials
   const getUserInitials = (name?: string) => {
@@ -450,18 +463,30 @@ const ProfileSnapshot = () => {
     return (
       <DashboardLayout steps={steps} currentStep={3}>
         <div className="max-w-6xl mx-auto space-y-6 p-6">
-          <div className="text-center text-red-600">Error loading profile. Please try again.</div>
+          <div className="text-center text-red-600">
+            <p>Error loading profile. Please try again.</p>
+            <p className="text-sm mt-2">Error: {error.message}</p>
+          </div>
         </div>
       </DashboardLayout>
     );
   }
 
-  // FIX: Change condition to check if formData has meaningful profile data, not just any data
+  // Check if we have meaningful profile data
   if (!profileDataResponse || !formData.name) {
     return (
       <DashboardLayout steps={steps} currentStep={3}>
         <div className="max-w-6xl mx-auto space-y-6 p-6">
-          <div className="text-center">Loading profile data...</div>
+          <div className="text-center">
+            <p>No profile data found.</p>
+            <p className="text-sm text-gray-600 mt-2">Please complete your profile creation first.</p>
+            <Button 
+              onClick={() => navigate('/dashboard/profile-creation')}
+              className="mt-4"
+            >
+              Go to Profile Creation
+            </Button>
+          </div>
         </div>
       </DashboardLayout>
     );
