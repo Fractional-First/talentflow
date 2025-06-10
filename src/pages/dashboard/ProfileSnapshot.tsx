@@ -17,6 +17,7 @@ import { useCallback, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { EditableTextSection } from "@/components/EditProfile/EditableTextSection"
 import { EditableArraySection } from "@/components/EditProfile/EditableArraySection"
+import { PersonasSection } from "@/components/EditProfile/PersonasSection"
 
 interface ProfileData {
   name?: string
@@ -752,103 +753,14 @@ const ProfileSnapshot = () => {
             />
 
             {/* Personas Section */}
-            <div className="bg-white rounded-lg border shadow-sm">
-              <div className="bg-[#449889] text-white rounded-t-lg">
-                <div className="flex items-center justify-between p-4">
-                  <h3 className="text-lg font-semibold">Personas</h3>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => toggleEdit("personas")}
-                    className="text-white hover:bg-white/20"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-
-              <div className="p-4">
-                {formData?.personas && formData.personas.length > 0 ? (
-                  <Tabs defaultValue="0" className="w-full">
-                    <TabsList
-                      className="grid w-full mb-6 bg-gray-100"
-                      style={{
-                        gridTemplateColumns: `repeat(${formData.personas.length}, minmax(0, 1fr))`,
-                      }}
-                    >
-                      {formData.personas.map((persona, index) => (
-                        <TabsTrigger
-                          key={index}
-                          value={index.toString()}
-                          className="text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900"
-                        >
-                          {persona.title}
-                        </TabsTrigger>
-                      ))}
-                    </TabsList>
-
-                    {formData.personas.map((persona, index) => (
-                      <TabsContent
-                        key={index}
-                        value={index.toString()}
-                        className="space-y-4"
-                      >
-                        {editStates.personas ? (
-                          <Input
-                            value={
-                              personaEditStates[index]?.title || persona.title
-                            }
-                            onChange={(e) =>
-                              handlePersonaLocalUpdate(
-                                index,
-                                "title",
-                                e.target.value
-                              )
-                            }
-                            className="font-medium"
-                            placeholder="Persona title"
-                          />
-                        ) : (
-                          <h4 className="font-medium">{persona.title}</h4>
-                        )}
-                        <div className="text-sm leading-relaxed text-gray-700">
-                          {editStates.personas ? (
-                            <Textarea
-                              value={
-                                personaEditStates[index]?.bulletsText ||
-                                persona.bullets
-                                  ?.map((bullet) => `• ${bullet}`)
-                                  .join("\n") ||
-                                ""
-                              }
-                              onChange={(e) =>
-                                handlePersonaLocalUpdate(
-                                  index,
-                                  "bulletsText",
-                                  e.target.value
-                                )
-                              }
-                              className="min-h-[120px]"
-                              placeholder="Enter bullet points, one per line. Start each line with '•' or it will be added automatically."
-                            />
-                          ) : (
-                            <ul className="space-y-2">
-                              {persona.bullets?.map((bullet, bulletIndex) => (
-                                <li key={bulletIndex}>• {bullet}</li>
-                              ))}
-                            </ul>
-                          )}
-                        </div>
-                      </TabsContent>
-                    ))}
-                  </Tabs>
-                ) : (
-                  <div className="text-sm text-gray-700">
-                    Personas not available
-                  </div>
-                )}
-              </div>
-            </div>
+            <PersonasSection
+              personas={formData.personas || []}
+              isEditing={editStates.personas}
+              onEditToggle={() => toggleEdit("personas")}
+              onPersonasChange={(newArr) =>
+                handleInputChange("personas", newArr)
+              }
+            />
 
             {/* Superpowers Section */}
             <div className="bg-white rounded-lg border">
