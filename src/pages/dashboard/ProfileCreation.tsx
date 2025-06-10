@@ -434,12 +434,12 @@ const ProfileCreation = () => {
             <StepCardContent>
               {/* VALIDATION ERRORS */}
               {validationErrors.length > 0 && (
-                <Alert className="mb-4 bg-red-50 border-red-200">
-                  <AlertCircle className="h-5 w-5 text-red-600" />
-                  <AlertTitle className="mb-1 font-semibold text-red-800">
+                <Alert className="mb-4 bg-destructive/10 border-destructive/30">
+                  <AlertCircle className="h-5 w-5 text-destructive" />
+                  <AlertTitle className="mb-1 font-semibold text-destructive">
                     Validation Error
                   </AlertTitle>
-                  <AlertDescription className="text-sm text-red-900">
+                  <AlertDescription className="text-sm text-destructive">
                     <ul className="list-disc ml-4">
                       {validationErrors.map((error, index) => (
                         <li key={index}>{error}</li>
@@ -450,16 +450,16 @@ const ProfileCreation = () => {
               )}
 
               {/* COMBINED INSTRUCTIONAL HELPER TEXT */}
-              <Alert className="mb-4 bg-blue-50 border-blue-200">
+              <Alert className="mb-4 bg-info-light border-info-border">
                 <div className="flex gap-2">
                   <div className="mt-0.5">
-                    {isLinkedInUser ? <Linkedin className="h-5 w-5 text-[#0A66C2]" /> : <HelpCircle className="h-5 w-5 text-blue-600" />}
+                    {isLinkedInUser ? <Linkedin className="h-5 w-5 text-fractional-teal" /> : <HelpCircle className="h-5 w-5 text-info" />}
                   </div>
                   <div>
-                    <AlertTitle className="mb-1 font-semibold text-blue-800">
+                    <AlertTitle className="mb-1 font-semibold text-info">
                       Profile Information Requirements
                     </AlertTitle>
-                    <AlertDescription className="text-sm text-blue-900">
+                    <AlertDescription className="text-sm text-info">
                       <p className="mb-1">At least <strong>one</strong> of the following is required:</p>
                       <ul className="list-disc ml-6 mb-2">
                         <li>Upload your resume/CV <span className="font-semibold">(PDF or DOCX)</span></li>
@@ -467,7 +467,7 @@ const ProfileCreation = () => {
                       </ul>
                       
                       {isLinkedInUser && (
-                        <p className="p-1.5 bg-blue-100/50 rounded border border-blue-200 text-xs">
+                        <p className="p-1.5 bg-info-light/50 rounded border border-info-border text-xs">
                           <strong>Note:</strong> LinkedIn sign-in provides only limited information. For your full experience, please upload your LinkedIn profile as a PDF.
                         </p>
                       )}
@@ -484,12 +484,12 @@ const ProfileCreation = () => {
 
               {/* Display any server connection errors */}
               {serverError && (
-                <Alert className="mb-4 bg-red-50 border-red-200">
-                  <AlertCircle className="h-5 w-5 text-red-600" />
-                  <AlertTitle className="mb-1 font-semibold text-red-800">
+                <Alert className="mb-4 bg-destructive/10 border-destructive/30">
+                  <AlertCircle className="h-5 w-5 text-destructive" />
+                  <AlertTitle className="mb-1 font-semibold text-destructive">
                     Connection Error
                   </AlertTitle>
-                  <AlertDescription className="text-sm text-red-900">
+                  <AlertDescription className="text-sm text-destructive">
                     {serverError}
                     <p className="mt-1 text-xs">
                       You can continue filling out the form and try submitting again later.
@@ -502,25 +502,25 @@ const ProfileCreation = () => {
                 <div className="space-y-6">
                   {/* UPLOADED DOCUMENTS DISPLAY */}
                   {(profile.linkedin || profile.resume) && (
-                    <div className="border rounded-lg p-4 bg-green-50 border-green-200">
-                      <h3 className="font-medium mb-3 text-green-800">Uploaded Documents</h3>
+                    <div className="border rounded-lg p-4 bg-success-light border-success-border">
+                      <h3 className="font-medium mb-3 text-success">Uploaded Documents</h3>
                       <div className="space-y-2">
                         {profile.linkedin && (
-                          <div className="flex items-center justify-between p-2 rounded bg-green-100 border border-green-200">
+                          <div className="flex items-center justify-between p-2 rounded bg-success-light border border-success-border">
                             <div className="flex items-center gap-2">
-                              <div className="p-1 rounded bg-green-200">
-                                <Linkedin className="h-4 w-4 text-green-700" />
+                              <div className="p-1 rounded bg-success-border">
+                                <Linkedin className="h-4 w-4 text-success" />
                               </div>
                               <div>
-                                <p className="font-medium text-green-800">LinkedIn</p>
-                                <p className="text-xs text-green-600">{profile.linkedin.name}</p>
+                                <p className="font-medium text-success">LinkedIn</p>
+                                <p className="text-xs text-success/80">{profile.linkedin.name}</p>
                               </div>
                             </div>
                             <Button
                               variant="ghost"
                               size="sm"
                               onClick={() => removeProfileDocument('linkedin')}
-                              className="text-red-600 hover:text-red-700 hover:bg-red-100"
+                              className="text-destructive hover:text-destructive hover:bg-destructive/10"
                               type="button"
                             >
                               <Trash2 className="h-4 w-4" />
@@ -528,21 +528,21 @@ const ProfileCreation = () => {
                           </div>
                         )}
                         {profile.resume && (
-                          <div className="flex items-center justify-between p-2 rounded bg-green-100 border border-green-200">
+                          <div className="flex items-center justify-between p-2 rounded bg-success-light border border-success-border">
                             <div className="flex items-center gap-2">
-                              <div className="p-1 rounded bg-green-200">
-                                <File className="h-4 w-4 text-green-700" />
+                              <div className="p-1 rounded bg-success-border">
+                                <File className="h-4 w-4 text-success" />
                               </div>
                               <div>
-                                <p className="font-medium text-green-800">Resume</p>
-                                <p className="text-xs text-green-600">{profile.resume.name}</p>
+                                <p className="font-medium text-success">Resume</p>
+                                <p className="text-xs text-success/80">{profile.resume.name}</p>
                               </div>
                             </div>
                             <Button
                               variant="ghost"
                               size="sm"
                               onClick={() => removeProfileDocument('resume')}
-                              className="text-red-600 hover:text-red-700 hover:bg-red-100"
+                              className="text-destructive hover:text-destructive hover:bg-destructive/10"
                               type="button"
                             >
                               <Trash2 className="h-4 w-4" />
@@ -556,8 +556,8 @@ const ProfileCreation = () => {
                   {/* LINKEDIN PDF UPLOAD SEGMENT */}
                   <div className="border rounded-lg p-6 mb-2">
                     <div className="flex items-center mb-4">
-                      <div className="bg-[#0A66C2]/10 p-3 rounded-full mr-3">
-                        <Linkedin className="h-6 w-6 text-[#0A66C2]" />
+                      <div className="bg-fractional-teal/10 p-3 rounded-full mr-3">
+                        <Linkedin className="h-6 w-6 text-fractional-teal" />
                       </div>
                       <div>
                         <h3 className="font-medium">Upload LinkedIn Profile (PDF)</h3>
@@ -693,16 +693,16 @@ const ProfileCreation = () => {
 
                   {/* DISPLAY WHEN BOTH FILES ARE UPLOADED */}
                   {profile.linkedin && profile.resume && (
-                    <Alert className="mb-4 bg-green-50 border-green-200">
+                    <Alert className="mb-4 bg-success-light border-success-border">
                       <div className="flex gap-2">
                         <div className="mt-0.5">
-                          <File className="h-5 w-5 text-green-600" />
+                          <File className="h-5 w-5 text-success" />
                         </div>
                         <div>
-                          <AlertTitle className="mb-1 font-semibold text-green-800">
+                          <AlertTitle className="mb-1 font-semibold text-success">
                             Both files uploaded successfully
                           </AlertTitle>
-                          <AlertDescription className="text-sm text-green-900">
+                          <AlertDescription className="text-sm text-success">
                             Great job! You've uploaded both your LinkedIn PDF and resume. 
                             This will give us the most complete picture of your professional background.
                           </AlertDescription>
@@ -736,16 +736,16 @@ const ProfileCreation = () => {
                       </Button>
                     </div>
                     
-                    <Alert className="mb-4 bg-blue-50 border-blue-200">
+                    <Alert className="mb-4 bg-info-light border-info-border">
                       <div className="flex gap-2">
                         <div className="mt-0.5">
-                          <HelpCircle className="h-5 w-5 text-blue-600" />
+                          <HelpCircle className="h-5 w-5 text-info" />
                         </div>
                         <div>
-                          <AlertTitle className="mb-1 font-semibold text-blue-800">
+                          <AlertTitle className="mb-1 font-semibold text-info">
                             Enhanced Profile Quality
                           </AlertTitle>
-                          <AlertDescription className="text-sm text-blue-900">
+                          <AlertDescription className="text-sm text-info">
                             The more supporting materials you provide, the stronger and more complete your profile will be. These additions help us present a well-rounded and accurate representation of your professional expertise.
                           </AlertDescription>
                         </div>
@@ -955,8 +955,8 @@ const ProfileCreation = () => {
                   </div>
                   
                   {isUsingLinkedInInfo && (
-                    <Alert variant="default" className="bg-[#0A66C2]/10 border-[#0A66C2]/30 mb-4">
-                      <Linkedin className="h-4 w-4 text-[#0A66C2]" />
+                    <Alert variant="default" className="bg-fractional-teal/10 border-fractional-teal/30 mb-4">
+                      <Linkedin className="h-4 w-4 text-fractional-teal" />
                       <AlertTitle>LinkedIn Profile Information Applied</AlertTitle>
                       <AlertDescription>
                         Your profile information has been pre-filled with data from your LinkedIn account. You can edit any fields as needed.

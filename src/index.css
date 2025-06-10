@@ -15,7 +15,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
 
-    --primary: 210 100% 50%;
+    --primary: 170 43% 40%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96%;
@@ -44,6 +44,24 @@
     --sidebar-accent-foreground: 222 47% 11%;
     --sidebar-border: 214 32% 91%;
     --sidebar-ring: 215 20% 65%;
+
+    /* Fractional First Brand Colors */
+    --fractional-teal: 170 43% 40%;
+    --fractional-teal-foreground: 0 0% 100%;
+    --fractional-teal-light: 170 43% 95%;
+    --fractional-teal-border: 170 43% 85%;
+
+    /* Success variants */
+    --success: 170 43% 40%;
+    --success-foreground: 0 0% 100%;
+    --success-light: 170 43% 95%;
+    --success-border: 170 43% 85%;
+
+    /* Info variants */
+    --info: 210 100% 50%;
+    --info-foreground: 0 0% 100%;
+    --info-light: 210 100% 95%;
+    --info-border: 210 100% 85%;
   }
 
   .dark {
@@ -56,7 +74,7 @@
     --popover: 222 47% 11%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 100% 50%;
+    --primary: 170 43% 40%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 217 33% 17%;
@@ -83,6 +101,24 @@
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 217 33% 17%;
     --sidebar-ring: 213 27% 84%;
+
+    /* Fractional First Brand Colors - Dark Mode */
+    --fractional-teal: 170 43% 50%;
+    --fractional-teal-foreground: 222 47% 11%;
+    --fractional-teal-light: 170 43% 15%;
+    --fractional-teal-border: 170 43% 25%;
+
+    /* Success variants - Dark Mode */
+    --success: 170 43% 50%;
+    --success-foreground: 222 47% 11%;
+    --success-light: 170 43% 15%;
+    --success-border: 170 43% 25%;
+
+    /* Info variants - Dark Mode */
+    --info: 210 100% 60%;
+    --info-foreground: 222 47% 11%;
+    --info-light: 210 100% 15%;
+    --info-border: 210 100% 25%;
   }
 }
 

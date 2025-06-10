@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -62,6 +61,24 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				'fractional-teal': {
+					DEFAULT: 'hsl(var(--fractional-teal))',
+					foreground: 'hsl(var(--fractional-teal-foreground))',
+					light: 'hsl(var(--fractional-teal-light))',
+					border: 'hsl(var(--fractional-teal-border))'
+				},
+				success: {
+					DEFAULT: 'hsl(var(--success))',
+					foreground: 'hsl(var(--success-foreground))',
+					light: 'hsl(var(--success-light))',
+					border: 'hsl(var(--success-border))'
+				},
+				info: {
+					DEFAULT: 'hsl(var(--info))',
+					foreground: 'hsl(var(--info-foreground))',
+					light: 'hsl(var(--info-light))',
+					border: 'hsl(var(--info-border))'
 				}
 			},
 			borderRadius: {
