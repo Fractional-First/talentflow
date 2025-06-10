@@ -15,6 +15,7 @@ import { useProfileSnapshot } from "@/queries/useProfileSnapshot"
 import { ArrowLeft, ArrowRight, Edit, Minus, Plus } from "lucide-react"
 import { useCallback, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { FunctionalSkillsSection } from "@/components/EditProfile/FunctionalSkillsSection"
 
 interface ProfileData {
   name?: string
@@ -733,70 +734,14 @@ const ProfileSnapshot = () => {
             />
 
             {/* Functional Skills */}
-            <div className="bg-white rounded-lg border">
-              <div className="bg-teal-600 text-white rounded-t-lg">
-                <div className="flex items-center justify-between p-4">
-                  <h3 className="text-lg font-semibold">Functional Skills</h3>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => toggleEdit("functionalSkills")}
-                    className="text-white hover:bg-white/20"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-
-              <div className="p-4 space-y-3">
-                {formData?.functional_skills &&
-                Object.keys(formData.functional_skills).length > 0 ? (
-                  Object.entries(formData.functional_skills).map(
-                    ([categoryName, skills]) => (
-                      <div
-                        key={categoryName}
-                        className="border-b border-gray-200 pb-3"
-                      >
-                        <button
-                          className="flex justify-between items-center w-full text-left"
-                          onClick={() => toggleFunctionalSkill(categoryName)}
-                        >
-                          <span className="font-medium text-gray-900">
-                            {categoryName}
-                          </span>
-                          {expandedFunctionalSkill === categoryName ? (
-                            <Minus className="h-5 w-5 text-gray-400" />
-                          ) : (
-                            <Plus className="h-5 w-5 text-gray-400" />
-                          )}
-                        </button>
-
-                        {expandedFunctionalSkill === categoryName && (
-                          <div className="mt-3 space-y-3">
-                            <div className="space-y-2">
-                              {skills?.map((skill, index) => (
-                                <div key={index}>
-                                  <h5 className="font-medium text-sm">
-                                    {skill.title}
-                                  </h5>
-                                  <p className="text-sm text-gray-700">
-                                    {skill.description}
-                                  </p>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    )
-                  )
-                ) : (
-                  <div className="text-sm text-gray-700">
-                    Functional skills not available
-                  </div>
-                )}
-              </div>
-            </div>
+            <FunctionalSkillsSection
+              functionalSkills={formData.functional_skills || {}}
+              isEditing={editStates.functionalSkills}
+              onEditToggle={() => toggleEdit("functionalSkills")}
+              onFunctionalSkillsChange={(skills) =>
+                handleInputChange("functional_skills", skills)
+              }
+            />
 
             {/* User Manual */}
             <EditableTextSection
