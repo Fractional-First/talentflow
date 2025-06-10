@@ -1,417 +1,386 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { DashboardLayout } from '@/components/DashboardLayout';
-import { StepCard, StepCardContent, StepCardDescription, StepCardFooter, StepCardHeader, StepCardTitle } from '@/components/StepCard';
-import { Step } from '@/components/OnboardingProgress';
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { toast } from '@/hooks/use-toast';
-import { Upload, ArrowRight, ArrowLeft, File, Clock, HelpCircle, Linkedin, Copy, AlertCircle, Link, FileText, Trash2, Plus, Paperclip } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
-import { supabase } from '@/integrations/supabase/client';
-import { useQueryClient } from '@tanstack/react-query';
+import { StepCard, StepCardContent, StepCardDescription, StepCardHeader, StepCardTitle } from '@/components/StepCard';
+import { StepCardFooter } from '@/components/StepCard';
+import { DashboardLayout } from '@/components/DashboardLayout';
+import { 
+  ArrowLeft, 
+  ArrowRight, 
+  Upload, 
+  File, 
+  Linkedin, 
+  Trash2, 
+  AlertCircle, 
+  CheckCircle, 
+  HelpCircle, 
+  Clock, 
+  Copy, 
+  Paperclip,
+  Plus,
+  X,
+  Link
+} from 'lucide-react';
 
-const industries = [
-  'Technology',
-  'Healthcare',
-  'Finance',
-  'Education',
-  'Manufacturing',
-  'Retail',
-  'Marketing',
-  'Design',
-  'Construction',
-  'Transportation',
-  'Hospitality',
-  'Other'
-];
+const LINKEDIN_PDF_GUIDE_URL = 'https://www.linkedin.com/help/linkedin/answer/17193/exporting-your-profile-to-pdf?lang=en';
 
-const experienceLevels = [
-  'Entry Level (0-2 years)',
-  'Mid Level (3-5 years)',
-  'Senior Level (6-10 years)',
-  'Executive (10+ years)'
-];
+interface SupportingDocument {
+  type: 'file' | 'link';
+  name?: string;
+  url?: string;
+  title?: string;
+  description?: string;
+  file?: File;
+}
 
-const LINKEDIN_PDF_GUIDE_URL =
-  "https://www.linkedin.com/help/linkedin/answer/a521735/how-to-save-a-profile-as-a-pdf?lang=en";
+interface ProfileDocument {
+  name: string;
+  url: string;
+}
 
-const N8N_DOCUMENTS_WEBHOOK = "https://webhook-processor-production-48f8.up.railway.app/webhook/d4245ae6-e289-47aa-95b4-26a93b75f7d9";
+interface ProfileData {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  currentPosition?: string;
+  company?: string;
+  yearsExperience?: string;
+  skills?: string;
+  summary?: string;
+  linkedin?: ProfileDocument | null;
+  resume?: ProfileDocument | null;
+  supportingDocuments?: SupportingDocument[];
+}
 
-type ProfileData = {
-  linkedin?: File;
-  resume?: File;
-  docs: Array<{ title: string; file: File }>;
-  links: Array<{ title: string; link: string }>;
+const initialFormData: ProfileData = {
+  firstName: '',
+  lastName: '',
+  email: '',
+  currentPosition: '',
+  company: '',
+  yearsExperience: '',
+  skills: '',
+  summary: '',
+  linkedin: null,
+  resume: null,
+  supportingDocuments: [],
 };
 
-type FormData = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  currentPosition: string;
-  company: string;
-  industry: string;
-  experienceLevel: string;
-  summary: string;
-  skills: string;
-};
+const steps = [
+  { id: 1, title: 'Welcome' },
+  { id: 2, title: 'Create Profile' },
+  { id: 3, title: 'Job Preferences' },
+];
 
 const ProfileCreation = () => {
+  const { user } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-  const queryClient = useQueryClient();
-  
-  const [profile, setProfile] = useState<ProfileData>({
-    docs: [],
-    links: []
-  });
-  
-  const [formData, setFormData] = useState<FormData>({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    currentPosition: '',
-    company: '',
-    industry: '',
-    experienceLevel: '',
-    summary: '',
-    skills: ''
-  });
-  
+  const toast = useToast();
+
+  const [formData, setFormData] = useState<ProfileData>(initialFormData);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showManualEntry, setShowManualEntry] = useState(false);
   const [showSupportingDocs, setShowSupportingDocs] = useState(false);
   const [isLinkedInUser, setIsLinkedInUser] = useState(false);
   const [isUsingLinkedInInfo, setIsUsingLinkedInInfo] = useState(false);
-  const [isEmailVerified, setIsEmailVerified] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [validationErrors, setValidationErrors] = useState<string[]>([]);
-  const [serverError, setServerError] = useState('');
-  
-  // Current document being added
-  const [currentDoc, setCurrentDoc] = useState({
-    type: 'document' as 'document' | 'link',
-    title: '',
-    description: '',
-    url: '',
-    fileName: ''
-  });
-  
-  // Effect to check if the user signed up with LinkedIn
+
+  const linkedinFileInputRef = useRef<HTMLInputElement>(null);
+  const resumeFileInputRef = useRef<HTMLInputElement>(null);
+
+  // Load existing profile data on mount
   useEffect(() => {
-    const authMethod = localStorage.getItem('authMethod');
-    if (authMethod === 'linkedin' || location.state?.linkedInSignUp) {
-      setIsLinkedInUser(true);
-    }
-  }, [location]);
-  
-  const steps: Step[] = [
-    { id: 1, name: 'Sign Up', description: 'Create your account', status: 'completed', estimatedTime: '2-3 minutes' },
-    { id: 2, name: 'Create Profile', description: 'Enter your information', status: 'current', estimatedTime: '5-7 minutes' },
-    { id: 3, name: 'Review Profile', description: 'Review your profile', status: 'upcoming', estimatedTime: '3-5 minutes' }
-  ];
-  
-  // Handlers
-  const handleLinkedInUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
-      setProfile(prev => ({ ...prev, linkedin: file }));
-      
-      toast({
-        title: "LinkedIn PDF uploaded",
-        description: "Your LinkedIn profile PDF was successfully uploaded."
-      });
-    }
-  };
-
-  const handleResumeUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
-      setProfile(prev => ({ ...prev, resume: file }));
-      
-      toast({
-        title: "Resume uploaded",
-        description: "Your resume was successfully uploaded."
-      });
-    }
-  };
-  
-  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { id, value } = e.target;
-    setFormData(prev => ({ ...prev, [id]: value }));
-  };
-
-  const handleSelectChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-  
-  const handleDocumentUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
-      setCurrentDoc(prev => ({ ...prev, fileName: file.name }));
-    }
-  };
-
-  const addSupportingDocument = (e: React.MouseEvent) => {
-    e.preventDefault();
-    
-    if (currentDoc.type === 'document' && !currentDoc.fileName) {
-      toast({
-        title: "Please select a file",
-        description: "You must upload a document before adding it.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (currentDoc.type === 'link' && !currentDoc.url) {
-      toast({
-        title: "Please enter a URL",
-        description: "You must provide a valid URL for your link.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (!currentDoc.title) {
-      toast({
-        title: "Title required",
-        description: "Please provide a title for your document or link.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (currentDoc.type === 'document') {
-      const fileInput = document.getElementById('doc-upload') as HTMLInputElement;
-      if (fileInput?.files?.[0]) {
-        setProfile(prev => ({
-          ...prev,
-          docs: [...prev.docs, { title: currentDoc.title, file: fileInput.files![0] }]
-        }));
+    const loadProfileData = async () => {
+      if (!user?.id) return;
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('profile_data')
+          .eq('id', user.id)
+          .single();
+        if (error) {
+          console.error('Error loading profile data:', error);
+          return;
+        }
+        if (data?.profile_data) {
+          const pd = data.profile_data as ProfileData;
+          setFormData(pd);
+          if (pd.linkedin) setIsLinkedInUser(true);
+        }
+      } catch (error) {
+        console.error('Error loading profile data:', error);
       }
-    } else {
-      setProfile(prev => ({
-        ...prev,
-        links: [...prev.links, { title: currentDoc.title, link: currentDoc.url }]
-      }));
-    }
+    };
+    loadProfileData();
+  }, [user?.id]);
 
-    // Reset current document
-    setCurrentDoc({
-      type: 'document',
-      title: '',
-      description: '',
-      url: '',
-      fileName: ''
-    });
-    
-    toast({
-      title: "Added successfully",
-      description: `Your ${currentDoc.type} has been added to your profile.`
-    });
-  };
-
-  const removeDocument = (index: number, type: 'docs' | 'links') => {
-    setProfile(prev => ({
-      ...prev,
-      [type]: prev[type].filter((_, i) => i !== index)
-    }));
-    
-    toast({
-      title: "Item removed",
-      description: "The document or link has been removed from your profile."
-    });
-  };
-
-  const removeProfileDocument = (type: 'linkedin' | 'resume') => {
-    setProfile(prev => {
-      const newProfile = { ...prev };
-      delete newProfile[type];
-      return newProfile;
-    });
-    
-    toast({
-      title: "Document removed",
-      description: "The profile document has been removed."
-    });
-  };
-  
-  const validateProfile = (): string[] => {
+  // Validation function
+  const validateForm = () => {
     const errors: string[] = [];
-    
-    if (!profile.linkedin && !profile.resume) {
-      errors.push('At least one of the following is required: LinkedIn PDF or Resume');
+    if (!formData.firstName || formData.firstName.trim() === '') {
+      errors.push('First name is required.');
     }
-    
-    if (!profile.linkedin && !profile.resume && (!formData.firstName || !formData.lastName)) {
-      errors.push('First name and last name are required when not uploading documents');
+    if (!formData.lastName || formData.lastName.trim() === '') {
+      errors.push('Last name is required.');
     }
-    
-    return errors;
+    if (!formData.email || formData.email.trim() === '') {
+      errors.push('Email address is required.');
+    } else {
+      // Basic email regex
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        errors.push('Email address is invalid.');
+      }
+    }
+    if (!formData.currentPosition || formData.currentPosition.trim() === '') {
+      errors.push('Current position is required.');
+    }
+    if (!formData.yearsExperience || formData.yearsExperience.trim() === '') {
+      errors.push('Years of experience is required.');
+    } else {
+      const years = Number(formData.yearsExperience);
+      if (isNaN(years) || years < 0 || years > 50) {
+        errors.push('Years of experience must be a number between 0 and 50.');
+      }
+    }
+    if (!formData.skills || formData.skills.trim() === '') {
+      errors.push('Key skills are required.');
+    }
+    if (!formData.summary || formData.summary.trim() === '') {
+      errors.push('Professional summary is required.');
+    }
+    // Require at least one of LinkedIn or Resume uploaded if not manual entry
+    if (!showManualEntry && !formData.linkedin && !formData.resume) {
+      errors.push('Please upload at least one of LinkedIn PDF or Resume.');
+    }
+    setValidationErrors(errors);
+    return errors.length === 0;
   };
-  
-  const submitProfileData = async () => {
-    const errors = validateProfile();
-    if (errors.length > 0) {
-      setValidationErrors(errors);
+
+  // Check if required documents are uploaded
+  const hasRequiredDocuments = !!formData.linkedin || !!formData.resume;
+
+  // Handle file uploads for LinkedIn and Resume
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'linkedin' | 'resume') => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    const file = files[0];
+    if (file.size > 10 * 1024 * 1024) {
       toast({
-        title: "Validation Error",
-        description: errors[0],
-        variant: "destructive"
+        title: 'File too large',
+        description: 'File size must be less than 10MB.',
+        variant: 'destructive',
       });
       return;
     }
-    
-    setIsSubmitting(true);
-    setServerError('');
-    setValidationErrors([]);
-    
+    if (type === 'linkedin' && file.type !== 'application/pdf') {
+      toast({
+        title: 'Invalid file type',
+        description: 'LinkedIn upload must be a PDF file.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    if (type === 'resume' && !['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].includes(file.type)) {
+      toast({
+        title: 'Invalid file type',
+        description: 'Resume must be PDF, DOC, or DOCX format.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    // Upload file to Supabase Storage or handle as needed
     try {
-      // Get the current user
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-      if (userError || !user) {
-        throw new Error('User not authenticated');
-      }
-
-      const formDataToSubmit = new FormData();
-
-      // Add user ID to the form data
-      formDataToSubmit.append('userId', user.id);
-
-      // Add form data
-      Object.entries(formData).forEach(([key, value]) => {
-        if (value) {
-          formDataToSubmit.append(key, value);
-        }
-      });
-      
-      // Add profile documents
-      if (profile.linkedin) {
-        formDataToSubmit.append('linkedin', profile.linkedin);
-      }
-      if (profile.resume) {
-        formDataToSubmit.append('resume', profile.resume);
-      }
-      
-      // Add supporting documents
-      profile.docs.forEach((doc, index) => {
-        formDataToSubmit.append(`docs[${index}][title]`, doc.title);
-        formDataToSubmit.append(`docs[${index}][file]`, doc.file);
-      });
-      
-      // Add links
-      profile.links.forEach((link, index) => {
-        formDataToSubmit.append(`links[${index}][title]`, link.title);
-        formDataToSubmit.append(`links[${index}][link]`, link.link);
-      });
-      
-      // Send POST request to webhook
-      const response = await fetch(N8N_DOCUMENTS_WEBHOOK, {
-        method: 'POST',
-        body: formDataToSubmit,
-      });
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Server error: ${response.status} ${response.statusText}. ${errorText}`);
-      }
-
-      // Parse the response to check for success
-      const responseData = await response.json();
-      
-      // Check if the API response indicates an error
-      if (responseData.error || responseData.status === 'error') {
-        throw new Error(responseData.message || 'Server reported an error processing your profile');
-      }
-      
-      // Store completion status in localStorage
-      const completedSections = JSON.parse(localStorage.getItem('completedSections') || '{}');
-      completedSections.profile = true;
-      localStorage.setItem('completedSections', JSON.stringify(completedSections));
-      
+      setIsSubmitting(true);
+      const filePath = `${user?.id}/${type}/${file.name}`;
+      const { data, error: uploadError } = await supabase.storage
+        .from('profile-documents')
+        .upload(filePath, file, { upsert: true });
+      if (uploadError) throw uploadError;
+      const publicUrl = supabase.storage.from('profile-documents').getPublicUrl(filePath).data.publicUrl;
+      if (!publicUrl) throw new Error('Failed to get public URL');
+      const newDoc: ProfileDocument = { name: file.name, url: publicUrl };
+      setFormData(prev => ({
+        ...prev,
+        [type]: newDoc,
+      }));
       toast({
-        title: "Profile saved successfully",
-        description: "Your profile information has been submitted and processed."
+        title: 'Upload successful',
+        description: `${type === 'linkedin' ? 'LinkedIn PDF' : 'Resume'} uploaded successfully.`,
+        variant: 'success',
       });
-      
-      // Invalidate React Query cache for profile data to ensure fresh data
-      await queryClient.invalidateQueries({ queryKey: ['profile', user.id] });
-      
-      // Redirect to profile snapshot page
-      navigate('/dashboard/profile-snapshot');
-      
     } catch (error) {
-      console.error('Error submitting profile:', error);
-      let errorMessage = "There was a problem submitting your profile. Please try again.";
-      
-      if (error instanceof Error) {
-        if (error.message.includes("Failed to fetch")) {
-          errorMessage = "Unable to connect to the server. Please check your internet connection and try submitting again.";
-        } else if (error.message.includes("Server error")) {
-          errorMessage = "The server encountered an error processing your profile. Please try submitting again.";
-        } else {
-          errorMessage = error.message;
-        }
-      }
-      
-      setServerError(errorMessage);
-      
+      console.error('Upload error:', error);
       toast({
-        title: "Error saving profile",
-        description: errorMessage,
-        variant: "destructive"
+        title: 'Upload failed',
+        description: 'There was an error uploading your file. Please try again.',
+        variant: 'destructive',
       });
     } finally {
       setIsSubmitting(false);
     }
   };
-  
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    submitProfileData();
+
+  // Remove uploaded LinkedIn or Resume document
+  const removeProfileDocument = (type: 'linkedin' | 'resume') => {
+    setFormData(prev => ({
+      ...prev,
+      [type]: null,
+    }));
   };
 
-  const requestEmailVerification = () => {
-    setTimeout(() => {
-      setIsEmailVerified(true);
+  // Supporting documents state and handlers
+  const [supportingDocTitle, setSupportingDocTitle] = useState('');
+  const [supportingDocDescription, setSupportingDocDescription] = useState('');
+  const [supportingDocUrl, setSupportingDocUrl] = useState('');
+  const [supportingDocFile, setSupportingDocFile] = useState<File | null>(null);
+  const [supportingDocType, setSupportingDocType] = useState<'file' | 'link'>('link');
+
+  const handleAddSupportingDocument = async () => {
+    if (supportingDocType === 'link') {
+      if (!supportingDocUrl.trim()) {
+        toast({
+          title: 'Invalid URL',
+          description: 'Please enter a valid URL.',
+          variant: 'destructive',
+        });
+        return;
+      }
+      setFormData(prev => ({
+        ...prev,
+        supportingDocuments: [
+          ...(prev.supportingDocuments || []),
+          {
+            type: 'link',
+            url: supportingDocUrl.trim(),
+            title: supportingDocTitle.trim() || undefined,
+            description: supportingDocDescription.trim() || undefined,
+          },
+        ],
+      }));
+      setSupportingDocTitle('');
+      setSupportingDocDescription('');
+      setSupportingDocUrl('');
       toast({
-        title: "Email verified",
-        description: "Your email address has been verified successfully."
+        title: 'Link added',
+        description: 'Supporting link added successfully.',
+        variant: 'success',
       });
-    }, 1500);
+    } else if (supportingDocType === 'file' && supportingDocFile) {
+      if (supportingDocFile.size > 10 * 1024 * 1024) {
+        toast({
+          title: 'File too large',
+          description: 'File size must be less than 10MB.',
+          variant: 'destructive',
+        });
+        return;
+      }
+      try {
+        setIsSubmitting(true);
+        const filePath = `${user?.id}/supporting-documents/${supportingDocFile.name}`;
+        const { data, error: uploadError } = await supabase.storage
+          .from('profile-documents')
+          .upload(filePath, supportingDocFile, { upsert: true });
+        if (uploadError) throw uploadError;
+        const publicUrl = supabase.storage.from('profile-documents').getPublicUrl(filePath).data.publicUrl;
+        if (!publicUrl) throw new Error('Failed to get public URL');
+        setFormData(prev => ({
+          ...prev,
+          supportingDocuments: [
+            ...(prev.supportingDocuments || []),
+            {
+              type: 'file',
+              name: supportingDocFile.name,
+              url: publicUrl,
+              title: supportingDocTitle.trim() || undefined,
+              description: supportingDocDescription.trim() || undefined,
+            },
+          ],
+        }));
+        setSupportingDocTitle('');
+        setSupportingDocDescription('');
+        setSupportingDocFile(null);
+        toast({
+          title: 'File added',
+          description: 'Supporting file added successfully.',
+          variant: 'success',
+        });
+      } catch (error) {
+        console.error('Supporting document upload error:', error);
+        toast({
+          title: 'Upload failed',
+          description: 'There was an error uploading your file. Please try again.',
+          variant: 'destructive',
+        });
+      } finally {
+        setIsSubmitting(false);
+      }
+    } else {
+      toast({
+        title: 'No file selected',
+        description: 'Please select a file to upload.',
+        variant: 'destructive',
+      });
+    }
   };
 
-  const handleUseLinkedInInfo = () => {
-    setIsUsingLinkedInInfo(true);
-    setFormData({
-      firstName: "John",
-      lastName: "Doe",
-      email: "john.doe@example.com",
-      phone: "+1 (555) 123-4567",
-      currentPosition: "Product Manager",
-      company: "Tech Innovations Inc.",
-      industry: "technology",
-      experienceLevel: "mid level (3-5 years)",
-      summary: "Experienced product manager with 5 years in the technology sector. Skilled in agile methodologies, user experience design, and cross-functional team leadership. Passionate about creating innovative solutions that solve real-world problems.",
-      skills: "Product Strategy, User Research, Agile/Scrum, Roadmap Planning, Cross-functional Leadership"
-    });
-    setShowManualEntry(true);
-    
-    toast({
-      title: "LinkedIn information applied",
-      description: "Your LinkedIn profile information has been used to pre-fill your profile."
+  const removeSupportingDocument = (index: number) => {
+    setFormData(prev => {
+      const newDocs = [...(prev.supportingDocuments || [])];
+      newDocs.splice(index, 1);
+      return {
+        ...prev,
+        supportingDocuments: newDocs,
+      };
     });
   };
 
-  const hasRequiredDocuments = profile.linkedin || profile.resume;
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setServerError(null);
+    if (!validateForm()) return;
+    if (!user?.id) {
+      setServerError('User not authenticated.');
+      return;
+    }
+    setIsSubmitting(true);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .upsert(
+          {
+            id: user.id,
+            profile_data: formData,
+          },
+          { onConflict: 'id' }
+        );
+      if (error) {
+        setServerError('Failed to save profile data.');
+        console.error('Save error:', error);
+        return;
+      }
+      toast({
+        title: 'Profile saved',
+        description: 'Your profile information has been saved successfully.',
+        variant: 'success',
+      });
+      navigate('/dashboard/job-preferences');
+    } catch (error) {
+      setServerError('An unexpected error occurred.');
+      console.error('Unexpected error:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <DashboardLayout steps={steps} currentStep={2}>
@@ -423,7 +392,7 @@ const ProfileCreation = () => {
               <StepCardDescription>
                 Tell us about your professional background and career goals
               </StepCardDescription>
-              <div className="flex items-center mt-2 bg-muted/40 px-3 py-2 rounded-md">
+              <div className="flex items-center mt-2 bg-muted/40 px-3 py-1 rounded-md">
                 <Clock className="h-4 w-4 text-muted-foreground mr-2" />
                 <span className="text-sm text-muted-foreground">
                   Estimated completion time: <strong>5-7 minutes</strong>
@@ -453,7 +422,7 @@ const ProfileCreation = () => {
               <Alert className="mb-4 bg-info-light border-info-border">
                 <div className="flex gap-2">
                   <div className="mt-0.5">
-                    {isLinkedInUser ? <Linkedin className="h-5 w-5 text-fractional-teal" /> : <HelpCircle className="h-5 w-5 text-info" />}
+                    {isLinkedInUser ? <Linkedin className="h-5 w-5 text-primary" /> : <HelpCircle className="h-5 w-5 text-info" />}
                   </div>
                   <div>
                     <AlertTitle className="mb-1 font-semibold text-info">
@@ -501,19 +470,19 @@ const ProfileCreation = () => {
               {!showManualEntry ? (
                 <div className="space-y-6">
                   {/* UPLOADED DOCUMENTS DISPLAY */}
-                  {(profile.linkedin || profile.resume) && (
+                  {(formData.linkedin || formData.resume) && (
                     <div className="border rounded-lg p-4 bg-success-light border-success-border">
                       <h3 className="font-medium mb-3 text-success">Uploaded Documents</h3>
                       <div className="space-y-2">
-                        {profile.linkedin && (
-                          <div className="flex items-center justify-between p-2 rounded bg-success-light border border-success-border">
+                        {formData.linkedin && (
+                          <div className="flex items-center justify-between p-2 rounded bg-background border border-success-border">
                             <div className="flex items-center gap-2">
-                              <div className="p-1 rounded bg-success-border">
-                                <Linkedin className="h-4 w-4 text-success" />
+                              <div className="p-1 rounded bg-primary/10">
+                                <Linkedin className="h-4 w-4 text-primary" />
                               </div>
                               <div>
                                 <p className="font-medium text-success">LinkedIn</p>
-                                <p className="text-xs text-success/80">{profile.linkedin.name}</p>
+                                <p className="text-xs text-muted-foreground">{formData.linkedin.name}</p>
                               </div>
                             </div>
                             <Button
@@ -527,15 +496,15 @@ const ProfileCreation = () => {
                             </Button>
                           </div>
                         )}
-                        {profile.resume && (
-                          <div className="flex items-center justify-between p-2 rounded bg-success-light border border-success-border">
+                        {formData.resume && (
+                          <div className="flex items-center justify-between p-2 rounded bg-background border border-success-border">
                             <div className="flex items-center gap-2">
-                              <div className="p-1 rounded bg-success-border">
-                                <File className="h-4 w-4 text-success" />
+                              <div className="p-1 rounded bg-primary/10">
+                                <File className="h-4 w-4 text-primary" />
                               </div>
                               <div>
                                 <p className="font-medium text-success">Resume</p>
-                                <p className="text-xs text-success/80">{profile.resume.name}</p>
+                                <p className="text-xs text-muted-foreground">{formData.resume.name}</p>
                               </div>
                             </div>
                             <Button
@@ -556,8 +525,8 @@ const ProfileCreation = () => {
                   {/* LINKEDIN PDF UPLOAD SEGMENT */}
                   <div className="border rounded-lg p-6 mb-2">
                     <div className="flex items-center mb-4">
-                      <div className="bg-fractional-teal/10 p-3 rounded-full mr-3">
-                        <Linkedin className="h-6 w-6 text-fractional-teal" />
+                      <div className="bg-primary/10 p-3 rounded-full mr-3">
+                        <Linkedin className="h-6 w-6 text-primary" />
                       </div>
                       <div>
                         <h3 className="font-medium">Upload LinkedIn Profile (PDF)</h3>
@@ -576,53 +545,21 @@ const ProfileCreation = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="border-2 border-dashed border-muted rounded-lg p-6 text-center">
-                      {profile.linkedin ? (
-                        <div className="flex flex-col items-center">
-                          <div className="bg-primary/10 p-3 rounded-full mb-3">
-                            <File className="h-6 w-6 text-primary" />
-                          </div>
-                          <p className="mb-1 font-medium">LinkedIn PDF uploaded successfully</p>
-                          <p className="text-sm text-muted-foreground mb-3">
-                            {profile.linkedin.name}
-                          </p>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => document.getElementById('linkedin-pdf-upload')?.click()}
-                            type="button"
-                          >
-                            Replace
-                          </Button>
-                        </div>
-                      ) : (
-                        <div className="flex flex-col items-center">
-                          <div className="bg-muted/50 p-3 rounded-full mb-3">
-                            <Upload className="h-6 w-6 text-muted-foreground" />
-                          </div>
-                          <p className="mb-1 font-medium">Drag and drop your LinkedIn PDF here</p>
-                          <p className="text-sm text-muted-foreground mb-3">PDF up to 5MB</p>
-                          <div>
-                            <label htmlFor="linkedin-pdf-upload">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => document.getElementById('linkedin-pdf-upload')?.click()}
-                                type="button"
-                              >
-                                Select File
-                              </Button>
-                              <input
-                                id="linkedin-pdf-upload"
-                                type="file"
-                                className="hidden"
-                                accept=".pdf"
-                                onChange={handleLinkedInUpload}
-                              />
-                            </label>
-                          </div>
-                        </div>
-                      )}
+
+                    {/* Upload interface */}
+                    <div className="relative">
+                      <input
+                        type="file"
+                        ref={linkedinFileInputRef}
+                        onChange={(e) => handleFileUpload(e, 'linkedin')}
+                        accept=".pdf"
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      />
+                      <div className="border-2 border-dashed border-border rounded-lg p-6 text-center bg-muted/20 hover:bg-muted/30 transition-colors">
+                        <Upload className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                        <p className="text-sm font-medium">Click to upload LinkedIn PDF</p>
+                        <p className="text-xs text-muted-foreground mt-1">PDF files only, max 10MB</p>
+                      </div>
                     </div>
                   </div>
 
@@ -633,70 +570,36 @@ const ProfileCreation = () => {
                         <File className="h-6 w-6 text-primary" />
                       </div>
                       <div>
-                        <h3 className="font-medium">Resume Upload</h3>
+                        <h3 className="font-medium">Upload Resume/CV</h3>
                         <p className="text-sm text-muted-foreground">
-                          Upload your resume and we'll extract the relevant information to help enhance your profile.
+                          Upload your most current resume or CV in PDF or DOCX format
                         </p>
                       </div>
                     </div>
-                    <div className="border-2 border-dashed border-muted rounded-lg p-6 text-center">
-                      {profile.resume ? (
-                        <div className="flex flex-col items-center">
-                          <div className="bg-primary/10 p-3 rounded-full mb-3">
-                            <File className="h-6 w-6 text-primary" />
-                          </div>
-                          <p className="mb-1 font-medium">Resume uploaded successfully</p>
-                          <p className="text-sm text-muted-foreground mb-3">
-                            {profile.resume.name}
-                          </p>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => document.getElementById('resume')?.click()}
-                            type="button"
-                          >
-                            Replace
-                          </Button>
-                        </div>
-                      ) : (
-                        <div className="flex flex-col items-center">
-                          <div className="bg-muted/50 p-3 rounded-full mb-3">
-                            <Upload className="h-6 w-6 text-muted-foreground" />
-                          </div>
-                          <p className="mb-1 font-medium">Drag and drop your resume here</p>
-                          <p className="text-sm text-muted-foreground mb-3">Supports PDF, DOCX, up to 5MB</p>
-                          <div>
-                            <label htmlFor="resume">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() =>
-                                  document.getElementById('resume')?.click()
-                                }
-                                type="button"
-                              >
-                                Select File
-                              </Button>
-                              <input
-                                id="resume"
-                                type="file"
-                                className="hidden"
-                                accept=".pdf,.doc,.docx"
-                                onChange={handleResumeUpload}
-                              />
-                            </label>
-                          </div>
-                        </div>
-                      )}
+
+                    {/* Upload interface */}
+                    <div className="relative">
+                      <input
+                        type="file"
+                        ref={resumeFileInputRef}
+                        onChange={(e) => handleFileUpload(e, 'resume')}
+                        accept=".pdf,.doc,.docx"
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      />
+                      <div className="border-2 border-dashed border-border rounded-lg p-6 text-center bg-muted/20 hover:bg-muted/30 transition-colors">
+                        <Upload className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                        <p className="text-sm font-medium">Click to upload Resume/CV</p>
+                        <p className="text-xs text-muted-foreground mt-1">PDF, DOC, or DOCX files, max 10MB</p>
+                      </div>
                     </div>
                   </div>
 
                   {/* DISPLAY WHEN BOTH FILES ARE UPLOADED */}
-                  {profile.linkedin && profile.resume && (
+                  {formData.linkedin && formData.resume && (
                     <Alert className="mb-4 bg-success-light border-success-border">
                       <div className="flex gap-2">
                         <div className="mt-0.5">
-                          <File className="h-5 w-5 text-success" />
+                          <CheckCircle className="h-5 w-5 text-success" />
                         </div>
                         <div>
                           <AlertTitle className="mb-1 font-semibold text-success">
@@ -752,176 +655,143 @@ const ProfileCreation = () => {
                       </div>
                     </Alert>
                     
-                    {showSupportingDocs && (
-                      <Card className="border border-border/60">
-                        <CardContent className="p-6 space-y-4">
-                          <div className="flex justify-between items-center">
-                            <h3 className="font-medium">Add New Supporting Material</h3>
-                            
-                            <div className="flex gap-2">
-                              <Button 
-                                variant={currentDoc.type === 'document' ? 'secondary' : 'outline'} 
+                    {/* Display existing supporting documents */}
+                    {formData.supportingDocuments && formData.supportingDocuments.length > 0 && (
+                      <div className="mb-4">
+                        <h4 className="font-medium mb-2">Added Documents & Links</h4>
+                        <div className="space-y-2">
+                          {formData.supportingDocuments.map((doc, index) => (
+                            <div key={index} className="flex items-center justify-between p-3 bg-muted/30 rounded border">
+                              <div className="flex items-center gap-2">
+                                <div className="p-1 rounded bg-primary/10">
+                                  {doc.type === 'file' ? (
+                                    <File className="h-4 w-4 text-primary" />
+                                  ) : (
+                                    <Link className="h-4 w-4 text-primary" />
+                                  )}
+                                </div>
+                                <div>
+                                  <p className="font-medium text-sm">{doc.title || doc.name}</p>
+                                  <p className="text-xs text-muted-foreground">
+                                    {doc.type === 'file' ? `File: ${doc.name}` : `Link: ${doc.url}`}
+                                  </p>
+                                  {doc.description && (
+                                    <p className="text-xs text-muted-foreground mt-1">{doc.description}</p>
+                                  )}
+                                </div>
+                              </div>
+                              <Button
+                                variant="ghost"
                                 size="sm"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  setCurrentDoc(prev => ({ ...prev, type: 'document' }));
-                                }}
+                                onClick={() => removeSupportingDocument(index)}
+                                className="text-destructive hover:text-destructive hover:bg-destructive/10"
                                 type="button"
                               >
-                                <FileText className="h-4 w-4 mr-1" />
-                                Document
-                              </Button>
-                              <Button 
-                                variant={currentDoc.type === 'link' ? 'secondary' : 'outline'} 
-                                size="sm" 
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  setCurrentDoc(prev => ({ ...prev, type: 'link' }));
-                                }}
-                                type="button"
-                              >
-                                <Link className="h-4 w-4 mr-1" />
-                                Link
+                                <Trash2 className="h-4 w-4" />
                               </Button>
                             </div>
-                          </div>
-                          
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Supporting documents form */}
+                    {showSupportingDocs && (
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-4">
+                          <Button
+                            variant={supportingDocType === 'link' ? 'default' : 'outline'}
+                            onClick={() => setSupportingDocType('link')}
+                            type="button"
+                          >
+                            Link
+                          </Button>
+                          <Button
+                            variant={supportingDocType === 'file' ? 'default' : 'outline'}
+                            onClick={() => setSupportingDocType('file')}
+                            type="button"
+                          >
+                            File
+                          </Button>
+                        </div>
+
+                        {supportingDocType === 'link' ? (
+                          <>
                             <div>
-                              <Label htmlFor="doc-title">Title*</Label>
-                              <Input 
-                                id="doc-title" 
-                                placeholder={currentDoc.type === 'document' ? "Document Title" : "Link Title"}
-                                value={currentDoc.title}
-                                onChange={(e) => setCurrentDoc(prev => ({ ...prev, title: e.target.value }))}
+                              <Label htmlFor="supportingDocUrl">URL *</Label>
+                              <Input
+                                id="supportingDocUrl"
+                                value={supportingDocUrl}
+                                onChange={(e) => setSupportingDocUrl(e.target.value)}
+                                placeholder="https://example.com/portfolio"
                               />
                             </div>
-                            
-                            {currentDoc.type === 'document' ? (
-                              <div>
-                                <Label htmlFor="doc-upload">Upload File*</Label>
-                                <div className="mt-1 flex items-center">
-                                  <Button 
-                                    variant="outline" 
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      document.getElementById('doc-upload')?.click();
-                                    }}
-                                    type="button"
-                                    className="w-full justify-start text-muted-foreground"
-                                  >
-                                    <Upload className="h-4 w-4 mr-2" />
-                                    {currentDoc.fileName || "Select File"}
-                                  </Button>
-                                  <input 
-                                    id="doc-upload" 
-                                    type="file" 
-                                    className="hidden" 
-                                    accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.png,.jpg,.jpeg" 
-                                    onChange={handleDocumentUpload}
-                                  />
-                                </div>
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Supports PDF, DOCX, PPTX, and common image formats up to 10MB
-                                </p>
-                              </div>
-                            ) : (
-                              <div>
-                                <Label htmlFor="doc-url">URL*</Label>
-                                <Input 
-                                  id="doc-url" 
-                                  placeholder="https://"
-                                  value={currentDoc.url}
-                                  onChange={(e) => setCurrentDoc(prev => ({ ...prev, url: e.target.value }))}
-                                />
-                              </div>
-                            )}
-                          </div>
-                          
-                          <div>
-                            <Label htmlFor="doc-description">Description (Optional)</Label>
-                            <Textarea 
-                              id="doc-description" 
-                              placeholder="Briefly describe this resource..."
-                              value={currentDoc.description}
-                              onChange={(e) => setCurrentDoc(prev => ({ ...prev, description: e.target.value }))}
-                              className="resize-none"
-                            />
-                          </div>
-                          
-                          <div className="flex justify-end">
-                            <Button
-                              onClick={addSupportingDocument}
-                              type="button"
-                            >
-                              <Plus className="h-4 w-4 mr-1" />
-                              Add {currentDoc.type === 'document' ? 'Document' : 'Link'}
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    )}
-                    
-                    {(profile.docs.length > 0 || profile.links.length > 0) && (
-                      <div className="space-y-3 mt-6">
-                        <h3 className="font-medium">Added Documents & Links</h3>
-                        <div className="space-y-3">
-                          {profile.docs.map((doc, index) => (
-                            <div 
-                              key={index} 
-                              className="flex items-center justify-between p-3 rounded-md border border-border/60 bg-background"
-                            >
-                              <div className="flex items-center gap-3">
-                                <div className="p-2 rounded-md bg-primary/10">
-                                  <FileText className="h-5 w-5 text-primary" />
-                                </div>
-                                
-                                <div>
-                                  <p className="font-medium">{doc.title}</p>
-                                  <p className="text-xs text-muted-foreground">{doc.file.name}</p>
-                                </div>
-                              </div>
-                              
-                              <Button
-                                variant="ghost" 
-                                size="sm"
-                                onClick={() => removeDocument(index, 'docs')}
-                                className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                                type="button"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
+                            <div>
+                              <Label htmlFor="supportingDocTitle">Title</Label>
+                              <Input
+                                id="supportingDocTitle"
+                                value={supportingDocTitle}
+                                onChange={(e) => setSupportingDocTitle(e.target.value)}
+                                placeholder="Portfolio, Publication, etc."
+                              />
                             </div>
-                          ))}
-                          {profile.links.map((link, index) => (
-                            <div 
-                              key={index} 
-                              className="flex items-center justify-between p-3 rounded-md border border-border/60 bg-background"
-                            >
-                              <div className="flex items-center gap-3">
-                                <div className="p-2 rounded-md bg-primary/10">
-                                  <Link className="h-5 w-5 text-primary" />
-                                </div>
-                                
-                                <div>
-                                  <p className="font-medium">{link.title}</p>
-                                  <p className="text-xs text-primary truncate max-w-[200px] md:max-w-[300px]">
-                                    {link.link}
-                                  </p>
-                                </div>
-                              </div>
-                              
-                              <Button
-                                variant="ghost" 
-                                size="sm"
-                                onClick={() => removeDocument(index, 'links')}
-                                className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                                type="button"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
+                            <div>
+                              <Label htmlFor="supportingDocDescription">Description</Label>
+                              <Textarea
+                                id="supportingDocDescription"
+                                value={supportingDocDescription}
+                                onChange={(e) => setSupportingDocDescription(e.target.value)}
+                                placeholder="Brief description of the link"
+                                rows={2}
+                              />
                             </div>
-                          ))}
+                          </>
+                        ) : (
+                          <>
+                            <div>
+                              <Label htmlFor="supportingDocFile">File *</Label>
+                              <Input
+                                id="supportingDocFile"
+                                type="file"
+                                onChange={(e) => {
+                                  if (e.target.files && e.target.files.length > 0) {
+                                    setSupportingDocFile(e.target.files[0]);
+                                  } else {
+                                    setSupportingDocFile(null);
+                                  }
+                                }}
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="supportingDocTitleFile">Title</Label>
+                              <Input
+                                id="supportingDocTitleFile"
+                                value={supportingDocTitle}
+                                onChange={(e) => setSupportingDocTitle(e.target.value)}
+                                placeholder="Portfolio, Publication, etc."
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="supportingDocDescriptionFile">Description</Label>
+                              <Textarea
+                                id="supportingDocDescriptionFile"
+                                value={supportingDocDescription}
+                                onChange={(e) => setSupportingDocDescription(e.target.value)}
+                                placeholder="Brief description of the file"
+                                rows={2}
+                              />
+                            </div>
+                          </>
+                        )}
+
+                        <div className="flex justify-end">
+                          <Button
+                            onClick={handleAddSupportingDocument}
+                            disabled={isSubmitting}
+                            type="button"
+                          >
+                            Add Document
+                          </Button>
                         </div>
                       </div>
                     )}
@@ -955,8 +825,8 @@ const ProfileCreation = () => {
                   </div>
                   
                   {isUsingLinkedInInfo && (
-                    <Alert variant="default" className="bg-fractional-teal/10 border-fractional-teal/30 mb-4">
-                      <Linkedin className="h-4 w-4 text-fractional-teal" />
+                    <Alert variant="default" className="bg-primary/10 border-primary/30 mb-4">
+                      <Linkedin className="h-4 w-4 text-primary" />
                       <AlertTitle>LinkedIn Profile Information Applied</AlertTitle>
                       <AlertDescription>
                         Your profile information has been pre-filled with data from your LinkedIn account. You can edit any fields as needed.
@@ -964,144 +834,91 @@ const ProfileCreation = () => {
                     </Alert>
                   )}
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-4">
-                      <div>
-                        <Label htmlFor="firstName">First Name</Label>
-                        <Input 
-                          id="firstName" 
-                          value={formData.firstName} 
-                          onChange={handleFormChange}
-                        />
-                      </div>
-                      
-                      <div>
-                        <div className="flex items-center justify-between">
-                          <Label htmlFor="email">Email</Label>
-                          <Badge variant={isEmailVerified ? "default" : "outline"} className="ml-2">
-                            {isEmailVerified ? "Verified" : "Unverified"}
-                          </Badge>
-                        </div>
-                        <div className="flex space-x-2">
-                          <Input 
-                            id="email" 
-                            type="email" 
-                            value={formData.email} 
-                            onChange={handleFormChange}
-                          />
-                          {!isEmailVerified && (
-                            <Button type="button" variant="outline" size="sm" onClick={requestEmailVerification}>
-                              Verify
-                            </Button>
-                          )}
-                        </div>
-                        {!isEmailVerified && (
-                          <p className="text-xs text-muted-foreground mt-1">
-                            Verification helps ensure profile authenticity
-                          </p>
-                        )}
-                      </div>
-                      
-                      <div>
-                        <Label htmlFor="currentPosition">Current Position</Label>
-                        <Input 
-                          id="currentPosition" 
-                          value={formData.currentPosition} 
-                          onChange={handleFormChange}
-                        />
-                      </div>
-                      
-                      <div>
-                        <Label htmlFor="industry">Industry</Label>
-                        <Select 
-                          value={formData.industry}
-                          onValueChange={(value) => handleSelectChange('industry', value)}
-                        >
-                          <SelectTrigger id="industry">
-                            <SelectValue placeholder="Select an industry" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {industries.map(industry => (
-                              <SelectItem key={industry} value={industry.toLowerCase()}>
-                                {industry}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
+                  {/* Manual form fields */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="firstName">First Name *</Label>
+                      <Input
+                        id="firstName"
+                        value={formData.firstName || ''}
+                        onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
+                        placeholder="Enter your first name"
+                      />
                     </div>
-                    
-                    <div className="space-y-4">
-                      <div>
-                        <Label htmlFor="lastName">Last Name</Label>
-                        <Input 
-                          id="lastName" 
-                          value={formData.lastName} 
-                          onChange={handleFormChange}
-                        />
-                      </div>
-                      
-                      <div>
-                        <Label htmlFor="phone">Phone Number</Label>
-                        <Input 
-                          id="phone" 
-                          type="tel" 
-                          value={formData.phone} 
-                          onChange={handleFormChange}
-                        />
-                      </div>
-                      
-                      <div>
-                        <Label htmlFor="company">Current Company</Label>
-                        <Input 
-                          id="company" 
-                          value={formData.company} 
-                          onChange={handleFormChange}
-                        />
-                      </div>
-                      
-                      <div>
-                        <Label htmlFor="experience">Experience Level</Label>
-                        <Select 
-                          value={formData.experienceLevel}
-                          onValueChange={(value) => handleSelectChange('experienceLevel', value)}
-                        >
-                          <SelectTrigger id="experience">
-                            <SelectValue placeholder="Select experience level" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {experienceLevels.map(level => (
-                              <SelectItem key={level} value={level.toLowerCase()}>
-                                {level}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
+                    <div>
+                      <Label htmlFor="lastName">Last Name *</Label>
+                      <Input
+                        id="lastName"
+                        value={formData.lastName || ''}
+                        onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
+                        placeholder="Enter your last name"
+                      />
                     </div>
                   </div>
-                  
-                  <div className="space-y-4 mt-6">
-                    <div>
-                      <Label htmlFor="summary">Professional Summary</Label>
-                      <Textarea 
-                        id="summary" 
-                        placeholder="Briefly describe your professional background, key skills, and career goals..."
-                        className="min-h-[120px]"
-                        value={formData.summary}
-                        onChange={handleFormChange}
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="skills">Key Skills (comma separated)</Label>
-                      <Input 
-                        id="skills" 
-                        placeholder="e.g., Project Management, JavaScript, Data Analysis, Leadership"
-                        value={formData.skills}
-                        onChange={handleFormChange}
-                      />
-                    </div>
+
+                  <div>
+                    <Label htmlFor="email">Email Address *</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={formData.email || ''}
+                      onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                      placeholder="Enter your email address"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="currentPosition">Current Position *</Label>
+                    <Input
+                      id="currentPosition"
+                      value={formData.currentPosition || ''}
+                      onChange={(e) => setFormData(prev => ({ ...prev, currentPosition: e.target.value }))}
+                      placeholder="e.g., Senior Product Manager"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="company">Current Company</Label>
+                    <Input
+                      id="company"
+                      value={formData.company || ''}
+                      onChange={(e) => setFormData(prev => ({ ...prev, company: e.target.value }))}
+                      placeholder="Enter your current company"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="yearsExperience">Years of Experience *</Label>
+                    <Input
+                      id="yearsExperience"
+                      type="number"
+                      min="0"
+                      max="50"
+                      value={formData.yearsExperience || ''}
+                      onChange={(e) => setFormData(prev => ({ ...prev, yearsExperience: e.target.value }))}
+                      placeholder="Enter years of experience"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="skills">Key Skills *</Label>
+                    <Input
+                      id="skills"
+                      value={formData.skills || ''}
+                      onChange={(e) => setFormData(prev => ({ ...prev, skills: e.target.value }))}
+                      placeholder="e.g., Product Strategy, User Research, Agile (comma-separated)"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="summary">Professional Summary *</Label>
+                    <Textarea
+                      id="summary"
+                      value={formData.summary || ''}
+                      onChange={(e) => setFormData(prev => ({ ...prev, summary: e.target.value }))}
+                      placeholder="Provide a brief summary of your professional background and key achievements..."
+                      rows={4}
+                    />
                   </div>
                 </div>
               )}
