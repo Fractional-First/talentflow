@@ -18,6 +18,7 @@ import { useNavigate } from "react-router-dom"
 import { EditableTextSection } from "@/components/EditProfile/EditableTextSection"
 import { EditableArraySection } from "@/components/EditProfile/EditableArraySection"
 import { PersonasSection } from "@/components/EditProfile/PersonasSection"
+import { SuperpowersSection } from "@/components/EditProfile/SuperpowersSection"
 
 interface ProfileData {
   name?: string
@@ -763,102 +764,14 @@ const ProfileSnapshot = () => {
             />
 
             {/* Superpowers Section */}
-            <div className="bg-white rounded-lg border">
-              <div className="bg-teal-600 text-white rounded-t-lg">
-                <div className="flex items-center justify-between p-4">
-                  <h3 className="text-lg font-semibold">Superpowers</h3>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => toggleEdit("superpowers")}
-                    className="text-white hover:bg-white/20"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-
-              <div className="p-4">
-                <div className="space-y-4">
-                  {formData?.superpowers && formData.superpowers.length > 0 ? (
-                    formData.superpowers.map((superpower, index) => (
-                      <div key={index} className="space-y-2">
-                        {editStates.superpowers ? (
-                          <div className="space-y-2">
-                            <div className="flex gap-2 items-center">
-                              <Input
-                                value={
-                                  superpowerEditStates[index]?.title ||
-                                  superpower.title
-                                }
-                                onChange={(e) =>
-                                  handleSuperpowerLocalUpdate(
-                                    index,
-                                    "title",
-                                    e.target.value
-                                  )
-                                }
-                                className="font-medium"
-                                placeholder="Superpower title"
-                              />
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => removeSuperpowerItem(index)}
-                                className="text-red-500 hover:text-red-700"
-                              >
-                                <X className="h-4 w-4" />
-                              </Button>
-                            </div>
-                            <Textarea
-                              value={
-                                superpowerEditStates[index]?.description ||
-                                superpower.description
-                              }
-                              onChange={(e) =>
-                                handleSuperpowerLocalUpdate(
-                                  index,
-                                  "description",
-                                  e.target.value
-                                )
-                              }
-                              className="text-sm"
-                              placeholder="Superpower description"
-                              rows={3}
-                            />
-                          </div>
-                        ) : (
-                          <div>
-                            <Label className="font-medium text-gray-900">
-                              {superpower.title}
-                            </Label>
-                            <p className="text-sm text-gray-700">
-                              {superpower.description}
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    ))
-                  ) : (
-                    <div className="text-sm text-gray-700">
-                      Superpowers not available
-                    </div>
-                  )}
-
-                  {editStates.superpowers && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={addSuperpowerItem}
-                      className="w-full"
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add Superpower
-                    </Button>
-                  )}
-                </div>
-              </div>
-            </div>
+            <SuperpowersSection
+              superpowers={formData.superpowers || []}
+              isEditing={editStates.superpowers}
+              onEditToggle={() => toggleEdit("superpowers")}
+              onSuperpowersChange={(newArr) =>
+                handleInputChange("superpowers", newArr)
+              }
+            />
 
             {/* Sweet Spot Section */}
             <EditableTextSection
