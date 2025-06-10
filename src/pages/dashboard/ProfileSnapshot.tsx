@@ -1,137 +1,92 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { DashboardLayout } from '@/components/DashboardLayout';
-import { StepCard, StepCardContent, StepCardDescription, StepCardFooter, StepCardHeader, StepCardTitle } from '@/components/StepCard';
-import { Step } from '@/components/OnboardingProgress';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import {
-  ArrowRight,
-  ArrowLeft,
-  User,
-  Briefcase,
-  GraduationCap,
-  CheckCircle,
-  Pencil,
-  WandSparkles,
-  Info,
-  MapPin,
-  Mail,
-  Phone,
-  Plus,
-  Minus,
-  Save,
-  X,
-  Edit,
-  History
-} from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { toast } from '@/hooks/use-toast';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Label } from '@/components/ui/label';
-import ProfilePictureUpload from '@/components/ProfilePictureUpload';
-import { VersionHistorySidebar } from '@/components/profile/VersionHistorySidebar';
-import { useVersionHistory } from '@/hooks/useVersionHistory';
-import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
-import { useQuery } from '@tanstack/react-query';
-import type { Json } from '@/integrations/supabase/types';
-
-interface ProfileData {
-  name?: string;
-  role?: string;
-  summary?: string;
-  location?: string;
-  personas?: Array<{
-    title: string;
-    bullets: string[];
-  }>;
-  meet_them?: string;
-  sweetspot?: string;
-  highlights?: string[];
-  industries?: string[];
-  focus_areas?: string[];
-  stage_focus?: string[];
-  superpowers?: Array<{
-    title: string;
-    description: string;
-  }>;
-  user_manual?: string;
-  certifications?: string[];
-  non_obvious_role?: {
-    title: string;
-    description: string;
-  };
-  functional_skills?: {
-    [key: string]: Array<{
-      title: string;
-      description: string;
-    }>;
-  };
-  personal_interests?: string[];
-  geographical_coverage?: string[];
-  profilePicture?: string;
-}
-
-interface EditStates {
-  basicInfo: boolean;
-  description: boolean;
-  keyRoles: boolean;
-  focusAreas: boolean;
-  industries: boolean;
-  geographicalCoverage: boolean;
-  stages: boolean;
-  personalInterests: boolean;
-  certifications: boolean;
-  engagementOptions: boolean;
-  meetIntro: boolean;
-  personas: boolean;
-  superpowers: boolean;
-  sweetSpot: boolean;
-  userManual: boolean;
-  functionalSkills: boolean;
-}
-
-const AIGUIDE_KEY = 'aiSuggestionsGuideSeen';
+import { initialSteps } from "@/components/dashboard/OnboardingSteps"
+import { DashboardLayout } from "@/components/DashboardLayout"
+import { BasicInfoSection } from "@/components/EditProfile/BasicInfoSection"
+import { EditableArraySection } from "@/components/EditProfile/EditableArraySection"
+import { EditableTextSection } from "@/components/EditProfile/EditableTextSection"
+import { FunctionalSkillsSection } from "@/components/EditProfile/FunctionalSkillsSection"
+import { PersonasSection } from "@/components/EditProfile/PersonasSection"
+import { SuperpowersSection } from "@/components/EditProfile/SuperpowersSection"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import { useAuth } from "@/contexts/AuthContext"
+import { toast } from "@/hooks/use-toast"
+import { useAutoSave } from "@/hooks/useAutoSave"
+import { useClickOutside } from "@/hooks/useClickOutside"
+import { usePersonaEditState } from "@/hooks/usePersonaEditState"
+import { useProfileForm } from "@/hooks/useProfileForm"
+import { useSuperpowerEditState } from "@/hooks/useSuperpowerEditState"
+import { supabase } from "@/integrations/supabase/client"
+import { getUserInitials } from "@/lib/utils"
+import { useProfileSnapshot } from "@/queries/useProfileSnapshot"
+import type { EditStates, ProfileData } from "@/types/profile"
+import { ArrowLeft, ArrowRight } from "lucide-react"
+import { useRef, useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 const ProfileSnapshot = () => {
-  const navigate = useNavigate();
-  const { user } = useAuth();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showAIGuide, setShowAIGuide] = useState(false);
-  const [expandedFunctionalSkill, setExpandedFunctionalSkill] = useState<string | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
-  const [lastSaveTime, setLastSaveTime] = useState<Date | null>(null);
-  const [versionHistorySidebar, setVersionHistorySidebar] = useState<{
-    isOpen: boolean;
-    fieldName: string;
-  }>({ isOpen: false, fieldName: '' });
+  const navigate = useNavigate()
+  const { user } = useAuth()
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Fetch profile data using the new hook
+  const { profileData, isLoading, error } = useProfileSnapshot()
 
   // Initialize formData state first
-  const [formData, setFormData] = useState<ProfileData>({});
+  const [formData, setFormData] = useProfileForm({
+    user,
+    profileData,
+    toast: (opts: {
+      title: string
+      description: string
+      variant: "default" | "destructive"
+    }) => {
+      toast(opts)
+    },
+  })
 
-  // Local editing state for personas
-  const [personaEditStates, setPersonaEditStates] = useState<{
-    [key: number]: {
-      title: string;
-      bulletsText: string;
-    };
-  }>({});
+  // Add activeTab state for personas
+  const [personasActiveTab, setPersonasActiveTab] = useState("0")
 
-  // Local editing state for superpowers
-  const [superpowerEditStates, setSuperpowerEditStates] = useState<{
-    [key: number]: {
-      title: string;
-      description: string;
-    };
-  }>({});
+  const {
+    personaEditStates,
+    handlePersonaLocalUpdate,
+    handleAddPersona,
+    handleRemovePersona,
+    syncPersonaEditStates,
+  } = usePersonaEditState({ personas: formData.personas || [], setFormData })
+
+  const { syncSuperpowerEditStates } = useSuperpowerEditState({
+    superpowers: formData.superpowers || [],
+    setFormData,
+  })
+
+  useAutoSave({ user, formData, profileData, toast: (opts) => toast(opts) })
+
+  // Restore toggleEdit function
+  const toggleEdit = (section: keyof EditStates) => {
+    setEditStates((prev) => {
+      // If already editing this section, turn it off
+      if (prev[section]) {
+        return { ...prev, [section]: false }
+      }
+      // Otherwise, set only this section to true, all others to false
+      const newState: EditStates = Object.keys(prev).reduce((acc, key) => {
+        acc[key as keyof EditStates] = false
+        return acc
+      }, {} as EditStates)
+      newState[section] = true
+
+      // When entering edit mode for personas, sync local state with current data
+      if (section === "personas" && formData.personas) {
+        syncPersonaEditStates(formData.personas)
+      }
+      // When entering edit mode for superpowers, sync local state with current data
+      if (section === "superpowers" && formData.superpowers) {
+        syncSuperpowerEditStates(formData.superpowers)
+      }
+      return newState
+    })
+  }
 
   const [editStates, setEditStates] = useState<EditStates>({
     basicInfo: false,
@@ -150,484 +105,68 @@ const ProfileSnapshot = () => {
     sweetSpot: false,
     userManual: false,
     functionalSkills: false,
-  });
+  })
 
-  // Fetch profile data from Supabase with more specific query
-  const { data: profileDataResponse, isLoading, error } = useQuery({
-    queryKey: ['profile-snapshot', user?.id],
-    queryFn: async () => {
-      if (!user?.id) {
-        console.log('No user ID available');
-        return null;
+  const mainContentRef = useRef<HTMLDivElement>(null)
+
+  useClickOutside(mainContentRef, () => {
+    setEditStates((prev) => {
+      if (Object.values(prev).some((v) => v)) {
+        const closed: EditStates = Object.keys(prev).reduce((acc, key) => {
+          acc[key as keyof EditStates] = false
+          return acc
+        }, {} as EditStates)
+        return closed
       }
-      
-      console.log('Fetching profile data for user:', user.id);
-      
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('profile_data, onboarding_status')
-        .eq('id', user.id)
-        .single();
-      
-      if (error) {
-        console.error('Error fetching profile:', error);
-        throw error;
-      }
-      
-      console.log('Raw profile data from DB:', data);
-      
-      // Check if we have profile_data and it's not just the onboarding_status
-      if (!data || !data.profile_data) {
-        console.log('No profile_data found in database');
-        return null;
-      }
-      
-      const profileData = data.profile_data as ProfileData;
-      console.log('Extracted profile data:', profileData);
-      
-      // Validate that we have meaningful profile data
-      if (!profileData || Object.keys(profileData).length === 0) {
-        console.log('Profile data is empty or invalid');
-        return null;
-      }
-      
-      return profileData;
-    },
-    enabled: !!user?.id,
-    retry: false, // Don't retry on error to avoid confusion
-  });
-
-  // Auto-save function
-  const autoSave = useCallback(async (dataToSave: ProfileData) => {
-    if (!user?.id || !dataToSave || Object.keys(dataToSave).length === 0) return;
-    
-    setIsSaving(true);
-    
-    try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ profile_data: dataToSave as Json })
-        .eq('id', user.id);
-
-      if (error) throw error;
-
-      setLastSaveTime(new Date());
-      console.log('Auto-saved profile data');
-    } catch (error) {
-      console.error('Error auto-saving profile:', error);
-      toast({
-        title: "Auto-save failed",
-        description: "Your changes couldn't be saved automatically. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSaving(false);
-    }
-  }, [user?.id]);
-
-  // Debounced auto-save effect with 1000ms delay
-  useEffect(() => {
-    if (!formData || Object.keys(formData).length === 0 || !profileDataResponse) return;
-    
-    // Only save if data has changed from original
-    const hasChanges = JSON.stringify(formData) !== JSON.stringify(profileDataResponse);
-    if (!hasChanges) return;
-    
-    const timeoutId = setTimeout(() => {
-      autoSave(formData);
-    }, 1000); // 1 second debounce
-
-    return () => clearTimeout(timeoutId);
-  }, [formData, autoSave, profileDataResponse]);
-
-  // Debounced update function for personas
-  useEffect(() => {
-    const timeouts: { [key: number]: NodeJS.Timeout } = {};
-
-    Object.entries(personaEditStates).forEach(([personaIndex, editState]) => {
-      const index = parseInt(personaIndex);
-      
-      if (timeouts[index]) {
-        clearTimeout(timeouts[index]);
-      }
-      
-      timeouts[index] = setTimeout(() => {
-        // Update the main formData with the debounced changes
-        const bullets = editState.bulletsText
-          .split('\n')
-          .map(line => line.replace(/^•\s*/, '').trim())
-          .filter(line => line.length > 0);
-        
-        setFormData(prev => {
-          const updatedPersonas = [...(prev.personas || [])];
-          updatedPersonas[index] = {
-            ...updatedPersonas[index],
-            title: editState.title,
-            bullets: bullets
-          };
-          return { ...prev, personas: updatedPersonas };
-        });
-      }, 300); // 300ms debounce delay
-    });
-
-    return () => {
-      Object.values(timeouts).forEach(timeout => clearTimeout(timeout));
-    };
-  }, [personaEditStates]);
-
-  // Debounced update function for superpowers
-  useEffect(() => {
-    const timeouts: { [key: number]: NodeJS.Timeout } = {};
-
-    Object.entries(superpowerEditStates).forEach(([superpowerIndex, editState]) => {
-      const index = parseInt(superpowerIndex);
-      
-      if (timeouts[index]) {
-        clearTimeout(timeouts[index]);
-      }
-      
-      timeouts[index] = setTimeout(() => {
-        // Update the main formData with the debounced changes
-        setFormData(prev => {
-          const updatedSuperpowers = [...(prev.superpowers || [])];
-          updatedSuperpowers[index] = {
-            title: editState.title,
-            description: editState.description
-          };
-          return { ...prev, superpowers: updatedSuperpowers };
-        });
-      }, 300); // 300ms debounce delay
-    });
-
-    return () => {
-      Object.values(timeouts).forEach(timeout => clearTimeout(timeout));
-    };
-  }, [superpowerEditStates]);
-
-  // Update formData when profileData is loaded
-  useEffect(() => {
-    console.log('useEffect triggered - profileDataResponse:', profileDataResponse);
-    if (profileDataResponse && typeof profileDataResponse === 'object') {
-      console.log('Setting form data from profileDataResponse:', profileDataResponse);
-      setFormData(profileDataResponse);
-      
-      // Initialize persona edit states when data is loaded
-      if (profileDataResponse.personas) {
-        const initialEditStates: { [key: number]: { title: string; bulletsText: string } } = {};
-        profileDataResponse.personas.forEach((persona, index) => {
-          initialEditStates[index] = {
-            title: persona.title,
-            bulletsText: persona.bullets?.map(bullet => `• ${bullet}`).join('\n') || ''
-          };
-        });
-        setPersonaEditStates(initialEditStates);
-      }
-
-      // Initialize superpower edit states when data is loaded
-      if (profileDataResponse.superpowers) {
-        const initialSuperpowerEditStates: { [key: number]: { title: string; description: string } } = {};
-        profileDataResponse.superpowers.forEach((superpower, index) => {
-          initialSuperpowerEditStates[index] = {
-            title: superpower.title,
-            description: superpower.description
-          };
-        });
-        setSuperpowerEditStates(initialSuperpowerEditStates);
-      }
-    }
-  }, [profileDataResponse]);
-
-  // Debug effect to track formData changes
-  useEffect(() => {
-    console.log('Current formData state:', formData);
-  }, [formData]);
-
-  console.log('Component render - isLoading:', isLoading, 'error:', error, 'profileDataResponse:', profileDataResponse);
-
-  // Helper function to get user initials
-  const getUserInitials = (name?: string) => {
-    if (!name) return 'U';
-    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-  };
-
-  // Version history hooks for all text fields
-  const descriptionHistory = useVersionHistory({
-    fieldName: 'Description',
-    initialValue: formData?.summary || ''
-  });
-
-  const meetIntroHistory = useVersionHistory({
-    fieldName: 'Meet Intro',
-    initialValue: formData?.meet_them || ''
-  });
-
-  const userManualHistory = useVersionHistory({
-    fieldName: 'User Manual',
-    initialValue: formData?.user_manual || ''
-  });
-
-  const sweetSpotHistory = useVersionHistory({
-    fieldName: 'Sweet Spot',
-    initialValue: formData?.sweetspot || ''
-  });
-
-  const steps: Step[] = [
-    { id: 1, name: 'Sign Up', description: 'Create your account', status: 'completed' },
-    { id: 2, name: 'Create Profile', description: 'Enter your information', status: 'completed' },
-    { id: 3, name: 'Review Profile', description: 'Review your profile', status: 'current' }
-  ];
-
-  // Show popup on first load
-  useEffect(() => {
-    const AIGUIDE_KEY = 'aiSuggestionsGuideSeen';
-    if (!localStorage.getItem(AIGUIDE_KEY)) setShowAIGuide(true);
-  }, []);
-
-  // When guide is dismissed, remember for future visits
-  const handleDismissGuide = () => {
-    const AIGUIDE_KEY = 'aiSuggestionsGuideSeen';
-    localStorage.setItem(AIGUIDE_KEY, 'seen');
-    setShowAIGuide(false);
-  };
-
-  const toggleEdit = (section: keyof EditStates) => {
-    setEditStates(prev => {
-      const newState = { ...prev, [section]: !prev[section] };
-      
-      // When entering edit mode for personas, sync local state with current data
-      if (section === 'personas' && newState.personas && formData.personas) {
-        const syncedEditStates: { [key: number]: { title: string; bulletsText: string } } = {};
-        formData.personas.forEach((persona, index) => {
-          syncedEditStates[index] = {
-            title: persona.title,
-            bulletsText: persona.bullets?.map(bullet => `• ${bullet}`).join('\n') || ''
-          };
-        });
-        setPersonaEditStates(syncedEditStates);
-      }
-
-      // When entering edit mode for superpowers, sync local state with current data
-      if (section === 'superpowers' && newState.superpowers && formData.superpowers) {
-        const syncedSuperpowerEditStates: { [key: number]: { title: string; description: string } } = {};
-        formData.superpowers.forEach((superpower, index) => {
-          syncedSuperpowerEditStates[index] = {
-            title: superpower.title,
-            description: superpower.description
-          };
-        });
-        setSuperpowerEditStates(syncedSuperpowerEditStates);
-      }
-      
-      return newState;
-    });
-  };
-
-  const handleInputChange = (field: keyof ProfileData, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-
-    // Update version history for specific fields
-    switch (field) {
-      case 'summary':
-        descriptionHistory.updateValue(value);
-        break;
-      case 'meet_them':
-        meetIntroHistory.updateValue(value);
-        break;
-      case 'user_manual':
-        userManualHistory.updateValue(value);
-        break;
-      case 'sweetspot':
-        sweetSpotHistory.updateValue(value);
-        break;
-    }
-  };
-
-  // Handle persona local state updates
-  const handlePersonaLocalUpdate = (personaIndex: number, field: 'title' | 'bulletsText', value: string) => {
-    setPersonaEditStates(prev => ({
-      ...prev,
-      [personaIndex]: {
-        ...prev[personaIndex],
-        [field]: value
-      }
-    }));
-  };
-
-  // Handle superpower local state updates
-  const handleSuperpowerLocalUpdate = (superpowerIndex: number, field: 'title' | 'description', value: string) => {
-    setSuperpowerEditStates(prev => ({
-      ...prev,
-      [superpowerIndex]: {
-        ...prev[superpowerIndex],
-        [field]: value
-      }
-    }));
-  };
-
-  // Handle persona updates
-  const handlePersonaUpdate = (personaIndex: number, field: 'title' | 'bullets', value: string | string[]) => {
-    const updatedPersonas = [...(formData.personas || [])];
-    if (field === 'title') {
-      updatedPersonas[personaIndex] = { ...updatedPersonas[personaIndex], title: value as string };
-    } else {
-      updatedPersonas[personaIndex] = { ...updatedPersonas[personaIndex], bullets: value as string[] };
-    }
-    setFormData(prev => ({ ...prev, personas: updatedPersonas }));
-  };
-
-  const handlePersonaBulletsTextChange = (personaIndex: number, textValue: string) => {
-    // Convert text back to bullets array (split by lines and filter empty)
-    const bullets = textValue.split('\n').map(line => line.replace(/^•\s*/, '').trim()).filter(line => line.length > 0);
-    handlePersonaUpdate(personaIndex, 'bullets', bullets);
-  };
-
-  const handleProfilePictureUpdate = (imageUrl: string) => {
-    setFormData(prev => ({ ...prev, profilePicture: imageUrl }));
-  };
-
-  const handleArrayChange = (field: keyof ProfileData, index: number, value: string) => {
-    const currentArray = formData[field] as string[];
-    if (!currentArray) return;
-    const newArray = [...currentArray];
-    newArray[index] = value;
-    setFormData(prev => ({ ...prev, [field]: newArray }));
-  };
-
-  const addArrayItem = (field: keyof ProfileData) => {
-    const currentArray = (formData[field] as string[]) || [];
-    setFormData(prev => ({ ...prev, [field]: [...currentArray, ''] }));
-  };
-
-  const removeArrayItem = (field: keyof ProfileData, index: number) => {
-    const currentArray = formData[field] as string[];
-    if (!currentArray) return;
-    const newArray = currentArray.filter((_, i) => i !== index);
-    setFormData(prev => ({ ...prev, [field]: newArray }));
-  };
-
-  // Add superpower item
-  const addSuperpowerItem = () => {
-    const currentSuperpowers = formData.superpowers || [];
-    const newSuperpower = { title: '', description: '' };
-    setFormData(prev => ({ ...prev, superpowers: [...currentSuperpowers, newSuperpower] }));
-    
-    // Initialize the edit state for the new superpower
-    const newIndex = currentSuperpowers.length;
-    setSuperpowerEditStates(prev => ({
-      ...prev,
-      [newIndex]: { title: '', description: '' }
-    }));
-  };
-
-  // Remove superpower item
-  const removeSuperpowerItem = (index: number) => {
-    const currentSuperpowers = formData.superpowers || [];
-    const newSuperpowers = currentSuperpowers.filter((_, i) => i !== index);
-    setFormData(prev => ({ ...prev, superpowers: newSuperpowers }));
-    
-    // Remove from edit state and reindex
-    const newEditStates: { [key: number]: { title: string; description: string } } = {};
-    newSuperpowers.forEach((superpower, newIndex) => {
-      if (superpowerEditStates[newIndex < index ? newIndex : newIndex + 1]) {
-        newEditStates[newIndex] = superpowerEditStates[newIndex < index ? newIndex : newIndex + 1];
-      } else {
-        newEditStates[newIndex] = {
-          title: superpower.title,
-          description: superpower.description
-        };
-      }
-    });
-    setSuperpowerEditStates(newEditStates);
-  };
-
-  const openVersionHistory = (fieldName: string) => {
-    setVersionHistorySidebar({ isOpen: true, fieldName });
-  };
-
-  const closeVersionHistory = () => {
-    setVersionHistorySidebar({ isOpen: false, fieldName: '' });
-  };
-
-  const getVersionHistoryHook = (fieldName: string) => {
-    switch (fieldName) {
-      case 'Description':
-        return descriptionHistory;
-      case 'Meet Intro':
-        return meetIntroHistory;
-      case 'User Manual':
-        return userManualHistory;
-      case 'Sweet Spot':
-        return sweetSpotHistory;
-      default:
-        return descriptionHistory; // fallback
-    }
-  };
-
-  const handleVersionRevert = (versionId: string) => {
-    const hook = getVersionHistoryHook(versionHistorySidebar.fieldName);
-    hook.revertToVersion(versionId);
-    
-    // Update form data based on field
-    switch (versionHistorySidebar.fieldName) {
-      case 'Description':
-        setFormData(prev => ({ ...prev, summary: hook.currentValue }));
-        break;
-      case 'Meet Intro':
-        setFormData(prev => ({ ...prev, meet_them: hook.currentValue }));
-        break;
-      case 'User Manual':
-        setFormData(prev => ({ ...prev, user_manual: hook.currentValue }));
-        break;
-      case 'Sweet Spot':
-        setFormData(prev => ({ ...prev, sweetspot: hook.currentValue }));
-        break;
-    }
-  };
+      return prev
+    })
+  })
 
   const handleContinue = async () => {
-    setIsSubmitting(true);
-    
+    setIsSubmitting(true)
+
     try {
       // Update onboarding status to completed
       const { error } = await supabase
-        .from('profiles')
-        .update({ onboarding_status: 'PROFILE_CONFIRMED' })
-        .eq('id', user?.id);
+        .from("profiles")
+        .update({ onboarding_status: "PROFILE_CONFIRMED" })
+        .eq("id", user?.id)
 
-      if (error) throw error;
+      if (error) throw error
 
       // Navigate immediately after successful update
-      navigate('/dashboard');
+      navigate("/dashboard")
     } catch (error) {
-      console.error('Error updating onboarding status:', error);
+      console.error("Error updating onboarding status:", error)
       toast({
         title: "Error",
         description: "Failed to complete onboarding.",
         variant: "destructive",
-      });
+      })
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
 
-  const toggleFunctionalSkill = (skill: string) => {
-    setExpandedFunctionalSkill(expandedFunctionalSkill === skill ? null : skill);
-  };
+  // Handle input changes for form fields
+  const handleInputChange = (field: keyof ProfileData, value: any) => {
+    setFormData((prev) => ({ ...prev, [field]: value }))
+  }
 
   if (isLoading) {
     return (
-      <DashboardLayout steps={steps} currentStep={3}>
+      <DashboardLayout steps={initialSteps} currentStep={3}>
         <div className="max-w-6xl mx-auto space-y-6 p-6">
           <div className="text-center">Loading profile...</div>
         </div>
       </DashboardLayout>
-    );
+    )
   }
 
   if (error) {
-    console.error('Profile query error:', error);
+    console.error("Profile query error:", error)
     return (
-      <DashboardLayout steps={steps} currentStep={3}>
+      <DashboardLayout steps={initialSteps} currentStep={3}>
         <div className="max-w-6xl mx-auto space-y-6 p-6">
           <div className="text-center text-red-600">
             <p>Error loading profile. Please try again.</p>
@@ -635,19 +174,21 @@ const ProfileSnapshot = () => {
           </div>
         </div>
       </DashboardLayout>
-    );
+    )
   }
 
   // Check if we have meaningful profile data
-  if (!profileDataResponse || !formData.name) {
+  if (!profileData || !formData.name) {
     return (
-      <DashboardLayout steps={steps} currentStep={3}>
+      <DashboardLayout steps={initialSteps} currentStep={3}>
         <div className="max-w-6xl mx-auto space-y-6 p-6">
           <div className="text-center">
             <p>No profile data found.</p>
-            <p className="text-sm text-gray-600 mt-2">Please complete your profile creation first.</p>
-            <Button 
-              onClick={() => navigate('/dashboard/profile-creation')}
+            <p className="text-sm text-gray-600 mt-2">
+              Please complete your profile creation first.
+            </p>
+            <Button
+              onClick={() => navigate("/dashboard/profile-creation")}
               className="mt-4"
             >
               Go to Profile Creation
@@ -655,62 +196,12 @@ const ProfileSnapshot = () => {
           </div>
         </div>
       </DashboardLayout>
-    );
+    )
   }
 
-  console.log('Rendering ProfileSnapshot with formData:', formData);
-
   return (
-    <DashboardLayout steps={steps} currentStep={3}>
-      {/* AI Guide Dialog */}
-      <Dialog open={showAIGuide} onOpenChange={handleDismissGuide}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              <span className="flex items-center gap-2">
-                <WandSparkles className="text-primary h-5 w-5" />
-                AI Suggestions for Your Profile
-              </span>
-            </DialogTitle>
-            <DialogDescription>
-              Get helpful suggestions based on your uploaded resume or LinkedIn PDF.<br/>
-              <span className="mt-1 block">
-                These are optional and can help you improve your profile. You have full control and can accept, ignore or dismiss any suggestion.
-              </span>
-            </DialogDescription>
-          </DialogHeader>
-          <div className="bg-primary/5 p-3 rounded text-sm my-2 flex gap-2">
-            <Info className="h-4 w-4 text-primary mt-0.5" />
-            <span>
-              AI suggestions are based only on the documents and data you provide (such as PDF uploads). No changes are made without your review and approval.
-            </span>
-          </div>
-          <DialogFooter>
-            <Button onClick={handleDismissGuide}>Got It</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <div className="max-w-6xl mx-auto space-y-6 p-6">
-        {/* Auto-save status indicator */}
-        {(isSaving || lastSaveTime) && (
-          <div className="flex justify-center">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted px-3 py-1 rounded-full">
-              {isSaving ? (
-                <>
-                  <div className="h-3 w-3 rounded-full bg-yellow-500 animate-pulse" />
-                  Saving...
-                </>
-              ) : (
-                <>
-                  <div className="h-3 w-3 rounded-full bg-green-500" />
-                  Saved {lastSaveTime && new Date(lastSaveTime).toLocaleTimeString()}
-                </>
-              )}
-            </div>
-          </div>
-        )}
-
+    <DashboardLayout steps={initialSteps} currentStep={3}>
+      <div ref={mainContentRef} className="max-w-6xl mx-auto space-y-6 p-6">
         {/* Main Layout - Two Column */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Profile Info */}
@@ -725,816 +216,203 @@ const ProfileSnapshot = () => {
                   </AvatarFallback>
                 </Avatar>
               </div>
-              
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    {editStates.basicInfo ? (
-                      <Input
-                        value={formData?.name || ''}
-                        onChange={(e) => handleInputChange('name', e.target.value)}
-                        className="text-2xl font-bold text-center"
-                      />
-                    ) : (
-                      <h1 className="text-2xl font-bold">{formData?.name || 'Name not available'}</h1>
-                    )}
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => toggleEdit('basicInfo')}
-                    className="ml-2"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                </div>
 
-                {editStates.basicInfo ? (
-                  <>
-                    <Input
-                      value={formData?.role || ''}
-                      onChange={(e) => handleInputChange('role', e.target.value)}
-                      className="text-lg text-center"
-                    />
-                    <Input
-                      value={formData?.location || ''}
-                      onChange={(e) => handleInputChange('location', e.target.value)}
-                      className="text-sm text-center"
-                    />
-                  </>
-                ) : (
-                  <>
-                    <p className="text-lg text-gray-700">{formData?.role || 'Role not available'}</p>
-                    <p className="text-sm text-gray-500">{formData?.location || 'Location not available'}</p>
-                  </>
-                )}
+              <div className="space-y-2">
+                <BasicInfoSection
+                  name={formData?.name || ""}
+                  role={formData?.role || ""}
+                  location={formData?.location || ""}
+                  isEditing={editStates.basicInfo}
+                  onEditToggle={() => toggleEdit("basicInfo")}
+                  onChange={(field, value) => handleInputChange(field, value)}
+                />
               </div>
             </div>
 
             {/* Description */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <Label className="text-sm font-medium">Description</Label>
-                <div className="flex gap-1">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => openVersionHistory('Description')}
-                    title="View version history"
-                  >
-                    <History className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => toggleEdit('description')}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-              {editStates.description ? (
-                <Textarea
-                  value={descriptionHistory.currentValue}
-                  onChange={(e) => handleInputChange('summary', e.target.value)}
-                  className="text-sm leading-relaxed"
-                  rows={6}
-                />
-              ) : (
-                <p className="text-sm leading-relaxed text-gray-700">
-                  {descriptionHistory.currentValue || formData?.summary || 'Description not available'}
-                </p>
-              )}
-            </div>
+            <EditableTextSection
+              title="Description"
+              value={formData?.summary || ""}
+              onChange={(value) => handleInputChange("summary", value)}
+              isEditing={editStates.description}
+              onEditToggle={() => toggleEdit("description")}
+              placeholder="Description not available"
+              className="bg-white"
+              headerClassName=""
+              labelClassName="text-base font-semibold"
+            />
 
             {/* Key Roles */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <Label className="font-semibold">Key Roles</Label>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => toggleEdit('keyRoles')}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-              </div>
-              {editStates.keyRoles ? (
-                <div className="space-y-2">
-                  {(formData?.highlights || []).map((highlight, index) => (
-                    <div key={index} className="flex gap-2">
-                      <Input
-                        value={highlight}
-                        onChange={(e) => handleArrayChange('highlights', index, e.target.value)}
-                        className="text-sm"
-                      />
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeArrayItem('highlights', index)}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => addArrayItem('highlights')}
-                    className="w-full"
-                  >
-                    <Plus className="h-4 w-4" />
-                    Add Role
-                  </Button>
-                </div>
-              ) : (
-                <ul className="space-y-1">
-                  {(formData?.highlights && formData.highlights.length > 0 
-                    ? formData.highlights 
-                    : ['Key roles not available']
-                  ).map((highlight, index) => (
-                    <li key={index} className="text-sm text-gray-700">• {highlight}</li>
-                  ))}
-                </ul>
-              )}
-            </div>
+            <EditableArraySection
+              title="Key Roles"
+              items={formData.highlights || []}
+              isEditing={editStates.keyRoles}
+              onEditToggle={() => toggleEdit("keyRoles")}
+              onChange={(newArr) => handleInputChange("highlights", newArr)}
+              placeholder="Key role"
+              addLabel="Add Role"
+              displayType="bullets"
+            />
 
             {/* Focus Areas */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <Label className="font-semibold">Focus Areas</Label>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => toggleEdit('focusAreas')}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-              </div>
-              {editStates.focusAreas ? (
-                <div className="space-y-2">
-                  <div className="flex flex-wrap gap-2">
-                    {(formData?.focus_areas || []).map((area, index) => (
-                      <div key={index} className="flex items-center gap-1">
-                        <Input
-                          value={area}
-                          onChange={(e) => handleArrayChange('focus_areas', index, e.target.value)}
-                          className="text-xs h-8 w-32"
-                        />
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeArrayItem('focus_areas', index)}
-                          className="h-6 w-6 p-0"
-                        >
-                          <X className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => addArrayItem('focus_areas')}
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Area
-                  </Button>
-                </div>
-              ) : (
-                <div className="flex flex-wrap gap-2">
-                  {(formData?.focus_areas && formData.focus_areas.length > 0 
-                    ? formData.focus_areas 
-                    : ['Focus areas not available']
-                  ).map((area, index) => (
-                    <Badge key={index} variant="secondary" className="text-xs">
-                      {area}
-                    </Badge>
-                  ))}
-                </div>
-              )}
-            </div>
+            <EditableArraySection
+              title="Focus Areas"
+              items={formData.focus_areas || []}
+              isEditing={editStates.focusAreas}
+              onEditToggle={() => toggleEdit("focusAreas")}
+              onChange={(newArr) => handleInputChange("focus_areas", newArr)}
+              placeholder="Focus area"
+              addLabel="Add Area"
+            />
 
             {/* Industries */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <Label className="font-semibold">Industries</Label>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => toggleEdit('industries')}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-              </div>
-              {editStates.industries ? (
-                <div className="space-y-2">
-                  <div className="flex flex-wrap gap-2">
-                    {(formData?.industries || []).map((industry, index) => (
-                      <div key={index} className="flex items-center gap-1">
-                        <Input
-                          value={industry}
-                          onChange={(e) => handleArrayChange('industries', index, e.target.value)}
-                          className="text-xs h-8 w-32"
-                        />
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeArrayItem('industries', index)}
-                          className="h-6 w-6 p-0"
-                        >
-                          <X className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => addArrayItem('industries')}
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Industry
-                  </Button>
-                </div>
-              ) : (
-                <div className="flex flex-wrap gap-2">
-                  {(formData?.industries && formData.industries.length > 0 
-                    ? formData.industries 
-                    : ['Industries not available']
-                  ).map((industry, index) => (
-                    <Badge key={index} variant="secondary" className="text-xs">
-                      {industry}
-                    </Badge>
-                  ))}
-                </div>
-              )}
-            </div>
+            <EditableArraySection
+              title="Industries"
+              items={formData.industries || []}
+              isEditing={editStates.industries}
+              onEditToggle={() => toggleEdit("industries")}
+              onChange={(newArr) => handleInputChange("industries", newArr)}
+              placeholder="Industry"
+              addLabel="Add Industry"
+            />
 
             {/* Geographical Coverage */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <Label className="font-semibold">Geographical Coverage</Label>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => toggleEdit('geographicalCoverage')}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-              </div>
-              {editStates.geographicalCoverage ? (
-                <div className="space-y-2">
-                  <div className="flex flex-wrap gap-2">
-                    {(formData?.geographical_coverage || []).map((region, index) => (
-                      <div key={index} className="flex items-center gap-1">
-                        <Input
-                          value={region}
-                          onChange={(e) => handleArrayChange('geographical_coverage', index, e.target.value)}
-                          className="text-xs h-8 w-32"
-                        />
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeArrayItem('geographical_coverage', index)}
-                          className="h-6 w-6 p-0"
-                        >
-                          <X className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => addArrayItem('geographical_coverage')}
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Region
-                  </Button>
-                </div>
-              ) : (
-                <div className="flex flex-wrap gap-2">
-                  {(formData?.geographical_coverage && formData.geographical_coverage.length > 0 
-                    ? formData.geographical_coverage 
-                    : ['Geographical coverage not available']
-                  ).map((region, index) => (
-                    <Badge key={index} variant="secondary" className="text-xs">
-                      {region}
-                    </Badge>
-                  ))}
-                </div>
-              )}
-            </div>
+            <EditableArraySection
+              title="Geographical Coverage"
+              items={formData.geographical_coverage || []}
+              isEditing={editStates.geographicalCoverage}
+              onEditToggle={() => toggleEdit("geographicalCoverage")}
+              onChange={(newArr) =>
+                handleInputChange("geographical_coverage", newArr)
+              }
+              placeholder="Region"
+              addLabel="Add Region"
+            />
 
             {/* Stage */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <Label className="font-semibold">Stage</Label>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => toggleEdit('stages')}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-              </div>
-              {editStates.stages ? (
-                <div className="space-y-2">
-                  <div className="flex flex-wrap gap-2">
-                    {(formData?.stage_focus || []).map((stage, index) => (
-                      <div key={index} className="flex items-center gap-1">
-                        <Input
-                          value={stage}
-                          onChange={(e) => handleArrayChange('stage_focus', index, e.target.value)}
-                          className="text-xs h-8 w-32"
-                        />
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeArrayItem('stage_focus', index)}
-                          className="h-6 w-6 p-0"
-                        >
-                          <X className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => addArrayItem('stage_focus')}
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Stage
-                  </Button>
-                </div>
-              ) : (
-                <div className="flex flex-wrap gap-2">
-                  {(formData?.stage_focus && formData.stage_focus.length > 0 
-                    ? formData.stage_focus 
-                    : ['Stage focus not available']
-                  ).map((stage, index) => (
-                    <Badge key={index} variant="secondary" className="text-xs">
-                      {stage}
-                    </Badge>
-                  ))}
-                </div>
-              )}
-            </div>
+            <EditableArraySection
+              title="Stage"
+              items={formData.stage_focus || []}
+              isEditing={editStates.stages}
+              onEditToggle={() => toggleEdit("stages")}
+              onChange={(newArr) => handleInputChange("stage_focus", newArr)}
+              placeholder="Stage"
+              addLabel="Add Stage"
+            />
 
             {/* Personal Interests */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <Label className="font-semibold">Personal Interests</Label>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => toggleEdit('personalInterests')}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-              </div>
-              {editStates.personalInterests ? (
-                <div className="space-y-2">
-                  <div className="flex flex-wrap gap-2">
-                    {(formData?.personal_interests || []).map((interest, index) => (
-                      <div key={index} className="flex items-center gap-1">
-                        <Input
-                          value={interest}
-                          onChange={(e) => handleArrayChange('personal_interests', index, e.target.value)}
-                          className="text-xs h-8 w-32"
-                        />
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeArrayItem('personal_interests', index)}
-                          className="h-6 w-6 p-0"
-                        >
-                          <X className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => addArrayItem('personal_interests')}
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Interest
-                  </Button>
-                </div>
-              ) : (
-                <div className="flex flex-wrap gap-2">
-                  {(formData?.personal_interests && formData.personal_interests.length > 0 
-                    ? formData.personal_interests 
-                    : ['Personal interests not available']
-                  ).map((interest, index) => (
-                    <Badge key={index} variant="secondary" className="text-xs">
-                      {interest}
-                    </Badge>
-                  ))}
-                </div>
-              )}
-            </div>
+            <EditableArraySection
+              title="Personal Interests"
+              items={formData.personal_interests || []}
+              isEditing={editStates.personalInterests}
+              onEditToggle={() => toggleEdit("personalInterests")}
+              onChange={(newArr) =>
+                handleInputChange("personal_interests", newArr)
+              }
+              placeholder="Interest"
+              addLabel="Add Interest"
+            />
 
             {/* Certifications */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <Label className="font-semibold">Certifications</Label>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => toggleEdit('certifications')}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-              </div>
-              {editStates.certifications ? (
-                <div className="space-y-2">
-                  {(formData?.certifications || []).map((cert, index) => (
-                    <div key={index} className="flex gap-2">
-                      <Input
-                        value={cert}
-                        onChange={(e) => handleArrayChange('certifications', index, e.target.value)}
-                        className="text-sm"
-                      />
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeArrayItem('certifications', index)}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => addArrayItem('certifications')}
-                    className="w-full"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Certification
-                  </Button>
-                </div>
-              ) : (
-                <ul className="space-y-1">
-                  {(formData?.certifications && formData.certifications.length > 0 
-                    ? formData.certifications 
-                    : ['Certifications not available']
-                  ).map((cert, index) => (
-                    <li key={index} className="text-sm text-gray-700">• {cert}</li>
-                  ))}
-                </ul>
-              )}
-            </div>
+            <EditableArraySection
+              title="Certifications"
+              items={formData.certifications || []}
+              isEditing={editStates.certifications}
+              onEditToggle={() => toggleEdit("certifications")}
+              onChange={(newArr) => handleInputChange("certifications", newArr)}
+              placeholder="Certification"
+              addLabel="Add Certification"
+            />
 
             {/* Engagement Options */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <Label className="font-semibold">Engagement Options</Label>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => toggleEdit('engagementOptions')}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-              </div>
-              {editStates.engagementOptions ? (
-                <Textarea
-                  value="Engagement options not available"
-                  className="text-sm"
-                  rows={2}
-                />
-              ) : (
-                <p className="text-sm text-gray-700">Engagement options not available</p>
-              )}
-            </div>
+            <EditableArraySection
+              title="Engagement Options"
+              items={formData.engagement_options || []}
+              isEditing={editStates.engagementOptions}
+              onEditToggle={() => toggleEdit("engagementOptions")}
+              onChange={(newArr) =>
+                handleInputChange("engagement_options", newArr)
+              }
+              placeholder="Engagement option"
+              addLabel="Add Option"
+            />
           </div>
 
           {/* Right Column - Main Content */}
           <div className="lg:col-span-2 space-y-6">
             {/* Meet Section */}
-            <div className="bg-teal-600 text-white rounded-lg">
-              <div className="flex items-center justify-between p-4 pb-2">
-                <h2 className="text-xl font-semibold">Meet {formData?.name?.split(' ')[0] || 'Professional'}</h2>
-                <div className="flex gap-1">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => openVersionHistory('Meet Intro')}
-                    className="text-white hover:bg-white/20"
-                    title="View version history"
-                  >
-                    <History className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => toggleEdit('meetIntro')}
-                    className="text-white hover:bg-white/20"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-              <div className="px-4 pb-4">
-                {editStates.meetIntro ? (
-                  <Textarea
-                    value={meetIntroHistory.currentValue}
-                    onChange={(e) => handleInputChange('meet_them', e.target.value)}
-                    className="text-sm leading-relaxed bg-white/10 border-white/20 text-white placeholder:text-white/70"
-                    rows={4}
-                  />
-                ) : (
-                  <p className="text-sm leading-relaxed">
-                    {meetIntroHistory.currentValue || formData?.meet_them || 'Introduction not available'}
-                  </p>
-                )}
-              </div>
-            </div>
+            <EditableTextSection
+              title={`Meet ${formData?.name?.split(" ")[0] || "Professional"}`}
+              value={formData?.meet_them || ""}
+              onChange={(value) => handleInputChange("meet_them", value)}
+              isEditing={editStates.meetIntro}
+              onEditToggle={() => toggleEdit("meetIntro")}
+              placeholder="Introduction not available"
+              className="bg-white"
+              headerClassName="bg-teal-600 text-white"
+              labelClassName="text-lg font-semibold"
+            />
 
             {/* Personas Section */}
-            <div className="bg-white rounded-lg border shadow-sm">
-              <div className="bg-[#449889] text-white rounded-t-lg">
-                <div className="flex items-center justify-between p-4">
-                  <h3 className="text-lg font-semibold">Personas</h3>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => toggleEdit('personas')}
-                    className="text-white hover:bg-white/20"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-              
-              <div className="p-4">
-                {formData?.personas && formData.personas.length > 0 ? (
-                  <Tabs defaultValue="0" className="w-full">
-                    <TabsList className="grid w-full mb-6 bg-gray-100" style={{gridTemplateColumns: `repeat(${formData.personas.length}, minmax(0, 1fr))`}}>
-                      {formData.personas.map((persona, index) => (
-                        <TabsTrigger 
-                          key={index} 
-                          value={index.toString()} 
-                          className="text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900"
-                        >
-                          {persona.title}
-                        </TabsTrigger>
-                      ))}
-                    </TabsList>
-                    
-                    {formData.personas.map((persona, index) => (
-                      <TabsContent key={index} value={index.toString()} className="space-y-4">
-                        {editStates.personas ? (
-                          <Input
-                            value={personaEditStates[index]?.title || persona.title}
-                            onChange={(e) => handlePersonaLocalUpdate(index, 'title', e.target.value)}
-                            className="font-medium"
-                            placeholder="Persona title"
-                          />
-                        ) : (
-                          <h4 className="font-medium">{persona.title}</h4>
-                        )}
-                        <div className="text-sm leading-relaxed text-gray-700">
-                          {editStates.personas ? (
-                            <Textarea
-                              value={personaEditStates[index]?.bulletsText || persona.bullets?.map(bullet => `• ${bullet}`).join('\n') || ''}
-                              onChange={(e) => handlePersonaLocalUpdate(index, 'bulletsText', e.target.value)}
-                              className="min-h-[120px]"
-                              placeholder="Enter bullet points, one per line. Start each line with '•' or it will be added automatically."
-                            />
-                          ) : (
-                            <ul className="space-y-2">
-                              {persona.bullets?.map((bullet, bulletIndex) => (
-                                <li key={bulletIndex}>• {bullet}</li>
-                              ))}
-                            </ul>
-                          )}
-                        </div>
-                      </TabsContent>
-                    ))}
-                  </Tabs>
-                ) : (
-                  <div className="text-sm text-gray-700">Personas not available</div>
-                )}
-              </div>
-            </div>
+            <PersonasSection
+              personas={formData.personas || []}
+              personaEditStates={personaEditStates}
+              isEditing={editStates.personas}
+              onEditToggle={() => toggleEdit("personas")}
+              onPersonaLocalUpdate={handlePersonaLocalUpdate}
+              onAddPersona={handleAddPersona}
+              onRemovePersona={handleRemovePersona}
+              activeTab={personasActiveTab}
+              onActiveTabChange={setPersonasActiveTab}
+            />
 
             {/* Superpowers Section */}
-            <div className="bg-white rounded-lg border">
-              <div className="bg-teal-600 text-white rounded-t-lg">
-                <div className="flex items-center justify-between p-4">
-                  <h3 className="text-lg font-semibold">Superpowers</h3>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => toggleEdit('superpowers')}
-                    className="text-white hover:bg-white/20"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-              
-              <div className="p-4">
-                <div className="space-y-4">
-                  {formData?.superpowers && formData.superpowers.length > 0 ? (
-                    formData.superpowers.map((superpower, index) => (
-                      <div key={index} className="space-y-2">
-                        {editStates.superpowers ? (
-                          <div className="space-y-2">
-                            <div className="flex gap-2 items-center">
-                              <Input
-                                value={superpowerEditStates[index]?.title || superpower.title}
-                                onChange={(e) => handleSuperpowerLocalUpdate(index, 'title', e.target.value)}
-                                className="font-medium"
-                                placeholder="Superpower title"
-                              />
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => removeSuperpowerItem(index)}
-                                className="text-red-500 hover:text-red-700"
-                              >
-                                <X className="h-4 w-4" />
-                              </Button>
-                            </div>
-                            <Textarea
-                              value={superpowerEditStates[index]?.description || superpower.description}
-                              onChange={(e) => handleSuperpowerLocalUpdate(index, 'description', e.target.value)}
-                              className="text-sm"
-                              placeholder="Superpower description"
-                              rows={3}
-                            />
-                          </div>
-                        ) : (
-                          <div>
-                            <Label className="font-medium text-gray-900">{superpower.title}</Label>
-                            <p className="text-sm text-gray-700">{superpower.description}</p>
-                          </div>
-                        )}
-                      </div>
-                    ))
-                  ) : (
-                    <div className="text-sm text-gray-700">Superpowers not available</div>
-                  )}
-                  
-                  {editStates.superpowers && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={addSuperpowerItem}
-                      className="w-full"
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add Superpower
-                    </Button>
-                  )}
-                </div>
-              </div>
-            </div>
+            <SuperpowersSection
+              superpowers={formData.superpowers || []}
+              isEditing={editStates.superpowers}
+              onEditToggle={() => toggleEdit("superpowers")}
+              onSuperpowersChange={(newArr) =>
+                handleInputChange("superpowers", newArr)
+              }
+            />
 
             {/* Sweet Spot Section */}
-            <div className="bg-white rounded-lg border">
-              <div className="bg-teal-600 text-white rounded-t-lg">
-                <div className="flex items-center justify-between p-4">
-                  <h3 className="text-lg font-semibold">Sweet Spot</h3>
-                  <div className="flex gap-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => openVersionHistory('Sweet Spot')}
-                      className="text-white hover:bg-white/20"
-                      title="View version history"
-                    >
-                      <History className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => toggleEdit('sweetSpot')}
-                      className="text-white hover:bg-white/20"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="p-4">
-                {editStates.sweetSpot ? (
-                  <Textarea
-                    value={sweetSpotHistory.currentValue}
-                    onChange={(e) => handleInputChange('sweetspot', e.target.value)}
-                    className="text-sm leading-relaxed"
-                    rows={4}
-                  />
-                ) : (
-                  <div className="text-sm leading-relaxed text-gray-700">
-                    {sweetSpotHistory.currentValue || formData?.sweetspot || 'Sweet spot not available'}
-                  </div>
-                )}
-              </div>
-            </div>
+            <EditableTextSection
+              title="Sweet Spot"
+              value={formData?.sweetspot || ""}
+              onChange={(value) => handleInputChange("sweetspot", value)}
+              isEditing={editStates.sweetSpot}
+              onEditToggle={() => toggleEdit("sweetSpot")}
+              placeholder="Sweet spot not available"
+              className="bg-white"
+              headerClassName="bg-teal-600 text-white"
+              labelClassName="text-lg font-semibold"
+            />
 
             {/* Functional Skills */}
-            <div className="bg-white rounded-lg border">
-              <div className="bg-teal-600 text-white rounded-t-lg">
-                <div className="flex items-center justify-between p-4">
-                  <h3 className="text-lg font-semibold">Functional Skills</h3>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => toggleEdit('functionalSkills')}
-                    className="text-white hover:bg-white/20"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-              
-              <div className="p-4 space-y-3">
-                {formData?.functional_skills && Object.keys(formData.functional_skills).length > 0 ? (
-                  Object.entries(formData.functional_skills).map(([categoryName, skills]) => (
-                    <div key={categoryName} className="border-b border-gray-200 pb-3">
-                      <button 
-                        className="flex justify-between items-center w-full text-left"
-                        onClick={() => toggleFunctionalSkill(categoryName)}
-                      >
-                        <span className="font-medium text-gray-900">{categoryName}</span>
-                        {expandedFunctionalSkill === categoryName ? 
-                          <Minus className="h-5 w-5 text-gray-400" /> : 
-                          <Plus className="h-5 w-5 text-gray-400" />
-                        }
-                      </button>
-                      
-                      {expandedFunctionalSkill === categoryName && (
-                        <div className="mt-3 space-y-3">
-                          <div className="space-y-2">
-                            {skills?.map((skill, index) => (
-                              <div key={index}>
-                                <h5 className="font-medium text-sm">{skill.title}</h5>
-                                <p className="text-sm text-gray-700">{skill.description}</p>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-sm text-gray-700">Functional skills not available</div>
-                )}
-              </div>
-            </div>
+            <FunctionalSkillsSection
+              functionalSkills={formData.functional_skills || {}}
+              isEditing={editStates.functionalSkills}
+              onEditToggle={() => toggleEdit("functionalSkills")}
+              onFunctionalSkillsChange={(skills) =>
+                handleInputChange("functional_skills", skills)
+              }
+            />
 
             {/* User Manual */}
-            <div className="bg-white rounded-lg border">
-              <div className="bg-teal-600 text-white rounded-t-lg">
-                <div className="flex items-center justify-between p-4">
-                  <h3 className="text-lg font-semibold">{formData?.name?.split(' ')[0] || 'Professional'}'s User Manual</h3>
-                  <div className="flex gap-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => openVersionHistory('User Manual')}
-                      className="text-white hover:bg-white/20"
-                      title="View version history"
-                    >
-                      <History className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => toggleEdit('userManual')}
-                      className="text-white hover:bg-white/20"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="p-4">
-                {editStates.userManual ? (
-                  <Textarea
-                    value={userManualHistory.currentValue}
-                    onChange={(e) => handleInputChange('user_manual', e.target.value)}
-                    className="text-sm leading-relaxed"
-                    rows={8}
-                  />
-                ) : (
-                  <div className="text-sm leading-relaxed text-gray-700 whitespace-pre-line">
-                    {userManualHistory.currentValue || formData?.user_manual || 'User manual not available'}
-                  </div>
-                )}
-              </div>
-            </div>
+            <EditableTextSection
+              title={`${
+                formData?.name?.split(" ")[0] || "Professional"
+              }'s User Manual`}
+              value={formData?.user_manual || ""}
+              onChange={(value) => handleInputChange("user_manual", value)}
+              isEditing={editStates.userManual}
+              onEditToggle={() => toggleEdit("userManual")}
+              placeholder="User manual not available"
+              className="bg-white"
+              headerClassName="bg-teal-600 text-white"
+              labelClassName="text-lg font-semibold"
+            />
           </div>
         </div>
 
@@ -1542,36 +420,24 @@ const ProfileSnapshot = () => {
         <div className="flex justify-between items-center pt-6">
           <Button
             variant="outline"
-            onClick={() => navigate('/dashboard/profile-creation')}
+            onClick={() => navigate("/dashboard/profile-creation")}
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Profile
           </Button>
-          
-          <Button 
+
+          <Button
             onClick={handleContinue}
             disabled={isSubmitting}
             className="bg-teal-600 hover:bg-teal-700"
           >
-            {isSubmitting ? 'Processing...' : 'Complete & Go to Dashboard'}
+            {isSubmitting ? "Processing..." : "Complete & Go to Dashboard"}
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </div>
       </div>
-
-      {/* Version History Sidebar */}
-      <VersionHistorySidebar
-        isOpen={versionHistorySidebar.isOpen}
-        onClose={closeVersionHistory}
-        fieldName={versionHistorySidebar.fieldName}
-        versions={getVersionHistoryHook(versionHistorySidebar.fieldName).versions}
-        currentVersionId={getVersionHistoryHook(versionHistorySidebar.fieldName).currentVersionId}
-        onRevert={handleVersionRevert}
-        onSaveVersion={(summary) => getVersionHistoryHook(versionHistorySidebar.fieldName).saveVersion(summary)}
-        onRenameVersion={(versionId, newSummary) => getVersionHistoryHook(versionHistorySidebar.fieldName).renameVersion(versionId, newSummary)}
-      />
     </DashboardLayout>
-  );
-};
+  )
+}
 
-export default ProfileSnapshot;
+export default ProfileSnapshot

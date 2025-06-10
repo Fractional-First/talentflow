@@ -1,24 +1,23 @@
-
-import React from 'react';
-import { Check } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import React from "react"
+import { Check } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 export type Step = {
-  id: number;
-  name: string;
-  description: string;
-  status: 'completed' | 'current' | 'upcoming';
-  estimatedTime?: string;
-};
-
-interface OnboardingProgressProps {
-  steps: Step[];
-  currentStep: number;
+  id: number
+  name: string
+  description: string
+  status: "completed" | "current" | "upcoming"
+  estimatedTime?: string
 }
 
-export function OnboardingProgress({ 
-  steps, 
-  currentStep 
+interface OnboardingProgressProps {
+  steps: Step[]
+  currentStep: number
+}
+
+export function OnboardingProgress({
+  steps,
+  currentStep,
 }: OnboardingProgressProps) {
   return (
     <div className="py-6 px-1">
@@ -29,27 +28,28 @@ export function OnboardingProgress({
               <div
                 className={cn(
                   "progress-step group relative z-10",
-                  step.status === 'completed' && "progress-step-completed",
-                  step.status === 'current' && "progress-step-active",
-                  step.status === 'upcoming' && "progress-step-pending"
+                  step.status === "completed" && "progress-step-completed",
+                  step.status === "upcoming" && "progress-step-pending"
                 )}
               >
-                {step.status === 'completed' ? (
+                {step.status === "completed" ? (
                   <Check className="h-5 w-5 text-white" />
                 ) : (
                   <span>{step.id}</span>
                 )}
-                
+
                 <div className="absolute -bottom-[48px] left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 min-w-max z-20">
-                  <div className="glassmorphism px-3 py-2 rounded-md text-xs font-medium">
+                  <div className="px-3 py-2 rounded-md text-xs font-medium bg-gray-900 text-white shadow-lg">
                     <div>{step.name}</div>
                     {step.estimatedTime && (
-                      <div className="text-xs opacity-80 mt-1">Est. time: {step.estimatedTime}</div>
+                      <div className="text-xs opacity-80 mt-1">
+                        Est. time: {step.estimatedTime}
+                      </div>
                     )}
                   </div>
                 </div>
               </div>
-              
+
               <span className="mt-2 text-xs font-medium hidden sm:block">
                 {step.name}
               </span>
@@ -60,8 +60,10 @@ export function OnboardingProgress({
                 <div
                   className={cn(
                     "h-0.5 w-full bg-muted-foreground/30 transition-all duration-300 ease-in-out",
-                    (steps[index].status === 'completed' && steps[index + 1].status === 'completed') ||
-                    (steps[index].status === 'completed' && steps[index + 1].status === 'current')
+                    (steps[index].status === "completed" &&
+                      steps[index + 1].status === "completed") ||
+                      (steps[index].status === "completed" &&
+                        steps[index + 1].status === "current")
                       ? "bg-primary"
                       : ""
                   )}
@@ -72,5 +74,5 @@ export function OnboardingProgress({
         ))}
       </div>
     </div>
-  );
+  )
 }
