@@ -1,5 +1,4 @@
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -75,7 +74,7 @@
     --border: 217 33% 17%;
     --input: 217 33% 17%;
     --ring: 213 27% 84%;
-    
+
     --sidebar-background: 222 47% 11%;
     --sidebar-foreground: 210 40% 98%;
     --sidebar-primary: 210 100% 50%;
@@ -119,27 +118,30 @@
   .glassmorphism {
     @apply bg-white/60 dark:bg-black/60 backdrop-blur-lg border border-white/10 dark:border-black/10 shadow-glass;
   }
-  
+
   .progress-step {
     @apply relative flex h-10 w-10 items-center justify-center rounded-full border-2 bg-background text-sm font-semibold transition-all duration-300 ease-in-out;
   }
-  
+
   .progress-step-active {
     @apply border-primary bg-primary text-primary-foreground;
   }
-  
+
   .progress-step-completed {
-    @apply border-primary bg-primary text-primary-foreground;
+    @apply border-0;
+    background-color: #449889 !important;
+    color: #fff !important;
+    border: 2px solid #449889 !important;
   }
-  
+
   .progress-step-pending {
     @apply border-muted-foreground/30 text-muted-foreground;
   }
-  
+
   .progress-connector {
     @apply absolute top-1/2 h-0.5 w-full -translate-y-1/2 bg-muted-foreground/30 transition-all duration-300 ease-in-out;
   }
-  
+
   .progress-connector-active {
     @apply bg-primary;
   }

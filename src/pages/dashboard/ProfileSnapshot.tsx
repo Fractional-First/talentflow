@@ -1,3 +1,4 @@
+import { initialSteps } from "@/components/dashboard/OnboardingSteps"
 import { DashboardLayout } from "@/components/DashboardLayout"
 import { BasicInfoSection } from "@/components/EditProfile/BasicInfoSection"
 import { EditableArraySection } from "@/components/EditProfile/EditableArraySection"
@@ -5,12 +6,12 @@ import { EditableTextSection } from "@/components/EditProfile/EditableTextSectio
 import { FunctionalSkillsSection } from "@/components/EditProfile/FunctionalSkillsSection"
 import { PersonasSection } from "@/components/EditProfile/PersonasSection"
 import { SuperpowersSection } from "@/components/EditProfile/SuperpowersSection"
-import { Step } from "@/components/OnboardingProgress"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/contexts/AuthContext"
 import { toast } from "@/hooks/use-toast"
 import { useAutoSave } from "@/hooks/useAutoSave"
+import { useClickOutside } from "@/hooks/useClickOutside"
 import { usePersonaEditState } from "@/hooks/usePersonaEditState"
 import { useProfileForm } from "@/hooks/useProfileForm"
 import { useSuperpowerEditState } from "@/hooks/useSuperpowerEditState"
@@ -19,9 +20,8 @@ import { getUserInitials } from "@/lib/utils"
 import { useProfileSnapshot } from "@/queries/useProfileSnapshot"
 import type { EditStates, ProfileData } from "@/types/profile"
 import { ArrowLeft, ArrowRight } from "lucide-react"
-import { useState, useRef } from "react"
+import { useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { useClickOutside } from "@/hooks/useClickOutside"
 
 const ProfileSnapshot = () => {
   const navigate = useNavigate()
@@ -62,27 +62,7 @@ const ProfileSnapshot = () => {
 
   useAutoSave({ user, formData, profileData, toast: (opts) => toast(opts) })
 
-  const steps: Step[] = [
-    {
-      id: 1,
-      name: "Sign Up",
-      description: "Create your account",
-      status: "completed",
-    },
-    {
-      id: 2,
-      name: "Create Profile",
-      description: "Enter your information",
-      status: "completed",
-    },
-    {
-      id: 3,
-      name: "Review Profile",
-      description: "Review your profile",
-      status: "current",
-    },
-  ]
-
+  // Restore toggleEdit function
   const toggleEdit = (section: keyof EditStates) => {
     setEditStates((prev) => {
       // If already editing this section, turn it off
@@ -175,7 +155,7 @@ const ProfileSnapshot = () => {
 
   if (isLoading) {
     return (
-      <DashboardLayout steps={steps} currentStep={3}>
+      <DashboardLayout steps={initialSteps} currentStep={3}>
         <div className="max-w-6xl mx-auto space-y-6 p-6">
           <div className="text-center">Loading profile...</div>
         </div>
@@ -186,7 +166,7 @@ const ProfileSnapshot = () => {
   if (error) {
     console.error("Profile query error:", error)
     return (
-      <DashboardLayout steps={steps} currentStep={3}>
+      <DashboardLayout steps={initialSteps} currentStep={3}>
         <div className="max-w-6xl mx-auto space-y-6 p-6">
           <div className="text-center text-red-600">
             <p>Error loading profile. Please try again.</p>
@@ -200,7 +180,7 @@ const ProfileSnapshot = () => {
   // Check if we have meaningful profile data
   if (!profileData || !formData.name) {
     return (
-      <DashboardLayout steps={steps} currentStep={3}>
+      <DashboardLayout steps={initialSteps} currentStep={3}>
         <div className="max-w-6xl mx-auto space-y-6 p-6">
           <div className="text-center">
             <p>No profile data found.</p>
@@ -220,7 +200,7 @@ const ProfileSnapshot = () => {
   }
 
   return (
-    <DashboardLayout steps={steps} currentStep={3}>
+    <DashboardLayout steps={initialSteps} currentStep={3}>
       <div ref={mainContentRef} className="max-w-6xl mx-auto space-y-6 p-6">
         {/* Main Layout - Two Column */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
