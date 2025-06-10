@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import { Edit, Plus, X } from "lucide-react"
 import clsx from "clsx"
@@ -16,6 +17,7 @@ interface EditableArraySectionProps {
   badgeClassName?: string
   inputClassName?: string
   className?: string
+  displayType?: "badges" | "bullets"
 }
 
 export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
@@ -29,6 +31,7 @@ export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
   badgeClassName = "",
   inputClassName = "",
   className = "",
+  displayType = "badges",
 }) => {
   const handleItemChange = (index: number, value: string) => {
     const newItems = [...items]
@@ -63,13 +66,26 @@ export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
           <div className="space-y-2">
             <div className="flex flex-wrap gap-2">
               {(items || []).map((item, index) => (
-                <div key={index} className="flex items-center gap-1">
-                  <Input
-                    value={item}
-                    onChange={(e) => handleItemChange(index, e.target.value)}
-                    className={clsx("text-xs h-8 w-32", inputClassName)}
-                    placeholder={placeholder}
-                  />
+                <div key={index} className="flex items-center gap-1 w-full">
+                  {displayType === "bullets" ? (
+                    <Textarea
+                      value={item}
+                      onChange={(e) => handleItemChange(index, e.target.value)}
+                      className={clsx(
+                        "text-sm min-h-[40px] w-full",
+                        inputClassName
+                      )}
+                      placeholder={placeholder}
+                      rows={2}
+                    />
+                  ) : (
+                    <Input
+                      value={item}
+                      onChange={(e) => handleItemChange(index, e.target.value)}
+                      className={clsx("text-xs h-8 w-32", inputClassName)}
+                      placeholder={placeholder}
+                    />
+                  )}
                   <Button
                     variant="ghost"
                     size="sm"
@@ -91,6 +107,17 @@ export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
               {addLabel}
             </Button>
           </div>
+        ) : displayType === "bullets" ? (
+          <ul className="space-y-1">
+            {(items && items.length > 0
+              ? items
+              : [placeholder || "Not available"]
+            ).map((item, index) => (
+              <li key={index} className="text-sm text-gray-700">
+                • {item}
+              </li>
+            ))}
+          </ul>
         ) : (
           <div className="flex flex-wrap gap-2">
             {(items && items.length > 0

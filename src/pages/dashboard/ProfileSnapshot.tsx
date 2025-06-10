@@ -641,60 +641,16 @@ const ProfileSnapshot = () => {
             />
 
             {/* Key Roles */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <Label className="font-semibold">Key Roles</Label>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => toggleEdit("keyRoles")}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-              </div>
-              {editStates.keyRoles ? (
-                <div className="space-y-2">
-                  {(formData?.highlights || []).map((highlight, index) => (
-                    <div key={index} className="flex gap-2">
-                      <Input
-                        value={highlight}
-                        onChange={(e) =>
-                          handleArrayChange("highlights", index, e.target.value)
-                        }
-                        className="text-sm"
-                      />
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeArrayItem("highlights", index)}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => addArrayItem("highlights")}
-                    className="w-full"
-                  >
-                    <Plus className="h-4 w-4" />
-                    Add Role
-                  </Button>
-                </div>
-              ) : (
-                <ul className="space-y-1">
-                  {(formData?.highlights && formData.highlights.length > 0
-                    ? formData.highlights
-                    : ["Key roles not available"]
-                  ).map((highlight, index) => (
-                    <li key={index} className="text-sm text-gray-700">
-                      • {highlight}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
+            <EditableArraySection
+              title="Key Roles"
+              items={formData.highlights || []}
+              isEditing={editStates.keyRoles}
+              onEditToggle={() => toggleEdit("keyRoles")}
+              onChange={(newArr) => handleInputChange("highlights", newArr)}
+              placeholder="Key role"
+              addLabel="Add Role"
+              displayType="bullets"
+            />
 
             {/* Focus Areas */}
             <EditableArraySection
