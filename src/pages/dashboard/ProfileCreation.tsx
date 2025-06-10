@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -57,6 +58,7 @@ interface ProfileData {
   linkedin?: ProfileDocument | null;
   resume?: ProfileDocument | null;
   supportingDocuments?: SupportingDocument[];
+  [key: string]: any; // Add index signature for Json compatibility
 }
 
 const initialFormData: ProfileData = {
@@ -74,15 +76,15 @@ const initialFormData: ProfileData = {
 };
 
 const steps = [
-  { id: 1, title: 'Welcome' },
-  { id: 2, title: 'Create Profile' },
-  { id: 3, title: 'Job Preferences' },
+  { id: 1, name: 'Welcome', title: 'Welcome', description: 'Get started', status: 'complete' as const },
+  { id: 2, name: 'Create Profile', title: 'Create Profile', description: 'Build your profile', status: 'current' as const },
+  { id: 3, name: 'Job Preferences', title: 'Job Preferences', description: 'Set preferences', status: 'upcoming' as const },
 ];
 
 const ProfileCreation = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const toast = useToast();
+  const { toast } = useToast();
 
   const [formData, setFormData] = useState<ProfileData>(initialFormData);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
@@ -215,7 +217,6 @@ const ProfileCreation = () => {
       toast({
         title: 'Upload successful',
         description: `${type === 'linkedin' ? 'LinkedIn PDF' : 'Resume'} uploaded successfully.`,
-        variant: 'success',
       });
     } catch (error) {
       console.error('Upload error:', error);
@@ -272,7 +273,6 @@ const ProfileCreation = () => {
       toast({
         title: 'Link added',
         description: 'Supporting link added successfully.',
-        variant: 'success',
       });
     } else if (supportingDocType === 'file' && supportingDocFile) {
       if (supportingDocFile.size > 10 * 1024 * 1024) {
@@ -311,7 +311,6 @@ const ProfileCreation = () => {
         toast({
           title: 'File added',
           description: 'Supporting file added successfully.',
-          variant: 'success',
         });
       } catch (error) {
         console.error('Supporting document upload error:', error);
@@ -359,7 +358,7 @@ const ProfileCreation = () => {
         .upsert(
           {
             id: user.id,
-            profile_data: formData,
+            profile_data: formData as any, // Cast to any for Json compatibility
           },
           { onConflict: 'id' }
         );
@@ -371,7 +370,6 @@ const ProfileCreation = () => {
       toast({
         title: 'Profile saved',
         description: 'Your profile information has been saved successfully.',
-        variant: 'success',
       });
       navigate('/dashboard/job-preferences');
     } catch (error) {
@@ -419,16 +417,16 @@ const ProfileCreation = () => {
               )}
 
               {/* COMBINED INSTRUCTIONAL HELPER TEXT */}
-              <Alert className="mb-4 bg-info-light border-info-border">
+              <Alert className="mb-4 bg-accent/10 border-accent/30">
                 <div className="flex gap-2">
                   <div className="mt-0.5">
-                    {isLinkedInUser ? <Linkedin className="h-5 w-5 text-primary" /> : <HelpCircle className="h-5 w-5 text-info" />}
+                    {isLinkedInUser ? <Linkedin className="h-5 w-5 text-primary" /> : <HelpCircle className="h-5 w-5 text-accent" />}
                   </div>
                   <div>
-                    <AlertTitle className="mb-1 font-semibold text-info">
+                    <AlertTitle className="mb-1 font-semibold text-accent">
                       Profile Information Requirements
                     </AlertTitle>
-                    <AlertDescription className="text-sm text-info">
+                    <AlertDescription className="text-sm text-accent">
                       <p className="mb-1">At least <strong>one</strong> of the following is required:</p>
                       <ul className="list-disc ml-6 mb-2">
                         <li>Upload your resume/CV <span className="font-semibold">(PDF or DOCX)</span></li>
@@ -436,7 +434,7 @@ const ProfileCreation = () => {
                       </ul>
                       
                       {isLinkedInUser && (
-                        <p className="p-1.5 bg-info-light/50 rounded border border-info-border text-xs">
+                        <p className="p-1.5 bg-accent/10 rounded border border-accent/30 text-xs">
                           <strong>Note:</strong> LinkedIn sign-in provides only limited information. For your full experience, please upload your LinkedIn profile as a PDF.
                         </p>
                       )}
@@ -471,11 +469,11 @@ const ProfileCreation = () => {
                 <div className="space-y-6">
                   {/* UPLOADED DOCUMENTS DISPLAY */}
                   {(formData.linkedin || formData.resume) && (
-                    <div className="border rounded-lg p-4 bg-success-light border-success-border">
+                    <div className="border rounded-lg p-4 bg-success/10 border-success/30">
                       <h3 className="font-medium mb-3 text-success">Uploaded Documents</h3>
                       <div className="space-y-2">
                         {formData.linkedin && (
-                          <div className="flex items-center justify-between p-2 rounded bg-background border border-success-border">
+                          <div className="flex items-center justify-between p-2 rounded bg-background border border-success/30">
                             <div className="flex items-center gap-2">
                               <div className="p-1 rounded bg-primary/10">
                                 <Linkedin className="h-4 w-4 text-primary" />
@@ -497,7 +495,7 @@ const ProfileCreation = () => {
                           </div>
                         )}
                         {formData.resume && (
-                          <div className="flex items-center justify-between p-2 rounded bg-background border border-success-border">
+                          <div className="flex items-center justify-between p-2 rounded bg-background border border-success/30">
                             <div className="flex items-center gap-2">
                               <div className="p-1 rounded bg-primary/10">
                                 <File className="h-4 w-4 text-primary" />
@@ -596,7 +594,7 @@ const ProfileCreation = () => {
 
                   {/* DISPLAY WHEN BOTH FILES ARE UPLOADED */}
                   {formData.linkedin && formData.resume && (
-                    <Alert className="mb-4 bg-success-light border-success-border">
+                    <Alert className="mb-4 bg-success/10 border-success/30">
                       <div className="flex gap-2">
                         <div className="mt-0.5">
                           <CheckCircle className="h-5 w-5 text-success" />
@@ -639,16 +637,16 @@ const ProfileCreation = () => {
                       </Button>
                     </div>
                     
-                    <Alert className="mb-4 bg-info-light border-info-border">
+                    <Alert className="mb-4 bg-accent/10 border-accent/30">
                       <div className="flex gap-2">
                         <div className="mt-0.5">
-                          <HelpCircle className="h-5 w-5 text-info" />
+                          <HelpCircle className="h-5 w-5 text-accent" />
                         </div>
                         <div>
-                          <AlertTitle className="mb-1 font-semibold text-info">
+                          <AlertTitle className="mb-1 font-semibold text-accent">
                             Enhanced Profile Quality
                           </AlertTitle>
-                          <AlertDescription className="text-sm text-info">
+                          <AlertDescription className="text-sm text-accent">
                             The more supporting materials you provide, the stronger and more complete your profile will be. These additions help us present a well-rounded and accurate representation of your professional expertise.
                           </AlertDescription>
                         </div>
