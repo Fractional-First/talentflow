@@ -19,8 +19,9 @@ import { getUserInitials } from "@/lib/utils"
 import { useProfileSnapshot } from "@/queries/useProfileSnapshot"
 import type { EditStates, ProfileData } from "@/types/profile"
 import { ArrowLeft, ArrowRight } from "lucide-react"
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { useNavigate } from "react-router-dom"
+import { useClickOutside } from "@/hooks/useClickOutside"
 
 const ProfileSnapshot = () => {
   const navigate = useNavigate()
@@ -84,22 +85,25 @@ const ProfileSnapshot = () => {
 
   const toggleEdit = (section: keyof EditStates) => {
     setEditStates((prev) => {
-      const newState = { ...prev, [section]: !prev[section] }
+      // If already editing this section, turn it off
+      if (prev[section]) {
+        return { ...prev, [section]: false }
+      }
+      // Otherwise, set only this section to true, all others to false
+      const newState: EditStates = Object.keys(prev).reduce((acc, key) => {
+        acc[key as keyof EditStates] = false
+        return acc
+      }, {} as EditStates)
+      newState[section] = true
 
       // When entering edit mode for personas, sync local state with current data
-      if (section === "personas" && newState.personas && formData.personas) {
+      if (section === "personas" && formData.personas) {
         syncPersonaEditStates(formData.personas)
       }
-
       // When entering edit mode for superpowers, sync local state with current data
-      if (
-        section === "superpowers" &&
-        newState.superpowers &&
-        formData.superpowers
-      ) {
+      if (section === "superpowers" && formData.superpowers) {
         syncSuperpowerEditStates(formData.superpowers)
       }
-
       return newState
     })
   }
@@ -121,6 +125,21 @@ const ProfileSnapshot = () => {
     sweetSpot: false,
     userManual: false,
     functionalSkills: false,
+  })
+
+  const mainContentRef = useRef<HTMLDivElement>(null)
+
+  useClickOutside(mainContentRef, () => {
+    setEditStates((prev) => {
+      if (Object.values(prev).some((v) => v)) {
+        const closed: EditStates = Object.keys(prev).reduce((acc, key) => {
+          acc[key as keyof EditStates] = false
+          return acc
+        }, {} as EditStates)
+        return closed
+      }
+      return prev
+    })
   })
 
   const handleContinue = async () => {
@@ -202,7 +221,7 @@ const ProfileSnapshot = () => {
 
   return (
     <DashboardLayout steps={steps} currentStep={3}>
-      <div className="max-w-6xl mx-auto space-y-6 p-6">
+      <div ref={mainContentRef} className="max-w-6xl mx-auto space-y-6 p-6">
         {/* Main Layout - Two Column */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Profile Info */}
