@@ -1,71 +1,21 @@
-import { useState, useEffect, useCallback } from "react"
-import { useNavigate } from "react-router-dom"
 import { DashboardLayout } from "@/components/DashboardLayout"
-import {
-  StepCard,
-  StepCardContent,
-  StepCardDescription,
-  StepCardFooter,
-  StepCardHeader,
-  StepCardTitle,
-} from "@/components/StepCard"
 import { Step } from "@/components/OnboardingProgress"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import {
-  ArrowRight,
-  ArrowLeft,
-  User,
-  Briefcase,
-  GraduationCap,
-  CheckCircle,
-  Pencil,
-  WandSparkles,
-  Info,
-  MapPin,
-  Mail,
-  Phone,
-  Plus,
-  Minus,
-  Save,
-  X,
-  Edit,
-  History,
-} from "lucide-react"
-import { Separator } from "@/components/ui/separator"
-import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { toast } from "@/hooks/use-toast"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Label } from "@/components/ui/label"
-import ProfilePictureUpload from "@/components/ProfilePictureUpload"
-import { useProfileSnapshot } from "@/queries/useProfileSnapshot"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Textarea } from "@/components/ui/textarea"
 import { useAuth } from "@/contexts/AuthContext"
+import { toast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
-import { useQuery } from "@tanstack/react-query"
 import type { Json } from "@/integrations/supabase/types"
+import { useProfileSnapshot } from "@/queries/useProfileSnapshot"
+import { ArrowLeft, ArrowRight, Edit, Minus, Plus, X } from "lucide-react"
+import { useCallback, useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { EditableTextSection } from "@/components/EditProfile/EditableTextSection"
 
 interface ProfileData {
   name?: string
@@ -1183,39 +1133,17 @@ const ProfileSnapshot = () => {
           {/* Right Column - Main Content */}
           <div className="lg:col-span-2 space-y-6">
             {/* Meet Section */}
-            <div className="bg-teal-600 text-white rounded-lg">
-              <div className="flex items-center justify-between p-4 pb-2">
-                <h2 className="text-xl font-semibold">
-                  Meet {formData?.name?.split(" ")[0] || "Professional"}
-                </h2>
-                <div className="flex gap-1">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => toggleEdit("meetIntro")}
-                    className="text-white hover:bg-white/20"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-              <div className="px-4 pb-4">
-                {editStates.meetIntro ? (
-                  <Textarea
-                    value={formData?.meet_them || ""}
-                    onChange={(e) =>
-                      handleInputChange("meet_them", e.target.value)
-                    }
-                    className="text-sm leading-relaxed bg-white/10 border-white/20 text-white placeholder:text-white/70"
-                    rows={4}
-                  />
-                ) : (
-                  <p className="text-sm leading-relaxed">
-                    {formData?.meet_them || "Introduction not available"}
-                  </p>
-                )}
-              </div>
-            </div>
+            <EditableTextSection
+              title={`Meet ${formData?.name?.split(" ")[0] || "Professional"}`}
+              value={formData?.meet_them || ""}
+              onChange={(value) => handleInputChange("meet_them", value)}
+              isEditing={editStates.meetIntro}
+              onEditToggle={() => toggleEdit("meetIntro")}
+              placeholder="Introduction not available"
+              bgColorClass="bg-teal-600"
+              textColorClass="text-white"
+              textAreaClass="bg-white/10 border-white/20 text-white placeholder:text-white/70"
+            />
 
             {/* Personas Section */}
             <div className="bg-white rounded-lg border shadow-sm">
@@ -1415,40 +1343,14 @@ const ProfileSnapshot = () => {
             </div>
 
             {/* Sweet Spot Section */}
-            <div className="bg-white rounded-lg border">
-              <div className="bg-teal-600 text-white rounded-t-lg">
-                <div className="flex items-center justify-between p-4">
-                  <h3 className="text-lg font-semibold">Sweet Spot</h3>
-                  <div className="flex gap-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => toggleEdit("sweetSpot")}
-                      className="text-white hover:bg-white/20"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-4">
-                {editStates.sweetSpot ? (
-                  <Textarea
-                    value={formData?.sweetspot || ""}
-                    onChange={(e) =>
-                      handleInputChange("sweetspot", e.target.value)
-                    }
-                    className="text-sm leading-relaxed"
-                    rows={4}
-                  />
-                ) : (
-                  <div className="text-sm leading-relaxed text-gray-700">
-                    {formData?.sweetspot || "Sweet spot not available"}
-                  </div>
-                )}
-              </div>
-            </div>
+            <EditableTextSection
+              title="Sweet Spot"
+              value={formData?.sweetspot || ""}
+              onChange={(value) => handleInputChange("sweetspot", value)}
+              isEditing={editStates.sweetSpot}
+              onEditToggle={() => toggleEdit("sweetSpot")}
+              placeholder="Sweet spot not available"
+            />
 
             {/* Functional Skills */}
             <div className="bg-white rounded-lg border">
@@ -1517,43 +1419,16 @@ const ProfileSnapshot = () => {
             </div>
 
             {/* User Manual */}
-            <div className="bg-white rounded-lg border">
-              <div className="bg-teal-600 text-white rounded-t-lg">
-                <div className="flex items-center justify-between p-4">
-                  <h3 className="text-lg font-semibold">
-                    {formData?.name?.split(" ")[0] || "Professional"}'s User
-                    Manual
-                  </h3>
-                  <div className="flex gap-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => toggleEdit("userManual")}
-                      className="text-white hover:bg-white/20"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-4">
-                {editStates.userManual ? (
-                  <Textarea
-                    value={formData?.user_manual || ""}
-                    onChange={(e) =>
-                      handleInputChange("user_manual", e.target.value)
-                    }
-                    className="text-sm leading-relaxed"
-                    rows={8}
-                  />
-                ) : (
-                  <div className="text-sm leading-relaxed text-gray-700 whitespace-pre-line">
-                    {formData?.user_manual || "User manual not available"}
-                  </div>
-                )}
-              </div>
-            </div>
+            <EditableTextSection
+              title={`${
+                formData?.name?.split(" ")[0] || "Professional"
+              }'s User Manual`}
+              value={formData?.user_manual || ""}
+              onChange={(value) => handleInputChange("user_manual", value)}
+              isEditing={editStates.userManual}
+              onEditToggle={() => toggleEdit("userManual")}
+              placeholder="User manual not available"
+            />
           </div>
         </div>
 
