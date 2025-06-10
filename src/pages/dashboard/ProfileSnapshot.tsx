@@ -1,78 +1,29 @@
 import { DashboardLayout } from "@/components/DashboardLayout"
+import { BasicInfoSection } from "@/components/EditProfile/BasicInfoSection"
 import { EditableArraySection } from "@/components/EditProfile/EditableArraySection"
 import { EditableTextSection } from "@/components/EditProfile/EditableTextSection"
+import { FunctionalSkillsSection } from "@/components/EditProfile/FunctionalSkillsSection"
 import { PersonasSection } from "@/components/EditProfile/PersonasSection"
 import { SuperpowersSection } from "@/components/EditProfile/SuperpowersSection"
 import { Step } from "@/components/OnboardingProgress"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { useAuth } from "@/contexts/AuthContext"
 import { toast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
 import type { Json } from "@/integrations/supabase/types"
 import { useProfileSnapshot } from "@/queries/useProfileSnapshot"
-import { ArrowLeft, ArrowRight, Edit, Minus, Plus } from "lucide-react"
+import { ArrowLeft, ArrowRight } from "lucide-react"
 import { useCallback, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { FunctionalSkillsSection } from "@/components/EditProfile/FunctionalSkillsSection"
-import { BasicInfoSection } from "@/components/EditProfile/BasicInfoSection"
-
-interface ProfileData {
-  name?: string
-  role?: string
-  summary?: string
-  location?: string
-  personas?: Array<{
-    title: string
-    bullets: string[]
-  }>
-  meet_them?: string
-  sweetspot?: string
-  highlights?: string[]
-  industries?: string[]
-  focus_areas?: string[]
-  stage_focus?: string[]
-  superpowers?: Array<{
-    title: string
-    description: string
-  }>
-  user_manual?: string
-  certifications?: string[]
-  non_obvious_role?: {
-    title: string
-    description: string
-  }
-  functional_skills?: {
-    [key: string]: Array<{
-      title: string
-      description: string
-    }>
-  }
-  personal_interests?: string[]
-  geographical_coverage?: string[]
-  profilePicture?: string
-  engagement_options?: string[]
-}
-
-interface EditStates {
-  basicInfo: boolean
-  description: boolean
-  keyRoles: boolean
-  focusAreas: boolean
-  industries: boolean
-  geographicalCoverage: boolean
-  stages: boolean
-  personalInterests: boolean
-  certifications: boolean
-  engagementOptions: boolean
-  meetIntro: boolean
-  personas: boolean
-  superpowers: boolean
-  sweetSpot: boolean
-  userManual: boolean
-  functionalSkills: boolean
-}
+import type {
+  ProfileData,
+  EditStates,
+  Persona,
+  Superpower,
+  FunctionalSkill,
+  FunctionalSkills,
+} from "@/types/profile"
 
 const ProfileSnapshot = () => {
   const navigate = useNavigate()

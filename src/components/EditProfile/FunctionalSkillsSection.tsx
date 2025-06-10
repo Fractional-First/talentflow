@@ -4,15 +4,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Edit, Plus, X, Minus } from "lucide-react"
 import clsx from "clsx"
-
-export interface FunctionalSkill {
-  title: string
-  description: string
-}
-
-export interface FunctionalSkills {
-  [category: string]: FunctionalSkill[]
-}
+import type { FunctionalSkill, FunctionalSkills } from "@/types/profile"
 
 interface FunctionalSkillsSectionProps {
   functionalSkills: FunctionalSkills

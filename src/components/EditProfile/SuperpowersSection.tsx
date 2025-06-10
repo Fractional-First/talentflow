@@ -4,11 +4,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Edit, Plus, X } from "lucide-react"
 import clsx from "clsx"
-
-export interface Superpower {
-  title: string
-  description: string
-}
+import type { Superpower } from "@/types/profile"
 
 interface SuperpowersSectionProps {
   superpowers: Superpower[]
