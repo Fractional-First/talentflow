@@ -37,9 +37,7 @@ export const EditableTextSection: React.FC<EditableTextSectionProps> = ({
           "flex items-center justify-between p-4 rounded-t-lg bg-teal-600 text-white"
         }
       >
-        <h3 className={clsx("text-lg font-semibold")}>
-          {title}
-        </h3>
+        <h3 className={clsx("text-lg font-semibold")}>{title}</h3>
         <Button
           variant="ghost"
           size="sm"

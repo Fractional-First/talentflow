@@ -16,6 +16,7 @@ import { ArrowLeft, ArrowRight, Edit, Minus, Plus, X } from "lucide-react"
 import { useCallback, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { EditableTextSection } from "@/components/EditProfile/EditableTextSection"
+import { EditableArraySection } from "@/components/EditProfile/EditableArraySection"
 
 interface ProfileData {
   name?: string
@@ -51,6 +52,7 @@ interface ProfileData {
   personal_interests?: string[]
   geographical_coverage?: string[]
   profilePicture?: string
+  engagement_options?: string[]
 }
 
 interface EditStates {
@@ -76,16 +78,9 @@ const ProfileSnapshot = () => {
   const navigate = useNavigate()
   const { user } = useAuth()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [showAIGuide, setShowAIGuide] = useState(false)
   const [expandedFunctionalSkill, setExpandedFunctionalSkill] = useState<
     string | null
   >(null)
-  const [isSaving, setIsSaving] = useState(false)
-  const [lastSaveTime, setLastSaveTime] = useState<Date | null>(null)
-  const [versionHistorySidebar, setVersionHistorySidebar] = useState<{
-    isOpen: boolean
-    fieldName: string
-  }>({ isOpen: false, fieldName: "" })
 
   // Initialize formData state first
   const [formData, setFormData] = useState<ProfileData>({})
@@ -134,8 +129,6 @@ const ProfileSnapshot = () => {
       if (!user?.id || !dataToSave || Object.keys(dataToSave).length === 0)
         return
 
-      setIsSaving(true)
-
       try {
         const { error } = await supabase
           .from("profiles")
@@ -144,8 +137,6 @@ const ProfileSnapshot = () => {
 
         if (error) throw error
 
-        setLastSaveTime(new Date())
-        console.log("Auto-saved profile data")
       } catch (error) {
         console.error("Error auto-saving profile:", error)
         toast({
@@ -154,8 +145,6 @@ const ProfileSnapshot = () => {
             "Your changes couldn't be saved automatically. Please try again.",
           variant: "destructive",
         })
-      } finally {
-        setIsSaving(false)
       }
     },
     [user?.id]
@@ -724,410 +713,87 @@ const ProfileSnapshot = () => {
             </div>
 
             {/* Focus Areas */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <Label className="font-semibold">Focus Areas</Label>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => toggleEdit("focusAreas")}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-              </div>
-              {editStates.focusAreas ? (
-                <div className="space-y-2">
-                  <div className="flex flex-wrap gap-2">
-                    {(formData?.focus_areas || []).map((area, index) => (
-                      <div key={index} className="flex items-center gap-1">
-                        <Input
-                          value={area}
-                          onChange={(e) =>
-                            handleArrayChange(
-                              "focus_areas",
-                              index,
-                              e.target.value
-                            )
-                          }
-                          className="text-xs h-8 w-32"
-                        />
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeArrayItem("focus_areas", index)}
-                          className="h-6 w-6 p-0"
-                        >
-                          <X className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => addArrayItem("focus_areas")}
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Area
-                  </Button>
-                </div>
-              ) : (
-                <div className="flex flex-wrap gap-2">
-                  {(formData?.focus_areas && formData.focus_areas.length > 0
-                    ? formData.focus_areas
-                    : ["Focus areas not available"]
-                  ).map((area, index) => (
-                    <Badge key={index} variant="secondary" className="text-xs">
-                      {area}
-                    </Badge>
-                  ))}
-                </div>
-              )}
-            </div>
+            <EditableArraySection
+              title="Focus Areas"
+              items={formData.focus_areas || []}
+              isEditing={editStates.focusAreas}
+              onEditToggle={() => toggleEdit("focusAreas")}
+              onChange={(newArr) => handleInputChange("focus_areas", newArr)}
+              placeholder="Focus area"
+              addLabel="Add Area"
+            />
 
             {/* Industries */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <Label className="font-semibold">Industries</Label>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => toggleEdit("industries")}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-              </div>
-              {editStates.industries ? (
-                <div className="space-y-2">
-                  <div className="flex flex-wrap gap-2">
-                    {(formData?.industries || []).map((industry, index) => (
-                      <div key={index} className="flex items-center gap-1">
-                        <Input
-                          value={industry}
-                          onChange={(e) =>
-                            handleArrayChange(
-                              "industries",
-                              index,
-                              e.target.value
-                            )
-                          }
-                          className="text-xs h-8 w-32"
-                        />
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeArrayItem("industries", index)}
-                          className="h-6 w-6 p-0"
-                        >
-                          <X className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => addArrayItem("industries")}
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Industry
-                  </Button>
-                </div>
-              ) : (
-                <div className="flex flex-wrap gap-2">
-                  {(formData?.industries && formData.industries.length > 0
-                    ? formData.industries
-                    : ["Industries not available"]
-                  ).map((industry, index) => (
-                    <Badge key={index} variant="secondary" className="text-xs">
-                      {industry}
-                    </Badge>
-                  ))}
-                </div>
-              )}
-            </div>
+            <EditableArraySection
+              title="Industries"
+              items={formData.industries || []}
+              isEditing={editStates.industries}
+              onEditToggle={() => toggleEdit("industries")}
+              onChange={(newArr) => handleInputChange("industries", newArr)}
+              placeholder="Industry"
+              addLabel="Add Industry"
+            />
 
             {/* Geographical Coverage */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <Label className="font-semibold">Geographical Coverage</Label>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => toggleEdit("geographicalCoverage")}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-              </div>
-              {editStates.geographicalCoverage ? (
-                <div className="space-y-2">
-                  <div className="flex flex-wrap gap-2">
-                    {(formData?.geographical_coverage || []).map(
-                      (region, index) => (
-                        <div key={index} className="flex items-center gap-1">
-                          <Input
-                            value={region}
-                            onChange={(e) =>
-                              handleArrayChange(
-                                "geographical_coverage",
-                                index,
-                                e.target.value
-                              )
-                            }
-                            className="text-xs h-8 w-32"
-                          />
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() =>
-                              removeArrayItem("geographical_coverage", index)
-                            }
-                            className="h-6 w-6 p-0"
-                          >
-                            <X className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      )
-                    )}
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => addArrayItem("geographical_coverage")}
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Region
-                  </Button>
-                </div>
-              ) : (
-                <div className="flex flex-wrap gap-2">
-                  {(formData?.geographical_coverage &&
-                  formData.geographical_coverage.length > 0
-                    ? formData.geographical_coverage
-                    : ["Geographical coverage not available"]
-                  ).map((region, index) => (
-                    <Badge key={index} variant="secondary" className="text-xs">
-                      {region}
-                    </Badge>
-                  ))}
-                </div>
-              )}
-            </div>
+            <EditableArraySection
+              title="Geographical Coverage"
+              items={formData.geographical_coverage || []}
+              isEditing={editStates.geographicalCoverage}
+              onEditToggle={() => toggleEdit("geographicalCoverage")}
+              onChange={(newArr) =>
+                handleInputChange("geographical_coverage", newArr)
+              }
+              placeholder="Region"
+              addLabel="Add Region"
+            />
 
             {/* Stage */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <Label className="font-semibold">Stage</Label>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => toggleEdit("stages")}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-              </div>
-              {editStates.stages ? (
-                <div className="space-y-2">
-                  <div className="flex flex-wrap gap-2">
-                    {(formData?.stage_focus || []).map((stage, index) => (
-                      <div key={index} className="flex items-center gap-1">
-                        <Input
-                          value={stage}
-                          onChange={(e) =>
-                            handleArrayChange(
-                              "stage_focus",
-                              index,
-                              e.target.value
-                            )
-                          }
-                          className="text-xs h-8 w-32"
-                        />
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeArrayItem("stage_focus", index)}
-                          className="h-6 w-6 p-0"
-                        >
-                          <X className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => addArrayItem("stage_focus")}
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Stage
-                  </Button>
-                </div>
-              ) : (
-                <div className="flex flex-wrap gap-2">
-                  {(formData?.stage_focus && formData.stage_focus.length > 0
-                    ? formData.stage_focus
-                    : ["Stage focus not available"]
-                  ).map((stage, index) => (
-                    <Badge key={index} variant="secondary" className="text-xs">
-                      {stage}
-                    </Badge>
-                  ))}
-                </div>
-              )}
-            </div>
+            <EditableArraySection
+              title="Stage"
+              items={formData.stage_focus || []}
+              isEditing={editStates.stages}
+              onEditToggle={() => toggleEdit("stages")}
+              onChange={(newArr) => handleInputChange("stage_focus", newArr)}
+              placeholder="Stage"
+              addLabel="Add Stage"
+            />
 
             {/* Personal Interests */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <Label className="font-semibold">Personal Interests</Label>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => toggleEdit("personalInterests")}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-              </div>
-              {editStates.personalInterests ? (
-                <div className="space-y-2">
-                  <div className="flex flex-wrap gap-2">
-                    {(formData?.personal_interests || []).map(
-                      (interest, index) => (
-                        <div key={index} className="flex items-center gap-1">
-                          <Input
-                            value={interest}
-                            onChange={(e) =>
-                              handleArrayChange(
-                                "personal_interests",
-                                index,
-                                e.target.value
-                              )
-                            }
-                            className="text-xs h-8 w-32"
-                          />
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() =>
-                              removeArrayItem("personal_interests", index)
-                            }
-                            className="h-6 w-6 p-0"
-                          >
-                            <X className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      )
-                    )}
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => addArrayItem("personal_interests")}
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Interest
-                  </Button>
-                </div>
-              ) : (
-                <div className="flex flex-wrap gap-2">
-                  {(formData?.personal_interests &&
-                  formData.personal_interests.length > 0
-                    ? formData.personal_interests
-                    : ["Personal interests not available"]
-                  ).map((interest, index) => (
-                    <Badge key={index} variant="secondary" className="text-xs">
-                      {interest}
-                    </Badge>
-                  ))}
-                </div>
-              )}
-            </div>
+            <EditableArraySection
+              title="Personal Interests"
+              items={formData.personal_interests || []}
+              isEditing={editStates.personalInterests}
+              onEditToggle={() => toggleEdit("personalInterests")}
+              onChange={(newArr) =>
+                handleInputChange("personal_interests", newArr)
+              }
+              placeholder="Interest"
+              addLabel="Add Interest"
+            />
 
             {/* Certifications */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <Label className="font-semibold">Certifications</Label>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => toggleEdit("certifications")}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-              </div>
-              {editStates.certifications ? (
-                <div className="space-y-2">
-                  {(formData?.certifications || []).map((cert, index) => (
-                    <div key={index} className="flex gap-2">
-                      <Input
-                        value={cert}
-                        onChange={(e) =>
-                          handleArrayChange(
-                            "certifications",
-                            index,
-                            e.target.value
-                          )
-                        }
-                        className="text-sm"
-                      />
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeArrayItem("certifications", index)}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => addArrayItem("certifications")}
-                    className="w-full"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Certification
-                  </Button>
-                </div>
-              ) : (
-                <ul className="space-y-1">
-                  {(formData?.certifications &&
-                  formData.certifications.length > 0
-                    ? formData.certifications
-                    : ["Certifications not available"]
-                  ).map((cert, index) => (
-                    <li key={index} className="text-sm text-gray-700">
-                      • {cert}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
+            <EditableArraySection
+              title="Certifications"
+              items={formData.certifications || []}
+              isEditing={editStates.certifications}
+              onEditToggle={() => toggleEdit("certifications")}
+              onChange={(newArr) => handleInputChange("certifications", newArr)}
+              placeholder="Certification"
+              addLabel="Add Certification"
+            />
 
             {/* Engagement Options */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <Label className="font-semibold">Engagement Options</Label>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => toggleEdit("engagementOptions")}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-              </div>
-              {editStates.engagementOptions ? (
-                <Textarea
-                  value="Engagement options not available"
-                  className="text-sm"
-                  rows={2}
-                />
-              ) : (
-                <p className="text-sm text-gray-700">
-                  Engagement options not available
-                </p>
-              )}
-            </div>
+            <EditableArraySection
+              title="Engagement Options"
+              items={formData.engagement_options || []}
+              isEditing={editStates.engagementOptions}
+              onEditToggle={() => toggleEdit("engagementOptions")}
+              onChange={(newArr) =>
+                handleInputChange("engagement_options", newArr)
+              }
+              placeholder="Engagement option"
+              addLabel="Add Option"
+            />
           </div>
 
           {/* Right Column - Main Content */}
