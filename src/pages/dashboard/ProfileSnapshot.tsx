@@ -10,223 +10,56 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/contexts/AuthContext"
 import { toast } from "@/hooks/use-toast"
+import { useAutoSave } from "@/hooks/useAutoSave"
+import { usePersonaEditState } from "@/hooks/usePersonaEditState"
+import { useProfileForm } from "@/hooks/useProfileForm"
+import { useSuperpowerEditState } from "@/hooks/useSuperpowerEditState"
 import { supabase } from "@/integrations/supabase/client"
-import type { Json } from "@/integrations/supabase/types"
+import { getUserInitials } from "@/lib/utils"
 import { useProfileSnapshot } from "@/queries/useProfileSnapshot"
+import type { EditStates, ProfileData } from "@/types/profile"
 import { ArrowLeft, ArrowRight } from "lucide-react"
-import { useCallback, useEffect, useState } from "react"
+import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import type {
-  ProfileData,
-  EditStates,
-  Persona,
-  Superpower,
-  FunctionalSkill,
-  FunctionalSkills,
-} from "@/types/profile"
 
 const ProfileSnapshot = () => {
   const navigate = useNavigate()
   const { user } = useAuth()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  // Fetch profile data using the new hook
+  const { profileData, isLoading, error } = useProfileSnapshot()
+
   // Initialize formData state first
-  const [formData, setFormData] = useState<ProfileData>({})
-
-  // Local editing state for personas
-  const [personaEditStates, setPersonaEditStates] = useState<{
-    [key: number]: {
-      title: string
-      bulletsText: string
-    }
-  }>({})
-
-  // Local editing state for superpowers
-  const [superpowerEditStates, setSuperpowerEditStates] = useState<{
-    [key: number]: {
+  const [formData, setFormData] = useProfileForm({
+    user,
+    profileData,
+    toast: (opts: {
       title: string
       description: string
-    }
-  }>({})
-
-  const [editStates, setEditStates] = useState<EditStates>({
-    basicInfo: false,
-    description: false,
-    keyRoles: false,
-    focusAreas: false,
-    industries: false,
-    geographicalCoverage: false,
-    stages: false,
-    personalInterests: false,
-    certifications: false,
-    engagementOptions: false,
-    meetIntro: false,
-    personas: false,
-    superpowers: false,
-    sweetSpot: false,
-    userManual: false,
-    functionalSkills: false,
+      variant: "default" | "destructive"
+    }) => {
+      toast(opts)
+    },
   })
 
   // Add activeTab state for personas
   const [personasActiveTab, setPersonasActiveTab] = useState("0")
 
-  // Fetch profile data using the new hook
-  const { profileData, isLoading, error } = useProfileSnapshot()
+  const {
+    personaEditStates,
+    handlePersonaLocalUpdate,
+    handleAddPersona,
+    handleRemovePersona,
+    syncPersonaEditStates,
+  } = usePersonaEditState({ personas: formData.personas || [], setFormData })
 
-  // Auto-save function
-  const autoSave = useCallback(
-    async (dataToSave: ProfileData) => {
-      if (!user?.id || !dataToSave || Object.keys(dataToSave).length === 0)
-        return
+  const { syncSuperpowerEditStates } = useSuperpowerEditState({
+    superpowers: formData.superpowers || [],
+    setFormData,
+  })
 
-      try {
-        const { error } = await supabase
-          .from("profiles")
-          .update({ profile_data: dataToSave as Json })
-          .eq("id", user.id)
-
-        if (error) throw error
-      } catch (error) {
-        console.error("Error auto-saving profile:", error)
-        toast({
-          title: "Auto-save failed",
-          description:
-            "Your changes couldn't be saved automatically. Please try again.",
-          variant: "destructive",
-        })
-      }
-    },
-    [user?.id]
-  )
-
-  // Debounced auto-save effect with 1000ms delay
-  useEffect(() => {
-    if (!formData || Object.keys(formData).length === 0 || !profileData) return
-
-    // Only save if data has changed from original
-    const hasChanges = JSON.stringify(formData) !== JSON.stringify(profileData)
-    if (!hasChanges) return
-
-    const timeoutId = setTimeout(() => {
-      autoSave(formData)
-    }, 1000) // 1 second debounce
-
-    return () => clearTimeout(timeoutId)
-  }, [formData, autoSave, profileData])
-
-  // Debounced update function for personas
-  useEffect(() => {
-    const timeouts: { [key: number]: NodeJS.Timeout } = {}
-
-    Object.entries(personaEditStates).forEach(([personaIndex, editState]) => {
-      const index = parseInt(personaIndex)
-
-      if (timeouts[index]) {
-        clearTimeout(timeouts[index])
-      }
-
-      timeouts[index] = setTimeout(() => {
-        // Update the main formData with the debounced changes
-        const bullets = editState.bulletsText
-          .split("\n")
-          .map((line) => line.replace(/^•\s*/, "").trim())
-          .filter((line) => line.length > 0)
-
-        setFormData((prev) => {
-          const updatedPersonas = [...(prev.personas || [])]
-          updatedPersonas[index] = {
-            ...updatedPersonas[index],
-            title: editState.title,
-            bullets: bullets,
-          }
-          return { ...prev, personas: updatedPersonas }
-        })
-      }, 300) // 300ms debounce delay
-    })
-
-    return () => {
-      Object.values(timeouts).forEach((timeout) => clearTimeout(timeout))
-    }
-  }, [personaEditStates])
-
-  // Debounced update function for superpowers
-  useEffect(() => {
-    const timeouts: { [key: number]: NodeJS.Timeout } = {}
-
-    Object.entries(superpowerEditStates).forEach(
-      ([superpowerIndex, editState]) => {
-        const index = parseInt(superpowerIndex)
-
-        if (timeouts[index]) {
-          clearTimeout(timeouts[index])
-        }
-
-        timeouts[index] = setTimeout(() => {
-          // Update the main formData with the debounced changes
-          setFormData((prev) => {
-            const updatedSuperpowers = [...(prev.superpowers || [])]
-            updatedSuperpowers[index] = {
-              title: editState.title,
-              description: editState.description,
-            }
-            return { ...prev, superpowers: updatedSuperpowers }
-          })
-        }, 300) // 300ms debounce delay
-      }
-    )
-
-    return () => {
-      Object.values(timeouts).forEach((timeout) => clearTimeout(timeout))
-    }
-  }, [superpowerEditStates])
-
-  // Update formData when profileData is loaded
-  useEffect(() => {
-    if (profileData && typeof profileData === "object") {
-      setFormData(profileData)
-
-      // Initialize persona edit states when data is loaded
-      if (profileData.personas) {
-        const initialEditStates: {
-          [key: number]: { title: string; bulletsText: string }
-        } = {}
-        profileData.personas.forEach((persona, index) => {
-          initialEditStates[index] = {
-            title: persona.title,
-            bulletsText:
-              persona.bullets?.map((bullet) => `• ${bullet}`).join("\n") || "",
-          }
-        })
-        setPersonaEditStates(initialEditStates)
-      }
-
-      // Initialize superpower edit states when data is loaded
-      if (profileData.superpowers) {
-        const initialSuperpowerEditStates: {
-          [key: number]: { title: string; description: string }
-        } = {}
-        profileData.superpowers.forEach((superpower, index) => {
-          initialSuperpowerEditStates[index] = {
-            title: superpower.title,
-            description: superpower.description,
-          }
-        })
-        setSuperpowerEditStates(initialSuperpowerEditStates)
-      }
-    }
-  }, [profileData])
-
-  // Helper function to get user initials
-  const getUserInitials = (name?: string) => {
-    if (!name) return "U"
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2)
-  }
+  useAutoSave({ user, formData, profileData, toast: (opts) => toast(opts) })
 
   const steps: Step[] = [
     {
@@ -255,17 +88,7 @@ const ProfileSnapshot = () => {
 
       // When entering edit mode for personas, sync local state with current data
       if (section === "personas" && newState.personas && formData.personas) {
-        const syncedEditStates: {
-          [key: number]: { title: string; bulletsText: string }
-        } = {}
-        formData.personas.forEach((persona, index) => {
-          syncedEditStates[index] = {
-            title: persona.title,
-            bulletsText:
-              persona.bullets?.map((bullet) => `• ${bullet}`).join("\n") || "",
-          }
-        })
-        setPersonaEditStates(syncedEditStates)
+        syncPersonaEditStates(formData.personas)
       }
 
       // When entering edit mode for superpowers, sync local state with current data
@@ -274,36 +97,31 @@ const ProfileSnapshot = () => {
         newState.superpowers &&
         formData.superpowers
       ) {
-        const syncedSuperpowerEditStates: {
-          [key: number]: { title: string; description: string }
-        } = {}
-        formData.superpowers.forEach((superpower, index) => {
-          syncedSuperpowerEditStates[index] = {
-            title: superpower.title,
-            description: superpower.description,
-          }
-        })
-        setSuperpowerEditStates(syncedSuperpowerEditStates)
+        syncSuperpowerEditStates(formData.superpowers)
       }
 
       return newState
     })
   }
 
-  // Handle persona local state updates
-  const handlePersonaLocalUpdate = (
-    personaIndex: number,
-    field: "title" | "bulletsText",
-    value: string
-  ) => {
-    setPersonaEditStates((prev) => ({
-      ...prev,
-      [personaIndex]: {
-        ...prev[personaIndex],
-        [field]: value,
-      },
-    }))
-  }
+  const [editStates, setEditStates] = useState<EditStates>({
+    basicInfo: false,
+    description: false,
+    keyRoles: false,
+    focusAreas: false,
+    industries: false,
+    geographicalCoverage: false,
+    stages: false,
+    personalInterests: false,
+    certifications: false,
+    engagementOptions: false,
+    meetIntro: false,
+    personas: false,
+    superpowers: false,
+    sweetSpot: false,
+    userManual: false,
+    functionalSkills: false,
+  })
 
   const handleContinue = async () => {
     setIsSubmitting(true)
@@ -334,46 +152,6 @@ const ProfileSnapshot = () => {
   // Handle input changes for form fields
   const handleInputChange = (field: keyof ProfileData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
-  }
-
-  // Handler to add a persona
-  const handleAddPersona = () => {
-    const newIndex = formData.personas?.length || 0
-    const newPersonas = [
-      ...(formData.personas || []),
-      { title: "", bullets: [] },
-    ]
-    setFormData((prev) => ({ ...prev, personas: newPersonas }))
-    setPersonaEditStates((prev) => ({
-      ...prev,
-      [newIndex]: { title: "", bulletsText: "" },
-    }))
-    setPersonasActiveTab(String(newIndex))
-  }
-
-  // Handler to remove a persona
-  const handleRemovePersona = (index: number) => {
-    if ((formData.personas?.length || 1) === 1) return
-    const newPersonas = (formData.personas || []).filter((_, i) => i !== index)
-    setFormData((prev) => ({ ...prev, personas: newPersonas }))
-    // Remove from edit state and reindex
-    const newEditStates: {
-      [key: number]: { title: string; bulletsText: string }
-    } = {}
-    newPersonas.forEach((persona, newIndex) => {
-      if (personaEditStates[newIndex < index ? newIndex : newIndex + 1]) {
-        newEditStates[newIndex] =
-          personaEditStates[newIndex < index ? newIndex : newIndex + 1]
-      } else {
-        newEditStates[newIndex] = {
-          title: persona.title,
-          bulletsText:
-            persona.bullets?.map((bullet) => `• ${bullet}`).join("\n") || "",
-        }
-      }
-    })
-    setPersonaEditStates(newEditStates)
-    setPersonasActiveTab("0")
   }
 
   if (isLoading) {
