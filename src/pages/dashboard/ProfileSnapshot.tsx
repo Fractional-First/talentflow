@@ -16,6 +16,7 @@ import { ArrowLeft, ArrowRight, Edit, Minus, Plus } from "lucide-react"
 import { useCallback, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { FunctionalSkillsSection } from "@/components/EditProfile/FunctionalSkillsSection"
+import { BasicInfoSection } from "@/components/EditProfile/BasicInfoSection"
 
 interface ProfileData {
   name?: string
@@ -77,9 +78,6 @@ const ProfileSnapshot = () => {
   const navigate = useNavigate()
   const { user } = useAuth()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [expandedFunctionalSkill, setExpandedFunctionalSkill] = useState<
-    string | null
-  >(null)
 
   // Initialize formData state first
   const [formData, setFormData] = useState<ProfileData>({})
@@ -356,27 +354,6 @@ const ProfileSnapshot = () => {
     }))
   }
 
-  // Handle persona updates
-  const handlePersonaUpdate = (
-    personaIndex: number,
-    field: "title" | "bullets",
-    value: string | string[]
-  ) => {
-    const updatedPersonas = [...(formData.personas || [])]
-    if (field === "title") {
-      updatedPersonas[personaIndex] = {
-        ...updatedPersonas[personaIndex],
-        title: value as string,
-      }
-    } else {
-      updatedPersonas[personaIndex] = {
-        ...updatedPersonas[personaIndex],
-        bullets: value as string[],
-      }
-    }
-    setFormData((prev) => ({ ...prev, personas: updatedPersonas }))
-  }
-
   const handleContinue = async () => {
     setIsSubmitting(true)
 
@@ -401,10 +378,6 @@ const ProfileSnapshot = () => {
     } finally {
       setIsSubmitting(false)
     }
-  }
-
-  const toggleFunctionalSkill = (skill: string) => {
-    setExpandedFunctionalSkill(expandedFunctionalSkill === skill ? null : skill)
   }
 
   // Handle input changes for form fields
@@ -517,59 +490,14 @@ const ProfileSnapshot = () => {
               </div>
 
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    {editStates.basicInfo ? (
-                      <Input
-                        value={formData?.name || ""}
-                        onChange={(e) =>
-                          handleInputChange("name", e.target.value)
-                        }
-                        className="text-2xl font-bold text-center"
-                      />
-                    ) : (
-                      <h1 className="text-2xl font-bold">
-                        {formData?.name || "Name not available"}
-                      </h1>
-                    )}
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => toggleEdit("basicInfo")}
-                    className="ml-2"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                </div>
-
-                {editStates.basicInfo ? (
-                  <>
-                    <Input
-                      value={formData?.role || ""}
-                      onChange={(e) =>
-                        handleInputChange("role", e.target.value)
-                      }
-                      className="text-lg text-center"
-                    />
-                    <Input
-                      value={formData?.location || ""}
-                      onChange={(e) =>
-                        handleInputChange("location", e.target.value)
-                      }
-                      className="text-sm text-center"
-                    />
-                  </>
-                ) : (
-                  <>
-                    <p className="text-lg text-gray-700">
-                      {formData?.role || "Role not available"}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      {formData?.location || "Location not available"}
-                    </p>
-                  </>
-                )}
+                <BasicInfoSection
+                  name={formData?.name || ""}
+                  role={formData?.role || ""}
+                  location={formData?.location || ""}
+                  isEditing={editStates.basicInfo}
+                  onEditToggle={() => toggleEdit("basicInfo")}
+                  onChange={(field, value) => handleInputChange(field, value)}
+                />
               </div>
             </div>
 
