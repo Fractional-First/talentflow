@@ -1,24 +1,20 @@
 import { DashboardLayout } from "@/components/DashboardLayout"
+import { EditableArraySection } from "@/components/EditProfile/EditableArraySection"
+import { EditableTextSection } from "@/components/EditProfile/EditableTextSection"
+import { PersonasSection } from "@/components/EditProfile/PersonasSection"
+import { SuperpowersSection } from "@/components/EditProfile/SuperpowersSection"
 import { Step } from "@/components/OnboardingProgress"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Textarea } from "@/components/ui/textarea"
 import { useAuth } from "@/contexts/AuthContext"
 import { toast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
 import type { Json } from "@/integrations/supabase/types"
 import { useProfileSnapshot } from "@/queries/useProfileSnapshot"
-import { ArrowLeft, ArrowRight, Edit, Minus, Plus, X } from "lucide-react"
+import { ArrowLeft, ArrowRight, Edit, Minus, Plus } from "lucide-react"
 import { useCallback, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { EditableTextSection } from "@/components/EditProfile/EditableTextSection"
-import { EditableArraySection } from "@/components/EditProfile/EditableArraySection"
-import { PersonasSection } from "@/components/EditProfile/PersonasSection"
-import { SuperpowersSection } from "@/components/EditProfile/SuperpowersSection"
 
 interface ProfileData {
   name?: string
@@ -121,6 +117,9 @@ const ProfileSnapshot = () => {
     userManual: false,
     functionalSkills: false,
   })
+
+  // Add activeTab state for personas
+  const [personasActiveTab, setPersonasActiveTab] = useState("0")
 
   // Fetch profile data using the new hook
   const { profileData, isLoading, error } = useProfileSnapshot()
@@ -356,21 +355,6 @@ const ProfileSnapshot = () => {
     }))
   }
 
-  // Handle superpower local state updates
-  const handleSuperpowerLocalUpdate = (
-    superpowerIndex: number,
-    field: "title" | "description",
-    value: string
-  ) => {
-    setSuperpowerEditStates((prev) => ({
-      ...prev,
-      [superpowerIndex]: {
-        ...prev[superpowerIndex],
-        [field]: value,
-      },
-    }))
-  }
-
   // Handle persona updates
   const handlePersonaUpdate = (
     personaIndex: number,
@@ -390,87 +374,6 @@ const ProfileSnapshot = () => {
       }
     }
     setFormData((prev) => ({ ...prev, personas: updatedPersonas }))
-  }
-
-  const handlePersonaBulletsTextChange = (
-    personaIndex: number,
-    textValue: string
-  ) => {
-    // Convert text back to bullets array (split by lines and filter empty)
-    const bullets = textValue
-      .split("\n")
-      .map((line) => line.replace(/^•\s*/, "").trim())
-      .filter((line) => line.length > 0)
-    handlePersonaUpdate(personaIndex, "bullets", bullets)
-  }
-
-  const handleProfilePictureUpdate = (imageUrl: string) => {
-    setFormData((prev) => ({ ...prev, profilePicture: imageUrl }))
-  }
-
-  const handleArrayChange = (
-    field: keyof ProfileData,
-    index: number,
-    value: string
-  ) => {
-    const currentArray = formData[field] as string[]
-    if (!currentArray) return
-    const newArray = [...currentArray]
-    newArray[index] = value
-    setFormData((prev) => ({ ...prev, [field]: newArray }))
-  }
-
-  const addArrayItem = (field: keyof ProfileData) => {
-    const currentArray = (formData[field] as string[]) || []
-    setFormData((prev) => ({ ...prev, [field]: [...currentArray, ""] }))
-  }
-
-  const removeArrayItem = (field: keyof ProfileData, index: number) => {
-    const currentArray = formData[field] as string[]
-    if (!currentArray) return
-    const newArray = currentArray.filter((_, i) => i !== index)
-    setFormData((prev) => ({ ...prev, [field]: newArray }))
-  }
-
-  // Add superpower item
-  const addSuperpowerItem = () => {
-    const currentSuperpowers = formData.superpowers || []
-    const newSuperpower = { title: "", description: "" }
-    setFormData((prev) => ({
-      ...prev,
-      superpowers: [...currentSuperpowers, newSuperpower],
-    }))
-
-    // Initialize the edit state for the new superpower
-    const newIndex = currentSuperpowers.length
-    setSuperpowerEditStates((prev) => ({
-      ...prev,
-      [newIndex]: { title: "", description: "" },
-    }))
-  }
-
-  // Remove superpower item
-  const removeSuperpowerItem = (index: number) => {
-    const currentSuperpowers = formData.superpowers || []
-    const newSuperpowers = currentSuperpowers.filter((_, i) => i !== index)
-    setFormData((prev) => ({ ...prev, superpowers: newSuperpowers }))
-
-    // Remove from edit state and reindex
-    const newEditStates: {
-      [key: number]: { title: string; description: string }
-    } = {}
-    newSuperpowers.forEach((superpower, newIndex) => {
-      if (superpowerEditStates[newIndex < index ? newIndex : newIndex + 1]) {
-        newEditStates[newIndex] =
-          superpowerEditStates[newIndex < index ? newIndex : newIndex + 1]
-      } else {
-        newEditStates[newIndex] = {
-          title: superpower.title,
-          description: superpower.description,
-        }
-      }
-    })
-    setSuperpowerEditStates(newEditStates)
   }
 
   const handleContinue = async () => {
@@ -506,6 +409,46 @@ const ProfileSnapshot = () => {
   // Handle input changes for form fields
   const handleInputChange = (field: keyof ProfileData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
+  }
+
+  // Handler to add a persona
+  const handleAddPersona = () => {
+    const newIndex = formData.personas?.length || 0
+    const newPersonas = [
+      ...(formData.personas || []),
+      { title: "", bullets: [] },
+    ]
+    setFormData((prev) => ({ ...prev, personas: newPersonas }))
+    setPersonaEditStates((prev) => ({
+      ...prev,
+      [newIndex]: { title: "", bulletsText: "" },
+    }))
+    setPersonasActiveTab(String(newIndex))
+  }
+
+  // Handler to remove a persona
+  const handleRemovePersona = (index: number) => {
+    if ((formData.personas?.length || 1) === 1) return
+    const newPersonas = (formData.personas || []).filter((_, i) => i !== index)
+    setFormData((prev) => ({ ...prev, personas: newPersonas }))
+    // Remove from edit state and reindex
+    const newEditStates: {
+      [key: number]: { title: string; bulletsText: string }
+    } = {}
+    newPersonas.forEach((persona, newIndex) => {
+      if (personaEditStates[newIndex < index ? newIndex : newIndex + 1]) {
+        newEditStates[newIndex] =
+          personaEditStates[newIndex < index ? newIndex : newIndex + 1]
+      } else {
+        newEditStates[newIndex] = {
+          title: persona.title,
+          bulletsText:
+            persona.bullets?.map((bullet) => `• ${bullet}`).join("\n") || "",
+        }
+      }
+    })
+    setPersonaEditStates(newEditStates)
+    setPersonasActiveTab("0")
   }
 
   if (isLoading) {
@@ -756,11 +699,14 @@ const ProfileSnapshot = () => {
             {/* Personas Section */}
             <PersonasSection
               personas={formData.personas || []}
+              personaEditStates={personaEditStates}
               isEditing={editStates.personas}
               onEditToggle={() => toggleEdit("personas")}
-              onPersonasChange={(newArr) =>
-                handleInputChange("personas", newArr)
-              }
+              onPersonaLocalUpdate={handlePersonaLocalUpdate}
+              onAddPersona={handleAddPersona}
+              onRemovePersona={handleRemovePersona}
+              activeTab={personasActiveTab}
+              onActiveTabChange={setPersonasActiveTab}
             />
 
             {/* Superpowers Section */}
