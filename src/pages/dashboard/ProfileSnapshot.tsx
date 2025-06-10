@@ -136,7 +136,6 @@ const ProfileSnapshot = () => {
           .eq("id", user.id)
 
         if (error) throw error
-
       } catch (error) {
         console.error("Error auto-saving profile:", error)
         toast({
@@ -629,32 +628,17 @@ const ProfileSnapshot = () => {
             </div>
 
             {/* Description */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <Label className="text-sm font-medium">Description</Label>
-                <div className="flex gap-1">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => toggleEdit("description")}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-              {editStates.description ? (
-                <Textarea
-                  value={formData?.summary || ""}
-                  onChange={(e) => handleInputChange("summary", e.target.value)}
-                  className="text-sm leading-relaxed"
-                  rows={6}
-                />
-              ) : (
-                <p className="text-sm leading-relaxed text-gray-700">
-                  {formData?.summary || "Description not available"}
-                </p>
-              )}
-            </div>
+            <EditableTextSection
+              title="Description"
+              value={formData?.summary || ""}
+              onChange={(value) => handleInputChange("summary", value)}
+              isEditing={editStates.description}
+              onEditToggle={() => toggleEdit("description")}
+              placeholder="Description not available"
+              className="bg-white"
+              headerClassName=""
+              labelClassName="text-base font-semibold"
+            />
 
             {/* Key Roles */}
             <div>
@@ -806,9 +790,9 @@ const ProfileSnapshot = () => {
               isEditing={editStates.meetIntro}
               onEditToggle={() => toggleEdit("meetIntro")}
               placeholder="Introduction not available"
-              bgColorClass="bg-teal-600"
-              textColorClass="text-white"
-              textAreaClass="bg-white/10 border-white/20 text-white placeholder:text-white/70"
+              className="bg-white"
+              headerClassName="bg-teal-600 text-white"
+              labelClassName="text-lg font-semibold"
             />
 
             {/* Personas Section */}
@@ -1016,6 +1000,9 @@ const ProfileSnapshot = () => {
               isEditing={editStates.sweetSpot}
               onEditToggle={() => toggleEdit("sweetSpot")}
               placeholder="Sweet spot not available"
+              className="bg-white"
+              headerClassName="bg-teal-600 text-white"
+              labelClassName="text-lg font-semibold"
             />
 
             {/* Functional Skills */}
@@ -1094,6 +1081,9 @@ const ProfileSnapshot = () => {
               isEditing={editStates.userManual}
               onEditToggle={() => toggleEdit("userManual")}
               placeholder="User manual not available"
+              className="bg-white"
+              headerClassName="bg-teal-600 text-white"
+              labelClassName="text-lg font-semibold"
             />
           </div>
         </div>
