@@ -76,7 +76,7 @@ const initialFormData: ProfileData = {
 };
 
 const steps = [
-  { id: 1, name: 'Welcome', title: 'Welcome', description: 'Get started', status: 'complete' as const },
+  { id: 1, name: 'Welcome', title: 'Welcome', description: 'Get started', status: 'completed' as const },
   { id: 2, name: 'Create Profile', title: 'Create Profile', description: 'Build your profile', status: 'current' as const },
   { id: 3, name: 'Job Preferences', title: 'Job Preferences', description: 'Set preferences', status: 'upcoming' as const },
 ];
@@ -358,6 +358,7 @@ const ProfileCreation = () => {
         .upsert(
           {
             id: user.id,
+            email: formData.email || user.email || '',
             profile_data: formData as any, // Cast to any for Json compatibility
           },
           { onConflict: 'id' }
@@ -390,7 +391,7 @@ const ProfileCreation = () => {
               <StepCardDescription>
                 Tell us about your professional background and career goals
               </StepCardDescription>
-              <div className="flex items-center mt-2 bg-muted/40 px-3 py-1 rounded-md">
+              <div className="flex items-center mt-2 bg-background px-3 py-1 rounded-md">
                 <Clock className="h-4 w-4 text-muted-foreground mr-2" />
                 <span className="text-sm text-muted-foreground">
                   Estimated completion time: <strong>5-7 minutes</strong>
@@ -417,16 +418,16 @@ const ProfileCreation = () => {
               )}
 
               {/* COMBINED INSTRUCTIONAL HELPER TEXT */}
-              <Alert className="mb-4 bg-accent/10 border-accent/30">
+              <Alert className="mb-4 bg-fractional-teal/10 border-fractional-teal/30">
                 <div className="flex gap-2">
                   <div className="mt-0.5">
-                    {isLinkedInUser ? <Linkedin className="h-5 w-5 text-primary" /> : <HelpCircle className="h-5 w-5 text-accent" />}
+                    {isLinkedInUser ? <Linkedin className="h-5 w-5 text-fractional-teal" /> : <HelpCircle className="h-5 w-5 text-fractional-teal" />}
                   </div>
                   <div>
-                    <AlertTitle className="mb-1 font-semibold text-accent">
+                    <AlertTitle className="mb-1 font-semibold text-fractional-teal">
                       Profile Information Requirements
                     </AlertTitle>
-                    <AlertDescription className="text-sm text-accent">
+                    <AlertDescription className="text-sm text-fractional-teal">
                       <p className="mb-1">At least <strong>one</strong> of the following is required:</p>
                       <ul className="list-disc ml-6 mb-2">
                         <li>Upload your resume/CV <span className="font-semibold">(PDF or DOCX)</span></li>
@@ -434,13 +435,13 @@ const ProfileCreation = () => {
                       </ul>
                       
                       {isLinkedInUser && (
-                        <p className="p-1.5 bg-accent/10 rounded border border-accent/30 text-xs">
+                        <p className="p-1.5 bg-fractional-teal/10 rounded border border-fractional-teal/30 text-xs">
                           <strong>Note:</strong> LinkedIn sign-in provides only limited information. For your full experience, please upload your LinkedIn profile as a PDF.
                         </p>
                       )}
                       
                       <div className="flex items-center mt-2 text-xs">
-                        <a href={LINKEDIN_PDF_GUIDE_URL} target="_blank" rel="noopener noreferrer" className="text-primary underline font-medium">
+                        <a href={LINKEDIN_PDF_GUIDE_URL} target="_blank" rel="noopener noreferrer" className="text-fractional-teal underline font-medium">
                           How to export your LinkedIn profile →
                         </a>
                       </div>
@@ -469,17 +470,17 @@ const ProfileCreation = () => {
                 <div className="space-y-6">
                   {/* UPLOADED DOCUMENTS DISPLAY */}
                   {(formData.linkedin || formData.resume) && (
-                    <div className="border rounded-lg p-4 bg-success/10 border-success/30">
-                      <h3 className="font-medium mb-3 text-success">Uploaded Documents</h3>
+                    <div className="border rounded-lg p-4 bg-fractional-teal/10 border-fractional-teal/30">
+                      <h3 className="font-medium mb-3 text-fractional-teal">Uploaded Documents</h3>
                       <div className="space-y-2">
                         {formData.linkedin && (
-                          <div className="flex items-center justify-between p-2 rounded bg-background border border-success/30">
+                          <div className="flex items-center justify-between p-2 rounded bg-background border border-fractional-teal/30">
                             <div className="flex items-center gap-2">
-                              <div className="p-1 rounded bg-primary/10">
-                                <Linkedin className="h-4 w-4 text-primary" />
+                              <div className="p-1 rounded bg-fractional-teal/10">
+                                <Linkedin className="h-4 w-4 text-fractional-teal" />
                               </div>
                               <div>
-                                <p className="font-medium text-success">LinkedIn</p>
+                                <p className="font-medium text-fractional-teal">LinkedIn</p>
                                 <p className="text-xs text-muted-foreground">{formData.linkedin.name}</p>
                               </div>
                             </div>
@@ -495,13 +496,13 @@ const ProfileCreation = () => {
                           </div>
                         )}
                         {formData.resume && (
-                          <div className="flex items-center justify-between p-2 rounded bg-background border border-success/30">
+                          <div className="flex items-center justify-between p-2 rounded bg-background border border-fractional-teal/30">
                             <div className="flex items-center gap-2">
-                              <div className="p-1 rounded bg-primary/10">
-                                <File className="h-4 w-4 text-primary" />
+                              <div className="p-1 rounded bg-fractional-teal/10">
+                                <File className="h-4 w-4 text-fractional-teal" />
                               </div>
                               <div>
-                                <p className="font-medium text-success">Resume</p>
+                                <p className="font-medium text-fractional-teal">Resume</p>
                                 <p className="text-xs text-muted-foreground">{formData.resume.name}</p>
                               </div>
                             </div>
@@ -523,8 +524,8 @@ const ProfileCreation = () => {
                   {/* LINKEDIN PDF UPLOAD SEGMENT */}
                   <div className="border rounded-lg p-6 mb-2">
                     <div className="flex items-center mb-4">
-                      <div className="bg-primary/10 p-3 rounded-full mr-3">
-                        <Linkedin className="h-6 w-6 text-primary" />
+                      <div className="bg-fractional-teal/10 p-3 rounded-full mr-3">
+                        <Linkedin className="h-6 w-6 text-fractional-teal" />
                       </div>
                       <div>
                         <h3 className="font-medium">Upload LinkedIn Profile (PDF)</h3>
@@ -536,7 +537,7 @@ const ProfileCreation = () => {
                             href={LINKEDIN_PDF_GUIDE_URL}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-primary hover:underline"
+                            className="text-fractional-teal hover:underline"
                           >
                             How to export your LinkedIn profile →
                           </a>
@@ -553,7 +554,7 @@ const ProfileCreation = () => {
                         accept=".pdf"
                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                       />
-                      <div className="border-2 border-dashed border-border rounded-lg p-6 text-center bg-muted/20 hover:bg-muted/30 transition-colors">
+                      <div className="border-2 border-dashed border-border rounded-lg p-6 text-center bg-background hover:bg-background/80 transition-colors">
                         <Upload className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
                         <p className="text-sm font-medium">Click to upload LinkedIn PDF</p>
                         <p className="text-xs text-muted-foreground mt-1">PDF files only, max 10MB</p>
@@ -564,8 +565,8 @@ const ProfileCreation = () => {
                   {/* RESUME UPLOAD SEGMENT */}
                   <div className="border rounded-lg p-6">
                     <div className="flex items-center mb-4">
-                      <div className="bg-primary/10 p-3 rounded-full mr-3">
-                        <File className="h-6 w-6 text-primary" />
+                      <div className="bg-fractional-teal/10 p-3 rounded-full mr-3">
+                        <File className="h-6 w-6 text-fractional-teal" />
                       </div>
                       <div>
                         <h3 className="font-medium">Upload Resume/CV</h3>
@@ -584,7 +585,7 @@ const ProfileCreation = () => {
                         accept=".pdf,.doc,.docx"
                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                       />
-                      <div className="border-2 border-dashed border-border rounded-lg p-6 text-center bg-muted/20 hover:bg-muted/30 transition-colors">
+                      <div className="border-2 border-dashed border-border rounded-lg p-6 text-center bg-background hover:bg-background/80 transition-colors">
                         <Upload className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
                         <p className="text-sm font-medium">Click to upload Resume/CV</p>
                         <p className="text-xs text-muted-foreground mt-1">PDF, DOC, or DOCX files, max 10MB</p>
@@ -594,16 +595,16 @@ const ProfileCreation = () => {
 
                   {/* DISPLAY WHEN BOTH FILES ARE UPLOADED */}
                   {formData.linkedin && formData.resume && (
-                    <Alert className="mb-4 bg-success/10 border-success/30">
+                    <Alert className="mb-4 bg-fractional-teal/10 border-fractional-teal/30">
                       <div className="flex gap-2">
                         <div className="mt-0.5">
-                          <CheckCircle className="h-5 w-5 text-success" />
+                          <CheckCircle className="h-5 w-5 text-fractional-teal" />
                         </div>
                         <div>
-                          <AlertTitle className="mb-1 font-semibold text-success">
+                          <AlertTitle className="mb-1 font-semibold text-fractional-teal">
                             Both files uploaded successfully
                           </AlertTitle>
-                          <AlertDescription className="text-sm text-success">
+                          <AlertDescription className="text-sm text-fractional-teal">
                             Great job! You've uploaded both your LinkedIn PDF and resume. 
                             This will give us the most complete picture of your professional background.
                           </AlertDescription>
@@ -617,8 +618,8 @@ const ProfileCreation = () => {
                     <div className="flex items-center justify-between mb-4">
                       <div>
                         <div className="flex items-center">
-                          <div className="bg-primary/10 p-3 rounded-full mr-3">
-                            <Paperclip className="h-6 w-6 text-primary" />
+                          <div className="bg-fractional-teal/10 p-3 rounded-full mr-3">
+                            <Paperclip className="h-6 w-6 text-fractional-teal" />
                           </div>
                           <div>
                             <h3 className="font-medium">Supporting Documents & Links (Optional)</h3>
@@ -637,16 +638,16 @@ const ProfileCreation = () => {
                       </Button>
                     </div>
                     
-                    <Alert className="mb-4 bg-accent/10 border-accent/30">
+                    <Alert className="mb-4 bg-fractional-teal/10 border-fractional-teal/30">
                       <div className="flex gap-2">
                         <div className="mt-0.5">
-                          <HelpCircle className="h-5 w-5 text-accent" />
+                          <HelpCircle className="h-5 w-5 text-fractional-teal" />
                         </div>
                         <div>
-                          <AlertTitle className="mb-1 font-semibold text-accent">
+                          <AlertTitle className="mb-1 font-semibold text-fractional-teal">
                             Enhanced Profile Quality
                           </AlertTitle>
-                          <AlertDescription className="text-sm text-accent">
+                          <AlertDescription className="text-sm text-fractional-teal">
                             The more supporting materials you provide, the stronger and more complete your profile will be. These additions help us present a well-rounded and accurate representation of your professional expertise.
                           </AlertDescription>
                         </div>
@@ -659,13 +660,13 @@ const ProfileCreation = () => {
                         <h4 className="font-medium mb-2">Added Documents & Links</h4>
                         <div className="space-y-2">
                           {formData.supportingDocuments.map((doc, index) => (
-                            <div key={index} className="flex items-center justify-between p-3 bg-muted/30 rounded border">
+                            <div key={index} className="flex items-center justify-between p-3 bg-background rounded border">
                               <div className="flex items-center gap-2">
-                                <div className="p-1 rounded bg-primary/10">
+                                <div className="p-1 rounded bg-fractional-teal/10">
                                   {doc.type === 'file' ? (
-                                    <File className="h-4 w-4 text-primary" />
+                                    <File className="h-4 w-4 text-fractional-teal" />
                                   ) : (
-                                    <Link className="h-4 w-4 text-primary" />
+                                    <Link className="h-4 w-4 text-fractional-teal" />
                                   )}
                                 </div>
                                 <div>
@@ -823,8 +824,8 @@ const ProfileCreation = () => {
                   </div>
                   
                   {isUsingLinkedInInfo && (
-                    <Alert variant="default" className="bg-primary/10 border-primary/30 mb-4">
-                      <Linkedin className="h-4 w-4 text-primary" />
+                    <Alert variant="default" className="bg-fractional-teal/10 border-fractional-teal/30 mb-4">
+                      <Linkedin className="h-4 w-4 text-fractional-teal" />
                       <AlertTitle>LinkedIn Profile Information Applied</AlertTitle>
                       <AlertDescription>
                         Your profile information has been pre-filled with data from your LinkedIn account. You can edit any fields as needed.
