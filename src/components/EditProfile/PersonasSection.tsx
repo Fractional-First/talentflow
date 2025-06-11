@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
-import { Edit } from "lucide-react"
+import { Edit, Plus, X } from "lucide-react"
 import clsx from "clsx"
 import type { Persona } from "@/types/profile"
 
@@ -23,6 +23,8 @@ interface PersonasSectionProps {
     field: "title" | "bulletsText",
     value: string
   ) => void
+  onAddPersona: () => void
+  onRemovePersona: (index: number) => void
   activeTab: string
   onActiveTabChange: (tab: string) => void
   className?: string
@@ -34,6 +36,8 @@ export const PersonasSection: React.FC<PersonasSectionProps> = ({
   isEditing,
   onEditToggle,
   onPersonaLocalUpdate,
+  onAddPersona,
+  onRemovePersona,
   activeTab,
   onActiveTabChange,
   className = "",
@@ -149,6 +153,15 @@ export const PersonasSection: React.FC<PersonasSectionProps> = ({
                         className="font-medium"
                         placeholder="Persona title"
                       />
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onRemovePersona(index)}
+                        className="text-red-500 hover:text-red-700"
+                        disabled={personas.length === 1}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
                     </div>
                     <Textarea
                       value={personaEditStates[index]?.bulletsText || ""}
@@ -178,6 +191,17 @@ export const PersonasSection: React.FC<PersonasSectionProps> = ({
           </Tabs>
         ) : (
           <div className="text-sm text-gray-700">Personas not available</div>
+        )}
+        {isEditing && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onAddPersona}
+            className="w-full mt-4"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add Persona
+          </Button>
         )}
       </div>
     </div>
