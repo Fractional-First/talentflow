@@ -47,7 +47,7 @@ export function useProfileSnapshot() {
 
   // Fetch profile data
   const {
-    data: profileData,
+    data: profileResult,
     isLoading,
     error,
   } = useQuery({
@@ -60,7 +60,7 @@ export function useProfileSnapshot() {
         .eq("id", user.id)
         .single()
       if (error) throw error
-      return data?.profile_data as ProfileData
+      return data
     },
     enabled: !!user?.id,
   })
@@ -87,7 +87,8 @@ export function useProfileSnapshot() {
   // You can add more mutations for specific actions (e.g., updateProfilePicture)
 
   return {
-    profileData,
+    profileData: profileResult?.profile_data as ProfileData,
+    onboardingStatus: profileResult?.onboarding_status,
     isLoading,
     error,
     saveProfile: saveProfileMutation.mutateAsync,
