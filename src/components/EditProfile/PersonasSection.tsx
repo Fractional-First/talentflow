@@ -1,4 +1,5 @@
-import React from "react"
+
+import React, { useState, useRef, useEffect } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -41,6 +42,40 @@ export const PersonasSection: React.FC<PersonasSectionProps> = ({
   onActiveTabChange,
   className = "",
 }) => {
+  const [editingTabIndex, setEditingTabIndex] = useState<number | null>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (editingTabIndex !== null && inputRef.current) {
+      inputRef.current.focus()
+      inputRef.current.select()
+    }
+  }, [editingTabIndex])
+
+  const handleTabTitleEdit = (index: number) => {
+    if (isEditing) {
+      setEditingTabIndex(index)
+    }
+  }
+
+  const handleTabTitleSave = (index: number, newTitle: string) => {
+    onPersonaLocalUpdate(index, "title", newTitle)
+    setEditingTabIndex(null)
+  }
+
+  const handleTabTitleKeyDown = (e: React.KeyboardEvent, index: number) => {
+    if (e.key === "Enter") {
+      const target = e.target as HTMLInputElement
+      handleTabTitleSave(index, target.value)
+    } else if (e.key === "Escape") {
+      setEditingTabIndex(null)
+    }
+  }
+
+  const handleTabTitleBlur = (e: React.FocusEvent<HTMLInputElement>, index: number) => {
+    handleTabTitleSave(index, e.target.value)
+  }
+
   return (
     <div className={clsx("bg-white rounded-lg border", className)}>
       <div className="bg-[#449889] text-white rounded-t-lg flex items-center justify-between p-4">
@@ -71,9 +106,33 @@ export const PersonasSection: React.FC<PersonasSectionProps> = ({
                 <TabsTrigger
                   key={index}
                   value={index.toString()}
-                  className="text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900"
+                  className="text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 relative group"
                 >
-                  {persona.title || `Persona ${index + 1}`}
+                  {editingTabIndex === index ? (
+                    <Input
+                      ref={inputRef}
+                      defaultValue={personaEditStates[index]?.title || persona.title || `Persona ${index + 1}`}
+                      onKeyDown={(e) => handleTabTitleKeyDown(e, index)}
+                      onBlur={(e) => handleTabTitleBlur(e, index)}
+                      className="h-6 text-xs p-1 min-w-0 w-full"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  ) : (
+                    <div className="flex items-center gap-1 w-full">
+                      <span className="truncate">
+                        {persona.title || `Persona ${index + 1}`}
+                      </span>
+                      {isEditing && (
+                        <Edit
+                          className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleTabTitleEdit(index)
+                          }}
+                        />
+                      )}
+                    </div>
+                  )}
                 </TabsTrigger>
               ))}
             </TabsList>

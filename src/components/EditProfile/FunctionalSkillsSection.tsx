@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -196,7 +197,7 @@ export const FunctionalSkillsSection: React.FC<
                                       e.target.value
                                     )
                                   }
-                                  className="font-medium"
+                                  className="text-sm"
                                   placeholder="Skill title"
                                 />
                                 <Button
@@ -225,13 +226,16 @@ export const FunctionalSkillsSection: React.FC<
                               />
                             </div>
                           ) : (
-                            <div>
-                              <div className="font-medium text-gray-900">
-                                {skill.title}
+                            <div className="flex items-start gap-2">
+                              <span className="text-sm text-gray-600 mt-0.5">•</span>
+                              <div className="flex-1">
+                                <div className="text-sm text-gray-900 font-medium">
+                                  {skill.title}
+                                </div>
+                                <p className="text-sm text-gray-700 mt-1">
+                                  {skill.description}
+                                </p>
                               </div>
-                              <p className="text-sm text-gray-700">
-                                {skill.description}
-                              </p>
                             </div>
                           )}
                         </div>

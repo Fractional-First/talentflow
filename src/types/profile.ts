@@ -1,3 +1,4 @@
+
 // Profile-related shared types
 
 export interface Persona {
