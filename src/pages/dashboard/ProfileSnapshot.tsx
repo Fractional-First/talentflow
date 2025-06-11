@@ -6,6 +6,7 @@ import { EditableTextSection } from "@/components/EditProfile/EditableTextSectio
 import { FunctionalSkillsSection } from "@/components/EditProfile/FunctionalSkillsSection"
 import { PersonasSection } from "@/components/EditProfile/PersonasSection"
 import { SuperpowersSection } from "@/components/EditProfile/SuperpowersSection"
+import { EngagementOptionsSection } from "@/components/EditProfile/EngagementOptionsSection"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/contexts/AuthContext"
@@ -50,8 +51,6 @@ const ProfileSnapshot = () => {
   const {
     personaEditStates,
     handlePersonaLocalUpdate,
-    handleAddPersona,
-    handleRemovePersona,
     syncPersonaEditStates,
   } = usePersonaEditState({ personas: formData.personas || [], setFormData })
 
@@ -325,16 +324,13 @@ const ProfileSnapshot = () => {
             />
 
             {/* Engagement Options */}
-            <EditableArraySection
-              title="Engagement Options"
-              items={formData.engagement_options || []}
+            <EngagementOptionsSection
+              engagementOptions={formData.engagement_options || []}
               isEditing={editStates.engagementOptions}
               onEditToggle={() => toggleEdit("engagementOptions")}
-              onChange={(newArr) =>
+              onEngagementOptionsChange={(newArr) =>
                 handleInputChange("engagement_options", newArr)
               }
-              placeholder="Engagement option"
-              addLabel="Add Option"
             />
           </div>
 
@@ -360,8 +356,6 @@ const ProfileSnapshot = () => {
               isEditing={editStates.personas}
               onEditToggle={() => toggleEdit("personas")}
               onPersonaLocalUpdate={handlePersonaLocalUpdate}
-              onAddPersona={handleAddPersona}
-              onRemovePersona={handleRemovePersona}
               activeTab={personasActiveTab}
               onActiveTabChange={setPersonasActiveTab}
             />
