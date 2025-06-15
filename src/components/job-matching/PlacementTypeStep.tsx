@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { StepCard, StepCardContent, StepCardDescription, StepCardHeader, StepCardTitle } from "@/components/StepCard";
@@ -114,36 +113,6 @@ const PlacementTypeCard = ({
     )}
   </div>
 );
-
-// Updated Remote Work Preference component with toggle
-const RemoteWorkPreference = ({ 
-  remotePreference, 
-  setRemotePreference 
-}: { 
-  remotePreference?: boolean; 
-  setRemotePreference?: (value: boolean) => void 
-}) => {
-  if (!remotePreference || !setRemotePreference) return null;
-  
-  return (
-    <div className="py-4">
-      <div className="flex items-center gap-2 mb-4">
-        <MapPin className="h-5 w-5 text-primary" />
-        <h3 className="font-medium">Remote Work Preference</h3>
-      </div>
-      <div className="px-4 flex items-center gap-2">
-        <Label htmlFor="remote-toggle-step" className={`text-sm ${!remotePreference && "font-medium"}`}>No</Label>
-        <Switch 
-          id="remote-toggle-step"
-          checked={remotePreference}
-          onCheckedChange={setRemotePreference}
-        />
-        <Label htmlFor="remote-toggle-step" className={`text-sm ${remotePreference && "font-medium"}`}>Yes</Label>
-        <span className="text-sm text-muted-foreground ml-2">Are you interested in remote work?</span>
-      </div>
-    </div>
-  );
-};
 
 // Enhanced Industry Preferences with Add button and dialog
 const IndustryPreferenceSection = ({
@@ -345,11 +314,6 @@ export const PlacementTypeStep = ({
                   setTimezone={setTimezone}
                 />
                 
-                <RemoteWorkPreference 
-                  remotePreference={remotePreference}
-                  setRemotePreference={setRemotePreference}
-                />
-                
                 <LocationPreferenceSection
                   currentLocation={currentLocation}
                   setCurrentLocation={setCurrentLocation}
@@ -401,11 +365,6 @@ export const PlacementTypeStep = ({
                   setTimezone={setTimezone}
                 />
                 
-                <RemoteWorkPreference 
-                  remotePreference={remotePreference}
-                  setRemotePreference={setRemotePreference}
-                />
-                
                 <LocationPreferenceSection
                   currentLocation={currentLocation}
                   setCurrentLocation={setCurrentLocation}
@@ -422,6 +381,30 @@ export const PlacementTypeStep = ({
               </div>
             )}
           </PlacementTypeCard>
+          
+          {/* Single Remote Work Preference section for both types */}
+          {(availabilityTypes.fullTime || availabilityTypes.fractional) && (
+            <div className="py-4 border-t">
+              <div className="flex items-center gap-2 mb-4">
+                <MapPin className="h-5 w-5 text-primary" />
+                <h3 className="font-medium">Remote Work Preference</h3>
+              </div>
+              <div className="px-4 flex items-center gap-3">
+                <Label htmlFor="remote-toggle-step" className={`text-sm ${!remotePreference ? "font-medium text-foreground" : "text-muted-foreground"}`}>
+                  No
+                </Label>
+                <Switch 
+                  id="remote-toggle-step"
+                  checked={remotePreference || false}
+                  onCheckedChange={(checked) => setRemotePreference?.(checked)}
+                />
+                <Label htmlFor="remote-toggle-step" className={`text-sm ${remotePreference ? "font-medium text-foreground" : "text-muted-foreground"}`}>
+                  Yes
+                </Label>
+                <span className="text-sm text-muted-foreground ml-2">Are you interested in remote work?</span>
+              </div>
+            </div>
+          )}
           
           <div className="pt-6">
             <Button 
