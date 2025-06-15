@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { StepCard, StepCardContent, StepCardDescription, StepCardHeader, StepCardTitle } from "@/components/StepCard";
 import { Briefcase, Clock, MapPin, Plus } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
 import CompensationSection from "./CompensationSection";
 import AvailabilitySection from "./AvailabilitySection";
 import { Badge } from "@/components/ui/badge";
@@ -92,14 +91,7 @@ const PlacementTypeCard = ({
         <Icon className={`h-6 w-6 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
       </div>
       <div className="flex-grow text-left">
-        <div className="flex items-center justify-between">
-          <h4 className="font-medium">{title}</h4>
-          <Checkbox 
-            checked={isSelected}
-            className="ml-2"
-            onCheckedChange={() => onClick()}
-          />
-        </div>
+        <h4 className="font-medium">{title}</h4>
         <p className="text-sm text-muted-foreground mt-1">{description}</p>
       </div>
     </button>
