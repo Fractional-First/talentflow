@@ -92,14 +92,7 @@ const PlacementTypeCard = ({
         <Icon className={`h-6 w-6 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
       </div>
       <div className="flex-grow text-left">
-        <div className="flex items-center justify-between">
-          <h4 className="font-medium">{title}</h4>
-          <Checkbox 
-            checked={isSelected}
-            className="ml-2"
-            onCheckedChange={() => onClick()}
-          />
-        </div>
+        <h4 className="font-medium">{title}</h4>
         <p className="text-sm text-muted-foreground mt-1">{description}</p>
       </div>
     </button>
@@ -234,7 +227,7 @@ export const PlacementTypeStep = ({
   setTimePreference,
   timezone,
   setTimezone,
-  remotePreference,
+  remotePreference = false,
   setRemotePreference,
   industryPreferences,
   setIndustryPreferences,
@@ -267,6 +260,13 @@ export const PlacementTypeStep = ({
       setPaymentType('hourly'); // Default to hourly for flexible positions
     }
     toggleType('fractional');
+  };
+
+  const handleRemoteToggle = (checked: boolean) => {
+    console.log('Remote preference toggle:', checked);
+    if (setRemotePreference) {
+      setRemotePreference(checked);
+    }
   };
 
   return (
@@ -395,8 +395,8 @@ export const PlacementTypeStep = ({
                 </Label>
                 <Switch 
                   id="remote-toggle-step"
-                  checked={remotePreference || false}
-                  onCheckedChange={(checked) => setRemotePreference?.(checked)}
+                  checked={remotePreference}
+                  onCheckedChange={handleRemoteToggle}
                 />
                 <Label htmlFor="remote-toggle-step" className={`text-sm ${remotePreference ? "font-medium text-foreground" : "text-muted-foreground"}`}>
                   Yes
