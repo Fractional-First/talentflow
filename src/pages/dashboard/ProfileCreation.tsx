@@ -15,6 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import { useQueryClient } from '@tanstack/react-query';
+import { EngagementOptionsSelector } from '@/components/profile-creation/EngagementOptionsSelector';
 
 const industries = [
   'Technology',
@@ -61,6 +62,7 @@ type FormData = {
   experienceLevel: string;
   summary: string;
   skills: string;
+  engagementOptions: string[];
 };
 
 const ProfileCreation = () => {
@@ -83,7 +85,8 @@ const ProfileCreation = () => {
     industry: '',
     experienceLevel: '',
     summary: '',
-    skills: ''
+    skills: '',
+    engagementOptions: []
   });
   
   const [showManualEntry, setShowManualEntry] = useState(false);
@@ -409,6 +412,10 @@ const ProfileCreation = () => {
       title: "LinkedIn information applied",
       description: "Your LinkedIn profile information has been used to pre-fill your profile."
     });
+  };
+
+  const handleEngagementOptionsChange = (options: string[]) => {
+    setFormData(prev => ({ ...prev, engagementOptions: options }));
   };
 
   const hasRequiredDocuments = profile.linkedin || profile.resume;
@@ -1102,6 +1109,12 @@ const ProfileCreation = () => {
                         onChange={handleFormChange}
                       />
                     </div>
+
+                    {/* Engagement Options Selector */}
+                    <EngagementOptionsSelector
+                      selectedOptions={formData.engagementOptions || []}
+                      onOptionsChange={handleEngagementOptionsChange}
+                    />
                   </div>
                 </div>
               )}
