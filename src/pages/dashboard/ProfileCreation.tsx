@@ -292,7 +292,12 @@ const ProfileCreation = () => {
       // Add form data
       Object.entries(formData).forEach(([key, value]) => {
         if (value) {
-          formDataToSubmit.append(key, value);
+          // Convert engagementOptions array to JSON string
+          if (key === 'engagementOptions' && Array.isArray(value)) {
+            formDataToSubmit.append(key, JSON.stringify(value));
+          } else if (typeof value === 'string') {
+            formDataToSubmit.append(key, value);
+          }
         }
       });
       
@@ -404,7 +409,8 @@ const ProfileCreation = () => {
       industry: "technology",
       experienceLevel: "mid level (3-5 years)",
       summary: "Experienced product manager with 5 years in the technology sector. Skilled in agile methodologies, user experience design, and cross-functional team leadership. Passionate about creating innovative solutions that solve real-world problems.",
-      skills: "Product Strategy, User Research, Agile/Scrum, Roadmap Planning, Cross-functional Leadership"
+      skills: "Product Strategy, User Research, Agile/Scrum, Roadmap Planning, Cross-functional Leadership",
+      engagementOptions: []
     });
     setShowManualEntry(true);
     
