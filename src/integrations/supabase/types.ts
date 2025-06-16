@@ -9,6 +9,57 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      countries: {
+        Row: {
+          alpha2_code: string
+          alpha3_code: string
+          country_code: number
+          created_at: string | null
+          id: string
+          intermediate_region: string | null
+          intermediate_region_code: number | null
+          iso_3166_2: string | null
+          name: string
+          region: string | null
+          region_code: number | null
+          sub_region: string | null
+          sub_region_code: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          alpha2_code: string
+          alpha3_code: string
+          country_code: number
+          created_at?: string | null
+          id?: string
+          intermediate_region?: string | null
+          intermediate_region_code?: number | null
+          iso_3166_2?: string | null
+          name: string
+          region?: string | null
+          region_code?: number | null
+          sub_region?: string | null
+          sub_region_code?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          alpha2_code?: string
+          alpha3_code?: string
+          country_code?: number
+          created_at?: string | null
+          id?: string
+          intermediate_region?: string | null
+          intermediate_region_code?: number | null
+          iso_3166_2?: string | null
+          name?: string
+          region?: string | null
+          region_code?: number | null
+          sub_region?: string | null
+          sub_region_code?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       profile_documents: {
         Row: {
           created_at: string
