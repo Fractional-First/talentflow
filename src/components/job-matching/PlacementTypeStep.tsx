@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { StepCard, StepCardContent, StepCardDescription, StepCardHeader, StepCardTitle } from "@/components/StepCard";
@@ -122,23 +123,28 @@ const RemoteWorkPreference = ({
   remotePreference?: boolean; 
   setRemotePreference?: (value: boolean) => void 
 }) => {
-  if (!remotePreference || !setRemotePreference) return null;
+  if (remotePreference === undefined || !setRemotePreference) return null;
   
   return (
     <div className="py-4">
-      <div className="flex items-center gap-2 mb-4">
-        <MapPin className="h-5 w-5 text-primary" />
-        <h3 className="font-medium">Remote Work Preference</h3>
-      </div>
-      <div className="px-4 flex items-center gap-2">
-        <Label htmlFor="remote-toggle-step" className={`text-sm ${!remotePreference && "font-medium"}`}>No</Label>
-        <Switch 
-          id="remote-toggle-step"
-          checked={remotePreference}
-          onCheckedChange={setRemotePreference}
-        />
-        <Label htmlFor="remote-toggle-step" className={`text-sm ${remotePreference && "font-medium"}`}>Yes</Label>
-        <span className="text-sm text-muted-foreground ml-2">Are you interested in remote work?</span>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <MapPin className="h-5 w-5 text-primary" />
+          <div>
+            <h3 className="font-medium">Remote Work Preference</h3>
+            <p className="text-sm text-muted-foreground">Are you interested in remote work?</p>
+          </div>
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <Label htmlFor="remote-toggle-step" className={`text-sm ${!remotePreference && "font-medium"}`}>No</Label>
+          <Switch 
+            id="remote-toggle-step"
+            checked={remotePreference}
+            onCheckedChange={setRemotePreference}
+          />
+          <Label htmlFor="remote-toggle-step" className={`text-sm ${remotePreference && "font-medium"}`}>Yes</Label>
+        </div>
       </div>
     </div>
   );
@@ -219,7 +225,9 @@ const LocationPreferenceSection = ({
   locationPreferences,
   setLocationPreferences,
   workEligibility,
-  setWorkEligibility
+  setWorkEligibility,
+  remotePreference,
+  setRemotePreference
 }: {
   currentLocation?: string;
   setCurrentLocation?: (location: string) => void;
@@ -227,6 +235,8 @@ const LocationPreferenceSection = ({
   setLocationPreferences?: React.Dispatch<React.SetStateAction<string[]>>;
   workEligibility?: string[];
   setWorkEligibility?: React.Dispatch<React.SetStateAction<string[]>>;
+  remotePreference?: boolean;
+  setRemotePreference?: (preference: boolean) => void;
 }) => {
   if (!currentLocation || !setCurrentLocation || !locationPreferences || !setLocationPreferences || !workEligibility || !setWorkEligibility) return null;
 
@@ -239,8 +249,8 @@ const LocationPreferenceSection = ({
         setWorkEligibility={setWorkEligibility}
         locationPreferences={locationPreferences}
         setLocationPreferences={setLocationPreferences}
-        remotePreference={false} // We handle remote preference separately
-        setRemotePreference={() => {}} // Empty function since we handle it separately
+        remotePreference={remotePreference || false}
+        setRemotePreference={setRemotePreference || (() => {})}
       />
     </div>
   );
@@ -356,6 +366,8 @@ export const PlacementTypeStep = ({
                   setLocationPreferences={setLocationPreferences}
                   workEligibility={workEligibility}
                   setWorkEligibility={setWorkEligibility}
+                  remotePreference={remotePreference}
+                  setRemotePreference={setRemotePreference}
                 />
                 
                 <IndustryPreferenceSection
@@ -412,6 +424,8 @@ export const PlacementTypeStep = ({
                   setLocationPreferences={setLocationPreferences}
                   workEligibility={workEligibility}
                   setWorkEligibility={setWorkEligibility}
+                  remotePreference={remotePreference}
+                  setRemotePreference={setRemotePreference}
                 />
                 
                 <IndustryPreferenceSection
