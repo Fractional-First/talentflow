@@ -1,10 +1,7 @@
 
-import { useState } from 'react';
-import { Briefcase, Plus } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
+import { IndustrySelector } from './IndustrySelector';
 
 interface IndustryPreferencesSectionProps {
   industryPreferences: string[];
@@ -15,15 +12,8 @@ const IndustryPreferencesSection = ({
   industryPreferences,
   setIndustryPreferences
 }: IndustryPreferencesSectionProps) => {
-  const [open, setOpen] = useState(false);
-  const [newIndustry, setNewIndustry] = useState("");
-  
-  const handleAddIndustry = () => {
-    if (newIndustry.trim() && !industryPreferences.includes(newIndustry.trim())) {
-      setIndustryPreferences([...industryPreferences, newIndustry.trim()]);
-      setNewIndustry("");
-      setOpen(false);
-    }
+  const clearIndustryPreferences = () => {
+    setIndustryPreferences([]);
   };
 
   return (
@@ -36,42 +26,23 @@ const IndustryPreferencesSection = ({
         </div>
       </div>
       
-      <div className="flex flex-wrap gap-2 px-4">
-        {industryPreferences.map(industry => (
-          <Badge key={industry} variant="outline">
-            {industry}
-            <button 
-              className="ml-1 text-muted-foreground hover:text-foreground"
-              onClick={() => setIndustryPreferences(prev => prev.filter(i => i !== industry))}
-            >
-              ×
-            </button>
-          </Badge>
-        ))}
-        
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button variant="outline" size="sm" className="gap-1">
-              <Plus className="h-3.5 w-3.5" />
-              Add Industry
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle>Add Industry Preference</DialogTitle>
-            </DialogHeader>
-            <div className="flex items-center gap-2">
-              <Input 
-                value={newIndustry} 
-                onChange={(e) => setNewIndustry(e.target.value)}
-                placeholder="Enter industry name" 
-                className="flex-1"
-                onKeyDown={(e) => e.key === 'Enter' && handleAddIndustry()}
-              />
-              <Button onClick={handleAddIndustry}>Add</Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+      <div className="space-y-4 px-4">
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-sm">Preferred Industries</label>
+            {industryPreferences.length > 0 && (
+              <Button variant="ghost" size="sm" onClick={clearIndustryPreferences}>
+                Clear all
+              </Button>
+            )}
+          </div>
+          <IndustrySelector
+            selectedIndustries={industryPreferences}
+            onIndustriesChange={setIndustryPreferences}
+            placeholder="Select industries you'd like to work in..."
+            maxSelections={20}
+          />
+        </div>
       </div>
     </div>
   );
