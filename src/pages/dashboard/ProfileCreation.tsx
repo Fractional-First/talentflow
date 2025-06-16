@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react"
-import { useNavigate, useLocation } from "react-router-dom"
 import { DashboardLayout } from "@/components/DashboardLayout"
+import { Step } from "@/components/OnboardingProgress"
+import { DocumentUploadSection } from "@/components/profile-creation/DocumentUploadSection"
+import { SupportingDocsSection } from "@/components/profile-creation/SupportingDocsSection"
 import {
   StepCard,
   StepCardContent,
@@ -9,89 +10,16 @@ import {
   StepCardHeader,
   StepCardTitle,
 } from "@/components/StepCard"
-import { Step } from "@/components/OnboardingProgress"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { toast } from "@/hooks/use-toast"
-import {
-  Upload,
-  ArrowRight,
-  ArrowLeft,
-  File,
-  Clock,
-  HelpCircle,
-  Linkedin,
-  Copy,
-  AlertCircle,
-  Link,
-  FileText,
-  Trash2,
-  Plus,
-  Paperclip,
-} from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent } from "@/components/ui/card"
-import { supabase } from "@/integrations/supabase/client"
-import { useQueryClient } from "@tanstack/react-query"
-import { DocumentUploadSection } from "@/components/profile-creation/DocumentUploadSection"
+import { Button } from "@/components/ui/button"
 import { useDocumentUpload } from "@/hooks/profile-creation/useDocumentUpload"
-import { N8N_DOCUMENTS_WEBHOOK } from "@/components/profile-creation/types"
-import { SupportingDocsSection } from "@/components/profile-creation/SupportingDocsSection"
-
-const industries = [
-  "Technology",
-  "Healthcare",
-  "Finance",
-  "Education",
-  "Manufacturing",
-  "Retail",
-  "Marketing",
-  "Design",
-  "Construction",
-  "Transportation",
-  "Hospitality",
-  "Other",
-]
-
-const experienceLevels = [
-  "Entry Level (0-2 years)",
-  "Mid Level (3-5 years)",
-  "Senior Level (6-10 years)",
-  "Executive (10+ years)",
-]
-
-const LINKEDIN_PDF_GUIDE_URL =
-  "https://www.linkedin.com/help/linkedin/answer/a521735/how-to-save-a-profile-as-a-pdf?lang=en"
-
-type ProfileData = {
-  linkedin?: File
-  resume?: File
-  docs: Array<{ title: string; file: File }>
-  links: Array<{ title: string; link: string }>
-}
-
-type FormData = {
-  firstName: string
-  lastName: string
-  email: string
-  phone: string
-  currentPosition: string
-  company: string
-  industry: string
-  experienceLevel: string
-  summary: string
-  skills: string
-}
+import { toast } from "@/hooks/use-toast"
+import { useSubmitProfile } from "@/queries/useSubmitProfile"
+import { useQueryClient } from "@tanstack/react-query"
+import { AlertCircle, ArrowLeft, ArrowRight, Clock } from "lucide-react"
+import { useEffect, useState } from "react"
+import { useLocation, useNavigate } from "react-router-dom"
+import { initialSteps } from "@/components/dashboard/OnboardingSteps"
 
 const ProfileCreation = () => {
   const navigate = useNavigate()
@@ -110,7 +38,8 @@ const ProfileCreation = () => {
     removeSupportingLink,
   } = useDocumentUpload()
 
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const submitProfileMutation = useSubmitProfile()
+
   const [validationErrors, setValidationErrors] = useState<string[]>([])
   const [serverError, setServerError] = useState("")
   const [isLinkedInUser, setIsLinkedInUser] = useState(false)
@@ -123,43 +52,20 @@ const ProfileCreation = () => {
     }
   }, [location])
 
-  const steps: Step[] = [
-    {
-      id: 1,
-      name: "Sign Up",
-      description: "Create your account",
-      status: "completed",
-      estimatedTime: "2-3 minutes",
-    },
-    {
-      id: 2,
-      name: "Create Profile",
-      description: "Enter your information",
-      status: "current",
-      estimatedTime: "5-7 minutes",
-    },
-    {
-      id: 3,
-      name: "Review Profile",
-      description: "Review your profile",
-      status: "upcoming",
-      estimatedTime: "3-5 minutes",
-    },
-  ]
+  const steps = initialSteps
 
   const validateProfile = (): string[] => {
     const errors: string[] = []
-
     if (!profile.linkedin && !profile.resume) {
       errors.push(
         "At least one of the following is required: LinkedIn PDF or Resume"
       )
     }
-
     return errors
   }
 
-  const submitProfileData = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
     const errors = validateProfile()
     if (errors.length > 0) {
       setValidationErrors(errors)
@@ -170,111 +76,51 @@ const ProfileCreation = () => {
       })
       return
     }
-
-    setIsSubmitting(true)
-    setServerError("")
     setValidationErrors([])
-
-    try {
-      // Get the current user
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser()
-      if (userError || !user) {
-        throw new Error("User not authenticated")
+    setServerError("")
+    submitProfileMutation.mutate(
+      { profile },
+      {
+        onSuccess: () => {
+          // Store completion status in localStorage
+          const completedSections = JSON.parse(
+            localStorage.getItem("completedSections") || "{}"
+          )
+          completedSections.profile = true
+          localStorage.setItem(
+            "completedSections",
+            JSON.stringify(completedSections)
+          )
+          toast({
+            title: "Profile saved successfully",
+            description:
+              "Your profile information has been submitted and processed.",
+          })
+          navigate("/dashboard/profile-snapshot")
+        },
+        onError: (error) => {
+          let errorMessage =
+            "There was a problem submitting your profile. Please try again."
+          if (error instanceof Error) {
+            if (error.message.includes("Failed to fetch")) {
+              errorMessage =
+                "Unable to connect to the server. Please check your internet connection and try submitting again."
+            } else if (error.message.includes("Server error")) {
+              errorMessage =
+                "The server encountered an error processing your profile. Please try submitting again."
+            } else {
+              errorMessage = error.message
+            }
+          }
+          setServerError(errorMessage)
+          toast({
+            title: "Error saving profile",
+            description: errorMessage,
+            variant: "destructive",
+          })
+        },
       }
-
-      const formDataToSubmit = new FormData()
-
-      // Add user ID to the form data
-      formDataToSubmit.append("userId", user.id)
-
-      // Add profile documents
-      if (profile.linkedin) {
-        formDataToSubmit.append("linkedin", profile.linkedin)
-      }
-      if (profile.resume) {
-        formDataToSubmit.append("resume", profile.resume)
-      }
-
-      // Send POST request to webhook
-      const response = await fetch(N8N_DOCUMENTS_WEBHOOK, {
-        method: "POST",
-        body: formDataToSubmit,
-      })
-
-      if (!response.ok) {
-        const errorText = await response.text()
-        throw new Error(
-          `Server error: ${response.status} ${response.statusText}. ${errorText}`
-        )
-      }
-
-      // Parse the response to check for success
-      const responseData = await response.json()
-
-      // Check if the API response indicates an error
-      if (responseData.error || responseData.status === "error") {
-        throw new Error(
-          responseData.message ||
-            "Server reported an error processing your profile"
-        )
-      }
-
-      // Store completion status in localStorage
-      const completedSections = JSON.parse(
-        localStorage.getItem("completedSections") || "{}"
-      )
-      completedSections.profile = true
-      localStorage.setItem(
-        "completedSections",
-        JSON.stringify(completedSections)
-      )
-
-      toast({
-        title: "Profile saved successfully",
-        description:
-          "Your profile information has been submitted and processed.",
-      })
-
-      // Invalidate React Query cache for profile data to ensure fresh data
-      await queryClient.invalidateQueries({ queryKey: ["profile", user.id] })
-
-      // Redirect to profile snapshot page
-      navigate("/dashboard/profile-snapshot")
-    } catch (error) {
-      console.error("Error submitting profile:", error)
-      let errorMessage =
-        "There was a problem submitting your profile. Please try again."
-
-      if (error instanceof Error) {
-        if (error.message.includes("Failed to fetch")) {
-          errorMessage =
-            "Unable to connect to the server. Please check your internet connection and try submitting again."
-        } else if (error.message.includes("Server error")) {
-          errorMessage =
-            "The server encountered an error processing your profile. Please try submitting again."
-        } else {
-          errorMessage = error.message
-        }
-      }
-
-      setServerError(errorMessage)
-
-      toast({
-        title: "Error saving profile",
-        description: errorMessage,
-        variant: "destructive",
-      })
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    submitProfileData()
+    )
   }
 
   return (
@@ -363,9 +209,11 @@ const ProfileCreation = () => {
 
             <Button
               type="submit"
-              disabled={isSubmitting || !hasRequiredDocuments}
+              disabled={
+                submitProfileMutation.isPending || !hasRequiredDocuments
+              }
             >
-              {isSubmitting ? "Saving..." : "Continue"}
+              {submitProfileMutation.isPending ? "Saving..." : "Continue"}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </StepCardFooter>
