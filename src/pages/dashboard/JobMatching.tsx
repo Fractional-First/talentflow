@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
@@ -53,11 +52,8 @@ const JobMatching = () => {
     'CA'  // Canada alpha2 code
   ]);
   
-  const [industryPreferences, setIndustryPreferences] = useState<string[]>([
-    'Technology',
-    'Finance',
-    'Healthcare'
-  ]);
+  // Updated to store industry IDs instead of industry names - starting empty
+  const [industryPreferences, setIndustryPreferences] = useState<string[]>([]);
   
   const handleContinue = () => {
     setIsSubmitting(true);

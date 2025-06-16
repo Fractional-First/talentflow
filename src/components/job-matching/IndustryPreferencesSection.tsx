@@ -21,18 +21,25 @@ const IndustryPreferencesSection = ({
   };
 
   const addIndustry = (industryId: string) => {
+    console.log('Adding industry:', industryId);
     if (!industryPreferences.includes(industryId)) {
       setIndustryPreferences([...industryPreferences, industryId]);
     }
   };
 
   const removeIndustry = (industryId: string) => {
+    console.log('Removing industry:', industryId);
     setIndustryPreferences(industryPreferences.filter(id => id !== industryId));
   };
 
   const getIndustryName = (industryId: string) => {
-    return industries.find(industry => industry.id === industryId)?.name || '';
+    const industry = industries.find(industry => industry.id === industryId);
+    console.log('Looking for industry:', industryId, 'Found:', industry);
+    return industry?.name || industryId;
   };
+
+  console.log('Current industryPreferences:', industryPreferences);
+  console.log('Available industries:', industries);
 
   return (
     <div>
