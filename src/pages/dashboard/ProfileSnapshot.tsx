@@ -22,6 +22,7 @@ import type { EditStates, ProfileData } from "@/types/profile"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 import { useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { useCompleteOnboarding } from "@/queries/useCompleteOnboarding"
 
 const ProfileSnapshot = () => {
   const navigate = useNavigate()
@@ -122,30 +123,26 @@ const ProfileSnapshot = () => {
     })
   })
 
+  const completeOnboardingMutation = useCompleteOnboarding()
+
   const handleContinue = async () => {
     setIsSubmitting(true)
-
-    try {
-      // Update onboarding status to completed
-      const { error } = await supabase
-        .from("profiles")
-        .update({ onboarding_status: "PROFILE_CONFIRMED" })
-        .eq("id", user?.id)
-
-      if (error) throw error
-
-      // Navigate immediately after successful update
-      navigate("/dashboard")
-    } catch (error) {
-      console.error("Error updating onboarding status:", error)
-      toast({
-        title: "Error",
-        description: "Failed to complete onboarding.",
-        variant: "destructive",
-      })
-    } finally {
-      setIsSubmitting(false)
-    }
+    completeOnboardingMutation.mutate(undefined, {
+      onSuccess: () => {
+        navigate("/dashboard")
+      },
+      onError: (error) => {
+        console.error("Error updating onboarding status:", error)
+        toast({
+          title: "Error",
+          description: "Failed to complete onboarding.",
+          variant: "destructive",
+        })
+      },
+      onSettled: () => {
+        setIsSubmitting(false)
+      },
+    })
   }
 
   // Handle input changes for form fields
