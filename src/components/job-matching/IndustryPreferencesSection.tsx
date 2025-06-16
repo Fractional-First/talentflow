@@ -1,10 +1,9 @@
 
-import { useState } from 'react';
-import { Briefcase, Plus } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import IndustrySelector from './IndustrySelector';
+import { useIndustries } from '@/hooks/useIndustries';
 
 interface IndustryPreferencesSectionProps {
   industryPreferences: string[];
@@ -15,63 +14,78 @@ const IndustryPreferencesSection = ({
   industryPreferences,
   setIndustryPreferences
 }: IndustryPreferencesSectionProps) => {
-  const [open, setOpen] = useState(false);
-  const [newIndustry, setNewIndustry] = useState("");
-  
-  const handleAddIndustry = () => {
-    if (newIndustry.trim() && !industryPreferences.includes(newIndustry.trim())) {
-      setIndustryPreferences([...industryPreferences, newIndustry.trim()]);
-      setNewIndustry("");
-      setOpen(false);
+  const { data: industries = [] } = useIndustries();
+
+  const clearIndustryPreferences = () => {
+    setIndustryPreferences([]);
+  };
+
+  const addIndustry = (industryId: string) => {
+    console.log('Adding industry:', industryId);
+    if (!industryPreferences.includes(industryId)) {
+      setIndustryPreferences([...industryPreferences, industryId]);
     }
   };
+
+  const removeIndustry = (industryId: string) => {
+    console.log('Removing industry:', industryId);
+    setIndustryPreferences(industryPreferences.filter(id => id !== industryId));
+  };
+
+  const getIndustryName = (industryId: string) => {
+    const industry = industries.find(industry => industry.id === industryId);
+    console.log('Looking for industry:', industryId, 'Found:', industry);
+    return industry?.name || industryId;
+  };
+
+  console.log('Current industryPreferences:', industryPreferences);
+  console.log('Available industries:', industries);
 
   return (
     <div>
       <div className="flex items-center gap-2 mb-4">
         <Briefcase className="h-5 w-5 text-primary" />
-        <div>
+        <div className="flex-1">
           <h3 className="font-medium">Industry Preferences</h3>
           <p className="text-sm text-muted-foreground">Select your preferred industries</p>
         </div>
+        {industryPreferences.length > 0 && (
+          <Button variant="ghost" size="sm" onClick={clearIndustryPreferences}>
+            Clear all
+          </Button>
+        )}
       </div>
       
-      <div className="flex flex-wrap gap-2 px-4">
-        {industryPreferences.map(industry => (
-          <Badge key={industry} variant="outline">
-            {industry}
-            <button 
-              className="ml-1 text-muted-foreground hover:text-foreground"
-              onClick={() => setIndustryPreferences(prev => prev.filter(i => i !== industry))}
-            >
-              ×
-            </button>
-          </Badge>
-        ))}
-        
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button variant="outline" size="sm" className="gap-1">
-              <Plus className="h-3.5 w-3.5" />
-              Add Industry
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle>Add Industry Preference</DialogTitle>
-            </DialogHeader>
-            <div className="flex items-center gap-2">
-              <Input 
-                value={newIndustry} 
-                onChange={(e) => setNewIndustry(e.target.value)}
-                placeholder="Enter industry name" 
-                className="flex-1"
-                onKeyDown={(e) => e.key === 'Enter' && handleAddIndustry()}
-              />
-              <Button onClick={handleAddIndustry}>Add</Button>
+      <div className="space-y-4 px-4">
+        <div>
+          <label className="text-sm mb-2 block">Select Industry</label>
+          <IndustrySelector
+            selectedIndustry=""
+            onIndustryChange={addIndustry}
+            placeholder="Search and select industries..."
+            excludeIndustries={industryPreferences}
+          />
+        </div>
+
+        {/* Selected industries display */}
+        {industryPreferences.length > 0 && (
+          <div className="space-y-2">
+            <label className="text-sm">Selected Industries ({industryPreferences.length})</label>
+            <div className="flex flex-wrap gap-2">
+              {industryPreferences.map((industryId) => (
+                <Badge key={industryId} variant="outline" className="flex items-center gap-1">
+                  <span>{getIndustryName(industryId)}</span>
+                  <button 
+                    className="ml-1 text-muted-foreground hover:text-foreground"
+                    onClick={() => removeIndustry(industryId)}
+                  >
+                    ×
+                  </button>
+                </Badge>
+              ))}
             </div>
-          </DialogContent>
-        </Dialog>
+          </div>
+        )}
       </div>
     </div>
   );

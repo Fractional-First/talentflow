@@ -9,6 +9,81 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      countries: {
+        Row: {
+          alpha2_code: string
+          alpha3_code: string
+          country_code: number
+          created_at: string | null
+          id: string
+          intermediate_region: string | null
+          intermediate_region_code: number | null
+          iso_3166_2: string | null
+          name: string
+          region: string | null
+          region_code: number | null
+          sub_region: string | null
+          sub_region_code: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          alpha2_code: string
+          alpha3_code: string
+          country_code: number
+          created_at?: string | null
+          id?: string
+          intermediate_region?: string | null
+          intermediate_region_code?: number | null
+          iso_3166_2?: string | null
+          name: string
+          region?: string | null
+          region_code?: number | null
+          sub_region?: string | null
+          sub_region_code?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          alpha2_code?: string
+          alpha3_code?: string
+          country_code?: number
+          created_at?: string | null
+          id?: string
+          intermediate_region?: string | null
+          intermediate_region_code?: number | null
+          iso_3166_2?: string | null
+          name?: string
+          region?: string | null
+          region_code?: number | null
+          sub_region?: string | null
+          sub_region_code?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      industries: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profile_documents: {
         Row: {
           created_at: string
@@ -81,6 +156,42 @@ export type Database = {
           profile_data?: Json
           profile_version?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      timezones: {
+        Row: {
+          abbr: string
+          created_at: string | null
+          id: string
+          isdst: boolean
+          text: string
+          updated_at: string | null
+          utc: string[]
+          utc_offset: number
+          value: string
+        }
+        Insert: {
+          abbr: string
+          created_at?: string | null
+          id?: string
+          isdst: boolean
+          text: string
+          updated_at?: string | null
+          utc: string[]
+          utc_offset: number
+          value: string
+        }
+        Update: {
+          abbr?: string
+          created_at?: string | null
+          id?: string
+          isdst?: boolean
+          text?: string
+          updated_at?: string | null
+          utc?: string[]
+          utc_offset?: number
+          value?: string
         }
         Relationships: []
       }
