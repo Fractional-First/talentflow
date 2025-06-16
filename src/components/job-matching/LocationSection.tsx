@@ -46,6 +46,10 @@ const LocationSection = ({
     }
   };
 
+  const clearWorkEligibility = () => {
+    setWorkEligibility([]);
+  };
+
   return (
     <div>
       <div className="flex items-center gap-2 mb-4">
@@ -68,7 +72,14 @@ const LocationSection = ({
         </div>
         
         <div>
-          <Label className="text-sm mb-2 block">Legal Work Eligibility</Label>
+          <div className="flex items-center justify-between mb-2">
+            <Label className="text-sm">Legal Work Eligibility</Label>
+            {workEligibility.length > 0 && (
+              <Button variant="ghost" size="sm" onClick={clearWorkEligibility}>
+                Clear all
+              </Button>
+            )}
+          </div>
           <CountrySelector
             selectedCountries={workEligibility}
             onCountriesChange={setWorkEligibility}

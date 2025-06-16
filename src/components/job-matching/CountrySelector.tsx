@@ -13,13 +13,17 @@ interface CountrySelectorProps {
   onCountriesChange: (countries: string[]) => void
   placeholder?: string
   maxSelections?: number
+  showClearAll?: boolean
+  onClearAll?: () => void
 }
 
 export function CountrySelector({
   selectedCountries,
   onCountriesChange,
   placeholder = "Select countries...",
-  maxSelections = 10
+  maxSelections = 10,
+  showClearAll = false,
+  onClearAll
 }: CountrySelectorProps) {
   const [open, setOpen] = useState(false)
   const [searchValue, setSearchValue] = useState("")
@@ -55,6 +59,9 @@ export function CountrySelector({
 
   const clearSelection = () => {
     onCountriesChange([])
+    if (onClearAll) {
+      onClearAll()
+    }
   }
 
   const selectedCountryData = getSelectedCountryNames()
@@ -138,23 +145,18 @@ export function CountrySelector({
 
       {/* Selected countries display */}
       {selectedCountries.length > 0 && (
-        <div className="space-y-2">
-          <div className="flex items-center justify-end">
-            <Button variant="ghost" size="sm" onClick={clearSelection}>
-              Clear all
-            </Button>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {selectedCountryData.map(({ code, name }) => (
-              <Badge key={code} variant="outline" className="flex items-center gap-1">
-                <span>{name}</span>
-                <X 
-                  className="h-3 w-3 cursor-pointer hover:text-destructive" 
-                  onClick={() => removeCountry(code)}
-                />
-              </Badge>
-            ))}
-          </div>
+        <div className="flex flex-wrap gap-2">
+          {selectedCountryData.map(({ code, name }) => (
+            <Badge key={code} variant="outline" className="flex items-center gap-1">
+              <span>{name}</span>
+              <button 
+                className="ml-1 text-muted-foreground hover:text-foreground"
+                onClick={() => removeCountry(code)}
+              >
+                ×
+              </button>
+            </Badge>
+          ))}
         </div>
       )}
     </div>
