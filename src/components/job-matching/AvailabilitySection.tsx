@@ -75,27 +75,6 @@ const AvailabilitySection = ({
           </div>
           
           <div className="space-y-6 px-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="start-date" className="text-sm">Available From</Label>
-                <Input
-                  id="start-date"
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                />
-              </div>
-              <div>
-                <Label htmlFor="end-date" className="text-sm">Available Until</Label>
-                <Input
-                  id="end-date"
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                />
-              </div>
-            </div>
-            
             <div>
               <Label className="text-sm mb-3 block">Hours Per Week</Label>
               <div className="space-y-4">
