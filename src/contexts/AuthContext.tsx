@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
 import { toast } from "sonner"
 import type { Session, User } from "@supabase/supabase-js"
+import { useQueryClient } from "@tanstack/react-query"
 
 type AuthContextType = {
   session: Session | null
@@ -32,6 +33,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true)
   const [isInitialLoad, setIsInitialLoad] = useState(true)
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
   // Clean up auth state in storage
   const cleanupAuthState = () => {
@@ -53,19 +55,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           .select("onboarding_status")
           .eq("id", user.id)
           .single()
-
+        let updatedStatus = profile?.onboarding_status
         if (profile?.onboarding_status === "SIGNED_UP") {
           await supabase
             .from("profiles")
             .update({ onboarding_status: "EMAIL_CONFIRMED" })
             .eq("id", user.id)
+          updatedStatus = "EMAIL_CONFIRMED"
+          // Invalidate the profile query so all consumers refetch
+          queryClient.invalidateQueries({
+            queryKey: ["profile", user.id],
+          })
         }
-
-        const currentStatus =
-          profile?.onboarding_status === "SIGNED_UP"
-            ? "EMAIL_CONFIRMED"
-            : profile?.onboarding_status
-
+        const currentStatus = updatedStatus
         // Redirect based on onboarding status
         switch (currentStatus) {
           case "EMAIL_CONFIRMED":
@@ -88,17 +90,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }
 
   useEffect(() => {
-    // Set up auth state listener FIRST
+    // Set up auth state listener ONCE
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, newSession) => {
       console.log("Auth state change:", event, newSession?.user?.email)
       setSession(newSession)
       setUser(newSession?.user ?? null)
-
-      // Always set loading to false when auth state changes
       setLoading(false)
-
       // Handle post-verification sign-in
       if (event === "SIGNED_IN" && newSession?.user && !isInitialLoad) {
         await redirectBasedOnStatus(newSession.user)
@@ -110,29 +109,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
       }
     })
-
-    // THEN check for existing session
-    const initializeAuth = async () => {
-      try {
-        const {
-          data: { session: currentSession },
-        } = await supabase.auth.getSession()
-        setSession(currentSession)
-        setUser(currentSession?.user ?? null)
-      } catch (error) {
-        console.error("Error fetching auth session:", error)
-      } finally {
-        setLoading(false)
-        setIsInitialLoad(false)
-      }
-    }
-
-    initializeAuth()
-
+    // Cleanup on unmount
     return () => {
       subscription.unsubscribe()
     }
-  }, [navigate])
+  }, [])
 
   const signIn = async (email: string, password: string) => {
     try {

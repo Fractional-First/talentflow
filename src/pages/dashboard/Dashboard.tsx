@@ -1,13 +1,12 @@
 import { AppSidebar } from "@/components/AppSidebar"
-import { ProfileSummaryCard } from "@/components/dashboard/ProfileSummaryCard"
 import { JobPreferencesCard } from "@/components/dashboard/JobPreferencesCard"
+import { JobPreferencesPlaceholder } from "@/components/dashboard/JobPreferencesPlaceholder"
+import { OnboardingBanner } from "@/components/dashboard/OnboardingBanner"
+import { ProfileSummaryCard } from "@/components/dashboard/ProfileSummaryCard"
 import { DashboardLayout } from "@/components/DashboardLayout"
 import { SidebarProvider } from "@/components/ui/sidebar"
-import { OnboardingBanner } from "@/components/dashboard/OnboardingBanner"
-import { JobPreferencesPlaceholder } from "@/components/dashboard/JobPreferencesPlaceholder"
-import { useState, useEffect } from "react"
-import { useProfileSnapshot } from "@/queries/useProfileSnapshot"
 import { Spinner } from "@/components/ui/spinner"
+import { useProfileSnapshot } from "@/queries/useProfileSnapshot"
 
 // Dashboard main content with sidebar navigation
 const Dashboard = () => {

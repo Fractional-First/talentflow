@@ -128,9 +128,6 @@ const ProfileSnapshot = () => {
   const handleContinue = async () => {
     setIsSubmitting(true)
     completeOnboardingMutation.mutate(undefined, {
-      onSuccess: () => {
-        navigate("/dashboard")
-      },
       onError: (error) => {
         console.error("Error updating onboarding status:", error)
         toast({
