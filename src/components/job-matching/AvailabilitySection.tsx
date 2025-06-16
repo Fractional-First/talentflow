@@ -1,12 +1,8 @@
 
-import React from 'react';
-import { Calendar, Clock, MapPin } from 'lucide-react';
 import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
+import { Calendar } from 'lucide-react';
+import React from 'react';
 import TimezoneSelector from './TimezoneSelector';
 
 interface AvailabilitySectionProps {
@@ -14,46 +10,12 @@ interface AvailabilitySectionProps {
     fullTime: boolean;
     fractional: boolean;
   };
-  setAvailabilityTypes: (types: { fullTime: boolean; fractional: boolean }) => void;
-  startDate: string;
-  setStartDate: (date: string) => void;
-  endDate: string;
-  setEndDate: (date: string) => void;
-  selectedDays: {
-    mon: boolean;
-    tue: boolean;
-    wed: boolean;
-    thu: boolean;
-    fri: boolean;
-    sat: boolean;
-    sun: boolean;
-  };
-  setSelectedDays: React.Dispatch<React.SetStateAction<{
-    mon: boolean;
-    tue: boolean;
-    wed: boolean;
-    thu: boolean;
-    fri: boolean;
-    sat: boolean;
-    sun: boolean;
-  }>>;
-  timePreference: string;
-  setTimePreference: (preference: string) => void;
   timezone: string;
   setTimezone: (zone: string) => void;
 }
 
 const AvailabilitySection = ({
   availabilityTypes,
-  setAvailabilityTypes,
-  startDate,
-  setStartDate,
-  endDate,
-  setEndDate,
-  selectedDays,
-  setSelectedDays,
-  timePreference,
-  setTimePreference,
   timezone,
   setTimezone
 }: AvailabilitySectionProps) => {
