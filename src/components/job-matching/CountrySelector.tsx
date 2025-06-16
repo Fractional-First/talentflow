@@ -1,6 +1,6 @@
 
 import { useState } from 'react'
-import { Check, ChevronsUpDown, Globe } from 'lucide-react'
+import { Check, ChevronsUpDown, Globe, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -43,15 +43,22 @@ export function CountrySelector({
     }
   }
 
+  const removeCountry = (countryCode: string, e: React.MouseEvent) => {
+    e.stopPropagation()
+    onCountriesChange(selectedCountries.filter(code => code !== countryCode))
+  }
+
   const getSelectedCountryNames = () => {
     return countries
       .filter(country => selectedCountries.includes(country.alpha2_code))
-      .map(country => country.name)
+      .map(country => ({ code: country.alpha2_code, name: country.name }))
   }
 
   const clearSelection = () => {
     onCountriesChange([])
   }
+
+  const selectedCountryData = getSelectedCountryNames()
 
   return (
     <div className="space-y-2">
@@ -61,15 +68,30 @@ export function CountrySelector({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-full justify-between"
+            className="w-full justify-between min-h-10 h-auto px-3 py-2"
             disabled={isLoading}
           >
-            <div className="flex items-center gap-2">
-              <Globe className="h-4 w-4" />
-              {selectedCountries.length === 0 
-                ? placeholder
-                : `${selectedCountries.length} selected`
-              }
+            <div className="flex items-center gap-2 flex-1 overflow-hidden">
+              <Globe className="h-4 w-4 flex-shrink-0" />
+              {selectedCountries.length === 0 ? (
+                <span className="text-muted-foreground">{placeholder}</span>
+              ) : (
+                <div className="flex flex-wrap gap-1 flex-1 overflow-hidden">
+                  {selectedCountryData.map(({ code, name }) => (
+                    <Badge 
+                      key={code} 
+                      variant="secondary" 
+                      className="text-xs flex items-center gap-1 max-w-32"
+                    >
+                      <span className="truncate">{name}</span>
+                      <X 
+                        className="h-3 w-3 cursor-pointer hover:text-destructive" 
+                        onClick={(e) => removeCountry(code, e)}
+                      />
+                    </Badge>
+                  ))}
+                </div>
+              )}
             </div>
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
@@ -130,24 +152,15 @@ export function CountrySelector({
         </PopoverContent>
       </Popover>
 
-      {/* Selected countries display */}
+      {/* Selection summary and clear all */}
       {selectedCountries.length > 0 && (
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">
-              Selected ({selectedCountries.length}/{maxSelections})
-            </span>
-            <Button variant="ghost" size="sm" onClick={clearSelection}>
-              Clear all
-            </Button>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {getSelectedCountryNames().map((countryName) => (
-              <Badge key={countryName} variant="secondary">
-                {countryName}
-              </Badge>
-            ))}
-          </div>
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <span>
+            Selected ({selectedCountries.length}/{maxSelections})
+          </span>
+          <Button variant="ghost" size="sm" onClick={clearSelection}>
+            Clear all
+          </Button>
         </div>
       )}
     </div>
