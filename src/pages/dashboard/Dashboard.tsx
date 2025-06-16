@@ -1,17 +1,18 @@
 import { AppSidebar } from "@/components/AppSidebar"
-import { ProfileSummaryCard } from "@/components/dashboard/ProfileSummaryCard"
 import { JobPreferencesCard } from "@/components/dashboard/JobPreferencesCard"
+import { JobPreferencesPlaceholder } from "@/components/dashboard/JobPreferencesPlaceholder"
+import { OnboardingBanner } from "@/components/dashboard/OnboardingBanner"
+import { ProfileSummaryCard } from "@/components/dashboard/ProfileSummaryCard"
 import { DashboardLayout } from "@/components/DashboardLayout"
 import { SidebarProvider } from "@/components/ui/sidebar"
-import { OnboardingBanner } from "@/components/dashboard/OnboardingBanner"
-import { JobPreferencesPlaceholder } from "@/components/dashboard/JobPreferencesPlaceholder"
-import { useState, useEffect } from "react"
-import { useProfileSnapshot } from "@/queries/useProfileSnapshot"
 import { Spinner } from "@/components/ui/spinner"
+import { useProfileSnapshot } from "@/queries/useProfileSnapshot"
+import { useProfileData } from "@/queries/useProfileData"
 
 // Dashboard main content with sidebar navigation
 const Dashboard = () => {
   const { onboardingStatus, isLoading } = useProfileSnapshot()
+  const { data: profile, isLoading: profileLoading, error } = useProfileData()
   const isOnboarding = onboardingStatus === "PROFILE_CONFIRMED"
 
   if (isLoading) {
@@ -20,6 +21,14 @@ const Dashboard = () => {
         <Spinner size="lg" />
       </div>
     )
+  }
+
+  if (profileLoading) {
+    return <div>Loading profile...</div>
+  }
+
+  if (error) {
+    return <div>Error loading profile</div>
   }
 
   return (
@@ -38,8 +47,8 @@ const Dashboard = () => {
               <div className="grid lg:grid-cols-2 gap-8">
                 {/* Left column - Read-only profile summary */}
                 <div className="space-y-6">
-                  <div className="opacity-75">
-                    <ProfileSummaryCard readonly />
+                  <div>
+                    <ProfileSummaryCard profile={profile} />
                   </div>
                 </div>
                 {/* Right column - Job preferences placeholder */}
@@ -51,7 +60,7 @@ const Dashboard = () => {
               // Regular dashboard layout
               <div className="flex flex-col gap-8">
                 <div className="animate-pulse-soft rounded border-2 border-primary/30 shadow-lg">
-                  <ProfileSummaryCard />
+                  <ProfileSummaryCard profile={profile} />
                 </div>
                 <div className="animate-pulse-soft rounded border-2 border-secondary/30 shadow-lg">
                   <JobPreferencesCard />
