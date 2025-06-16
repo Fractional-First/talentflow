@@ -58,6 +58,55 @@ const AvailabilitySection = ({
 }: AvailabilitySectionProps) => {
   const showFractionalOptions = availabilityTypes.fractional;
 
+  // Convert selectedDays to selectedTimeSlots format for WeeklyCalendar
+  const selectedTimeSlots: { [key: string]: boolean } = {};
+  
+  // Initialize with empty time slots
+  const dayMap = {
+    mon: 'Mon',
+    tue: 'Tue', 
+    wed: 'Wed',
+    thu: 'Thu',
+    fri: 'Fri',
+    sat: 'Sat',
+    sun: 'Sun'
+  };
+
+  // Convert the selectedDays format to selectedTimeSlots format
+  Object.entries(selectedDays).forEach(([key, isSelected]) => {
+    const dayName = dayMap[key as keyof typeof dayMap];
+    if (isSelected) {
+      // Set working hours (9 AM to 5 PM) as selected by default
+      for (let hour = 9; hour < 17; hour++) {
+        selectedTimeSlots[`${dayName}-${hour}`] = true;
+      }
+    }
+  });
+
+  const setSelectedTimeSlots = (slots: React.SetStateAction<{ [key: string]: boolean }>) => {
+    // Convert back to selectedDays format
+    const newSlots = typeof slots === 'function' ? slots(selectedTimeSlots) : slots;
+    const newSelectedDays = { ...selectedDays };
+    
+    // Reset all days to false first
+    Object.keys(newSelectedDays).forEach(key => {
+      newSelectedDays[key as keyof typeof newSelectedDays] = false;
+    });
+    
+    // Check if any time slots are selected for each day
+    Object.keys(newSlots).forEach(slotKey => {
+      if (newSlots[slotKey]) {
+        const [dayName] = slotKey.split('-');
+        const dayKey = Object.entries(dayMap).find(([k, v]) => v === dayName)?.[0];
+        if (dayKey) {
+          newSelectedDays[dayKey as keyof typeof newSelectedDays] = true;
+        }
+      }
+    });
+    
+    setSelectedDays(newSelectedDays);
+  };
+
   return (
     <>
       <div className="flex items-center gap-2 mb-6">
@@ -131,10 +180,12 @@ const AvailabilitySection = ({
             </div>
             
             <div>
-              <Label className="text-sm mb-3 block">Days Available</Label>
+              <Label className="text-sm mb-3 block">Weekly Schedule</Label>
               <WeeklyCalendar 
-                selectedDays={selectedDays}
-                onDaysChange={setSelectedDays}
+                selectedTimeSlots={selectedTimeSlots}
+                setSelectedTimeSlots={setSelectedTimeSlots}
+                timezone={timezone}
+                setTimezone={setTimezone}
               />
             </div>
             
@@ -152,15 +203,6 @@ const AvailabilitySection = ({
                   <SelectItem value="flexible">Flexible</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
-            
-            <div>
-              <Label className="text-sm mb-2 block">Your Timezone</Label>
-              <TimezoneSelector
-                selectedTimezone={timezone}
-                onTimezoneChange={setTimezone}
-                placeholder="Select your timezone..."
-              />
             </div>
           </div>
         </>
