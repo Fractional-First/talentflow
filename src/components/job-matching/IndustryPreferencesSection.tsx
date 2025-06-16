@@ -58,11 +58,11 @@ const IndustryPreferencesSection = ({
       
       <div className="space-y-4 px-4">
         <div>
-          <label className="text-sm mb-2 block">Add Industry</label>
+          <label className="text-sm mb-2 block">Select Industry</label>
           <IndustrySelector
             selectedIndustry=""
             onIndustryChange={addIndustry}
-            placeholder="Select an industry to add..."
+            placeholder="Search and select industries..."
             excludeIndustries={industryPreferences}
           />
         </div>
