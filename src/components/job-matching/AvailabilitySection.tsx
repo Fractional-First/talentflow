@@ -64,44 +64,6 @@ const AvailabilitySection = ({
 
   return (
     <>
-      <div className="flex items-center gap-2 mb-6">
-        <Clock className="h-5 w-5 text-primary" />
-        <div>
-          <h3 className="font-medium">Availability Type</h3>
-          <p className="text-sm text-muted-foreground">What type of work are you interested in?</p>
-        </div>
-      </div>
-      
-      <div className="space-y-4 px-4 mb-6">
-        <div className="flex items-center space-x-2">
-          <Checkbox
-            id="full-time"
-            checked={availabilityTypes.fullTime}
-            onCheckedChange={(checked) =>
-              setAvailabilityTypes({
-                ...availabilityTypes,
-                fullTime: !!checked,
-              })
-            }
-          />
-          <Label htmlFor="full-time">Full-time positions</Label>
-        </div>
-        
-        <div className="flex items-center space-x-2">
-          <Checkbox
-            id="fractional"
-            checked={availabilityTypes.fractional}
-            onCheckedChange={(checked) =>
-              setAvailabilityTypes({
-                ...availabilityTypes,
-                fractional: !!checked,
-              })
-            }
-          />
-          <Label htmlFor="fractional">Fractional/Part-time positions</Label>
-        </div>
-      </div>
-
       {showFractionalOptions && (
         <>
           <div className="flex items-center gap-2 mb-6">
