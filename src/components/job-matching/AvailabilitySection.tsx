@@ -1,11 +1,12 @@
 
+import React from 'react';
 import { Calendar, Clock, MapPin } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { WeeklyCalendar } from './WeeklyCalendar';
+import { Slider } from '@/components/ui/slider';
 import TimezoneSelector from './TimezoneSelector';
 
 interface AvailabilitySectionProps {
@@ -58,54 +59,8 @@ const AvailabilitySection = ({
 }: AvailabilitySectionProps) => {
   const showFractionalOptions = availabilityTypes.fractional;
 
-  // Convert selectedDays to selectedTimeSlots format for WeeklyCalendar
-  const selectedTimeSlots: { [key: string]: boolean } = {};
-  
-  // Initialize with empty time slots
-  const dayMap = {
-    mon: 'Mon',
-    tue: 'Tue', 
-    wed: 'Wed',
-    thu: 'Thu',
-    fri: 'Fri',
-    sat: 'Sat',
-    sun: 'Sun'
-  };
-
-  // Convert the selectedDays format to selectedTimeSlots format
-  Object.entries(selectedDays).forEach(([key, isSelected]) => {
-    const dayName = dayMap[key as keyof typeof dayMap];
-    if (isSelected) {
-      // Set working hours (9 AM to 5 PM) as selected by default
-      for (let hour = 9; hour < 17; hour++) {
-        selectedTimeSlots[`${dayName}-${hour}`] = true;
-      }
-    }
-  });
-
-  const setSelectedTimeSlots = (slots: React.SetStateAction<{ [key: string]: boolean }>) => {
-    // Convert back to selectedDays format
-    const newSlots = typeof slots === 'function' ? slots(selectedTimeSlots) : slots;
-    const newSelectedDays = { ...selectedDays };
-    
-    // Reset all days to false first
-    Object.keys(newSelectedDays).forEach(key => {
-      newSelectedDays[key as keyof typeof newSelectedDays] = false;
-    });
-    
-    // Check if any time slots are selected for each day
-    Object.keys(newSlots).forEach(slotKey => {
-      if (newSlots[slotKey]) {
-        const [dayName] = slotKey.split('-');
-        const dayKey = Object.entries(dayMap).find(([k, v]) => v === dayName)?.[0];
-        if (dayKey) {
-          newSelectedDays[dayKey as keyof typeof newSelectedDays] = true;
-        }
-      }
-    });
-    
-    setSelectedDays(newSelectedDays);
-  };
+  // State for hours per week (default to 20 hours for fractional work)
+  const [hoursPerWeek, setHoursPerWeek] = React.useState([20]);
 
   return (
     <>
@@ -180,13 +135,22 @@ const AvailabilitySection = ({
             </div>
             
             <div>
-              <Label className="text-sm mb-3 block">Weekly Schedule</Label>
-              <WeeklyCalendar 
-                selectedTimeSlots={selectedTimeSlots}
-                setSelectedTimeSlots={setSelectedTimeSlots}
-                timezone={timezone}
-                setTimezone={setTimezone}
-              />
+              <Label className="text-sm mb-3 block">Hours Per Week</Label>
+              <div className="space-y-4">
+                <Slider
+                  value={hoursPerWeek}
+                  onValueChange={setHoursPerWeek}
+                  max={40}
+                  min={5}
+                  step={5}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-sm text-muted-foreground">
+                  <span>5 hours</span>
+                  <span className="font-medium text-foreground">{hoursPerWeek[0]} hours per week</span>
+                  <span>40 hours</span>
+                </div>
+              </div>
             </div>
             
             <div>
@@ -203,6 +167,15 @@ const AvailabilitySection = ({
                   <SelectItem value="flexible">Flexible</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+            
+            <div>
+              <Label className="text-sm mb-2 block">Your Timezone</Label>
+              <TimezoneSelector
+                selectedTimezone={timezone}
+                onTimezoneChange={setTimezone}
+                placeholder="Select your timezone..."
+              />
             </div>
           </div>
         </>
