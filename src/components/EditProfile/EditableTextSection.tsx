@@ -62,7 +62,7 @@ export const EditableTextSection: React.FC<EditableTextSectionProps> = ({
               textAreaClass,
               "text-sm leading-relaxed",
               textColorClass,
-              bgColorClass
+              bgColorClass.includes("teal") ? "bg-teal-500" : bgColorClass,
             )}
             rows={bgColorClass.includes("teal") ? 4 : 8}
             placeholder={placeholder}

@@ -342,7 +342,8 @@ const ProfileSnapshot = () => {
               isEditing={editStates.meetIntro}
               onEditToggle={() => toggleEdit("meetIntro")}
               placeholder="Introduction not available"
-              className="bg-white"
+              bgColorClass="bg-teal-600"
+              textColorClass="text-white"
               headerClassName="bg-teal-600 text-white"
               labelClassName="text-lg font-semibold"
             />
