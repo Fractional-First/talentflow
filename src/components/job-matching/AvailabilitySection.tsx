@@ -95,22 +95,6 @@ const AvailabilitySection = ({
             </div>
             
             <div>
-              <Label htmlFor="time-preference" className="text-sm">Time Preference</Label>
-              <Select value={timePreference} onValueChange={setTimePreference}>
-                <SelectTrigger className="mt-1">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all-day">All Day</SelectItem>
-                  <SelectItem value="morning">Morning Hours (6 AM - 12 PM)</SelectItem>
-                  <SelectItem value="afternoon">Afternoon Hours (12 PM - 6 PM)</SelectItem>
-                  <SelectItem value="evening">Evening Hours (6 PM - 12 AM)</SelectItem>
-                  <SelectItem value="flexible">Flexible</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div>
               <Label className="text-sm mb-2 block">Your Timezone</Label>
               <TimezoneSelector
                 selectedTimezone={timezone}
