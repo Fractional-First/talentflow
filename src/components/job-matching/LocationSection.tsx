@@ -12,8 +12,8 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { useCountries } from "@/hooks/useCountries"
 import { MapPin } from "lucide-react"
-import { useState } from "react"
-import { CountrySelector } from "./CountrySelector"
+import React, { useState } from "react"
+import Select from "react-select"
 
 interface LocationSectionProps {
   currentLocation: string
@@ -82,9 +82,7 @@ const LocationSection = ({
         <div className="py-2">
           <div className="flex items-center justify-between">
             <div>
-              <Label className="text-sm font-normal">
-                Remote Work
-              </Label>
+              <Label className="text-sm font-normal">Remote Work</Label>
               <p className="text-sm text-muted-foreground">
                 Are you interested in remote work?
               </p>
@@ -111,20 +109,24 @@ const LocationSection = ({
           </div>
         </div>
         <div className="py-2">
-          <div className="flex items-center justify-between mb-2">
-            <Label className="text-sm">Legal Work Eligibility</Label>
-            {workEligibility.length > 0 && (
-              <Button variant="ghost" size="sm" onClick={clearWorkEligibility}>
-                Clear all
-              </Button>
-            )}
-          </div>
-          <div className="w-full max-w-xl">
-            <CountrySelector
-              selectedCountries={workEligibility}
-              onCountriesChange={setWorkEligibility}
-              placeholder="Select countries where you can legally work..."
-              maxSelections={50}
+          <Label className="text-sm mb-2 block">Legal Work Eligibility</Label>
+          <div className="w-full">
+            {/* React-select for countries */}
+            <Select
+              isMulti
+              isLoading={isLoading}
+              options={countries.map((c) => ({
+                value: c.alpha2_code,
+                label: c.name,
+              }))}
+              value={countries
+                .filter((c) => workEligibility.includes(c.alpha2_code))
+                .map((c) => ({ value: c.alpha2_code, label: c.name }))}
+              onChange={(opts) =>
+                setWorkEligibility(opts.map((opt) => opt.value))
+              }
+              placeholder="Search and select countries..."
+              classNamePrefix="react-select"
             />
           </div>
         </div>

@@ -68,7 +68,6 @@ export function CountrySelector({
       .map((country) => ({ code: country.alpha2_code, name: country.name }))
   }
 
-
   const selectedCountryData = getSelectedCountryNames()
 
   return (
