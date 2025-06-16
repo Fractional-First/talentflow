@@ -10,7 +10,6 @@ interface DocumentUploadSectionProps {
   onResumeUpload: (file: File) => void
   onLinkedInRemove: () => void
   onResumeRemove: () => void
-  isLinkedInUser?: boolean
 }
 
 const LINKEDIN_PDF_GUIDE_URL =
@@ -23,7 +22,6 @@ export const DocumentUploadSection = ({
   onResumeUpload,
   onLinkedInRemove,
   onResumeRemove,
-  isLinkedInUser = false,
 }: DocumentUploadSectionProps) => {
   return (
     <div className="space-y-6">
@@ -34,11 +32,7 @@ export const DocumentUploadSection = ({
       >
         <div className="flex gap-2">
           <div className="mt-0.5">
-            {isLinkedInUser ? (
-              <Linkedin className="h-5 w-5 text-[#449889]" />
-            ) : (
-              <File className="h-5 w-5 text-[#449889]" />
-            )}
+            <File className="h-5 w-5 text-[#449889]" />
           </div>
           <div>
             <AlertTitle
@@ -61,20 +55,6 @@ export const DocumentUploadSection = ({
                   <span className="font-semibold">PDF</span>
                 </li>
               </ul>
-              {isLinkedInUser && (
-                <p
-                  className="p-1.5 rounded border text-xs"
-                  style={{
-                    background: "#E6F4F2",
-                    borderColor: "#BFE3DD",
-                    color: "#449889",
-                  }}
-                >
-                  <strong>Note:</strong> LinkedIn sign-in provides only limited
-                  information. For your full experience, please upload your
-                  LinkedIn profile as a PDF.
-                </p>
-              )}
               <div className="flex items-center mt-2 text-xs">
                 <a
                   href={LINKEDIN_PDF_GUIDE_URL}

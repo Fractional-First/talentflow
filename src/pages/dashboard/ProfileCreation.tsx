@@ -1,5 +1,5 @@
+import { initialSteps } from "@/components/dashboard/OnboardingSteps"
 import { DashboardLayout } from "@/components/DashboardLayout"
-import { Step } from "@/components/OnboardingProgress"
 import { DocumentUploadSection } from "@/components/profile-creation/DocumentUploadSection"
 import { SupportingDocsSection } from "@/components/profile-creation/SupportingDocsSection"
 import {
@@ -15,16 +15,12 @@ import { Button } from "@/components/ui/button"
 import { useDocumentUpload } from "@/hooks/profile-creation/useDocumentUpload"
 import { toast } from "@/hooks/use-toast"
 import { useSubmitProfile } from "@/queries/useSubmitProfile"
-import { useQueryClient } from "@tanstack/react-query"
 import { AlertCircle, ArrowLeft, ArrowRight, Clock } from "lucide-react"
-import { useEffect, useState } from "react"
-import { useLocation, useNavigate } from "react-router-dom"
-import { initialSteps } from "@/components/dashboard/OnboardingSteps"
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 const ProfileCreation = () => {
   const navigate = useNavigate()
-  const location = useLocation()
-  const queryClient = useQueryClient()
 
   const {
     profile,
@@ -42,17 +38,6 @@ const ProfileCreation = () => {
 
   const [validationErrors, setValidationErrors] = useState<string[]>([])
   const [serverError, setServerError] = useState("")
-  const [isLinkedInUser, setIsLinkedInUser] = useState(false)
-
-  // Effect to check if the user signed up with LinkedIn
-  useEffect(() => {
-    const authMethod = localStorage.getItem("authMethod")
-    if (authMethod === "linkedin" || location.state?.linkedInSignUp) {
-      setIsLinkedInUser(true)
-    }
-  }, [location])
-
-  const steps = initialSteps
 
   const validateProfile = (): string[] => {
     const errors: string[] = []
@@ -82,15 +67,6 @@ const ProfileCreation = () => {
       { profile },
       {
         onSuccess: () => {
-          // Store completion status in localStorage
-          const completedSections = JSON.parse(
-            localStorage.getItem("completedSections") || "{}"
-          )
-          completedSections.profile = true
-          localStorage.setItem(
-            "completedSections",
-            JSON.stringify(completedSections)
-          )
           toast({
             title: "Profile saved successfully",
             description:
@@ -124,7 +100,7 @@ const ProfileCreation = () => {
   }
 
   return (
-    <DashboardLayout steps={steps} currentStep={2}>
+    <DashboardLayout steps={initialSteps} currentStep={2}>
       <form onSubmit={handleSubmit}>
         <div className="space-y-6">
           <StepCard>
@@ -183,7 +159,6 @@ const ProfileCreation = () => {
                 onResumeUpload={handleResumeUpload}
                 onLinkedInRemove={() => removeProfileDocument("linkedin")}
                 onResumeRemove={() => removeProfileDocument("resume")}
-                isLinkedInUser={isLinkedInUser}
               />
               <SupportingDocsSection
                 docs={profile.docs}
