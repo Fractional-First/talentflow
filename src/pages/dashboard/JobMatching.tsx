@@ -39,7 +39,7 @@ const JobMatching = () => {
     sun: false,
   });
   const [timePreference, setTimePreference] = useState('all-day');
-  const [timezone, setTimezone] = useState('EST');
+  const [timezone, setTimezone] = useState('Eastern Standard Time');
   
   const [locationPreferences, setLocationPreferences] = useState<string[]>([
     'New York',

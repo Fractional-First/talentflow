@@ -135,6 +135,42 @@ export type Database = {
         }
         Relationships: []
       }
+      timezones: {
+        Row: {
+          abbr: string
+          created_at: string | null
+          id: string
+          isdst: boolean
+          text: string
+          updated_at: string | null
+          utc: string[]
+          utc_offset: number
+          value: string
+        }
+        Insert: {
+          abbr: string
+          created_at?: string | null
+          id?: string
+          isdst: boolean
+          text: string
+          updated_at?: string | null
+          utc: string[]
+          utc_offset: number
+          value: string
+        }
+        Update: {
+          abbr?: string
+          created_at?: string | null
+          id?: string
+          isdst?: boolean
+          text?: string
+          updated_at?: string | null
+          utc?: string[]
+          utc_offset?: number
+          value?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
