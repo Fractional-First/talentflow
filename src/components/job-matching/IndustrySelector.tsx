@@ -16,7 +16,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { useIndustries, type Industry } from '@/hooks/useIndustries';
+import { useIndustries } from '@/hooks/useIndustries';
 
 interface IndustrySelectorProps {
   selectedIndustry: string;
