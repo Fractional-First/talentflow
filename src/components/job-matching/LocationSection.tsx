@@ -1,9 +1,11 @@
+
 import { MapPin, Building } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
+import { CountrySelector } from './CountrySelector';
 import {
   Dialog,
   DialogContent,
@@ -34,18 +36,8 @@ const LocationSection = ({
   remotePreference,
   setRemotePreference
 }: LocationSectionProps) => {
-  const [newCountry, setNewCountry] = useState("");
   const [newLocation, setNewLocation] = useState("");
-  const [openCountryDialog, setOpenCountryDialog] = useState(false);
   const [openLocationDialog, setOpenLocationDialog] = useState(false);
-
-  const handleAddCountry = () => {
-    if (newCountry.trim() && !workEligibility.includes(newCountry.trim())) {
-      setWorkEligibility([...workEligibility, newCountry.trim()]);
-      setNewCountry("");
-      setOpenCountryDialog(false);
-    }
-  };
 
   const handleAddLocation = () => {
     if (newLocation.trim() && !locationPreferences.includes(newLocation.trim())) {
@@ -98,41 +90,13 @@ const LocationSection = ({
           </div>
           
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <Label className="text-sm">Legal Work Eligibility</Label>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {workEligibility.map(country => (
-                <Badge key={country} variant="outline">
-                  {country}
-                  <button 
-                    className="ml-1 text-muted-foreground hover:text-foreground"
-                    onClick={() => setWorkEligibility(prev => prev.filter(c => c !== country))}
-                  >
-                    ×
-                  </button>
-                </Badge>
-              ))}
-              <Dialog open={openCountryDialog} onOpenChange={setOpenCountryDialog}>
-                <DialogTrigger asChild>
-                  <Button variant="outline" size="sm">+ Add Country</Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Add Work Eligibility Country</DialogTitle>
-                  </DialogHeader>
-                  <div className="flex items-center gap-2 mt-2">
-                    <Input 
-                      value={newCountry} 
-                      onChange={(e) => setNewCountry(e.target.value)}
-                      placeholder="Enter country name"
-                      onKeyDown={(e) => e.key === 'Enter' && handleAddCountry()}
-                    />
-                    <Button onClick={handleAddCountry}>Add</Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </div>
+            <Label className="text-sm mb-2 block">Legal Work Eligibility</Label>
+            <CountrySelector
+              selectedCountries={workEligibility}
+              onCountriesChange={setWorkEligibility}
+              placeholder="Select countries where you can legally work..."
+              maxSelections={50}
+            />
           </div>
           
           <div>

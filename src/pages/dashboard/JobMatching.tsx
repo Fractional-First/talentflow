@@ -47,9 +47,10 @@ const JobMatching = () => {
     'Boston'
   ]);
   
+  // Updated to store country codes (alpha2) instead of country names
   const [workEligibility, setWorkEligibility] = useState<string[]>([
-    'United States',
-    'Canada'
+    'US', // United States alpha2 code
+    'CA'  // Canada alpha2 code
   ]);
   
   const [industryPreferences, setIndustryPreferences] = useState<string[]>([
