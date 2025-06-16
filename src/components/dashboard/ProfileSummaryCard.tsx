@@ -3,10 +3,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { type ProfileSummary } from "@/queries/useProfileData"
-import {
-  ArrowRight,
-  CheckCircle
-} from "lucide-react"
+import { ArrowRight, CheckCircle } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
 interface ProfileSummaryCardProps {
@@ -29,7 +26,7 @@ export function ProfileSummaryCard({
     .toUpperCase()
 
   return (
-    <StepCard className={cn(readonly && "bg-muted/30", className)}>
+    <StepCard className={cn(className)}>
       {readonly && (
         <div className="flex items-center gap-2 p-4 border-b bg-green-50 text-green-800">
           <CheckCircle className="h-4 w-4" />
@@ -54,7 +51,7 @@ export function ProfileSummaryCard({
         </div>
         <div className="mt-4">
           <h3 className="text-lg font-medium text-gray-900">About</h3>
-          <p className="mt-2 text-gray-600">{profile.about}</p>
+          <p className="mt-2 text-sm text-gray-600">{profile.about}</p>
         </div>
         <div className="mt-4">
           <h3 className="text-lg font-medium text-gray-900">Skills</h3>
@@ -71,7 +68,7 @@ export function ProfileSummaryCard({
         </div>
         <div className="mt-8 flex flex-col items-center">
           <Button
-            onClick={() => navigate("/dashboard/profile-creation")}
+            onClick={() => navigate("/dashboard/profile-snapshot")}
             className="w-full"
           >
             Edit Profile

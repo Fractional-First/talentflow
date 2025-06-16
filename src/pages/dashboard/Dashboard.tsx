@@ -47,8 +47,8 @@ const Dashboard = () => {
               <div className="grid lg:grid-cols-2 gap-8">
                 {/* Left column - Read-only profile summary */}
                 <div className="space-y-6">
-                  <div className="opacity-75">
-                    <ProfileSummaryCard readonly profile={profile} />
+                  <div>
+                    <ProfileSummaryCard profile={profile} />
                   </div>
                 </div>
                 {/* Right column - Job preferences placeholder */}
