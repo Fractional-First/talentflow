@@ -248,10 +248,10 @@ const JobMatching = () => {
               <div className="pt-6">
                 <Button
                   onClick={handleContinue}
-                  disabled={!hasSelection}
+                  disabled={!hasSelection || isSubmitting}
                   className="w-full"
                 >
-                  Complete Setup
+                  {isSubmitting ? 'Submitting...' : 'Complete Setup'} 
                 </Button>
               </div>
             </div>

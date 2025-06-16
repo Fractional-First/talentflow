@@ -71,41 +71,6 @@ export const FullTimePreferences = ({
         setTimezone={setTimezone}
       />
 
-      {/* Remote Work Preference */}
-      <div className="py-4">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <MapPin className="h-5 w-5 text-primary" />
-            <div>
-              <h3 className="font-medium">Remote Work Preference</h3>
-              <p className="text-sm text-muted-foreground">
-                Are you interested in remote work?
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Label
-              htmlFor="remote-toggle-step"
-              className={`text-sm ${!remotePreference && "font-medium"}`}
-            >
-              No
-            </Label>
-            <Switch
-              id="remote-toggle-step"
-              checked={remotePreference}
-              onCheckedChange={setRemotePreference}
-            />
-            <Label
-              htmlFor="remote-toggle-step"
-              className={`text-sm ${remotePreference && "font-medium"}`}
-            >
-              Yes
-            </Label>
-          </div>
-        </div>
-      </div>
-
       {/* Location Section */}
       <div className="py-4">
         <LocationSection

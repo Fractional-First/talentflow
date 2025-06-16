@@ -1,19 +1,28 @@
-
-import { useState } from 'react'
-import { Check, ChevronsUpDown, Globe, X } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Badge } from '@/components/ui/badge'
-import { useCountries, useRegions, type Country } from '@/hooks/useCountries'
-import { cn } from '@/lib/utils'
+import { useState } from "react"
+import { Check, ChevronsUpDown, Globe, X } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { Badge } from "@/components/ui/badge"
+import { useCountries, useRegions, type Country } from "@/hooks/useCountries"
+import { cn } from "@/lib/utils"
 
 interface CountrySelectorProps {
   selectedCountries: string[]
   onCountriesChange: (countries: string[]) => void
   placeholder?: string
   maxSelections?: number
-  showClearAll?: boolean
   onClearAll?: () => void
 }
 
@@ -22,47 +31,43 @@ export function CountrySelector({
   onCountriesChange,
   placeholder = "Select countries...",
   maxSelections = 10,
-  showClearAll = false,
-  onClearAll
+  onClearAll,
 }: CountrySelectorProps) {
   const [open, setOpen] = useState(false)
   const [searchValue, setSearchValue] = useState("")
   const [filterByRegion, setFilterByRegion] = useState<string | null>(null)
-  
+
   const { data: countries = [], isLoading } = useCountries()
   const { data: regions = [] } = useRegions()
 
-  const filteredCountries = countries.filter(country => {
-    const matchesSearch = country.name.toLowerCase().includes(searchValue.toLowerCase()) ||
-                         country.alpha2_code.toLowerCase().includes(searchValue.toLowerCase())
+  const filteredCountries = countries.filter((country) => {
+    const matchesSearch =
+      country.name.toLowerCase().includes(searchValue.toLowerCase()) ||
+      country.alpha2_code.toLowerCase().includes(searchValue.toLowerCase())
     const matchesRegion = !filterByRegion || country.region === filterByRegion
     return matchesSearch && matchesRegion
   })
 
   const toggleCountry = (countryCode: string) => {
     if (selectedCountries.includes(countryCode)) {
-      onCountriesChange(selectedCountries.filter(code => code !== countryCode))
+      onCountriesChange(
+        selectedCountries.filter((code) => code !== countryCode)
+      )
     } else if (selectedCountries.length < maxSelections) {
       onCountriesChange([...selectedCountries, countryCode])
     }
   }
 
   const removeCountry = (countryCode: string) => {
-    onCountriesChange(selectedCountries.filter(code => code !== countryCode))
+    onCountriesChange(selectedCountries.filter((code) => code !== countryCode))
   }
 
   const getSelectedCountryNames = () => {
     return countries
-      .filter(country => selectedCountries.includes(country.alpha2_code))
-      .map(country => ({ code: country.alpha2_code, name: country.name }))
+      .filter((country) => selectedCountries.includes(country.alpha2_code))
+      .map((country) => ({ code: country.alpha2_code, name: country.name }))
   }
 
-  const clearSelection = () => {
-    onCountriesChange([])
-    if (onClearAll) {
-      onClearAll()
-    }
-  }
 
   const selectedCountryData = getSelectedCountryNames()
 
@@ -79,33 +84,49 @@ export function CountrySelector({
           >
             <div className="flex items-center gap-2">
               <Globe className="h-4 w-4" />
-              {selectedCountries.length === 0 
+              {selectedCountries.length === 0
                 ? placeholder
-                : `${selectedCountries.length} selected`
-              }
+                : `${selectedCountries.length} selected`}
             </div>
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-full p-0" align="start">
+        <PopoverContent
+          className="w-full p-0"
+          align="start"
+          style={{ width: "var(--radix-popover-trigger-width)" }}
+        >
           <Command>
-            <CommandInput 
-              placeholder="Search countries..." 
+            <CommandInput
+              placeholder="Search countries..."
               value={searchValue}
               onValueChange={setSearchValue}
             />
             <CommandList>
               <CommandEmpty>No countries found.</CommandEmpty>
-              
+
               {/* Region filters */}
               <CommandGroup heading="Filter by Region">
                 <CommandItem onSelect={() => setFilterByRegion(null)}>
-                  <Check className={cn("mr-2 h-4 w-4", !filterByRegion ? "opacity-100" : "opacity-0")} />
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      !filterByRegion ? "opacity-100" : "opacity-0"
+                    )}
+                  />
                   All Regions
                 </CommandItem>
-                {regions.map(region => (
-                  <CommandItem key={region} onSelect={() => setFilterByRegion(region)}>
-                    <Check className={cn("mr-2 h-4 w-4", filterByRegion === region ? "opacity-100" : "opacity-0")} />
+                {regions.map((region) => (
+                  <CommandItem
+                    key={region}
+                    onSelect={() => setFilterByRegion(region)}
+                  >
+                    <Check
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        filterByRegion === region ? "opacity-100" : "opacity-0"
+                      )}
+                    />
                     {region}
                   </CommandItem>
                 ))}
@@ -121,7 +142,9 @@ export function CountrySelector({
                     <Check
                       className={cn(
                         "mr-2 h-4 w-4",
-                        selectedCountries.includes(country.alpha2_code) ? "opacity-100" : "opacity-0"
+                        selectedCountries.includes(country.alpha2_code)
+                          ? "opacity-100"
+                          : "opacity-0"
                       )}
                     />
                     <div className="flex items-center gap-2">
@@ -147,9 +170,13 @@ export function CountrySelector({
       {selectedCountries.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {selectedCountryData.map(({ code, name }) => (
-            <Badge key={code} variant="outline" className="flex items-center gap-1">
+            <Badge
+              key={code}
+              variant="outline"
+              className="flex items-center gap-1"
+            >
               <span>{name}</span>
-              <button 
+              <button
                 className="ml-1 text-muted-foreground hover:text-foreground"
                 onClick={() => removeCountry(code)}
               >
