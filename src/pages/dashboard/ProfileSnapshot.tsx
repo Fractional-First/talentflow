@@ -1,4 +1,3 @@
-
 import { initialSteps } from "@/components/dashboard/OnboardingSteps"
 import { DashboardLayout } from "@/components/DashboardLayout"
 import { BasicInfoSection } from "@/components/EditProfile/BasicInfoSection"
@@ -202,7 +201,7 @@ const ProfileSnapshot = () => {
 
   return (
     <DashboardLayout steps={initialSteps} currentStep={3}>
-      <div ref={mainContentRef} className="max-w-7xl mx-auto space-y-6 p-6">
+      <div ref={mainContentRef} className="max-w-6xl mx-auto space-y-6 p-6">
         {/* Main Layout - Two Column */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Profile Info */}
