@@ -1,4 +1,3 @@
-
 import { Clock } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { StepCard, StepCardContent, StepCardDescription, StepCardHeader, StepCardTitle } from '@/components/StepCard';
@@ -127,15 +126,6 @@ const JobMatchingPreferencesSection = ({
           
           <AvailabilitySection
             availabilityTypes={availabilityTypes}
-            setAvailabilityTypes={setAvailabilityTypes}
-            startDate={startDate}
-            setStartDate={setStartDate}
-            endDate={endDate}
-            setEndDate={setEndDate}
-            selectedDays={selectedDays}
-            setSelectedDays={setSelectedDays}
-            timePreference={timePreference}
-            setTimePreference={setTimePreference}
             timezone={timezone}
             setTimezone={setTimezone}
           />
