@@ -6,6 +6,7 @@ import { EditableTextSection } from "@/components/EditProfile/EditableTextSectio
 import { FunctionalSkillsSection } from "@/components/EditProfile/FunctionalSkillsSection"
 import { PersonasSection } from "@/components/EditProfile/PersonasSection"
 import { SuperpowersSection } from "@/components/EditProfile/SuperpowersSection"
+import ProfilePictureUpload from "@/components/ProfilePictureUpload"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/contexts/AuthContext"
@@ -147,6 +148,11 @@ const ProfileSnapshot = () => {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
+  // Handle profile picture update
+  const handleProfilePictureUpdate = (imageUrl: string) => {
+    handleInputChange("profilePicture", imageUrl)
+  }
+
   if (isLoading) {
     return (
       <DashboardLayout steps={initialSteps} currentStep={3}>
@@ -203,12 +209,12 @@ const ProfileSnapshot = () => {
             {/* Profile Image and Basic Info */}
             <div className="text-center">
               <div className="relative mb-4 inline-block">
-                <Avatar className="h-32 w-32 shadow-lg border-4 border-white">
-                  <AvatarImage src={formData?.profilePicture} />
-                  <AvatarFallback className="text-2xl bg-[#449889] text-white">
-                    {getUserInitials(formData?.name)}
-                  </AvatarFallback>
-                </Avatar>
+                <ProfilePictureUpload
+                  currentImage={formData?.profilePicture}
+                  userName={formData?.name || "User"}
+                  onImageUpdate={handleProfilePictureUpdate}
+                  size="lg"
+                />
               </div>
 
               <div className="space-y-2">
