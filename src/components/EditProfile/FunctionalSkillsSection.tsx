@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -183,65 +182,60 @@ export const FunctionalSkillsSection: React.FC<
                 {expandedCategory === category && (
                   <div className="mt-3 space-y-3">
                     {skills.length > 0 ? (
-                      <ul className="space-y-3">
-                        {skills.map((skill, index) => (
-                          <li key={index}>
-                            {isEditing ? (
-                              <div className="space-y-2">
-                                <div className="flex gap-2 items-center">
-                                  <Input
-                                    value={skill.title}
-                                    onChange={(e) =>
-                                      handleSkillTitleChange(
-                                        category,
-                                        index,
-                                        e.target.value
-                                      )
-                                    }
-                                    className="font-medium"
-                                    placeholder="Skill title"
-                                  />
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() =>
-                                      handleRemoveSkill(category, index)
-                                    }
-                                    className="text-red-500 hover:text-red-700"
-                                  >
-                                    <X className="h-4 w-4" />
-                                  </Button>
-                                </div>
-                                <Textarea
-                                  value={skill.description}
+                      skills.map((skill, index) => (
+                        <div key={index} className="space-y-2">
+                          {isEditing ? (
+                            <div className="space-y-2">
+                              <div className="flex gap-2 items-center">
+                                <Input
+                                  value={skill.title}
                                   onChange={(e) =>
-                                    handleSkillDescriptionChange(
+                                    handleSkillTitleChange(
                                       category,
                                       index,
                                       e.target.value
                                     )
                                   }
-                                  className="text-sm"
-                                  placeholder="Skill description"
-                                  rows={3}
+                                  className="font-medium"
+                                  placeholder="Skill title"
                                 />
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() =>
+                                    handleRemoveSkill(category, index)
+                                  }
+                                  className="text-red-500 hover:text-red-700"
+                                >
+                                  <X className="h-4 w-4" />
+                                </Button>
                               </div>
-                            ) : (
-                              <div className="flex items-start gap-2">
-                                <span className="text-gray-600 mt-1 flex-shrink-0">•</span>
-                                <div className="flex-1">
-                                  <div className="text-sm text-gray-900 mb-1">
-                                    <strong>{skill.title}</strong>
-                                  </div>
-                                  <p className="text-sm text-gray-700 leading-relaxed pl-0">
-                                    {skill.description}
-                                  </p>
-                                </div>
+                              <Textarea
+                                value={skill.description}
+                                onChange={(e) =>
+                                  handleSkillDescriptionChange(
+                                    category,
+                                    index,
+                                    e.target.value
+                                  )
+                                }
+                                className="text-sm"
+                                placeholder="Skill description"
+                                rows={3}
+                              />
+                            </div>
+                          ) : (
+                            <div>
+                              <div className="font-medium text-gray-900">
+                                {skill.title}
                               </div>
-                            )}
-                          </li>
-                        ))}
-                      </ul>
+                              <p className="text-sm text-gray-700">
+                                {skill.description}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      ))
                     ) : (
                       <div className="text-sm text-gray-700">
                         No skills in this category
