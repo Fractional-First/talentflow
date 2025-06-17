@@ -10,6 +10,31 @@ interface AvailabilitySectionProps {
     fullTime: boolean;
     fractional: boolean;
   };
+  setAvailabilityTypes: (types: { fullTime: boolean; fractional: boolean }) => void;
+  startDate: string;
+  setStartDate: (date: string) => void;
+  endDate: string;
+  setEndDate: (date: string) => void;
+  selectedDays: {
+    mon: boolean;
+    tue: boolean;
+    wed: boolean;
+    thu: boolean;
+    fri: boolean;
+    sat: boolean;
+    sun: boolean;
+  };
+  setSelectedDays: React.Dispatch<React.SetStateAction<{
+    mon: boolean;
+    tue: boolean;
+    wed: boolean;
+    thu: boolean;
+    fri: boolean;
+    sat: boolean;
+    sun: boolean;
+  }>>;
+  timePreference: string;
+  setTimePreference: (preference: string) => void;
   timezone: string;
   setTimezone: (zone: string) => void;
 }
