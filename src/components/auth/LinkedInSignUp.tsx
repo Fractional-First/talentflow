@@ -1,37 +1,39 @@
-
-import { Button } from '@/components/ui/button';
-import { Linkedin } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
+import { Button } from "@/components/ui/button"
+import { Linkedin } from "lucide-react"
+import { supabase } from "@/integrations/supabase/client"
+import { toast } from "sonner"
 
 interface LinkedInSignUpProps {
-  onClick?: () => void;
-  isSubmitting: boolean;
+  onClick?: () => void
+  isSubmitting: boolean
 }
 
-export const LinkedInSignUp = ({ onClick, isSubmitting }: LinkedInSignUpProps) => {
+export const LinkedInSignUp = ({
+  onClick,
+  isSubmitting,
+}: LinkedInSignUpProps) => {
   const handleLinkedInSignUp = async () => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'linkedin_oidc',
+        provider: "linkedin_oidc",
         options: {
-          redirectTo: `${window.location.origin}/dashboard/profile-creation`
-        }
-      });
-      
+          redirectTo: `${window.location.origin}/create-profile`,
+        },
+      })
+
       if (error) {
-        toast.error('Failed to sign up with LinkedIn');
-        console.error('LinkedIn OAuth error:', error);
+        toast.error("Failed to sign up with LinkedIn")
+        console.error("LinkedIn OAuth error:", error)
       }
     } catch (error) {
-      toast.error('Failed to sign up with LinkedIn');
-      console.error('LinkedIn OAuth error:', error);
+      toast.error("Failed to sign up with LinkedIn")
+      console.error("LinkedIn OAuth error:", error)
     }
-  };
+  }
 
   return (
-    <Button 
-      variant="outline" 
+    <Button
+      variant="outline"
       className="w-full flex items-center justify-center gap-2"
       onClick={onClick || handleLinkedInSignUp}
       disabled={isSubmitting}
@@ -39,5 +41,5 @@ export const LinkedInSignUp = ({ onClick, isSubmitting }: LinkedInSignUpProps) =
       <Linkedin className="h-5 w-5" />
       <span>Sign up with LinkedIn</span>
     </Button>
-  );
-};
+  )
+}

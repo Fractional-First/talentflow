@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { toast } from "@/hooks/use-toast"
-import { ProfileData } from "@/components/profile-creation/types"
+import { ProfileData } from "@/components/create-profile/types"
 
 export const useDocumentUpload = () => {
   const [profile, setProfile] = useState<ProfileData>({

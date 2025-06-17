@@ -1,7 +1,7 @@
 import { initialSteps } from "@/components/dashboard/OnboardingSteps"
 import { DashboardLayout } from "@/components/DashboardLayout"
-import { DocumentUploadSection } from "@/components/profile-creation/DocumentUploadSection"
-import { SupportingDocsSection } from "@/components/profile-creation/SupportingDocsSection"
+import { DocumentUploadSection } from "@/components/create-profile/DocumentUploadSection"
+import { SupportingDocsSection } from "@/components/create-profile/SupportingDocsSection"
 import {
   StepCard,
   StepCardContent,
@@ -72,7 +72,7 @@ const ProfileCreation = () => {
             description:
               "Your profile information has been submitted and processed.",
           })
-          navigate("/dashboard/profile-snapshot")
+          navigate("/edit-profile")
         },
         onError: (error) => {
           let errorMessage =

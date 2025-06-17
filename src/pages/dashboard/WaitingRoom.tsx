@@ -154,7 +154,7 @@ const WaitingRoom = () => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => navigate("/dashboard/profile-snapshot")}
+                onClick={() => navigate("/edit-profile")}
               >
                 <Edit className="h-4 w-4 mr-2" />
                 Edit Profile

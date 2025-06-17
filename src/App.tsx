@@ -14,10 +14,10 @@ import ResetPassword from "./pages/ResetPassword"
 import SignUp from "./pages/SignUp"
 import Branding from "./pages/dashboard/Branding"
 import Dashboard from "./pages/dashboard/Dashboard"
-import ProfileCreation from "./pages/dashboard/ProfileCreation"
-import ProfileSnapshot from "./pages/dashboard/ProfileSnapshot"
+import ProfileCreation from "./pages/CreateProfile"
+import ProfileSnapshot from "./pages/EditProfile"
 import WaitingRoom from "./pages/dashboard/WaitingRoom"
-import WorkPreferences from "./pages/dashboard/WorkPreferences"
+import WorkPreferences from "./pages/WorkPreferences"
 
 const queryClient = new QueryClient()
 
@@ -48,7 +48,7 @@ const App = () => (
 
             {/* Profile creation - for users with EMAIL_CONFIRMED, PROFILE_GENERATED, or PROFILE_CONFIRMED status */}
             <Route
-              path="/dashboard/profile-creation"
+              path="/create-profile"
               element={
                 <ProtectedRoute
                   allowedStatuses={[
@@ -64,7 +64,7 @@ const App = () => (
 
             {/* Profile snapshot - for users with PROFILE_GENERATED or PROFILE_CONFIRMED status */}
             <Route
-              path="/dashboard/profile-snapshot"
+              path="/edit-profile"
               element={
                 <ProtectedRoute
                   allowedStatuses={["PROFILE_GENERATED", "PROFILE_CONFIRMED"]}

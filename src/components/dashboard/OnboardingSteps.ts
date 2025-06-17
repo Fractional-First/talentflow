@@ -82,7 +82,7 @@ export const getNextStepInfo = (nextStep: Step | undefined, steps: Step[]) => {
       return {
         title: "Create Your Profile",
         description: "Let's start by setting up your professional profile.",
-        path: "/dashboard/profile-creation",
+        path: "/create-profile",
         buttonText: "Create Profile",
         estimatedTime: nextStep.estimatedTime,
       }
@@ -90,7 +90,7 @@ export const getNextStepInfo = (nextStep: Step | undefined, steps: Step[]) => {
       return {
         title: "Create Your Profile",
         description: "Let's start by setting up your professional profile.",
-        path: "/dashboard/profile-creation",
+        path: "/create-profile",
         buttonText: "Create Profile",
         estimatedTime: nextStep.estimatedTime,
       }
@@ -99,7 +99,7 @@ export const getNextStepInfo = (nextStep: Step | undefined, steps: Step[]) => {
         title: "Review Your Profile Snapshot",
         description:
           "Take a look at your profile summary and make any necessary adjustments.",
-        path: "/dashboard/profile-snapshot",
+        path: "/edit-profile",
         buttonText: "Review Profile",
         estimatedTime: nextStep.estimatedTime,
       }

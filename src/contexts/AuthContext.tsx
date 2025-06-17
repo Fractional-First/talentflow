@@ -71,21 +71,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         // Redirect based on onboarding status
         switch (currentStatus) {
           case "EMAIL_CONFIRMED":
-            navigate("/dashboard/profile-creation")
+            navigate("/create-profile")
             break
           case "PROFILE_GENERATED":
-            navigate("/dashboard/profile-snapshot")
+            navigate("/edit-profile")
             break
           case "PROFILE_CONFIRMED":
             navigate("/dashboard")
             break
           default:
-            navigate("/dashboard/profile-creation")
+            navigate("/create-profile")
         }
       }
     } catch (error) {
       console.error("Error checking onboarding status:", error)
-      navigate("/dashboard/profile-creation")
+      navigate("/create-profile")
     }
   }
 
@@ -154,7 +154,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/dashboard/profile-creation`,
+          emailRedirectTo: `${window.location.origin}/create-profile`,
           data: {
             first_name: firstName || "",
             last_name: lastName || "",

@@ -23,7 +23,7 @@ const menuItems = [
   },
   {
     title: "Profile Snapshot",
-    path: "/dashboard/profile-snapshot",
+    path: "/edit-profile",
     icon: User,
   },
   {

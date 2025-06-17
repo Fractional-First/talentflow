@@ -1,11 +1,11 @@
 import { initialSteps } from "@/components/dashboard/OnboardingSteps"
 import { DashboardLayout } from "@/components/DashboardLayout"
-import { BasicInfoSection } from "@/components/EditProfile/BasicInfoSection"
-import { EditableArraySection } from "@/components/EditProfile/EditableArraySection"
-import { EditableTextSection } from "@/components/EditProfile/EditableTextSection"
-import { FunctionalSkillsSection } from "@/components/EditProfile/FunctionalSkillsSection"
-import { PersonasSection } from "@/components/EditProfile/PersonasSection"
-import { SuperpowersSection } from "@/components/EditProfile/SuperpowersSection"
+import { BasicInfoSection } from "@/components/edit-profile/BasicInfoSection"
+import { EditableArraySection } from "@/components/edit-profile/EditableArraySection"
+import { EditableTextSection } from "@/components/edit-profile/EditableTextSection"
+import { FunctionalSkillsSection } from "@/components/edit-profile/FunctionalSkillsSection"
+import { PersonasSection } from "@/components/edit-profile/PersonasSection"
+import { SuperpowersSection } from "@/components/edit-profile/SuperpowersSection"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/contexts/AuthContext"
@@ -182,7 +182,7 @@ const ProfileSnapshot = () => {
               Please complete your profile creation first.
             </p>
             <Button
-              onClick={() => navigate("/dashboard/profile-creation")}
+              onClick={() => navigate("/create-profile")}
               className="mt-4"
             >
               Go to Profile Creation
@@ -413,10 +413,7 @@ const ProfileSnapshot = () => {
 
         {/* Action Buttons */}
         <div className="flex justify-between items-center pt-6">
-          <Button
-            variant="outline"
-            onClick={() => navigate("/dashboard/profile-creation")}
-          >
+          <Button variant="outline" onClick={() => navigate("/create-profile")}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Profile
           </Button>
