@@ -1,3 +1,4 @@
+
 import { initialSteps } from "@/components/dashboard/OnboardingSteps"
 import { DashboardLayout } from "@/components/DashboardLayout"
 import { BasicInfoSection } from "@/components/EditProfile/BasicInfoSection"
@@ -156,7 +157,7 @@ const ProfileSnapshot = () => {
   if (isLoading) {
     return (
       <DashboardLayout steps={initialSteps} currentStep={3}>
-        <div className="max-w-6xl mx-auto space-y-6 p-6">
+        <div className="max-w-7xl mx-auto space-y-6 p-6">
           <div className="text-center">Loading profile...</div>
         </div>
       </DashboardLayout>
@@ -167,7 +168,7 @@ const ProfileSnapshot = () => {
     console.error("Profile query error:", error)
     return (
       <DashboardLayout steps={initialSteps} currentStep={3}>
-        <div className="max-w-6xl mx-auto space-y-6 p-6">
+        <div className="max-w-7xl mx-auto space-y-6 p-6">
           <div className="text-center text-red-600">
             <p>Error loading profile. Please try again.</p>
             <p className="text-sm mt-2">Error: {error.message}</p>
@@ -181,7 +182,7 @@ const ProfileSnapshot = () => {
   if (!profileData || !formData.name) {
     return (
       <DashboardLayout steps={initialSteps} currentStep={3}>
-        <div className="max-w-6xl mx-auto space-y-6 p-6">
+        <div className="max-w-7xl mx-auto space-y-6 p-6">
           <div className="text-center">
             <p>No profile data found.</p>
             <p className="text-sm text-gray-600 mt-2">
@@ -201,7 +202,7 @@ const ProfileSnapshot = () => {
 
   return (
     <DashboardLayout steps={initialSteps} currentStep={3}>
-      <div ref={mainContentRef} className="max-w-6xl mx-auto space-y-6 p-6">
+      <div ref={mainContentRef} className="max-w-7xl mx-auto space-y-6 p-6">
         {/* Main Layout - Two Column */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Profile Info */}
