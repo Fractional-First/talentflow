@@ -1,8 +1,11 @@
+
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
+import { Input } from '@/components/ui/input';
 import { Calendar } from 'lucide-react';
 import React from 'react';
 import TimezoneSelector from './TimezoneSelector';
+
 interface AvailabilitySectionProps {
   availabilityTypes: {
     fullTime: boolean;
@@ -39,44 +42,104 @@ interface AvailabilitySectionProps {
   timezone: string;
   setTimezone: (zone: string) => void;
 }
+
 const AvailabilitySection = ({
   availabilityTypes,
+  startDate,
+  setStartDate,
   timezone,
   setTimezone
 }: AvailabilitySectionProps) => {
   const showFractionalOptions = availabilityTypes.fractional;
+  const showFullTimeOptions = availabilityTypes.fullTime;
 
   // State for hours per week (default to 20 hours for fractional work)
   const [hoursPerWeek, setHoursPerWeek] = React.useState([20]);
-  return <>
-      {showFractionalOptions && <>
-          <div className="flex items-center gap-2 mb-6">
-            
-            <div>
-              
-              
+
+  return (
+    <div className="space-y-6">
+      {/* Full-time options */}
+      {showFullTimeOptions && (
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="start-date" className="text-sm font-medium mb-2 block">
+              Preferred Start Date
+            </Label>
+            <div className="relative">
+              <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                id="start-date"
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="pl-10 max-w-md"
+                placeholder="Select start date"
+              />
+            </div>
+          </div>
+
+          <div>
+            <Label className="text-sm font-medium mb-2 block">Your Timezone</Label>
+            <TimezoneSelector 
+              selectedTimezone={timezone} 
+              onTimezoneChange={setTimezone} 
+              placeholder="Select your timezone..." 
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Fractional options */}
+      {showFractionalOptions && (
+        <div className="space-y-4">
+          <div>
+            <Label className="text-sm font-medium mb-3 block">Hours Per Week</Label>
+            <div className="space-y-4">
+              <Slider 
+                value={hoursPerWeek} 
+                onValueChange={setHoursPerWeek} 
+                max={40} 
+                min={5} 
+                step={5} 
+                className="w-full" 
+              />
+              <div className="flex justify-between text-sm text-muted-foreground">
+                <span>5 hours</span>
+                <span className="font-medium text-foreground">{hoursPerWeek[0]} hours per week</span>
+                <span>40 hours</span>
+              </div>
             </div>
           </div>
           
-          <div className="space-y-6 px-4">
-            <div>
-              <Label className="text-sm mb-3 block">Hours Per Week</Label>
-              <div className="space-y-4">
-                <Slider value={hoursPerWeek} onValueChange={setHoursPerWeek} max={40} min={5} step={5} className="w-full" />
-                <div className="flex justify-between text-sm text-muted-foreground">
-                  <span>5 hours</span>
-                  <span className="font-medium text-foreground">{hoursPerWeek[0]} hours per week</span>
-                  <span>40 hours</span>
-                </div>
-              </div>
-            </div>
-            
-            <div>
-              <Label className="text-sm mb-2 block">Your Timezone</Label>
-              <TimezoneSelector selectedTimezone={timezone} onTimezoneChange={setTimezone} placeholder="Select your timezone..." />
+          <div>
+            <Label htmlFor="start-date-fractional" className="text-sm font-medium mb-2 block">
+              Preferred Start Date
+            </Label>
+            <div className="relative">
+              <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                id="start-date-fractional"
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="pl-10 max-w-md"
+                placeholder="Select start date"
+              />
             </div>
           </div>
-        </>}
-    </>;
+          
+          <div>
+            <Label className="text-sm font-medium mb-2 block">Your Timezone</Label>
+            <TimezoneSelector 
+              selectedTimezone={timezone} 
+              onTimezoneChange={setTimezone} 
+              placeholder="Select your timezone..." 
+            />
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
+
 export default AvailabilitySection;
