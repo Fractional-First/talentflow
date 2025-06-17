@@ -127,15 +127,6 @@ const JobMatchingPreferencesSection = ({
           
           <AvailabilitySection
             availabilityTypes={availabilityTypes}
-            setAvailabilityTypes={setAvailabilityTypes}
-            startDate={startDate}
-            setStartDate={setStartDate}
-            endDate={endDate}
-            setEndDate={setEndDate}
-            selectedDays={selectedDays}
-            setSelectedDays={setSelectedDays}
-            timePreference={timePreference}
-            setTimePreference={setTimePreference}
             timezone={timezone}
             setTimezone={setTimezone}
           />
