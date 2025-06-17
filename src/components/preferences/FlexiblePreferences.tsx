@@ -1,4 +1,5 @@
 
+import React from "react"
 import AvailabilitySection from "@/components/job-matching/AvailabilitySection"
 import CompensationSection from "@/components/job-matching/CompensationSection"
 import LocationSection from "@/components/job-matching/LocationSection"
