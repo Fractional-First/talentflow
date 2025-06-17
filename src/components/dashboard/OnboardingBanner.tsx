@@ -1,10 +1,9 @@
-
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
-import { Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button"
+import { useNavigate } from "react-router-dom"
+import { Sparkles } from "lucide-react"
 
 export const OnboardingBanner = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   return (
     <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-secondary/10 border-b border-border/30">
@@ -19,13 +18,14 @@ export const OnboardingBanner = () => {
                 Welcome! Let's complete your profile
               </h2>
               <p className="text-muted-foreground mt-1">
-                Tell us what you're looking for so we can prepare future opportunities for you.
+                Tell us what you're looking for so we can prepare future
+                opportunities for you.
               </p>
             </div>
           </div>
-          
-          <Button 
-            onClick={() => navigate('/dashboard/job-matching')}
+
+          <Button
+            onClick={() => navigate("/work-preferences")}
             className="ml-6"
           >
             Set Job Preferences
@@ -33,5 +33,5 @@ export const OnboardingBanner = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

@@ -1,7 +1,7 @@
 import { DashboardLayout } from "@/components/DashboardLayout"
-import { JobMatchingConfirmation } from "@/components/job-matching/JobMatchingConfirmation"
-import { FlexiblePreferences } from "@/components/preferences/FlexiblePreferences"
-import { FullTimePreferences } from "@/components/preferences/FullTimePreferences"
+import { WorkPreferencesConfirmation } from "@/components/work-preferences/WorkPreferencesConfirmation"
+import { FlexiblePreferences } from "@/components/work-preferences/FlexiblePreferences"
+import { FullTimePreferences } from "@/components/work-preferences/FullTimePreferences"
 import {
   StepCard,
   StepCardContent,
@@ -15,7 +15,7 @@ import { Briefcase, Clock, Home } from "lucide-react"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 
-const JobMatching = () => {
+const WorkPreferences = () => {
   const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState<
     "placement-type" | "confirmation"
@@ -251,7 +251,7 @@ const JobMatching = () => {
                   disabled={!hasSelection || isSubmitting}
                   className="w-full"
                 >
-                  {isSubmitting ? "Submitting..." : "Complete Setup"}
+                  {isSubmitting ? "Saving..." : "Continue"}
                 </Button>
               </div>
             </div>
@@ -260,31 +260,14 @@ const JobMatching = () => {
       )
     }
 
-    if (currentStep === "confirmation") {
-      return <JobMatchingConfirmation onGoToDashboard={handleGoToDashboard} />
-    }
+    return <WorkPreferencesConfirmation onGoToDashboard={handleGoToDashboard} />
   }
 
   return (
-    <DashboardLayout sidebar={false} className="space-y-6">
-      <div className="space-y-6">
-        {onboardingComplete && currentStep !== "confirmation" && (
-          <div className="mb-4">
-            <Button
-              variant="outline"
-              onClick={() => navigate("/dashboard")}
-              className="gap-2"
-            >
-              <Home className="h-4 w-4" />
-              Back to Dashboard
-            </Button>
-          </div>
-        )}
-
-        {renderStepContent()}
-      </div>
+    <DashboardLayout>
+      <div className="container max-w-3xl py-8">{renderStepContent()}</div>
     </DashboardLayout>
   )
 }
 
-export default JobMatching
+export default WorkPreferences

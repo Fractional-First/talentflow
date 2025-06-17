@@ -1,4 +1,3 @@
-
 import {
   Sidebar,
   SidebarContent,
@@ -9,12 +8,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarTrigger,
-} from "@/components/ui/sidebar";
-import { useNavigate, useLocation } from "react-router-dom";
-import { User, Briefcase, Home, Settings, LogOut, Award } from "lucide-react";
-import React from "react";
-import { useAuth } from "@/contexts/AuthContext";
-import { cn } from "@/lib/utils";
+} from "@/components/ui/sidebar"
+import { useNavigate, useLocation } from "react-router-dom"
+import { User, Briefcase, Home, Settings, LogOut, Award } from "lucide-react"
+import React from "react"
+import { useAuth } from "@/contexts/AuthContext"
+import { cn } from "@/lib/utils"
 
 const menuItems = [
   {
@@ -34,7 +33,7 @@ const menuItems = [
   },
   {
     title: "Job Preferences",
-    path: "/dashboard/job-matching",
+    path: "/work-preferences",
     icon: Briefcase,
   },
   {
@@ -42,16 +41,16 @@ const menuItems = [
     path: "/dashboard/branding",
     icon: Settings,
   },
-];
+]
 
 interface AppSidebarProps {
-  isOnboarding?: boolean;
+  isOnboarding?: boolean
 }
 
 export function AppSidebar({ isOnboarding = false }: AppSidebarProps) {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { signOut } = useAuth();
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { signOut } = useAuth()
 
   return (
     <Sidebar>
@@ -61,39 +60,48 @@ export function AppSidebar({ isOnboarding = false }: AppSidebarProps) {
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => {
-                const isJobPreferences = item.path === "/dashboard/job-matching";
-                const isDisabled = isOnboarding && !isJobPreferences && item.path !== "/dashboard";
-                const isHighlighted = isOnboarding && isJobPreferences;
-                
+                const isJobPreferences = item.path === "/work-preferences"
+                const isDisabled =
+                  isOnboarding &&
+                  !isJobPreferences &&
+                  item.path !== "/dashboard"
+                const isHighlighted = isOnboarding && isJobPreferences
+
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       asChild
                       isActive={
                         location.pathname === item.path ||
-                        (item.path === "/dashboard" && location.pathname === "/dashboard")
+                        (item.path === "/dashboard" &&
+                          location.pathname === "/dashboard")
                       }
                       className={cn(
                         isDisabled && "opacity-50 pointer-events-none",
-                        isHighlighted && "bg-primary/10 border border-primary/20 shadow-sm"
+                        isHighlighted &&
+                          "bg-primary/10 border border-primary/20 shadow-sm"
                       )}
                     >
                       <a
                         href={item.path}
-                        onClick={e => {
-                          e.preventDefault();
+                        onClick={(e) => {
+                          e.preventDefault()
                           if (!isDisabled) {
-                            navigate(item.path);
+                            navigate(item.path)
                           }
                         }}
                       >
-                        <item.icon className={cn(
-                          "mr-2",
-                          isHighlighted && "text-primary"
-                        )} />
-                        <span className={cn(
-                          isHighlighted && "text-primary font-medium"
-                        )}>
+                        <item.icon
+                          className={cn(
+                            "mr-2",
+                            isHighlighted && "text-primary"
+                          )}
+                        />
+                        <span
+                          className={cn(
+                            isHighlighted && "text-primary font-medium"
+                          )}
+                        >
                           {item.title}
                           {isHighlighted && (
                             <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-primary text-primary-foreground">
@@ -104,7 +112,7 @@ export function AppSidebar({ isOnboarding = false }: AppSidebarProps) {
                       </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                );
+                )
               })}
               <SidebarMenuItem>
                 <SidebarMenuButton
@@ -113,9 +121,7 @@ export function AppSidebar({ isOnboarding = false }: AppSidebarProps) {
                   className="text-red-500"
                   tooltip="Logout"
                 >
-                  <button
-                    onClick={signOut}
-                  >
+                  <button onClick={signOut}>
                     <LogOut className="mr-2" />
                     Logout
                   </button>
@@ -126,5 +132,5 @@ export function AppSidebar({ isOnboarding = false }: AppSidebarProps) {
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>
-  );
+  )
 }
