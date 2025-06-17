@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { useGooglePlaces } from "../../hooks/useGooglePlaces"
+import { useGooglePlaces } from "../../queries/useGooglePlaces"
 import { Input } from "@/components/ui/input"
 
 interface LocationInputWithPopoverProps {

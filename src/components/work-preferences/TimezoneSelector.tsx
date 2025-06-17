@@ -1,4 +1,4 @@
-import { useTimezones } from "@/hooks/useTimezones"
+import { useTimezones } from "@/queries/useTimezones"
 import Select from "react-select"
 
 interface TimezoneSelectorProps {

@@ -1,6 +1,6 @@
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
-import { useCountries } from "@/hooks/useCountries"
+import { useCountries } from "@/queries/useCountries"
 import { Badge, MapPin } from "lucide-react"
 import React from "react"
 import Select from "react-select"

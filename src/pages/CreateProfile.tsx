@@ -12,7 +12,7 @@ import {
 } from "@/components/StepCard"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
-import { useDocumentUpload } from "@/hooks/profile-creation/useDocumentUpload"
+import { useDocumentUpload } from "@/queries/useDocumentUpload"
 import { toast } from "@/hooks/use-toast"
 import { useSubmitProfile } from "@/queries/useSubmitProfile"
 import { AlertCircle, ArrowLeft, ArrowRight, Clock } from "lucide-react"

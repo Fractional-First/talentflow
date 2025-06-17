@@ -15,7 +15,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { Badge } from "@/components/ui/badge"
-import { useCountries, useRegions, type Country } from "@/hooks/useCountries"
+import { useCountries, useRegions, type Country } from "@/queries/useCountries"
 import { cn } from "@/lib/utils"
 
 interface CountrySelectorProps {
