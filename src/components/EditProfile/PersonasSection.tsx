@@ -125,7 +125,7 @@ export const PersonasSection: React.FC<PersonasSectionProps> = ({
                       {persona.bullets.map((bullet, bulletIndex) => (
                         <li 
                           key={bulletIndex} 
-                          className="flex text-base leading-relaxed"
+                          className="flex text-sm leading-relaxed"
                         >
                           <span className="text-gray-600 mr-3 flex-shrink-0">•</span>
                           <span className="flex-1">{bullet}</span>
