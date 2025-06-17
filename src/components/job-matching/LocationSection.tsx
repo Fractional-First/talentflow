@@ -1,3 +1,4 @@
+
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -7,12 +8,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { useCountries } from "@/hooks/useCountries"
+import { useLocationPreferences } from "@/hooks/useLocationPreferences"
+import { LocationAutocomplete } from "@/components/location/LocationAutocomplete"
 import { MapPin } from "lucide-react"
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import Select from "react-select"
 
 interface LocationSectionProps {
@@ -31,27 +33,61 @@ const LocationSection = ({
   setCurrentLocation,
   workEligibility,
   setWorkEligibility,
-  locationPreferences,
-  setLocationPreferences,
+  locationPreferences: legacyLocationPreferences,
+  setLocationPreferences: setLegacyLocationPreferences,
   remotePreference,
   setRemotePreference,
 }: LocationSectionProps) => {
-  const [newLocation, setNewLocation] = useState("")
   const [openLocationDialog, setOpenLocationDialog] = useState(false)
   const { data: countries = [], isLoading } = useCountries()
+  
+  const {
+    getCurrentLocation,
+    getPreferredWorkLocations,
+    saveLocation,
+    removeLocation,
+    locationPreferences,
+    isSaving
+  } = useLocationPreferences()
 
-  const clearWorkEligibility = () => {
-    setWorkEligibility([])
+  // Sync with legacy props for backward compatibility
+  const currentLocationData = getCurrentLocation()
+  const preferredWorkLocations = getPreferredWorkLocations()
+
+  useEffect(() => {
+    if (currentLocationData && currentLocationData.name !== currentLocation) {
+      setCurrentLocation(currentLocationData.name)
+    }
+  }, [currentLocationData, currentLocation, setCurrentLocation])
+
+  useEffect(() => {
+    const locationNames = preferredWorkLocations.map(loc => loc.name)
+    if (JSON.stringify(locationNames) !== JSON.stringify(legacyLocationPreferences)) {
+      setLegacyLocationPreferences(locationNames)
+    }
+  }, [preferredWorkLocations, legacyLocationPreferences, setLegacyLocationPreferences])
+
+  const handleCurrentLocationSelect = (locationData: any) => {
+    saveLocation({
+      locationData,
+      preferenceType: 'current'
+    })
   }
 
-  const handleAddLocation = () => {
-    if (
-      newLocation.trim() &&
-      !locationPreferences.includes(newLocation.trim())
-    ) {
-      setLocationPreferences([...locationPreferences, newLocation.trim()])
-      setNewLocation("")
-      setOpenLocationDialog(false)
+  const handlePreferredLocationSelect = (locationData: any) => {
+    saveLocation({
+      locationData,
+      preferenceType: 'preferred_work'
+    })
+    setOpenLocationDialog(false)
+  }
+
+  const handleRemovePreferredLocation = (locationName: string) => {
+    const preference = locationPreferences.find(
+      pref => pref.preference_type === 'preferred_work' && pref.location.name === locationName
+    )
+    if (preference) {
+      removeLocation(preference.id)
     }
   }
 
@@ -66,15 +102,13 @@ const LocationSection = ({
           </p>
         </div>
       </div>
-      <div className="space-y-2 px-4">
+      <div className="space-y-4 px-4">
         <div>
-          <Label htmlFor="current-location" className="text-sm">
-            Current Location
-          </Label>
-          <Input
-            id="current-location"
+          <LocationAutocomplete
             value={currentLocation}
-            onChange={(e) => setCurrentLocation(e.target.value)}
+            onLocationSelect={handleCurrentLocationSelect}
+            label="Current Location"
+            placeholder="Search for your current location..."
             className="max-w-md"
           />
         </div>
@@ -108,10 +142,10 @@ const LocationSection = ({
             </div>
           </div>
         </div>
+
         <div className="py-2">
           <Label className="text-sm mb-2 block">Legal Work Eligibility</Label>
           <div className="w-full">
-            {/* React-select for countries */}
             <Select
               isMulti
               isLoading={isLoading}
@@ -130,21 +164,18 @@ const LocationSection = ({
             />
           </div>
         </div>
+
         <div className="py-2">
           <div className="flex items-center justify-between mb-2">
             <Label className="text-sm">Preferred Work Locations</Label>
           </div>
           <div className="flex flex-wrap gap-2">
-            {locationPreferences.map((location) => (
-              <Badge key={location} variant="outline">
-                {location}
+            {preferredWorkLocations.map((location) => (
+              <Badge key={location.id} variant="outline">
+                {location.name}
                 <button
                   className="ml-1 text-muted-foreground hover:text-foreground"
-                  onClick={() =>
-                    setLocationPreferences((prev) =>
-                      prev.filter((l) => l !== location)
-                    )
-                  }
+                  onClick={() => handleRemovePreferredLocation(location.name)}
                 >
                   ×
                 </button>
@@ -155,7 +186,7 @@ const LocationSection = ({
               onOpenChange={setOpenLocationDialog}
             >
               <DialogTrigger asChild>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" disabled={isSaving}>
                   + Add Location
                 </Button>
               </DialogTrigger>
@@ -163,14 +194,12 @@ const LocationSection = ({
                 <DialogHeader>
                   <DialogTitle>Add Preferred Work Location</DialogTitle>
                 </DialogHeader>
-                <div className="flex items-center gap-2 mt-2">
-                  <Input
-                    value={newLocation}
-                    onChange={(e) => setNewLocation(e.target.value)}
-                    placeholder="Enter city or region"
-                    onKeyDown={(e) => e.key === "Enter" && handleAddLocation()}
+                <div className="mt-4">
+                  <LocationAutocomplete
+                    value=""
+                    onLocationSelect={handlePreferredLocationSelect}
+                    placeholder="Search for a preferred work location..."
                   />
-                  <Button onClick={handleAddLocation}>Add</Button>
                 </div>
               </DialogContent>
             </Dialog>

@@ -84,6 +84,59 @@ export type Database = {
         }
         Relationships: []
       }
+      locations: {
+        Row: {
+          city: string | null
+          country_code: string | null
+          created_at: string
+          formatted_address: string | null
+          id: string
+          latitude: number | null
+          longitude: number | null
+          name: string
+          place_id: string
+          place_types: string[] | null
+          state_province: string | null
+          updated_at: string
+        }
+        Insert: {
+          city?: string | null
+          country_code?: string | null
+          created_at?: string
+          formatted_address?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          name: string
+          place_id: string
+          place_types?: string[] | null
+          state_province?: string | null
+          updated_at?: string
+        }
+        Update: {
+          city?: string | null
+          country_code?: string | null
+          created_at?: string
+          formatted_address?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          name?: string
+          place_id?: string
+          place_types?: string[] | null
+          state_province?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "locations_country_code_fkey"
+            columns: ["country_code"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["alpha2_code"]
+          },
+        ]
+      }
       profile_documents: {
         Row: {
           created_at: string
@@ -194,6 +247,48 @@ export type Database = {
           value?: string
         }
         Relationships: []
+      }
+      user_location_preferences: {
+        Row: {
+          created_at: string
+          id: string
+          location_id: string
+          preference_type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          location_id: string
+          preference_type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          location_id?: string
+          preference_type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_location_preferences_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_location_preferences_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
