@@ -1,3 +1,4 @@
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/contexts/AuthContext"
@@ -39,6 +40,7 @@ export interface ProfileData {
   personal_interests?: string[]
   geographical_coverage?: string[]
   profilePicture?: string
+  engagement_options?: string[]
 }
 
 export function useProfileSnapshot() {

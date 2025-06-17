@@ -6,6 +6,7 @@ import { EditableTextSection } from "@/components/EditProfile/EditableTextSectio
 import { FunctionalSkillsSection } from "@/components/EditProfile/FunctionalSkillsSection"
 import { PersonasSection } from "@/components/EditProfile/PersonasSection"
 import { SuperpowersSection } from "@/components/EditProfile/SuperpowersSection"
+import ProfilePictureUpload from "@/components/ProfilePictureUpload"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/contexts/AuthContext"
@@ -147,10 +148,15 @@ const ProfileSnapshot = () => {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
+  // Handle profile picture update
+  const handleProfilePictureUpdate = (imageUrl: string) => {
+    handleInputChange("profilePicture", imageUrl)
+  }
+
   if (isLoading) {
     return (
       <DashboardLayout steps={initialSteps} currentStep={3}>
-        <div className="max-w-6xl mx-auto space-y-6 p-6">
+        <div className="max-w-7xl mx-auto space-y-6 p-6">
           <div className="text-center">Loading profile...</div>
         </div>
       </DashboardLayout>
@@ -161,7 +167,7 @@ const ProfileSnapshot = () => {
     console.error("Profile query error:", error)
     return (
       <DashboardLayout steps={initialSteps} currentStep={3}>
-        <div className="max-w-6xl mx-auto space-y-6 p-6">
+        <div className="max-w-7xl mx-auto space-y-6 p-6">
           <div className="text-center text-red-600">
             <p>Error loading profile. Please try again.</p>
             <p className="text-sm mt-2">Error: {error.message}</p>
@@ -175,7 +181,7 @@ const ProfileSnapshot = () => {
   if (!profileData || !formData.name) {
     return (
       <DashboardLayout steps={initialSteps} currentStep={3}>
-        <div className="max-w-6xl mx-auto space-y-6 p-6">
+        <div className="max-w-7xl mx-auto space-y-6 p-6">
           <div className="text-center">
             <p>No profile data found.</p>
             <p className="text-sm text-gray-600 mt-2">
@@ -195,7 +201,7 @@ const ProfileSnapshot = () => {
 
   return (
     <DashboardLayout steps={initialSteps} currentStep={3}>
-      <div ref={mainContentRef} className="max-w-6xl mx-auto space-y-6 p-6">
+      <div ref={mainContentRef} className="max-w-7xl mx-auto space-y-6 p-6">
         {/* Main Layout - Two Column */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Profile Info */}
@@ -203,12 +209,12 @@ const ProfileSnapshot = () => {
             {/* Profile Image and Basic Info */}
             <div className="text-center">
               <div className="relative mb-4 inline-block">
-                <Avatar className="h-32 w-32 shadow-lg border-4 border-white">
-                  <AvatarImage src={formData?.profilePicture} />
-                  <AvatarFallback className="text-2xl bg-[#449889] text-white">
-                    {getUserInitials(formData?.name)}
-                  </AvatarFallback>
-                </Avatar>
+                <ProfilePictureUpload
+                  currentImage={formData?.profilePicture}
+                  userName={formData?.name || "User"}
+                  onImageUpdate={handleProfilePictureUpdate}
+                  size="lg"
+                />
               </div>
 
               <div className="space-y-2">
@@ -259,9 +265,9 @@ const ProfileSnapshot = () => {
               addLabel="Add Area"
             />
 
-            {/* Industries */}
+            {/* Industry Experience */}
             <EditableArraySection
-              title="Industries"
+              title="Industry Experience"
               items={formData.industries || []}
               isEditing={editStates.industries}
               onEditToggle={() => toggleEdit("industries")}
@@ -270,17 +276,17 @@ const ProfileSnapshot = () => {
               addLabel="Add Industry"
             />
 
-            {/* Geographical Coverage */}
+            {/* Countries Worked In */}
             <EditableArraySection
-              title="Geographical Coverage"
+              title="Countries Worked In"
               items={formData.geographical_coverage || []}
               isEditing={editStates.geographicalCoverage}
               onEditToggle={() => toggleEdit("geographicalCoverage")}
               onChange={(newArr) =>
                 handleInputChange("geographical_coverage", newArr)
               }
-              placeholder="Region"
-              addLabel="Add Region"
+              placeholder="Country"
+              addLabel="Add Country"
             />
 
             {/* Stage */}
@@ -316,19 +322,6 @@ const ProfileSnapshot = () => {
               onChange={(newArr) => handleInputChange("certifications", newArr)}
               placeholder="Certification"
               addLabel="Add Certification"
-            />
-
-            {/* Engagement Options */}
-            <EditableArraySection
-              title="Engagement Options"
-              items={formData.engagement_options || []}
-              isEditing={editStates.engagementOptions}
-              onEditToggle={() => toggleEdit("engagementOptions")}
-              onChange={(newArr) =>
-                handleInputChange("engagement_options", newArr)
-              }
-              placeholder="Engagement option"
-              addLabel="Add Option"
             />
           </div>
 

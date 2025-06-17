@@ -12,12 +12,16 @@ interface ProfilePictureUploadProps {
   currentImage?: string;
   userName: string;
   onImageUpdate: (imageUrl: string) => void;
+  className?: string;
+  size?: 'sm' | 'md' | 'lg';
 }
 
 const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
   currentImage,
   userName,
-  onImageUpdate
+  onImageUpdate,
+  className = "",
+  size = 'lg'
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -32,6 +36,18 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
   const imgRef = useRef<HTMLImageElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  const sizeClasses = {
+    sm: 'h-16 w-16',
+    md: 'h-32 w-32',
+    lg: 'h-48 w-48'
+  };
+
+  const textSizeClasses = {
+    sm: 'text-lg',
+    md: 'text-2xl',
+    lg: 'text-4xl'
+  };
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -115,10 +131,10 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
 
   return (
     <>
-      <div className="relative group">
-        <Avatar className="h-48 w-48 border-4 border-white shadow-lg">
+      <div className={`relative group ${className}`}>
+        <Avatar className={`${sizeClasses[size]} border-4 border-white shadow-lg`}>
           <AvatarImage src={currentImage} alt={userName} />
-          <AvatarFallback className="text-4xl bg-teal-100 text-teal-700">
+          <AvatarFallback className={`${textSizeClasses[size]} bg-[#449889] text-white`}>
             {initials}
           </AvatarFallback>
         </Avatar>
@@ -132,7 +148,7 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
             className="text-white hover:text-white hover:bg-white/20"
           >
             <Camera className="h-6 w-6 mr-2" />
-            Change Photo
+            {size === 'sm' ? 'Edit' : 'Change Photo'}
           </Button>
         </div>
       </div>
@@ -182,7 +198,7 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
               <X className="h-4 w-4 mr-2" />
               Cancel
             </Button>
-            <Button onClick={handleSave} className="bg-teal-600 hover:bg-teal-700">
+            <Button onClick={handleSave} className="bg-[#449889] hover:bg-[#3a7a6d]">
               <Save className="h-4 w-4 mr-2" />
               Save Photo
             </Button>
