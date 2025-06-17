@@ -1,7 +1,9 @@
+
 import AvailabilitySection from "@/components/job-matching/AvailabilitySection"
 import CompensationSection from "@/components/job-matching/CompensationSection"
 import LocationSection from "@/components/job-matching/LocationSection"
 import IndustryPreferences from "./IndustryPreferences"
+import React from "react"
 
 interface FullTimePreferencesProps {
   rateRange: number[]
@@ -40,6 +42,22 @@ export const FullTimePreferences = ({
   workEligibility,
   setWorkEligibility,
 }: FullTimePreferencesProps) => {
+  // Add missing state variables needed by AvailabilitySection
+  const [endDate, setEndDate] = React.useState("")
+  const [selectedDays, setSelectedDays] = React.useState({
+    mon: true,
+    tue: true,
+    wed: true,
+    thu: true,
+    fri: true,
+    sat: false,
+    sun: false,
+  })
+  const [timePreference, setTimePreference] = React.useState("business-hours")
+
+  const availabilityTypes = { fullTime: true, fractional: false }
+  const setAvailabilityTypes = () => {} // Not used in this context
+
   return (
     <div className="bg-background/80 rounded-lg p-4 space-y-6">
       {/* Full-time position only shows annual salary option */}
@@ -52,7 +70,16 @@ export const FullTimePreferences = ({
       />
 
       <AvailabilitySection
-        availabilityTypes={{ fullTime: true, fractional: false }}
+        availabilityTypes={availabilityTypes}
+        setAvailabilityTypes={setAvailabilityTypes}
+        startDate={startDate}
+        setStartDate={setStartDate}
+        endDate={endDate}
+        setEndDate={setEndDate}
+        selectedDays={selectedDays}
+        setSelectedDays={setSelectedDays}
+        timePreference={timePreference}
+        setTimePreference={setTimePreference}
         timezone={timezone}
         setTimezone={setTimezone}
       />

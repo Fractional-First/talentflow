@@ -1,3 +1,4 @@
+
 import AvailabilitySection from "@/components/job-matching/AvailabilitySection"
 import CompensationSection from "@/components/job-matching/CompensationSection"
 import LocationSection from "@/components/job-matching/LocationSection"
@@ -29,6 +30,8 @@ export const FlexiblePreferences = ({
   setRateRange,
   paymentType,
   setPaymentType,
+  startDate,
+  setStartDate,
   timezone,
   setTimezone,
   remotePreference,
@@ -42,6 +45,22 @@ export const FlexiblePreferences = ({
   workEligibility,
   setWorkEligibility,
 }: FlexiblePreferencesProps) => {
+  // Add missing state variables needed by AvailabilitySection
+  const [endDate, setEndDate] = React.useState("")
+  const [selectedDays, setSelectedDays] = React.useState({
+    mon: true,
+    tue: true,
+    wed: true,
+    thu: true,
+    fri: true,
+    sat: false,
+    sun: false,
+  })
+  const [timePreference, setTimePreference] = React.useState("business-hours")
+
+  const availabilityTypes = { fullTime: false, fractional: true }
+  const setAvailabilityTypes = () => {} // Not used in this context
+
   return (
     <div className="bg-background/80 rounded-lg p-4 space-y-6">
       {/* Flexible position only shows hourly and daily rate options */}
@@ -54,7 +73,16 @@ export const FlexiblePreferences = ({
       />
 
       <AvailabilitySection
-        availabilityTypes={{ fullTime: false, fractional: true }}
+        availabilityTypes={availabilityTypes}
+        setAvailabilityTypes={setAvailabilityTypes}
+        startDate={startDate}
+        setStartDate={setStartDate}
+        endDate={endDate}
+        setEndDate={setEndDate}
+        selectedDays={selectedDays}
+        setSelectedDays={setSelectedDays}
+        timePreference={timePreference}
+        setTimePreference={setTimePreference}
         timezone={timezone}
         setTimezone={setTimezone}
       />
