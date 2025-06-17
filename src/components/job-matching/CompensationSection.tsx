@@ -1,19 +1,9 @@
-
-import { 
-  DollarSign, 
-  HelpCircle 
-} from 'lucide-react';
+import { DollarSign, HelpCircle } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 interface CompensationSectionProps {
   paymentType: string;
   setPaymentType: (type: string) => void;
@@ -21,7 +11,6 @@ interface CompensationSectionProps {
   setRateRange: (range: number[]) => void;
   showOnly?: 'annual' | 'hourly-daily'; // New prop for conditional rendering
 }
-
 const CompensationSection = ({
   paymentType,
   setPaymentType,
@@ -32,31 +21,27 @@ const CompensationSection = ({
   const formatSalary = (value: number) => {
     return `$${value.toLocaleString()}`;
   };
-
   const handleMinChange = (value: string) => {
     const numValue = parseInt(value.replace(/[^0-9]/g, '')) || 0;
     setRateRange([numValue, rateRange[1]]);
   };
-
   const handleMaxChange = (value: string) => {
     const numValue = parseInt(value.replace(/[^0-9]/g, '')) || 0;
     setRateRange([rateRange[0], numValue]);
   };
-
-  return (
-    <div>
+  return <div>
       <div className="flex items-center gap-2 mb-4">
-        <DollarSign className="h-5 w-5 text-primary" />
+        
         <div>
-          <h3 className="font-medium">Compensation Expectations</h3>
-          <p className="text-sm text-muted-foreground">Set your preferred compensation range</p>
+          
+          
         </div>
       </div>
       
       {/* Display either only annual, or only hourly and daily based on showOnly prop */}
-      {showOnly === 'annual' ? (
-        // Annual salary only option for full-time positions
-        <div className="mb-6">
+      {showOnly === 'annual' ?
+    // Annual salary only option for full-time positions
+    <div className="mb-6">
           <div className="bg-muted/30 rounded-md p-2 mb-4">
             <span className="text-sm font-medium">Annual Cash Compensation (including base and incentives)</span>
           </div>
@@ -81,34 +66,19 @@ const CompensationSection = ({
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="min-annual" className="text-sm font-medium">Minimum (USD)</Label>
-                <Input
-                  id="min-annual"
-                  type="text"
-                  value={formatSalary(rateRange[0])}
-                  onChange={(e) => handleMinChange(e.target.value)}
-                  placeholder="$75,000"
-                  className="mt-1"
-                />
+                <Input id="min-annual" type="text" value={formatSalary(rateRange[0])} onChange={e => handleMinChange(e.target.value)} placeholder="$75,000" className="mt-1" />
               </div>
               <div>
                 <Label htmlFor="max-annual" className="text-sm font-medium">Maximum (USD)</Label>
-                <Input
-                  id="max-annual"
-                  type="text"
-                  value={formatSalary(rateRange[1])}
-                  onChange={(e) => handleMaxChange(e.target.value)}
-                  placeholder="$100,000"
-                  className="mt-1"
-                />
+                <Input id="max-annual" type="text" value={formatSalary(rateRange[1])} onChange={e => handleMaxChange(e.target.value)} placeholder="$100,000" className="mt-1" />
               </div>
             </div>
             
             <p className="text-xs text-muted-foreground mt-2">Range from {formatSalary(rateRange[0])} to {formatSalary(rateRange[1])}</p>
           </div>
-        </div>
-      ) : showOnly === 'hourly-daily' ? (
-        // Hourly and daily rate options only for flexible positions
-        <Tabs defaultValue={paymentType} onValueChange={setPaymentType} className="mb-6">
+        </div> : showOnly === 'hourly-daily' ?
+    // Hourly and daily rate options only for flexible positions
+    <Tabs defaultValue={paymentType} onValueChange={setPaymentType} className="mb-6">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="hourly">Hourly Rate</TabsTrigger>
             <TabsTrigger value="daily">Daily Rate</TabsTrigger>
@@ -135,25 +105,11 @@ const CompensationSection = ({
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="min-hourly" className="text-sm font-medium">Minimum (USD)</Label>
-                  <Input
-                    id="min-hourly"
-                    type="text"
-                    value={`$${rateRange[0]}`}
-                    onChange={(e) => handleMinChange(e.target.value)}
-                    placeholder="$75"
-                    className="mt-1"
-                  />
+                  <Input id="min-hourly" type="text" value={`$${rateRange[0]}`} onChange={e => handleMinChange(e.target.value)} placeholder="$75" className="mt-1" />
                 </div>
                 <div>
                   <Label htmlFor="max-hourly" className="text-sm font-medium">Maximum (USD)</Label>
-                  <Input
-                    id="max-hourly"
-                    type="text"
-                    value={`$${rateRange[1]}`}
-                    onChange={(e) => handleMaxChange(e.target.value)}
-                    placeholder="$150"
-                    className="mt-1"
-                  />
+                  <Input id="max-hourly" type="text" value={`$${rateRange[1]}`} onChange={e => handleMaxChange(e.target.value)} placeholder="$150" className="mt-1" />
                 </div>
               </div>
               
@@ -182,35 +138,20 @@ const CompensationSection = ({
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="min-daily" className="text-sm font-medium">Minimum (USD)</Label>
-                  <Input
-                    id="min-daily"
-                    type="text"
-                    value={`$${rateRange[0]}`}
-                    onChange={(e) => handleMinChange(e.target.value)}
-                    placeholder="$500"
-                    className="mt-1"
-                  />
+                  <Input id="min-daily" type="text" value={`$${rateRange[0]}`} onChange={e => handleMinChange(e.target.value)} placeholder="$500" className="mt-1" />
                 </div>
                 <div>
                   <Label htmlFor="max-daily" className="text-sm font-medium">Maximum (USD)</Label>
-                  <Input
-                    id="max-daily"
-                    type="text"
-                    value={`$${rateRange[1]}`}
-                    onChange={(e) => handleMaxChange(e.target.value)}
-                    placeholder="$1,000"
-                    className="mt-1"
-                  />
+                  <Input id="max-daily" type="text" value={`$${rateRange[1]}`} onChange={e => handleMaxChange(e.target.value)} placeholder="$1,000" className="mt-1" />
                 </div>
               </div>
               
               <p className="text-xs text-muted-foreground mt-2">Range from $${rateRange[0]} to $${rateRange[1]} per day</p>
             </div>
           </TabsContent>
-        </Tabs>
-      ) : (
-        // Default case - show all options (original functionality)
-        <Tabs defaultValue="annual" onValueChange={setPaymentType} className="mb-6">
+        </Tabs> :
+    // Default case - show all options (original functionality)
+    <Tabs defaultValue="annual" onValueChange={setPaymentType} className="mb-6">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="annual">Annual Cash Compensation</TabsTrigger>
             <TabsTrigger value="daily">Daily Rate</TabsTrigger>
@@ -238,25 +179,11 @@ const CompensationSection = ({
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="min-annual-default" className="text-sm font-medium">Minimum (USD)</Label>
-                  <Input
-                    id="min-annual-default"
-                    type="text"
-                    value={formatSalary(rateRange[0])}
-                    onChange={(e) => handleMinChange(e.target.value)}
-                    placeholder="$75,000"
-                    className="mt-1"
-                  />
+                  <Input id="min-annual-default" type="text" value={formatSalary(rateRange[0])} onChange={e => handleMinChange(e.target.value)} placeholder="$75,000" className="mt-1" />
                 </div>
                 <div>
                   <Label htmlFor="max-annual-default" className="text-sm font-medium">Maximum (USD)</Label>
-                  <Input
-                    id="max-annual-default"
-                    type="text"
-                    value={formatSalary(rateRange[1])}
-                    onChange={(e) => handleMaxChange(e.target.value)}
-                    placeholder="$100,000"
-                    className="mt-1"
-                  />
+                  <Input id="max-annual-default" type="text" value={formatSalary(rateRange[1])} onChange={e => handleMaxChange(e.target.value)} placeholder="$100,000" className="mt-1" />
                 </div>
               </div>
               
@@ -285,25 +212,11 @@ const CompensationSection = ({
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="min-daily-default" className="text-sm font-medium">Minimum (USD)</Label>
-                  <Input
-                    id="min-daily-default"
-                    type="text"
-                    value={`$${rateRange[0]}`}
-                    onChange={(e) => handleMinChange(e.target.value)}
-                    placeholder="$500"
-                    className="mt-1"
-                  />
+                  <Input id="min-daily-default" type="text" value={`$${rateRange[0]}`} onChange={e => handleMinChange(e.target.value)} placeholder="$500" className="mt-1" />
                 </div>
                 <div>
                   <Label htmlFor="max-daily-default" className="text-sm font-medium">Maximum (USD)</Label>
-                  <Input
-                    id="max-daily-default"
-                    type="text"
-                    value={`$${rateRange[1]}`}
-                    onChange={(e) => handleMaxChange(e.target.value)}
-                    placeholder="$1,000"
-                    className="mt-1"
-                  />
+                  <Input id="max-daily-default" type="text" value={`$${rateRange[1]}`} onChange={e => handleMaxChange(e.target.value)} placeholder="$1,000" className="mt-1" />
                 </div>
               </div>
               
@@ -332,35 +245,18 @@ const CompensationSection = ({
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="min-hourly-default" className="text-sm font-medium">Minimum (USD)</Label>
-                  <Input
-                    id="min-hourly-default"
-                    type="text"
-                    value={`$${rateRange[0]}`}
-                    onChange={(e) => handleMinChange(e.target.value)}
-                    placeholder="$75"
-                    className="mt-1"
-                  />
+                  <Input id="min-hourly-default" type="text" value={`$${rateRange[0]}`} onChange={e => handleMinChange(e.target.value)} placeholder="$75" className="mt-1" />
                 </div>
                 <div>
                   <Label htmlFor="max-hourly-default" className="text-sm font-medium">Maximum (USD)</Label>
-                  <Input
-                    id="max-hourly-default"
-                    type="text"
-                    value={`$${rateRange[1]}`}
-                    onChange={(e) => handleMaxChange(e.target.value)}
-                    placeholder="$150"
-                    className="mt-1"
-                  />
+                  <Input id="max-hourly-default" type="text" value={`$${rateRange[1]}`} onChange={e => handleMaxChange(e.target.value)} placeholder="$150" className="mt-1" />
                 </div>
               </div>
               
               <p className="text-xs text-muted-foreground mt-2">Range from $${rateRange[0]} to $${rateRange[1]} per hour</p>
             </div>
           </TabsContent>
-        </Tabs>
-      )}
-    </div>
-  );
+        </Tabs>}
+    </div>;
 };
-
 export default CompensationSection;
