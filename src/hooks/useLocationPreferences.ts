@@ -61,6 +61,10 @@ export const useLocationPreferences = () => {
       locationData: LocationData
       preferenceType: 'current' | 'preferred_work' 
     }) => {
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('User not authenticated')
+
       // First, upsert the location
       const { data: location, error: locationError } = await supabase
         .from('locations')
@@ -87,6 +91,7 @@ export const useLocationPreferences = () => {
       const { data: preference, error: preferenceError } = await supabase
         .from('user_location_preferences')
         .upsert({
+          user_id: user.id,
           location_id: location.id,
           preference_type: preferenceType
         }, {
