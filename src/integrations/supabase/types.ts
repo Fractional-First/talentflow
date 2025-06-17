@@ -60,6 +60,247 @@ export type Database = {
         }
         Relationships: []
       }
+      fractional_industry_preferences: {
+        Row: {
+          created_at: string
+          id: string
+          industry_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          industry_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          industry_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fractional_industry_preferences_industry_id_fkey"
+            columns: ["industry_id"]
+            isOneToOne: false
+            referencedRelation: "industries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fractional_industry_preferences_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fractional_location_preferences: {
+        Row: {
+          created_at: string
+          id: string
+          location_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          location_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          location_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fractional_location_preferences_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fractional_location_preferences_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fractional_preferences: {
+        Row: {
+          created_at: string
+          id: string
+          max_daily_rate: number | null
+          max_hourly_rate: number | null
+          max_hours_per_week: number | null
+          min_daily_rate: number | null
+          min_hourly_rate: number | null
+          min_hours_per_week: number | null
+          payment_type: string | null
+          remote_ok: boolean | null
+          start_date: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          max_daily_rate?: number | null
+          max_hourly_rate?: number | null
+          max_hours_per_week?: number | null
+          min_daily_rate?: number | null
+          min_hourly_rate?: number | null
+          min_hours_per_week?: number | null
+          payment_type?: string | null
+          remote_ok?: boolean | null
+          start_date?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          max_daily_rate?: number | null
+          max_hourly_rate?: number | null
+          max_hours_per_week?: number | null
+          min_daily_rate?: number | null
+          min_hourly_rate?: number | null
+          min_hours_per_week?: number | null
+          payment_type?: string | null
+          remote_ok?: boolean | null
+          start_date?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fractional_preferences_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      full_time_industry_preferences: {
+        Row: {
+          created_at: string
+          id: string
+          industry_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          industry_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          industry_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "full_time_industry_preferences_industry_id_fkey"
+            columns: ["industry_id"]
+            isOneToOne: false
+            referencedRelation: "industries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "full_time_industry_preferences_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      full_time_location_preferences: {
+        Row: {
+          created_at: string
+          id: string
+          location_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          location_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          location_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "full_time_location_preferences_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "full_time_location_preferences_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      full_time_preferences: {
+        Row: {
+          created_at: string
+          id: string
+          max_salary: number | null
+          min_salary: number | null
+          remote_ok: boolean | null
+          start_date: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          max_salary?: number | null
+          min_salary?: number | null
+          remote_ok?: boolean | null
+          start_date?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          max_salary?: number | null
+          min_salary?: number | null
+          remote_ok?: boolean | null
+          start_date?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "full_time_preferences_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       industries: {
         Row: {
           created_at: string
@@ -285,6 +526,91 @@ export type Database = {
             foreignKeyName: "user_location_preferences_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_work_eligibility: {
+        Row: {
+          country_code: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          country_code: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          country_code?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_work_eligibility_country_code_fkey"
+            columns: ["country_code"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["alpha2_code"]
+          },
+          {
+            foreignKeyName: "user_work_eligibility_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      work_preferences: {
+        Row: {
+          created_at: string
+          current_location_id: string | null
+          id: string
+          timezone_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_location_id?: string | null
+          id?: string
+          timezone_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_location_id?: string | null
+          id?: string
+          timezone_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "work_preferences_current_location_id_fkey"
+            columns: ["current_location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "work_preferences_timezone_id_fkey"
+            columns: ["timezone_id"]
+            isOneToOne: false
+            referencedRelation: "timezones"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "work_preferences_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
