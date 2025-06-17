@@ -1,8 +1,9 @@
+
 import React, { useState, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
-import { Edit, Plus, X } from "lucide-react"
+import { Edit, Plus, X, User, Lightbulb, Settings } from "lucide-react"
 import clsx from "clsx"
 import type { Superpower } from "@/types/profile"
 
@@ -12,6 +13,22 @@ interface SuperpowersSectionProps {
   onEditToggle: () => void
   onSuperpowersChange: (superpowers: Superpower[]) => void
   className?: string
+}
+
+// Helper function to get icon based on title
+const getSuperpowerIcon = (title: string) => {
+  const lowerTitle = title.toLowerCase()
+  
+  if (lowerTitle.includes('problem') || lowerTitle.includes('solving') || lowerTitle.includes('human')) {
+    return User
+  } else if (lowerTitle.includes('design') || lowerTitle.includes('product') || lowerTitle.includes('inclusive')) {
+    return Lightbulb
+  } else if (lowerTitle.includes('system') || lowerTitle.includes('thinking') || lowerTitle.includes('architect')) {
+    return Settings
+  }
+  
+  // Default icon
+  return Lightbulb
 }
 
 export const SuperpowersSection: React.FC<SuperpowersSectionProps> = ({
@@ -28,7 +45,6 @@ export const SuperpowersSection: React.FC<SuperpowersSectionProps> = ({
     setLocalSuperpowers(superpowers || [])
   }, [superpowers])
 
-  // Debounce superpowers changes
   useEffect(() => {
     if (!isEditing) return
     const timeout = setTimeout(() => {
@@ -77,50 +93,60 @@ export const SuperpowersSection: React.FC<SuperpowersSectionProps> = ({
       <div className="p-4">
         <div className="space-y-4">
           {localSuperpowers && localSuperpowers.length > 0 ? (
-            localSuperpowers.map((superpower, index) => (
-              <div key={index} className="space-y-2">
-                {isEditing ? (
-                  <div className="space-y-2">
-                    <div className="flex gap-2 items-center">
-                      <Input
-                        value={superpower.title}
+            localSuperpowers.map((superpower, index) => {
+              const IconComponent = getSuperpowerIcon(superpower.title)
+              return (
+                <div key={index} className="space-y-2">
+                  {isEditing ? (
+                    <div className="space-y-2">
+                      <div className="flex gap-2 items-center">
+                        <Input
+                          value={superpower.title}
+                          onChange={(e) =>
+                            handleTitleChange(index, e.target.value)
+                          }
+                          className="font-medium"
+                          placeholder="Superpower title"
+                        />
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRemoveSuperpower(index)}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      <Textarea
+                        value={superpower.description}
                         onChange={(e) =>
-                          handleTitleChange(index, e.target.value)
+                          handleDescriptionChange(index, e.target.value)
                         }
-                        className="font-medium"
-                        placeholder="Superpower title"
+                        className="text-sm"
+                        placeholder="Superpower description"
+                        rows={3}
                       />
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleRemoveSuperpower(index)}
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
                     </div>
-                    <Textarea
-                      value={superpower.description}
-                      onChange={(e) =>
-                        handleDescriptionChange(index, e.target.value)
-                      }
-                      className="text-sm"
-                      placeholder="Superpower description"
-                      rows={3}
-                    />
-                  </div>
-                ) : (
-                  <div>
-                    <div className="font-medium text-gray-900">
-                      {superpower.title}
+                  ) : (
+                    <div className="flex flex-col sm:flex-row sm:items-start gap-3">
+                      <div className="flex-shrink-0 flex justify-center sm:justify-start">
+                        <div className="w-12 h-12 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center shadow-sm">
+                          <IconComponent className="h-6 w-6 text-teal-600" />
+                        </div>
+                      </div>
+                      <div className="flex-1 text-center sm:text-left">
+                        <div className="font-medium text-gray-900 mb-1">
+                          {superpower.title}
+                        </div>
+                        <p className="text-sm text-gray-700">
+                          {superpower.description}
+                        </p>
+                      </div>
                     </div>
-                    <p className="text-sm text-gray-700">
-                      {superpower.description}
-                    </p>
-                  </div>
-                )}
-              </div>
-            ))
+                  )}
+                </div>
+              )
+            })
           ) : (
             <div className="text-sm text-gray-700">
               Superpowers not available

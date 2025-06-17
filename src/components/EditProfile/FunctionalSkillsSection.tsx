@@ -225,13 +225,16 @@ export const FunctionalSkillsSection: React.FC<
                               />
                             </div>
                           ) : (
-                            <div>
-                              <div className="font-medium text-gray-900">
-                                {skill.title}
+                            <div className="flex">
+                              <span className="text-sm text-gray-700 mr-2 flex-shrink-0 mt-0.5">•</span>
+                              <div className="flex-1">
+                                <span className="text-sm text-gray-700">
+                                  <span className="text-sm text-gray-700">{skill.title}</span>
+                                  {skill.description && (
+                                    <>: {skill.description}</>
+                                  )}
+                                </span>
                               </div>
-                              <p className="text-sm text-gray-700">
-                                {skill.description}
-                              </p>
                             </div>
                           )}
                         </div>

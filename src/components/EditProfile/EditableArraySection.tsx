@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -113,8 +114,11 @@ export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
               ? items
               : [placeholder || "Not available"]
             ).map((item, index) => (
-              <li key={index} className="text-sm text-gray-700">
-                • {item}
+              <li key={index} className="flex">
+                <span className="text-sm text-gray-700 mr-2 flex-shrink-0 mt-0.5">•</span>
+                <span className="text-sm text-gray-700 flex-1" style={{ textIndent: '0', paddingLeft: '0' }}>
+                  {item}
+                </span>
               </li>
             ))}
           </ul>
