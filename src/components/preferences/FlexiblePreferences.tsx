@@ -46,6 +46,10 @@ export const FlexiblePreferences = ({
   workEligibility,
   setWorkEligibility,
 }: FlexiblePreferencesProps) => {
+  // Separate rate ranges for different compensation types
+  const [hourlyRange, setHourlyRange] = React.useState([75, 150])
+  const [dailyRange, setDailyRange] = React.useState([500, 1000])
+
   // Add missing state variables needed by AvailabilitySection
   const [endDate, setEndDate] = React.useState("")
   const [selectedDays, setSelectedDays] = React.useState({
@@ -62,14 +66,38 @@ export const FlexiblePreferences = ({
   const availabilityTypes = { fullTime: false, fractional: true }
   const setAvailabilityTypes = () => {} // Not used in this context
 
+  // Get the appropriate range based on payment type
+  const getCurrentRange = () => {
+    switch (paymentType) {
+      case "hourly":
+        return hourlyRange
+      case "daily":
+        return dailyRange
+      default:
+        return hourlyRange
+    }
+  }
+
+  // Set the appropriate range based on payment type
+  const setCurrentRange = (range: number[]) => {
+    switch (paymentType) {
+      case "hourly":
+        setHourlyRange(range)
+        break
+      case "daily":
+        setDailyRange(range)
+        break
+    }
+  }
+
   return (
     <div className="bg-background/80 rounded-lg p-4 space-y-6">
       {/* Flexible position only shows hourly and daily rate options */}
       <CompensationSection
         paymentType={paymentType === "annual" ? "hourly" : paymentType}
         setPaymentType={setPaymentType}
-        rateRange={rateRange}
-        setRateRange={setRateRange}
+        rateRange={getCurrentRange()}
+        setRateRange={setCurrentRange}
         showOnly="hourly-daily"
       />
 

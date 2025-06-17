@@ -42,6 +42,9 @@ export const FullTimePreferences = ({
   workEligibility,
   setWorkEligibility,
 }: FullTimePreferencesProps) => {
+  // Separate state for annual salary range with appropriate default values
+  const [annualRange, setAnnualRange] = React.useState([75000, 150000])
+
   // Add missing state variables needed by AvailabilitySection
   const [endDate, setEndDate] = React.useState("")
   const [selectedDays, setSelectedDays] = React.useState({
@@ -64,8 +67,8 @@ export const FullTimePreferences = ({
       <CompensationSection
         paymentType="annual"
         setPaymentType={() => {}} // Lock to annual
-        rateRange={rateRange}
-        setRateRange={setRateRange}
+        rateRange={annualRange}
+        setRateRange={setAnnualRange}
         showOnly="annual"
       />
 
