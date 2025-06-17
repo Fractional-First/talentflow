@@ -4,6 +4,8 @@ import AvailabilitySection from "@/components/job-matching/AvailabilitySection"
 import CompensationSection from "@/components/job-matching/CompensationSection"
 import LocationSection from "@/components/job-matching/LocationSection"
 import IndustryPreferences from "./IndustryPreferences"
+import { Card, CardContent } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
 
 interface FlexiblePreferencesProps {
   rateRange: number[]
@@ -91,50 +93,97 @@ export const FlexiblePreferences = ({
   }
 
   return (
-    <div className="bg-background/80 rounded-lg p-4 space-y-6">
-      {/* Flexible position only shows hourly and daily rate options */}
-      <CompensationSection
-        paymentType={paymentType === "annual" ? "hourly" : paymentType}
-        setPaymentType={setPaymentType}
-        rateRange={getCurrentRange()}
-        setRateRange={setCurrentRange}
-        showOnly="hourly-daily"
-      />
+    <div className="space-y-8">
+      {/* Compensation Section */}
+      <Card className="border-0 shadow-soft">
+        <CardContent className="p-8">
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold text-foreground mb-2">
+              Compensation Expectations
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              Set your preferred hourly or daily rates for flexible positions
+            </p>
+          </div>
+          <CompensationSection
+            paymentType={paymentType === "annual" ? "hourly" : paymentType}
+            setPaymentType={setPaymentType}
+            rateRange={getCurrentRange()}
+            setRateRange={setCurrentRange}
+            showOnly="hourly-daily"
+          />
+        </CardContent>
+      </Card>
 
-      <AvailabilitySection
-        availabilityTypes={availabilityTypes}
-        setAvailabilityTypes={setAvailabilityTypes}
-        startDate={startDate}
-        setStartDate={setStartDate}
-        endDate={endDate}
-        setEndDate={setEndDate}
-        selectedDays={selectedDays}
-        setSelectedDays={setSelectedDays}
-        timePreference={timePreference}
-        setTimePreference={setTimePreference}
-        timezone={timezone}
-        setTimezone={setTimezone}
-      />
+      {/* Availability Section */}
+      <Card className="border-0 shadow-soft">
+        <CardContent className="p-8">
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold text-foreground mb-2">
+              Availability & Schedule
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              Define your availability preferences and working hours for flexible work
+            </p>
+          </div>
+          <AvailabilitySection
+            availabilityTypes={availabilityTypes}
+            setAvailabilityTypes={setAvailabilityTypes}
+            startDate={startDate}
+            setStartDate={setStartDate}
+            endDate={endDate}
+            setEndDate={setEndDate}
+            selectedDays={selectedDays}
+            setSelectedDays={setSelectedDays}
+            timePreference={timePreference}
+            setTimePreference={setTimePreference}
+            timezone={timezone}
+            setTimezone={setTimezone}
+          />
+        </CardContent>
+      </Card>
 
-      {/* Location Section */}
-      <div className="py-4">
-        <LocationSection
-          currentLocation={currentLocation}
-          setCurrentLocation={setCurrentLocation}
-          workEligibility={workEligibility}
-          setWorkEligibility={setWorkEligibility}
-          locationPreferences={locationPreferences}
-          setLocationPreferences={setLocationPreferences}
-          remotePreference={remotePreference}
-          setRemotePreference={setRemotePreference}
-        />
-      </div>
+      {/* Location Preferences Section */}
+      <Card className="border-0 shadow-soft">
+        <CardContent className="p-8">
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold text-foreground mb-2">
+              Location & Remote Work
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              Specify your location preferences and remote work options
+            </p>
+          </div>
+          <LocationSection
+            currentLocation={currentLocation}
+            setCurrentLocation={setCurrentLocation}
+            workEligibility={workEligibility}
+            setWorkEligibility={setWorkEligibility}
+            locationPreferences={locationPreferences}
+            setLocationPreferences={setLocationPreferences}
+            remotePreference={remotePreference}
+            setRemotePreference={setRemotePreference}
+          />
+        </CardContent>
+      </Card>
 
-      {/* Industry Preferences */}
-      <IndustryPreferences
-        value={industryPreferences}
-        onChange={setIndustryPreferences}
-      />
+      {/* Industry Preferences Section */}
+      <Card className="border-0 shadow-soft">
+        <CardContent className="p-8">
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold text-foreground mb-2">
+              Industry Preferences
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              Select the industries where you'd like to find opportunities
+            </p>
+          </div>
+          <IndustryPreferences
+            value={industryPreferences}
+            onChange={setIndustryPreferences}
+          />
+        </CardContent>
+      </Card>
     </div>
   )
 }
