@@ -2,6 +2,7 @@
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Input } from '@/components/ui/input';
+import { Calendar } from 'lucide-react';
 import React from 'react';
 import TimezoneSelector from './TimezoneSelector';
 
@@ -64,14 +65,17 @@ const AvailabilitySection = ({
             <Label htmlFor="start-date" className="text-sm font-medium mb-2 block">
               Preferred Start Date
             </Label>
-            <Input
-              id="start-date"
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="w-full max-w-xs"
-              placeholder="Select start date"
-            />
+            <div className="relative">
+              <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                id="start-date"
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="pl-10 max-w-md"
+                placeholder="Select start date"
+              />
+            </div>
           </div>
 
           <div>
@@ -111,14 +115,17 @@ const AvailabilitySection = ({
             <Label htmlFor="start-date-fractional" className="text-sm font-medium mb-2 block">
               Preferred Start Date
             </Label>
-            <Input
-              id="start-date-fractional"
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="w-full max-w-xs"
-              placeholder="Select start date"
-            />
+            <div className="relative">
+              <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                id="start-date-fractional"
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="pl-10 max-w-md"
+                placeholder="Select start date"
+              />
+            </div>
           </div>
           
           <div>
