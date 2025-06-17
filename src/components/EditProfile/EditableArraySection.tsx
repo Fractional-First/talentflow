@@ -1,138 +1,180 @@
-import { Button } from "@/components/ui/button"
+import React, { useState, useEffect } from "react"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Edit, Plus, X } from "lucide-react"
 import clsx from "clsx"
-import React from "react"
 
 interface EditableArraySectionProps {
   title: string
   items: string[]
-  onChange: (items: string[]) => void
   isEditing: boolean
   onEditToggle: () => void
+  onChange: (newArr: string[]) => void
   placeholder?: string
   addLabel?: string
-  badgeClassName?: string
-  inputClassName?: string
+  displayType?: "default" | "bullets"
   className?: string
-  displayType?: "badges" | "bullets"
+  headerClassName?: string
+  bgColorClass?: string
+  textColorClass?: string
 }
 
 export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
   title,
   items,
-  onChange,
   isEditing,
   onEditToggle,
-  placeholder = "",
+  onChange,
+  placeholder = "Item",
   addLabel = "Add Item",
-  badgeClassName = "",
-  inputClassName = "",
+  displayType = "default",
   className = "",
-  displayType = "badges",
+  headerClassName = "",
+  bgColorClass = "",
+  textColorClass = "",
 }) => {
-  const handleItemChange = (index: number, value: string) => {
-    const newItems = [...items]
+  const [localItems, setLocalItems] = useState<string[]>([])
+
+  useEffect(() => {
+    setLocalItems(items || [])
+  }, [items])
+
+  useEffect(() => {
+    if (!isEditing) {
+      onChange(localItems)
+    }
+  }, [localItems, isEditing, onChange])
+
+  const handleChange = (index: number, value: string) => {
+    const newItems = [...localItems]
     newItems[index] = value
-    onChange(newItems)
+    setLocalItems(newItems)
   }
 
   const handleAdd = () => {
-    onChange([...(items || []), ""])
+    setLocalItems([...localItems, ""])
   }
 
   const handleRemove = (index: number) => {
-    const newItems = items.filter((_, i) => i !== index)
-    onChange(newItems)
+    const newItems = [...localItems]
+    newItems.splice(index, 1)
+    setLocalItems(newItems)
   }
 
   return (
     <div className={clsx("bg-white rounded-lg border", className)}>
-      <div className="flex items-center justify-between p-4 pb-2">
-        <h3 className="text-lg font-semibold">{title}</h3>
+      <div
+        className={clsx(
+          "flex items-center justify-between p-4 rounded-t-lg",
+          bgColorClass || "bg-gray-50",
+          headerClassName
+        )}
+      >
+        <h3
+          className={clsx(
+            "text-base font-semibold",
+            textColorClass || "text-gray-900"
+          )}
+        >
+          {title}
+        </h3>
         <Button
           variant="ghost"
           size="sm"
           onClick={onEditToggle}
-          className="hover:bg-gray-100"
+          className={clsx(
+            "hover:bg-white/20",
+            textColorClass || "text-gray-600"
+          )}
         >
           <Edit className="h-4 w-4" />
         </Button>
       </div>
       <div className="p-4">
-        {isEditing ? (
+        {localItems.length > 0 ? (
           <div className="space-y-2">
-            <div className="flex flex-wrap gap-2">
-              {(items || []).map((item, index) => (
-                <div key={index} className="flex items-center gap-1 w-full">
-                  {displayType === "bullets" ? (
-                    <Textarea
-                      value={item}
-                      onChange={(e) => handleItemChange(index, e.target.value)}
-                      className={clsx(
-                        "text-sm min-h-[40px] w-full",
-                        inputClassName
-                      )}
-                      placeholder={placeholder}
-                      rows={2}
-                    />
-                  ) : (
-                    <Input
-                      value={item}
-                      onChange={(e) => handleItemChange(index, e.target.value)}
-                      className={clsx("text-xs h-8 w-32", inputClassName)}
-                      placeholder={placeholder}
-                    />
-                  )}
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleRemove(index)}
-                    className="h-6 w-6 p-0"
-                  >
-                    <X className="h-3 w-3" />
-                  </Button>
-                </div>
-              ))}
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleAdd}
-              className="mt-2"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              {addLabel}
-            </Button>
+            {displayType === "bullets" ? (
+              <ul className="space-y-2">
+                {localItems.map((item, index) => (
+                  <li key={index} className="flex items-start gap-2">
+                    {isEditing ? (
+                      <div className="flex gap-2 items-center w-full">
+                        <Input
+                          value={item}
+                          onChange={(e) => handleChange(index, e.target.value)}
+                          placeholder={placeholder}
+                          className="flex-1"
+                        />
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRemove(index)}
+                          className="text-red-500 hover:text-red-700 flex-shrink-0"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <>
+                        <span className="text-gray-600 mt-1 flex-shrink-0">•</span>
+                        <span className="text-sm text-gray-700 leading-relaxed">
+                          {item}
+                        </span>
+                      </>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="space-y-2">
+                {localItems.map((item, index) => (
+                  <div key={index}>
+                    {isEditing ? (
+                      <div className="flex gap-2 items-center">
+                        <Input
+                          value={item}
+                          onChange={(e) => handleChange(index, e.target.value)}
+                          placeholder={placeholder}
+                          className="flex-1"
+                        />
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRemove(index)}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="flex items-start gap-2">
+                        <span className="text-gray-600 mt-1 flex-shrink-0">•</span>
+                        <span className="text-sm text-gray-700 leading-relaxed">
+                          {item}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-        ) : displayType === "bullets" ? (
-          <ul className="space-y-1">
-            {(items && items.length > 0
-              ? items
-              : [placeholder || "Not available"]
-            ).map((item, index) => (
-              <li key={index} className="text-sm text-gray-700">
-                • {item}
-              </li>
-            ))}
-          </ul>
         ) : (
-          <div className="flex flex-wrap gap-2">
-            {(items && items.length > 0
-              ? items
-              : [placeholder || "Not available"]
-            ).map((item, index) => (
-              <Badge
-                key={index}
-                variant="secondary"
-                className={clsx("text-xs", badgeClassName)}
-              >
-                {item}
-              </Badge>
-            ))}
+          <div className="text-sm text-gray-700">
+            {placeholder} not available
           </div>
+        )}
+
+        {isEditing && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleAdd}
+            className="w-full mt-4"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            {addLabel}
+          </Button>
         )}
       </div>
     </div>

@@ -323,19 +323,6 @@ const ProfileSnapshot = () => {
               placeholder="Certification"
               addLabel="Add Certification"
             />
-
-            {/* Engagement Options */}
-            <EditableArraySection
-              title="Engagement Options"
-              items={formData.engagement_options || []}
-              isEditing={editStates.engagementOptions}
-              onEditToggle={() => toggleEdit("engagementOptions")}
-              onChange={(newArr) =>
-                handleInputChange("engagement_options", newArr)
-              }
-              placeholder="Engagement option"
-              addLabel="Add Option"
-            />
           </div>
 
           {/* Right Column - Main Content */}
