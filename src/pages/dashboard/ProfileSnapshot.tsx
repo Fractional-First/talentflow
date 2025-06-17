@@ -1,4 +1,3 @@
-
 import { initialSteps } from "@/components/dashboard/OnboardingSteps"
 import { DashboardLayout } from "@/components/DashboardLayout"
 import { BasicInfoSection } from "@/components/EditProfile/BasicInfoSection"
@@ -266,9 +265,9 @@ const ProfileSnapshot = () => {
               addLabel="Add Area"
             />
 
-            {/* Industries */}
+            {/* Industry Experience */}
             <EditableArraySection
-              title="Industries"
+              title="Industry Experience"
               items={formData.industries || []}
               isEditing={editStates.industries}
               onEditToggle={() => toggleEdit("industries")}
@@ -277,17 +276,17 @@ const ProfileSnapshot = () => {
               addLabel="Add Industry"
             />
 
-            {/* Geographical Coverage */}
+            {/* Countries Worked In */}
             <EditableArraySection
-              title="Geographical Coverage"
+              title="Countries Worked In"
               items={formData.geographical_coverage || []}
               isEditing={editStates.geographicalCoverage}
               onEditToggle={() => toggleEdit("geographicalCoverage")}
               onChange={(newArr) =>
                 handleInputChange("geographical_coverage", newArr)
               }
-              placeholder="Region"
-              addLabel="Add Region"
+              placeholder="Country"
+              addLabel="Add Country"
             />
 
             {/* Stage */}
