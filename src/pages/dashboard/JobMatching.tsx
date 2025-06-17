@@ -31,7 +31,7 @@ const JobMatching = () => {
   const [rateRange, setRateRange] = useState([75000, 100000])
   const [paymentType, setPaymentType] = useState("annual")
   const [remotePreference, setRemotePreference] = useState(true)
-  const [currentLocation, setCurrentLocation] = useState("New York, USA")
+  const [currentLocation, setCurrentLocation] = useState("")
   const [startDate, setStartDate] = useState("")
   const [timezone, setTimezone] = useState("Eastern Standard Time")
   const [locationPreferences, setLocationPreferences] = useState<string[]>([])
@@ -251,7 +251,7 @@ const JobMatching = () => {
                   disabled={!hasSelection || isSubmitting}
                   className="w-full"
                 >
-                  {isSubmitting ? 'Submitting...' : 'Complete Setup'} 
+                  {isSubmitting ? "Submitting..." : "Complete Setup"}
                 </Button>
               </div>
             </div>
