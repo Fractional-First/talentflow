@@ -50,19 +50,14 @@ export const FullTimePreferences = ({
       {/* Location Section */}
       <div className="py-4">
         <LocationSection
-          currentLocation={form.current_location_id || ""}
+          form={form}
+          setForm={setForm}
+          type="fullTime"
           currentLocationObj={form.currentLocationObj}
           setCurrentLocation={setCurrentLocation}
           workEligibility={form.work_eligibility || []}
           setWorkEligibility={(codes) =>
             setForm((prev) => ({ ...prev, work_eligibility: codes }))
-          }
-          locationPreferences={locations}
-          setLocationPreferences={(locs) =>
-            setForm((prev) => ({
-              ...prev,
-              fullTime: { ...prev.fullTime, locations: locs },
-            }))
           }
           remotePreference={form.fullTime.remote_ok || false}
           setRemotePreference={(val) =>

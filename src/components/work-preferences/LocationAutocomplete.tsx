@@ -3,7 +3,7 @@ import { useGooglePlaces } from "../../queries/useGooglePlaces"
 import { Input } from "@/components/ui/input"
 
 // Google Place type (simplified)
-type GooglePlace = {
+export type GooglePlace = {
   place_id: string
   name: string
   formatted_address?: string
@@ -43,6 +43,7 @@ const LocationInputWithPopover: React.FC<LocationInputWithPopoverProps> = ({
   placeholder = "Enter location...",
 }) => {
   const [showPopover, setShowPopover] = useState(false)
+  const [inputValue, setInputValue] = useState("")
   const {
     placePredictions,
     getPlacePredictions,
@@ -50,9 +51,20 @@ const LocationInputWithPopover: React.FC<LocationInputWithPopoverProps> = ({
     placesService,
   } = useGooglePlaces()
 
+  // Update input value when value prop changes
+  useEffect(() => {
+    if (typeof value === "string") {
+      setInputValue(value)
+    } else if (value) {
+      setInputValue(value.formatted_address || value.name || "")
+    } else {
+      setInputValue("")
+    }
+  }, [value])
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value
-    onChange(newValue)
+    setInputValue(newValue)
     if (newValue.trim()) {
       getPlacePredictions({ input: newValue })
       setShowPopover(true)
@@ -88,22 +100,18 @@ const LocationInputWithPopover: React.FC<LocationInputWithPopoverProps> = ({
             place_types: placeDetails.types,
           }
           onChange(locationObj)
+          setInputValue("") // Clear the input after selection
         }
         setShowPopover(false)
       }
     )
   }
 
-  const displayValue =
-    typeof value === "string"
-      ? value
-      : value?.formatted_address || value?.name || ""
-
   return (
     <div style={{ position: "relative" }}>
       <Input
         type="text"
-        value={displayValue}
+        value={inputValue}
         onChange={handleInputChange}
         placeholder={placeholder}
       />

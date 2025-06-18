@@ -1,35 +1,76 @@
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
+import { Badge } from "@/components/ui/badge"
 import { useCountries } from "@/queries/useCountries"
-import { Badge, MapPin } from "lucide-react"
+import { MapPin, X } from "lucide-react"
 import React from "react"
 import Select from "react-select"
-import LocationInputWithPopover from "./LocationAutocomplete"
+import LocationInputWithPopover, { GooglePlace } from "./LocationAutocomplete"
+import { CombinedWorkPreferencesForm } from "@/hooks/useWorkPreferences"
 
 interface LocationSectionProps {
-  currentLocation: string | object | null
-  currentLocationObj?: any
-  setCurrentLocation: (location: string | object) => void
+  form: CombinedWorkPreferencesForm
+  setForm: (
+    updater: (prev: CombinedWorkPreferencesForm) => CombinedWorkPreferencesForm
+  ) => void
+  currentLocationObj: any | null
+  setCurrentLocation: (location: string | { place_id: string } | null) => void
+  type: "fullTime" | "fractional"
   workEligibility: string[]
   setWorkEligibility: (eligibility: string[]) => void
-  locationPreferences: string[]
-  setLocationPreferences: (preferences: string[]) => void
   remotePreference: boolean
   setRemotePreference: (preference: boolean) => void
 }
 
-const LocationSection = ({
-  currentLocation,
+export function LocationSection({
+  form,
+  setForm,
   currentLocationObj,
   setCurrentLocation,
+  type,
   workEligibility,
   setWorkEligibility,
-  locationPreferences,
-  setLocationPreferences,
   remotePreference,
   setRemotePreference,
-}: LocationSectionProps) => {
+}: LocationSectionProps) {
+  const locationPreferences =
+    type === "fullTime" ? form.fullTime.locations : form.fractional.locations
+
   const { data: countries = [], isLoading } = useCountries()
+
+  const handleAddPreferredLocation = (location: string | GooglePlace) => {
+    if (typeof location === "string") return
+    if (
+      !locationPreferences.some((loc) => loc.place_id === location.place_id)
+    ) {
+      setForm((prev) => ({
+        ...prev,
+        [type]: {
+          ...prev[type],
+          locations: [...locationPreferences, location],
+        },
+      }))
+    }
+  }
+
+  const handleRemovePreferredLocation = (placeId: string) => {
+    setForm((prev) => ({
+      ...prev,
+      [type]: {
+        ...prev[type],
+        locations: locationPreferences.filter(
+          (loc) => loc.place_id !== placeId
+        ),
+      },
+    }))
+  }
+
+  const getLocationName = (locationId: string) => {
+    const location = locationPreferences.find(
+      (loc) => loc.place_id === locationId
+    )
+    return location?.name || locationId
+  }
 
   return (
     <div>
@@ -44,11 +85,11 @@ const LocationSection = ({
       </div>
       <div className="space-y-4 px-4">
         <div>
-          <label className="text-sm mb-2 block">Current Location</label>
+          <h3 className="text-sm font-medium mb-2">Current Location</h3>
           <LocationInputWithPopover
-            value={currentLocationObj || currentLocation || ""}
+            value={currentLocationObj}
             onChange={setCurrentLocation}
-            placeholder={"Search for your current location..."}
+            placeholder="Enter your current location"
           />
         </div>
 
@@ -104,22 +145,31 @@ const LocationSection = ({
           </div>
         </div>
 
-        <div className="py-2">
-          <div className="flex items-center justify-between mb-2">
-            <Label className="text-sm">Preferred Work Locations</Label>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {/* {preferredWorkLocations.map((location) => (
-              <Badge key={location.id} variant="outline">
-                {location.name}
+        <div>
+          <h3 className="text-sm font-medium mb-2">Preferred Work Locations</h3>
+          <LocationInputWithPopover
+            value={null}
+            onChange={handleAddPreferredLocation}
+            placeholder="Add preferred work locations"
+          />
+          <div className="flex flex-wrap gap-2 mt-2">
+            {locationPreferences.map((location) => (
+              <Badge
+                key={location.place_id}
+                variant="secondary"
+                className="flex items-center gap-1"
+              >
+                {location.name || location.formatted_address}
                 <button
-                  className="ml-1 text-muted-foreground hover:text-foreground"
-                  onClick={() => handleRemovePreferredLocation(location.name)}
+                  onClick={() =>
+                    handleRemovePreferredLocation(location.place_id)
+                  }
+                  className="ml-1 hover:text-destructive"
                 >
-                  ×
+                  <X className="h-3 w-3" />
                 </button>
               </Badge>
-            ))} */}
+            ))}
           </div>
         </div>
       </div>

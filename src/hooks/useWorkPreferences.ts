@@ -3,6 +3,8 @@ import { useFractionalPreferences } from "@/queries/useFractionalPreferences"
 import { useLocationPreferences } from "@/queries/useLocationPreferences"
 import { useWorkPreferences as useWorkPrefsQuery } from "@/queries/useWorkPreferences"
 import { useEffect, useState } from "react"
+import type { GooglePlace } from "@/components/work-preferences/LocationAutocomplete"
+import { supabase } from "@/integrations/supabase/client"
 
 export interface CombinedWorkPreferencesForm {
   // Full-time
@@ -11,7 +13,7 @@ export interface CombinedWorkPreferencesForm {
     max_salary: number | null
     remote_ok: boolean | null
     start_date: string | null
-    locations: string[]
+    locations: GooglePlace[]
     industries: string[]
   }
   // Fractional
@@ -25,7 +27,7 @@ export interface CombinedWorkPreferencesForm {
     remote_ok: boolean | null
     payment_type: string | null
     start_date: string | null
-    locations: string[]
+    locations: GooglePlace[]
     industries: string[]
   }
   // General
@@ -63,6 +65,20 @@ const defaultForm: CombinedWorkPreferencesForm = {
   work_eligibility: [],
 }
 
+async function fetchLocationDetails(
+  locationIds: string[]
+): Promise<GooglePlace[]> {
+  if (!locationIds.length) return []
+
+  const { data, error } = await supabase
+    .from("locations")
+    .select("*")
+    .in("id", locationIds)
+
+  if (error) throw error
+  return data as GooglePlace[]
+}
+
 export function useWorkPreferences() {
   const fullTime = useFullTimePreferences()
   const fractional = useFractionalPreferences()
@@ -79,53 +95,68 @@ export function useWorkPreferences() {
     work.isLoading
 
   useEffect(() => {
-    if (
-      !isLoading &&
-      !initialized &&
-      (fullTime.fullTimePreferences ||
-        fractional.fractionalPreferences ||
-        work.workPreferences)
-    ) {
-      setForm({
-        fullTime: {
-          min_salary: fullTime.fullTimePreferences?.min_salary ?? null,
-          max_salary: fullTime.fullTimePreferences?.max_salary ?? null,
-          remote_ok: fullTime.fullTimePreferences?.remote_ok ?? null,
-          start_date: fullTime.fullTimePreferences?.start_date ?? null,
-          locations:
-            fullTime.locationPreferences?.map((l) => l.location_id) ?? [],
-          industries:
-            fullTime.industryPreferences?.map((i) => i.industry_id) ?? [],
-        },
-        fractional: {
-          min_hourly_rate:
-            fractional.fractionalPreferences?.min_hourly_rate ?? null,
-          max_hourly_rate:
-            fractional.fractionalPreferences?.max_hourly_rate ?? null,
-          min_daily_rate:
-            fractional.fractionalPreferences?.min_daily_rate ?? null,
-          max_daily_rate:
-            fractional.fractionalPreferences?.max_daily_rate ?? null,
-          min_hours_per_week:
-            fractional.fractionalPreferences?.min_hours_per_week ?? null,
-          max_hours_per_week:
-            fractional.fractionalPreferences?.max_hours_per_week ?? null,
-          remote_ok: fractional.fractionalPreferences?.remote_ok ?? null,
-          payment_type: fractional.fractionalPreferences?.payment_type ?? null,
-          start_date: fractional.fractionalPreferences?.start_date ?? null,
-          locations:
-            fractional.locationPreferences?.map((l) => l.location_id) ?? [],
-          industries:
-            fractional.industryPreferences?.map((i) => i.industry_id) ?? [],
-        },
-        current_location_id: work.workPreferences?.current_location_id ?? null,
-        currentLocationObj: work.workPreferences?.current_location ?? null,
-        timezone_id: work.workPreferences?.timezone_id ?? null,
-        work_eligibility:
-          work.workEligibility?.map((e) => e.country_code) ?? [],
-      })
-      setInitialized(true)
+    async function initializeForm() {
+      if (
+        !isLoading &&
+        !initialized &&
+        (fullTime.fullTimePreferences ||
+          fractional.fractionalPreferences ||
+          work.workPreferences)
+      ) {
+        // Fetch location details for both full-time and fractional preferences
+        const ftLocationIds =
+          fullTime.locationPreferences?.map((lp) => lp.location_id) || []
+        const fracLocationIds =
+          fractional.locationPreferences?.map((lp) => lp.location_id) || []
+
+        const [ftLocations, fracLocations] = await Promise.all([
+          fetchLocationDetails(ftLocationIds),
+          fetchLocationDetails(fracLocationIds),
+        ])
+
+        setForm({
+          fullTime: {
+            min_salary: fullTime.fullTimePreferences?.min_salary ?? null,
+            max_salary: fullTime.fullTimePreferences?.max_salary ?? null,
+            remote_ok: fullTime.fullTimePreferences?.remote_ok ?? null,
+            start_date: fullTime.fullTimePreferences?.start_date ?? null,
+            locations: ftLocations,
+            industries:
+              fullTime.industryPreferences?.map((i) => i.industry_id) ?? [],
+          },
+          fractional: {
+            min_hourly_rate:
+              fractional.fractionalPreferences?.min_hourly_rate ?? null,
+            max_hourly_rate:
+              fractional.fractionalPreferences?.max_hourly_rate ?? null,
+            min_daily_rate:
+              fractional.fractionalPreferences?.min_daily_rate ?? null,
+            max_daily_rate:
+              fractional.fractionalPreferences?.max_daily_rate ?? null,
+            min_hours_per_week:
+              fractional.fractionalPreferences?.min_hours_per_week ?? null,
+            max_hours_per_week:
+              fractional.fractionalPreferences?.max_hours_per_week ?? null,
+            remote_ok: fractional.fractionalPreferences?.remote_ok ?? null,
+            payment_type:
+              fractional.fractionalPreferences?.payment_type ?? null,
+            start_date: fractional.fractionalPreferences?.start_date ?? null,
+            locations: fracLocations,
+            industries:
+              fractional.industryPreferences?.map((i) => i.industry_id) ?? [],
+          },
+          current_location_id:
+            work.workPreferences?.current_location_id ?? null,
+          currentLocationObj: work.workPreferences?.current_location ?? null,
+          timezone_id: work.workPreferences?.timezone_id ?? null,
+          work_eligibility:
+            work.workEligibility?.map((e) => e.country_code) ?? [],
+        })
+        setInitialized(true)
+      }
     }
+
+    initializeForm()
   }, [isLoading, initialized, fullTime, fractional, locations, work])
 
   // Helper to update both current_location_id and currentLocationObj

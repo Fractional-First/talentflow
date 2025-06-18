@@ -89,19 +89,14 @@ export const FlexiblePreferences = ({
       {/* Location Section */}
       <div className="py-4">
         <LocationSection
-          currentLocation={form.current_location_id || ""}
+          form={form}
+          setForm={setForm}
+          type="fractional"
           currentLocationObj={form.currentLocationObj}
           setCurrentLocation={setCurrentLocation}
           workEligibility={form.work_eligibility || []}
           setWorkEligibility={(codes) =>
             setForm((prev) => ({ ...prev, work_eligibility: codes }))
-          }
-          locationPreferences={locations}
-          setLocationPreferences={(locs) =>
-            setForm((prev) => ({
-              ...prev,
-              fractional: { ...prev.fractional, locations: locs },
-            }))
           }
           remotePreference={form.fractional.remote_ok || false}
           setRemotePreference={(val) =>

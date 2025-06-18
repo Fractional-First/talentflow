@@ -5,24 +5,12 @@ import { CombinedWorkPreferencesForm } from "./useWorkPreferences"
 import { useState } from "react"
 import { supabase } from "@/integrations/supabase/client"
 import { useQueryClient } from "@tanstack/react-query"
+import type { GooglePlace } from "@/components/work-preferences/LocationAutocomplete"
 
 function diffIds(current: string[], desired: string[]) {
   const toAdd = desired.filter((id) => !current.includes(id))
   const toRemove = current.filter((id) => !desired.includes(id))
   return { toAdd, toRemove }
-}
-
-// Google Place type (simplified)
-type GooglePlace = {
-  place_id: string
-  name: string
-  formatted_address?: string
-  city?: string
-  state_province?: string
-  country_code?: string
-  latitude?: number
-  longitude?: number
-  place_types?: string[]
 }
 
 async function upsertLocationAndGetId(place: GooglePlace): Promise<string> {
@@ -90,6 +78,7 @@ export function useSaveWorkPreferences() {
       } else {
         current_location_id = null
       }
+
       // Save full-time preferences
       await fullTime.updateFullTimePreferences({
         min_salary: form.fullTime.min_salary,
@@ -97,6 +86,7 @@ export function useSaveWorkPreferences() {
         remote_ok: form.fullTime.remote_ok,
         start_date: form.fullTime.start_date,
       })
+
       // Save fractional preferences
       await fractional.updateFractionalPreferences({
         min_hourly_rate: form.fractional.min_hourly_rate,
@@ -109,11 +99,13 @@ export function useSaveWorkPreferences() {
         payment_type: form.fractional.payment_type,
         start_date: form.fractional.start_date,
       })
+
       // Save general work preferences
       await work.updateWorkPreferences({
         current_location_id: current_location_id || null,
         timezone_id: form.timezone_id,
       })
+
       // Save work eligibility (countries)
       const currentEligibility = (work.workEligibility || []).map(
         (e) => e.country_code
@@ -126,13 +118,17 @@ export function useSaveWorkPreferences() {
       for (const code of eligibilityToRemove) {
         await work.removeWorkEligibility(code)
       }
+
       // Save full-time locations
       const currentFTLocations = (fullTime.locationPreferences || []).map(
         (lp) => lp.location_id
       )
+      const ftLocationIds = await Promise.all(
+        form.fullTime.locations.map((loc) => upsertLocationAndGetId(loc))
+      )
       const { toAdd: ftLocToAdd, toRemove: ftLocToRemove } = diffIds(
         currentFTLocations,
-        form.fullTime.locations || []
+        ftLocationIds
       )
       for (const id of ftLocToAdd) {
         await fullTime.addLocationPreference(id)
@@ -140,6 +136,25 @@ export function useSaveWorkPreferences() {
       for (const id of ftLocToRemove) {
         await fullTime.removeLocationPreference(id)
       }
+
+      // Save fractional locations
+      const currentFracLocations = (fractional.locationPreferences || []).map(
+        (lp) => lp.location_id
+      )
+      const fracLocationIds = await Promise.all(
+        form.fractional.locations.map((loc) => upsertLocationAndGetId(loc))
+      )
+      const { toAdd: fracLocToAdd, toRemove: fracLocToRemove } = diffIds(
+        currentFracLocations,
+        fracLocationIds
+      )
+      for (const id of fracLocToAdd) {
+        await fractional.addLocationPreference(id)
+      }
+      for (const id of fracLocToRemove) {
+        await fractional.removeLocationPreference(id)
+      }
+
       // Save full-time industries
       const currentFTIndustries = (fullTime.industryPreferences || []).map(
         (ip) => ip.industry_id
@@ -154,20 +169,7 @@ export function useSaveWorkPreferences() {
       for (const id of ftIndToRemove) {
         await fullTime.removeIndustryPreference(id)
       }
-      // Save fractional locations
-      const currentFracLocations = (fractional.locationPreferences || []).map(
-        (lp) => lp.location_id
-      )
-      const { toAdd: fracLocToAdd, toRemove: fracLocToRemove } = diffIds(
-        currentFracLocations,
-        form.fractional.locations || []
-      )
-      for (const id of fracLocToAdd) {
-        await fractional.addLocationPreference(id)
-      }
-      for (const id of fracLocToRemove) {
-        await fractional.removeLocationPreference(id)
-      }
+
       // Save fractional industries
       const currentFracIndustries = (fractional.industryPreferences || []).map(
         (ip) => ip.industry_id
@@ -182,6 +184,7 @@ export function useSaveWorkPreferences() {
       for (const id of fracIndToRemove) {
         await fractional.removeIndustryPreference(id)
       }
+
       setIsSaving(false)
       // Invalidate all relevant queries so UI is always up-to-date
       await Promise.all([
