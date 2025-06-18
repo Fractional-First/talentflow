@@ -85,6 +85,7 @@ export function useSaveWorkPreferences() {
         max_salary: form.fullTime.max_salary,
         remote_ok: form.fullTime.remote_ok,
         start_date: form.fullTime.start_date,
+        open_for_work: form.fullTime.open_for_work,
       })
 
       // Save fractional preferences
@@ -98,6 +99,7 @@ export function useSaveWorkPreferences() {
         remote_ok: form.fractional.remote_ok,
         payment_type: form.fractional.payment_type,
         start_date: form.fractional.start_date,
+        open_for_work: form.fractional.open_for_work,
       })
 
       // Save general work preferences

@@ -10,6 +10,7 @@ interface FullTimePreferences {
   start_date: string | null
   created_at: string
   updated_at: string
+  open_for_work: boolean
 }
 
 interface FullTimeLocationPreference {
@@ -110,6 +111,7 @@ export const useFullTimePreferences = () => {
       max_salary?: number | null
       remote_ok?: boolean | null
       start_date?: string | null
+      open_for_work?: boolean
     }) => {
       const {
         data: { user },

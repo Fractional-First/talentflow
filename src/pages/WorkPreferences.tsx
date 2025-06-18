@@ -29,17 +29,14 @@ const WorkPreferences = () => {
     useWorkPreferences()
   const { save, isSaving, error: saveError } = useSaveWorkPreferences()
 
-  // UI state for placement type selection
-  const [availabilityTypes, setAvailabilityTypes] = useState({
-    fullTime: true,
-    fractional: true,
-  })
-
   // Handle toggling placement types
   const toggleType = (type: "fullTime" | "fractional") => {
-    setAvailabilityTypes((prev) => ({
+    setForm((prev) => ({
       ...prev,
-      [type]: !prev[type],
+      [type]: {
+        ...prev[type],
+        open_for_work: !prev[type].open_for_work,
+      },
     }))
   }
 
@@ -87,7 +84,7 @@ const WorkPreferences = () => {
   }
 
   const hasSelection =
-    availabilityTypes.fullTime || availabilityTypes.fractional
+    form.fullTime.open_for_work || form.fractional.open_for_work
 
   const renderStepContent = () => {
     if (currentStep === "placement-type") {
@@ -109,19 +106,19 @@ const WorkPreferences = () => {
                 <button
                   onClick={() => toggleType("fullTime")}
                   className={`w-full p-6 rounded-lg border-2 transition-all flex items-start ${
-                    availabilityTypes.fullTime
+                    form.fullTime.open_for_work
                       ? "border-primary bg-primary/5 shadow-soft"
                       : "border-border hover:border-primary/50"
                   }`}
                 >
                   <div
                     className={`rounded-full p-2 mr-4 ${
-                      availabilityTypes.fullTime ? "bg-primary/10" : "bg-muted"
+                      form.fullTime.open_for_work ? "bg-primary/10" : "bg-muted"
                     }`}
                   >
                     <Briefcase
                       className={`h-6 w-6 ${
-                        availabilityTypes.fullTime
+                        form.fullTime.open_for_work
                           ? "text-primary"
                           : "text-muted-foreground"
                       }`}
@@ -131,7 +128,7 @@ const WorkPreferences = () => {
                     <div className="flex items-center justify-between">
                       <h4 className="font-medium">Full-time Position</h4>
                       <Checkbox
-                        checked={availabilityTypes.fullTime}
+                        checked={form.fullTime.open_for_work}
                         className="ml-2"
                         onCheckedChange={() => toggleType("fullTime")}
                       />
@@ -145,7 +142,7 @@ const WorkPreferences = () => {
 
                 <div
                   className={`mt-4 ml-8 border-l-2 border-primary/30 pl-4 ${
-                    !availabilityTypes.fullTime ? "hidden" : ""
+                    !form.fullTime.open_for_work ? "hidden" : ""
                   }`}
                 >
                   <div className="pt-2 space-y-6">
@@ -164,21 +161,21 @@ const WorkPreferences = () => {
                 <button
                   onClick={() => toggleType("fractional")}
                   className={`w-full p-6 rounded-lg border-2 transition-all flex items-start ${
-                    availabilityTypes.fractional
+                    form.fractional.open_for_work
                       ? "border-primary bg-primary/5 shadow-soft"
                       : "border-border hover:border-primary/50"
                   }`}
                 >
                   <div
                     className={`rounded-full p-2 mr-4 ${
-                      availabilityTypes.fractional
+                      form.fractional.open_for_work
                         ? "bg-primary/10"
                         : "bg-muted"
                     }`}
                   >
                     <Clock
                       className={`h-6 w-6 ${
-                        availabilityTypes.fractional
+                        form.fractional.open_for_work
                           ? "text-primary"
                           : "text-muted-foreground"
                       }`}
@@ -188,7 +185,7 @@ const WorkPreferences = () => {
                     <div className="flex items-center justify-between">
                       <h4 className="font-medium">Flexible Position</h4>
                       <Checkbox
-                        checked={availabilityTypes.fractional}
+                        checked={form.fractional.open_for_work}
                         className="ml-2"
                         onCheckedChange={() => toggleType("fractional")}
                       />
@@ -202,7 +199,7 @@ const WorkPreferences = () => {
 
                 <div
                   className={`mt-4 ml-8 border-l-2 border-primary/30 pl-4 ${
-                    !availabilityTypes.fractional ? "hidden" : ""
+                    !form.fractional.open_for_work ? "hidden" : ""
                   }`}
                 >
                   <div className="pt-2 space-y-6">

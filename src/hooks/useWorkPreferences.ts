@@ -15,6 +15,7 @@ export interface CombinedWorkPreferencesForm {
     start_date: string | null
     locations: GooglePlace[]
     industries: string[]
+    open_for_work: boolean
   }
   // Fractional
   fractional: {
@@ -29,6 +30,7 @@ export interface CombinedWorkPreferencesForm {
     start_date: string | null
     locations: GooglePlace[]
     industries: string[]
+    open_for_work: boolean
   }
   // General
   current_location_id: string | null // UUID or Google Place ID
@@ -45,6 +47,7 @@ const defaultForm: CombinedWorkPreferencesForm = {
     start_date: null,
     locations: [],
     industries: [],
+    open_for_work: false,
   },
   fractional: {
     min_hourly_rate: null,
@@ -58,6 +61,7 @@ const defaultForm: CombinedWorkPreferencesForm = {
     start_date: null,
     locations: [],
     industries: [],
+    open_for_work: false,
   },
   current_location_id: null,
   currentLocationObj: null,
@@ -123,6 +127,7 @@ export function useWorkPreferences() {
             locations: ftLocations,
             industries:
               fullTime.industryPreferences?.map((i) => i.industry_id) ?? [],
+            open_for_work: fullTime.fullTimePreferences?.open_for_work ?? false,
           },
           fractional: {
             min_hourly_rate:
@@ -144,6 +149,8 @@ export function useWorkPreferences() {
             locations: fracLocations,
             industries:
               fractional.industryPreferences?.map((i) => i.industry_id) ?? [],
+            open_for_work:
+              fractional.fractionalPreferences?.open_for_work ?? false,
           },
           current_location_id:
             work.workPreferences?.current_location_id ?? null,

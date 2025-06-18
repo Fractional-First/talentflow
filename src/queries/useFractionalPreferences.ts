@@ -15,6 +15,7 @@ interface FractionalPreferences {
   start_date: string | null
   created_at: string
   updated_at: string
+  open_for_work: boolean
 }
 
 interface FractionalLocationPreference {
@@ -120,6 +121,7 @@ export const useFractionalPreferences = () => {
       remote_ok?: boolean | null
       payment_type?: string | null
       start_date?: string | null
+      open_for_work?: boolean
     }) => {
       const {
         data: { user },
