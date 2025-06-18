@@ -4,6 +4,7 @@ import { useWorkPreferences as useWorkPrefsQuery } from "@/queries/useWorkPrefer
 import { CombinedWorkPreferencesForm } from "./useWorkPreferences"
 import { useState } from "react"
 import { supabase } from "@/integrations/supabase/client"
+import { useQueryClient } from "@tanstack/react-query"
 
 function diffIds(current: string[], desired: string[]) {
   const toAdd = desired.filter((id) => !current.includes(id))
@@ -69,6 +70,7 @@ export function useSaveWorkPreferences() {
   const work = useWorkPrefsQuery()
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<Error | null>(null)
+  const queryClient = useQueryClient()
 
   const save = async (form: CombinedWorkPreferencesForm) => {
     setIsSaving(true)
@@ -181,6 +183,25 @@ export function useSaveWorkPreferences() {
         await fractional.removeIndustryPreference(id)
       }
       setIsSaving(false)
+      // Invalidate all relevant queries so UI is always up-to-date
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["work-preferences"] }),
+        queryClient.invalidateQueries({ queryKey: ["work-eligibility"] }),
+        queryClient.invalidateQueries({ queryKey: ["full-time-preferences"] }),
+        queryClient.invalidateQueries({
+          queryKey: ["full-time-location-preferences"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["full-time-industry-preferences"],
+        }),
+        queryClient.invalidateQueries({ queryKey: ["fractional-preferences"] }),
+        queryClient.invalidateQueries({
+          queryKey: ["fractional-location-preferences"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["fractional-industry-preferences"],
+        }),
+      ])
       return true
     } catch (err: any) {
       setError(err)

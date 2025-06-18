@@ -27,7 +27,7 @@ export const FlexiblePreferences = ({
         paymentType={
           form.fractional.payment_type === "annual"
             ? "hourly"
-            : (form.fractional.payment_type as "hourly" | "daily") || "hourly"
+            : form.fractional.payment_type || "hourly"
         }
         setPaymentType={(type) =>
           setForm((prev) => ({
@@ -35,17 +35,31 @@ export const FlexiblePreferences = ({
             fractional: { ...prev.fractional, payment_type: type },
           }))
         }
-        rateRange={[
-          form.fractional.min_hourly_rate || 0,
-          form.fractional.max_hourly_rate || 0,
-        ]}
+        rateRange={
+          form.fractional.payment_type === "daily"
+            ? [
+                form.fractional.min_daily_rate || 0,
+                form.fractional.max_daily_rate || 0,
+              ]
+            : [
+                form.fractional.min_hourly_rate || 0,
+                form.fractional.max_hourly_rate || 0,
+              ]
+        }
         setRateRange={([min, max]) =>
           setForm((prev) => ({
             ...prev,
             fractional: {
               ...prev.fractional,
-              min_hourly_rate: min,
-              max_hourly_rate: max,
+              ...(prev.fractional.payment_type === "daily"
+                ? {
+                    min_daily_rate: min,
+                    max_daily_rate: max,
+                  }
+                : {
+                    min_hourly_rate: min,
+                    max_hourly_rate: max,
+                  }),
             },
           }))
         }
