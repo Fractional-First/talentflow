@@ -1,6 +1,5 @@
-
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { supabase } from '@/integrations/supabase/client'
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { supabase } from "@/integrations/supabase/client"
 
 interface FractionalPreferences {
   id: string
@@ -46,51 +45,67 @@ export const useFractionalPreferences = () => {
   const queryClient = useQueryClient()
 
   // Fetch fractional preferences
-  const { data: fractionalPreferences, isLoading: isLoadingPreferences } = useQuery({
-    queryKey: ['fractional-preferences'],
+  const {
+    data: fractionalPreferences,
+    isLoading: isLoadingPreferences,
+    error: errorPreferences,
+  } = useQuery({
+    queryKey: ["fractional-preferences"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('fractional_preferences')
-        .select('*')
+        .from("fractional_preferences")
+        .select("*")
         .maybeSingle()
 
       if (error) throw error
       return data as FractionalPreferences | null
-    }
+    },
   })
 
   // Fetch location preferences
-  const { data: locationPreferences = [], isLoading: isLoadingLocations } = useQuery({
-    queryKey: ['fractional-location-preferences'],
+  const {
+    data: locationPreferences = [],
+    isLoading: isLoadingLocations,
+    error: errorLocations,
+  } = useQuery({
+    queryKey: ["fractional-location-preferences"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('fractional_location_preferences')
-        .select(`
+        .from("fractional_location_preferences")
+        .select(
+          `
           *,
           location:locations(*)
-        `)
-        .order('created_at', { ascending: false })
+        `
+        )
+        .order("created_at", { ascending: false })
 
       if (error) throw error
       return data as FractionalLocationPreference[]
-    }
+    },
   })
 
   // Fetch industry preferences
-  const { data: industryPreferences = [], isLoading: isLoadingIndustries } = useQuery({
-    queryKey: ['fractional-industry-preferences'],
+  const {
+    data: industryPreferences = [],
+    isLoading: isLoadingIndustries,
+    error: errorIndustries,
+  } = useQuery({
+    queryKey: ["fractional-industry-preferences"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('fractional_industry_preferences')
-        .select(`
+        .from("fractional_industry_preferences")
+        .select(
+          `
           *,
           industry:industries(*)
-        `)
-        .order('created_at', { ascending: false })
+        `
+        )
+        .order("created_at", { ascending: false })
 
       if (error) throw error
       return data as FractionalIndustryPreference[]
-    }
+    },
   })
 
   // Update fractional preferences
@@ -106,17 +121,22 @@ export const useFractionalPreferences = () => {
       payment_type?: string | null
       start_date?: string | null
     }) => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('User not authenticated')
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (!user) throw new Error("User not authenticated")
 
       const { data, error } = await supabase
-        .from('fractional_preferences')
-        .upsert({
-          user_id: user.id,
-          ...preferences
-        }, {
-          onConflict: 'user_id'
-        })
+        .from("fractional_preferences")
+        .upsert(
+          {
+            user_id: user.id,
+            ...preferences,
+          },
+          {
+            onConflict: "user_id",
+          }
+        )
         .select()
         .single()
 
@@ -124,21 +144,23 @@ export const useFractionalPreferences = () => {
       return data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['fractional-preferences'] })
-    }
+      queryClient.invalidateQueries({ queryKey: ["fractional-preferences"] })
+    },
   })
 
   // Add location preference
   const addLocationPreferenceMutation = useMutation({
     mutationFn: async (locationId: string) => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('User not authenticated')
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (!user) throw new Error("User not authenticated")
 
       const { data, error } = await supabase
-        .from('fractional_location_preferences')
+        .from("fractional_location_preferences")
         .insert({
           user_id: user.id,
-          location_id: locationId
+          location_id: locationId,
         })
         .select()
         .single()
@@ -147,40 +169,48 @@ export const useFractionalPreferences = () => {
       return data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['fractional-location-preferences'] })
-    }
+      queryClient.invalidateQueries({
+        queryKey: ["fractional-location-preferences"],
+      })
+    },
   })
 
   // Remove location preference
   const removeLocationPreferenceMutation = useMutation({
     mutationFn: async (locationId: string) => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('User not authenticated')
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (!user) throw new Error("User not authenticated")
 
       const { error } = await supabase
-        .from('fractional_location_preferences')
+        .from("fractional_location_preferences")
         .delete()
-        .eq('user_id', user.id)
-        .eq('location_id', locationId)
+        .eq("user_id", user.id)
+        .eq("location_id", locationId)
 
       if (error) throw error
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['fractional-location-preferences'] })
-    }
+      queryClient.invalidateQueries({
+        queryKey: ["fractional-location-preferences"],
+      })
+    },
   })
 
   // Add industry preference
   const addIndustryPreferenceMutation = useMutation({
     mutationFn: async (industryId: string) => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('User not authenticated')
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (!user) throw new Error("User not authenticated")
 
       const { data, error } = await supabase
-        .from('fractional_industry_preferences')
+        .from("fractional_industry_preferences")
         .insert({
           user_id: user.id,
-          industry_id: industryId
+          industry_id: industryId,
         })
         .select()
         .single()
@@ -189,34 +219,44 @@ export const useFractionalPreferences = () => {
       return data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['fractional-industry-preferences'] })
-    }
+      queryClient.invalidateQueries({
+        queryKey: ["fractional-industry-preferences"],
+      })
+    },
   })
 
   // Remove industry preference
   const removeIndustryPreferenceMutation = useMutation({
     mutationFn: async (industryId: string) => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('User not authenticated')
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (!user) throw new Error("User not authenticated")
 
       const { error } = await supabase
-        .from('fractional_industry_preferences')
+        .from("fractional_industry_preferences")
         .delete()
-        .eq('user_id', user.id)
-        .eq('industry_id', industryId)
+        .eq("user_id", user.id)
+        .eq("industry_id", industryId)
 
       if (error) throw error
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['fractional-industry-preferences'] })
-    }
+      queryClient.invalidateQueries({
+        queryKey: ["fractional-industry-preferences"],
+      })
+    },
   })
 
   return {
     fractionalPreferences,
     locationPreferences,
     industryPreferences,
-    isLoading: isLoadingPreferences || isLoadingLocations || isLoadingIndustries,
+    isLoading:
+      isLoadingPreferences || isLoadingLocations || isLoadingIndustries,
+    errorPreferences,
+    errorLocations,
+    errorIndustries,
     updateFractionalPreferences: updateFractionalPreferencesMutation.mutate,
     addLocationPreference: addLocationPreferenceMutation.mutate,
     removeLocationPreference: removeLocationPreferenceMutation.mutate,
@@ -226,6 +266,6 @@ export const useFractionalPreferences = () => {
     isAddingLocation: addLocationPreferenceMutation.isPending,
     isRemovingLocation: removeLocationPreferenceMutation.isPending,
     isAddingIndustry: addIndustryPreferenceMutation.isPending,
-    isRemovingIndustry: removeIndustryPreferenceMutation.isPending
+    isRemovingIndustry: removeIndustryPreferenceMutation.isPending,
   }
 }

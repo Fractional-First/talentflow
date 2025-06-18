@@ -11,51 +11,53 @@ import {
 } from "@/components/StepCard"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Briefcase, Clock, Home } from "lucide-react"
+import { Briefcase, Clock } from "lucide-react"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { Spinner } from "@/components/ui/spinner"
+import { useWorkPreferences } from "@/hooks/useWorkPreferences"
+import { useSaveWorkPreferences } from "@/hooks/useSaveWorkPreferences"
 
 const WorkPreferences = () => {
   const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState<
     "placement-type" | "confirmation"
   >("placement-type")
-  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // Updated placement type state to handle multiple selections
+  // Unified form state
+  const { form, setForm, isLoading, error, setCurrentLocation } =
+    useWorkPreferences()
+  const { save, isSaving, error: saveError } = useSaveWorkPreferences()
+
+  // UI state for placement type selection
   const [availabilityTypes, setAvailabilityTypes] = useState({
-    fullTime: false,
-    fractional: false,
+    fullTime: true,
+    fractional: true,
   })
 
-  const [rateRange, setRateRange] = useState([75000, 100000])
-  const [paymentType, setPaymentType] = useState("annual")
-  const [remotePreference, setRemotePreference] = useState(true)
-  const [currentLocation, setCurrentLocation] = useState("")
-  const [startDate, setStartDate] = useState("")
-  const [timezone, setTimezone] = useState("Eastern Standard Time")
-  const [locationPreferences, setLocationPreferences] = useState<string[]>([])
-  // Updated to store country codes (alpha2) instead of country names
-  const [workEligibility, setWorkEligibility] = useState<string[]>([])
-  // Updated to store industry IDs instead of industry names - starting empty
-  const [industryPreferences, setIndustryPreferences] = useState<string[]>([])
+  // Handle toggling placement types
+  const toggleType = (type: "fullTime" | "fractional") => {
+    setAvailabilityTypes((prev) => ({
+      ...prev,
+      [type]: !prev[type],
+    }))
+  }
 
-  const handleContinue = () => {
-    setIsSubmitting(true)
-    setTimeout(() => {
-      setIsSubmitting(false)
+  // Save/Continue logic
+  const handleContinue = async () => {
+    const success = await save(form)
+    if (success) {
       setCurrentStep("confirmation")
-      // Mark onboarding as complete when reaching confirmation
       localStorage.setItem("onboardingComplete", "true")
-    }, 1000)
+    }
   }
 
   const handleGoToDashboard = () => {
     navigate("/dashboard")
   }
 
+  // Onboarding complete state
   const [onboardingComplete, setOnboardingComplete] = useState(false)
-
   useState(() => {
     const onboardingStatus = localStorage.getItem("onboardingComplete")
     if (onboardingStatus === "true") {
@@ -63,41 +65,32 @@ const WorkPreferences = () => {
     }
   })
 
-  // Handle selection of placement types and update the backward compatibility variable
-  const handleSelectTypes = (types: {
-    fullTime: boolean
-    fractional: boolean
-  }) => {
-    setAvailabilityTypes(types)
+  // Render
+  if (isLoading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Spinner size="lg" />
+        </div>
+      </DashboardLayout>
+    )
   }
+
+  if (error) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center min-h-[60vh] text-red-600">
+          Error loading preferences: {error.message}
+        </div>
+      </DashboardLayout>
+    )
+  }
+
+  const hasSelection =
+    availabilityTypes.fullTime || availabilityTypes.fractional
 
   const renderStepContent = () => {
     if (currentStep === "placement-type") {
-      const toggleType = (type: "fullTime" | "fractional") => {
-        handleSelectTypes({
-          ...availabilityTypes,
-          [type]: !availabilityTypes[type],
-        })
-      }
-
-      const hasSelection =
-        availabilityTypes.fullTime || availabilityTypes.fractional
-
-      // Set appropriate payment type when selecting position type
-      const handleFullTimeToggle = () => {
-        if (!availabilityTypes.fullTime) {
-          setPaymentType("annual") // Force annual salary for full-time
-        }
-        toggleType("fullTime")
-      }
-
-      const handleFlexibleToggle = () => {
-        if (!availabilityTypes.fractional) {
-          setPaymentType("hourly") // Default to hourly for flexible positions
-        }
-        toggleType("fractional")
-      }
-
       return (
         <StepCard>
           <StepCardHeader>
@@ -114,7 +107,7 @@ const WorkPreferences = () => {
               {/* Full-time Position Card */}
               <div className="w-full">
                 <button
-                  onClick={handleFullTimeToggle}
+                  onClick={() => toggleType("fullTime")}
                   className={`w-full p-6 rounded-lg border-2 transition-all flex items-start ${
                     availabilityTypes.fullTime
                       ? "border-primary bg-primary/5 shadow-soft"
@@ -140,7 +133,7 @@ const WorkPreferences = () => {
                       <Checkbox
                         checked={availabilityTypes.fullTime}
                         className="ml-2"
-                        onCheckedChange={handleFullTimeToggle}
+                        onCheckedChange={() => toggleType("fullTime")}
                       />
                     </div>
                     <p className="text-sm text-muted-foreground mt-1">
@@ -150,36 +143,26 @@ const WorkPreferences = () => {
                   </div>
                 </button>
 
-                {availabilityTypes.fullTime && (
-                  <div className="mt-4 ml-8 border-l-2 border-primary/30 pl-4">
-                    <div className="pt-2 space-y-6">
-                      <FullTimePreferences
-                        rateRange={rateRange}
-                        setRateRange={setRateRange}
-                        startDate={startDate}
-                        setStartDate={setStartDate}
-                        timezone={timezone}
-                        setTimezone={setTimezone}
-                        remotePreference={remotePreference}
-                        setRemotePreference={setRemotePreference}
-                        industryPreferences={industryPreferences}
-                        setIndustryPreferences={setIndustryPreferences}
-                        currentLocation={currentLocation}
-                        setCurrentLocation={setCurrentLocation}
-                        locationPreferences={locationPreferences}
-                        setLocationPreferences={setLocationPreferences}
-                        workEligibility={workEligibility}
-                        setWorkEligibility={setWorkEligibility}
-                      />
-                    </div>
+                <div
+                  className={`mt-4 ml-8 border-l-2 border-primary/30 pl-4 ${
+                    !availabilityTypes.fullTime ? "hidden" : ""
+                  }`}
+                >
+                  <div className="pt-2 space-y-6">
+                    <FullTimePreferences
+                      form={form}
+                      setForm={setForm}
+                      currentLocationObj={form.currentLocationObj}
+                      setCurrentLocation={setCurrentLocation}
+                    />
                   </div>
-                )}
+                </div>
               </div>
 
               {/* Flexible Position Card */}
               <div className="w-full">
                 <button
-                  onClick={handleFlexibleToggle}
+                  onClick={() => toggleType("fractional")}
                   className={`w-full p-6 rounded-lg border-2 transition-all flex items-start ${
                     availabilityTypes.fractional
                       ? "border-primary bg-primary/5 shadow-soft"
@@ -207,7 +190,7 @@ const WorkPreferences = () => {
                       <Checkbox
                         checked={availabilityTypes.fractional}
                         className="ml-2"
-                        onCheckedChange={handleFlexibleToggle}
+                        onCheckedChange={() => toggleType("fractional")}
                       />
                     </div>
                     <p className="text-sm text-muted-foreground mt-1">
@@ -217,42 +200,33 @@ const WorkPreferences = () => {
                   </div>
                 </button>
 
-                {availabilityTypes.fractional && (
-                  <div className="mt-4 ml-8 border-l-2 border-primary/30 pl-4">
-                    <div className="pt-2 space-y-6">
-                      <FlexiblePreferences
-                        rateRange={rateRange}
-                        setRateRange={setRateRange}
-                        paymentType={paymentType}
-                        setPaymentType={setPaymentType}
-                        startDate={startDate}
-                        setStartDate={setStartDate}
-                        timezone={timezone}
-                        setTimezone={setTimezone}
-                        remotePreference={remotePreference}
-                        setRemotePreference={setRemotePreference}
-                        industryPreferences={industryPreferences}
-                        setIndustryPreferences={setIndustryPreferences}
-                        currentLocation={currentLocation}
-                        setCurrentLocation={setCurrentLocation}
-                        locationPreferences={locationPreferences}
-                        setLocationPreferences={setLocationPreferences}
-                        workEligibility={workEligibility}
-                        setWorkEligibility={setWorkEligibility}
-                      />
-                    </div>
+                <div
+                  className={`mt-4 ml-8 border-l-2 border-primary/30 pl-4 ${
+                    !availabilityTypes.fractional ? "hidden" : ""
+                  }`}
+                >
+                  <div className="pt-2 space-y-6">
+                    <FlexiblePreferences
+                      form={form}
+                      setForm={setForm}
+                      currentLocationObj={form.currentLocationObj}
+                      setCurrentLocation={setCurrentLocation}
+                    />
                   </div>
-                )}
+                </div>
               </div>
 
               <div className="pt-6">
                 <Button
                   onClick={handleContinue}
-                  disabled={!hasSelection || isSubmitting}
+                  disabled={!hasSelection || isSaving}
                   className="w-full"
                 >
-                  {isSubmitting ? "Saving..." : "Continue"}
+                  {isSaving ? "Saving..." : "Continue"}
                 </Button>
+                {saveError && (
+                  <div className="text-red-600 mt-2">{saveError.message}</div>
+                )}
               </div>
             </div>
           </StepCardContent>

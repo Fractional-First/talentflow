@@ -2,10 +2,39 @@ import React, { useState, useEffect } from "react"
 import { useGooglePlaces } from "../../queries/useGooglePlaces"
 import { Input } from "@/components/ui/input"
 
+// Google Place type (simplified)
+type GooglePlace = {
+  place_id: string
+  name: string
+  formatted_address?: string
+  city?: string
+  state_province?: string
+  country_code?: string
+  latitude?: number
+  longitude?: number
+  place_types?: string[]
+}
+
 interface LocationInputWithPopoverProps {
-  value: string
-  onChange: (value: string) => void
+  value: string | GooglePlace
+  onChange: (value: string | GooglePlace) => void
   placeholder?: string
+}
+
+// Helper functions to extract city, state, country code
+function extractCity(components) {
+  const cityComp = components?.find((c) => c.types.includes("locality"))
+  return cityComp?.long_name || ""
+}
+function extractState(components) {
+  const stateComp = components?.find((c) =>
+    c.types.includes("administrative_area_level_1")
+  )
+  return stateComp?.short_name || ""
+}
+function extractCountryCode(components) {
+  const countryComp = components?.find((c) => c.types.includes("country"))
+  return countryComp?.short_name || ""
 }
 
 const LocationInputWithPopover: React.FC<LocationInputWithPopoverProps> = ({
@@ -13,7 +42,6 @@ const LocationInputWithPopover: React.FC<LocationInputWithPopoverProps> = ({
   onChange,
   placeholder = "Enter location...",
 }) => {
-  const [inputValue, setInputValue] = useState(value)
   const [showPopover, setShowPopover] = useState(false)
   const {
     placePredictions,
@@ -22,13 +50,9 @@ const LocationInputWithPopover: React.FC<LocationInputWithPopoverProps> = ({
     placesService,
   } = useGooglePlaces()
 
-  useEffect(() => {
-    setInputValue(value)
-  }, [value])
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value
-    setInputValue(newValue)
+    onChange(newValue)
     if (newValue.trim()) {
       getPlacePredictions({ input: newValue })
       setShowPopover(true)
@@ -41,23 +65,45 @@ const LocationInputWithPopover: React.FC<LocationInputWithPopoverProps> = ({
     placesService?.getDetails(
       {
         placeId: prediction.place_id,
-        fields: ["formatted_address"],
+        fields: [
+          "place_id",
+          "name",
+          "formatted_address",
+          "address_components",
+          "geometry",
+          "types",
+        ],
       },
       (placeDetails) => {
-        if (placeDetails?.formatted_address) {
-          onChange(placeDetails.formatted_address)
-          setInputValue(placeDetails.formatted_address)
+        if (placeDetails) {
+          const locationObj = {
+            place_id: placeDetails.place_id,
+            name: placeDetails.name || prediction.description,
+            formatted_address: placeDetails.formatted_address,
+            city: extractCity(placeDetails.address_components),
+            state_province: extractState(placeDetails.address_components),
+            country_code: extractCountryCode(placeDetails.address_components),
+            latitude: placeDetails.geometry?.location?.lat(),
+            longitude: placeDetails.geometry?.location?.lng(),
+            place_types: placeDetails.types,
+          }
+          onChange(locationObj)
         }
         setShowPopover(false)
       }
     )
   }
 
+  const displayValue =
+    typeof value === "string"
+      ? value
+      : value?.formatted_address || value?.name || ""
+
   return (
     <div style={{ position: "relative" }}>
       <Input
         type="text"
-        value={inputValue}
+        value={displayValue}
         onChange={handleInputChange}
         placeholder={placeholder}
       />

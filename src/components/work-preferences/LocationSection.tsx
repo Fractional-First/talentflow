@@ -7,23 +7,25 @@ import Select from "react-select"
 import LocationInputWithPopover from "./LocationAutocomplete"
 
 interface LocationSectionProps {
-  currentLocation: string
-  setCurrentLocation: (location: string) => void
+  currentLocation: string | object | null
+  currentLocationObj?: any
+  setCurrentLocation: (location: string | object) => void
   workEligibility: string[]
-  setWorkEligibility: React.Dispatch<React.SetStateAction<string[]>>
+  setWorkEligibility: (eligibility: string[]) => void
   locationPreferences: string[]
-  setLocationPreferences: React.Dispatch<React.SetStateAction<string[]>>
+  setLocationPreferences: (preferences: string[]) => void
   remotePreference: boolean
   setRemotePreference: (preference: boolean) => void
 }
 
 const LocationSection = ({
   currentLocation,
+  currentLocationObj,
   setCurrentLocation,
   workEligibility,
   setWorkEligibility,
-  locationPreferences: legacyLocationPreferences,
-  setLocationPreferences: setLegacyLocationPreferences,
+  locationPreferences,
+  setLocationPreferences,
   remotePreference,
   setRemotePreference,
 }: LocationSectionProps) => {
@@ -44,7 +46,7 @@ const LocationSection = ({
         <div>
           <label className="text-sm mb-2 block">Current Location</label>
           <LocationInputWithPopover
-            value={currentLocation}
+            value={currentLocationObj || currentLocation || ""}
             onChange={setCurrentLocation}
             placeholder={"Search for your current location..."}
           />

@@ -1,6 +1,5 @@
-
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { supabase } from '@/integrations/supabase/client'
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { supabase } from "@/integrations/supabase/client"
 
 interface WorkPreferences {
   id: string
@@ -36,38 +35,50 @@ export const useWorkPreferences = () => {
   const queryClient = useQueryClient()
 
   // Fetch work preferences
-  const { data: workPreferences, isLoading: isLoadingWorkPreferences } = useQuery({
-    queryKey: ['work-preferences'],
+  const {
+    data: workPreferences,
+    isLoading: isLoadingWorkPreferences,
+    error: errorWorkPreferences,
+  } = useQuery({
+    queryKey: ["work-preferences"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('work_preferences')
-        .select(`
+        .from("work_preferences")
+        .select(
+          `
           *,
           current_location:locations(*),
           timezone:timezones(*)
-        `)
+        `
+        )
         .maybeSingle()
 
       if (error) throw error
       return data as WorkPreferences | null
-    }
+    },
   })
 
   // Fetch work eligibility
-  const { data: workEligibility = [], isLoading: isLoadingEligibility } = useQuery({
-    queryKey: ['work-eligibility'],
+  const {
+    data: workEligibility = [],
+    isLoading: isLoadingEligibility,
+    error: errorEligibility,
+  } = useQuery({
+    queryKey: ["work-eligibility"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('user_work_eligibility')
-        .select(`
+        .from("user_work_eligibility")
+        .select(
+          `
           *,
           country:countries(name, alpha2_code)
-        `)
-        .order('created_at', { ascending: false })
+        `
+        )
+        .order("created_at", { ascending: false })
 
       if (error) throw error
       return data as WorkEligibility[]
-    }
+    },
   })
 
   // Update work preferences
@@ -76,17 +87,22 @@ export const useWorkPreferences = () => {
       current_location_id?: string | null
       timezone_id?: string | null
     }) => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('User not authenticated')
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (!user) throw new Error("User not authenticated")
 
       const { data, error } = await supabase
-        .from('work_preferences')
-        .upsert({
-          user_id: user.id,
-          ...preferences
-        }, {
-          onConflict: 'user_id'
-        })
+        .from("work_preferences")
+        .upsert(
+          {
+            user_id: user.id,
+            ...preferences,
+          },
+          {
+            onConflict: "user_id",
+          }
+        )
         .select()
         .single()
 
@@ -94,21 +110,23 @@ export const useWorkPreferences = () => {
       return data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['work-preferences'] })
-    }
+      queryClient.invalidateQueries({ queryKey: ["work-preferences"] })
+    },
   })
 
   // Add work eligibility
   const addWorkEligibilityMutation = useMutation({
     mutationFn: async (countryCode: string) => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('User not authenticated')
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (!user) throw new Error("User not authenticated")
 
       const { data, error } = await supabase
-        .from('user_work_eligibility')
+        .from("user_work_eligibility")
         .insert({
           user_id: user.id,
-          country_code: countryCode
+          country_code: countryCode,
         })
         .select()
         .single()
@@ -117,38 +135,42 @@ export const useWorkPreferences = () => {
       return data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['work-eligibility'] })
-    }
+      queryClient.invalidateQueries({ queryKey: ["work-eligibility"] })
+    },
   })
 
   // Remove work eligibility
   const removeWorkEligibilityMutation = useMutation({
     mutationFn: async (countryCode: string) => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('User not authenticated')
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (!user) throw new Error("User not authenticated")
 
       const { error } = await supabase
-        .from('user_work_eligibility')
+        .from("user_work_eligibility")
         .delete()
-        .eq('user_id', user.id)
-        .eq('country_code', countryCode)
+        .eq("user_id", user.id)
+        .eq("country_code", countryCode)
 
       if (error) throw error
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['work-eligibility'] })
-    }
+      queryClient.invalidateQueries({ queryKey: ["work-eligibility"] })
+    },
   })
 
   return {
     workPreferences,
     workEligibility,
     isLoading: isLoadingWorkPreferences || isLoadingEligibility,
+    errorWorkPreferences,
+    errorEligibility,
     updateWorkPreferences: updateWorkPreferencesMutation.mutate,
     addWorkEligibility: addWorkEligibilityMutation.mutate,
     removeWorkEligibility: removeWorkEligibilityMutation.mutate,
     isUpdating: updateWorkPreferencesMutation.isPending,
     isAddingEligibility: addWorkEligibilityMutation.isPending,
-    isRemovingEligibility: removeWorkEligibilityMutation.isPending
+    isRemovingEligibility: removeWorkEligibilityMutation.isPending,
   }
 }

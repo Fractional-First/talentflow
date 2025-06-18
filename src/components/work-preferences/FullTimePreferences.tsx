@@ -1,80 +1,88 @@
 import AvailabilitySection from "@/components/work-preferences/AvailabilitySection"
 import CompensationSection from "@/components/work-preferences/CompensationSection"
 import LocationSection from "@/components/work-preferences/LocationSection"
+import { CombinedWorkPreferencesForm } from "@/hooks/useWorkPreferences"
 import IndustryPreferences from "./IndustryPreferences"
 
 interface FullTimePreferencesProps {
-  rateRange: number[]
-  setRateRange: (range: number[]) => void
-  startDate: string
-  setStartDate: (date: string) => void
-  timezone: string
-  setTimezone: (zone: string) => void
-  remotePreference: boolean
-  setRemotePreference: (preference: boolean) => void
-  industryPreferences: string[]
-  setIndustryPreferences: React.Dispatch<React.SetStateAction<string[]>>
-  currentLocation: string
-  setCurrentLocation: (location: string) => void
-  locationPreferences: string[]
-  setLocationPreferences: React.Dispatch<React.SetStateAction<string[]>>
-  workEligibility: string[]
-  setWorkEligibility: React.Dispatch<React.SetStateAction<string[]>>
+  form: CombinedWorkPreferencesForm
+  setForm: (
+    updater: (prev: CombinedWorkPreferencesForm) => CombinedWorkPreferencesForm
+  ) => void
+  currentLocationObj?: any
+  setCurrentLocation: (location: string | { place_id: string } | null) => void
 }
 
 export const FullTimePreferences = ({
-  rateRange,
-  setRateRange,
-  startDate,
-  setStartDate,
-  timezone,
-  setTimezone,
-  remotePreference,
-  setRemotePreference,
-  industryPreferences,
-  setIndustryPreferences,
-  currentLocation,
+  form,
+  setForm,
   setCurrentLocation,
-  locationPreferences,
-  setLocationPreferences,
-  workEligibility,
-  setWorkEligibility,
 }: FullTimePreferencesProps) => {
+  const locations = form.fullTime.locations || []
+  const industries = form.fullTime.industries || []
   return (
     <div className="bg-background/80 rounded-lg p-4 space-y-6">
       {/* Full-time position only shows annual salary option */}
       <CompensationSection
         paymentType="annual"
         setPaymentType={() => {}} // Lock to annual
-        rateRange={rateRange}
-        setRateRange={setRateRange}
+        rateRange={[
+          form.fullTime.min_salary || 0,
+          form.fullTime.max_salary || 0,
+        ]}
+        setRateRange={([min, max]) =>
+          setForm((prev) => ({
+            ...prev,
+            fullTime: { ...prev.fullTime, min_salary: min, max_salary: max },
+          }))
+        }
         showOnly="annual"
       />
 
       <AvailabilitySection
         availabilityTypes={{ fullTime: true, fractional: false }}
-        timezone={timezone}
-        setTimezone={setTimezone}
+        timezone={form.timezone_id || ""}
+        setTimezone={(timezoneId) =>
+          setForm((prev) => ({ ...prev, timezone_id: timezoneId }))
+        }
       />
 
       {/* Location Section */}
       <div className="py-4">
         <LocationSection
-          currentLocation={currentLocation}
+          currentLocation={form.current_location_id || ""}
+          currentLocationObj={form.currentLocationObj}
           setCurrentLocation={setCurrentLocation}
-          workEligibility={workEligibility}
-          setWorkEligibility={setWorkEligibility}
-          locationPreferences={locationPreferences}
-          setLocationPreferences={setLocationPreferences}
-          remotePreference={remotePreference}
-          setRemotePreference={setRemotePreference}
+          workEligibility={form.work_eligibility || []}
+          setWorkEligibility={(codes) =>
+            setForm((prev) => ({ ...prev, work_eligibility: codes }))
+          }
+          locationPreferences={locations}
+          setLocationPreferences={(locs) =>
+            setForm((prev) => ({
+              ...prev,
+              fullTime: { ...prev.fullTime, locations: locs },
+            }))
+          }
+          remotePreference={form.fullTime.remote_ok || false}
+          setRemotePreference={(val) =>
+            setForm((prev) => ({
+              ...prev,
+              fullTime: { ...prev.fullTime, remote_ok: val },
+            }))
+          }
         />
       </div>
 
       {/* Industry Preferences */}
       <IndustryPreferences
-        value={industryPreferences}
-        onChange={setIndustryPreferences}
+        value={industries}
+        onChange={(ids) =>
+          setForm((prev) => ({
+            ...prev,
+            fullTime: { ...prev.fullTime, industries: ids },
+          }))
+        }
       />
     </div>
   )
