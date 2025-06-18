@@ -1,4 +1,4 @@
-import { useTimezones } from "@/hooks/useTimezones"
+import { useTimezones } from "@/queries/useTimezones"
 import Select from "react-select"
 
 interface TimezoneSelectorProps {
@@ -14,7 +14,7 @@ const TimezoneSelector = ({
 }: TimezoneSelectorProps) => {
   const { data: timezones = [], isLoading } = useTimezones()
 
-  const options = timezones.map((tz) => ({ value: tz.value, label: tz.text }))
+  const options = timezones.map((tz) => ({ value: tz.id, label: tz.text }))
   const selectedOption =
     options.find((opt) => opt.value === selectedTimezone) || null
 

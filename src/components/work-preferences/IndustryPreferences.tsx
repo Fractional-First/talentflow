@@ -1,4 +1,4 @@
-import { useIndustries } from "@/hooks/useIndustries"
+import { useIndustries } from "@/queries/useIndustries"
 import { Briefcase } from "lucide-react"
 import React from "react"
 import Select from "react-select"

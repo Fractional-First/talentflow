@@ -67,10 +67,7 @@ export function ProfileSummaryCard({
           </div>
         </div>
         <div className="mt-8 flex flex-col items-center">
-          <Button
-            onClick={() => navigate("/dashboard/profile-snapshot")}
-            className="w-full"
-          >
+          <Button onClick={() => navigate("/edit-profile")} className="w-full">
             Edit Profile
             <ArrowRight className="h-4 w-4 ml-2" />
           </Button>

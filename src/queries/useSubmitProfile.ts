@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
-import { N8N_DOCUMENTS_WEBHOOK } from "@/components/profile-creation/types"
+import { N8N_DOCUMENTS_WEBHOOK } from "@/components/create-profile/types"
 
 interface SubmitProfileArgs {
   profile: {

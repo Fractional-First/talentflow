@@ -1,12 +1,11 @@
-
-import { StepCard } from "@/components/StepCard";
-import { Briefcase, MapPin, Clock } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { StepCard } from "@/components/StepCard"
+import { Briefcase, MapPin, Clock } from "lucide-react"
+import { Separator } from "@/components/ui/separator"
+import { Button } from "@/components/ui/button"
+import { useNavigate } from "react-router-dom"
 
 export const JobPreferencesCard = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   return (
     <StepCard>
@@ -18,11 +17,14 @@ export const JobPreferencesCard = () => {
           </div>
         </div>
         <div className="md:w-3/4 p-6">
-          <h3 className="text-lg font-semibold">Preferred Roles & Work Style</h3>
+          <h3 className="text-lg font-semibold">
+            Preferred Roles & Work Style
+          </h3>
           <div className="text-muted-foreground mb-3 text-sm">
             Product Manager, Project Lead, Senior Product Owner
             <br />
-            Configure more details such as compensation, availability, location, and industry preferences by viewing all job matching settings.
+            Configure more details such as compensation, availability, location,
+            and industry preferences by viewing all job matching settings.
           </div>
           <Separator className="my-2" />
           <div className="grid md:grid-cols-2 gap-4">
@@ -38,16 +40,22 @@ export const JobPreferencesCard = () => {
                 <Clock className="h-4 w-4" />
                 Availability
               </div>
-              <div className="text-muted-foreground">Full-time, Immediately</div>
+              <div className="text-muted-foreground">
+                Full-time, Immediately
+              </div>
             </div>
           </div>
           <div className="mt-5">
-            <Button size="sm" variant="outline" onClick={() => navigate("/dashboard/job-matching")}>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => navigate("/work-preferences")}
+            >
               Show More Details
             </Button>
           </div>
         </div>
       </div>
     </StepCard>
-  );
-};
+  )
+}

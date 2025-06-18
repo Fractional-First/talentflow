@@ -1,11 +1,17 @@
-
-import { StepCard } from "@/components/StepCard";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
-import { Briefcase, ArrowRight, MapPin, DollarSign, Building, Clock } from "lucide-react";
+import { StepCard } from "@/components/StepCard"
+import { Button } from "@/components/ui/button"
+import { useNavigate } from "react-router-dom"
+import {
+  Briefcase,
+  ArrowRight,
+  MapPin,
+  DollarSign,
+  Building,
+  Clock,
+} from "lucide-react"
 
 export const JobPreferencesPlaceholder = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   return (
     <StepCard>
@@ -23,33 +29,43 @@ export const JobPreferencesPlaceholder = () => {
         <div className="space-y-4 mb-6">
           <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
             <Briefcase className="h-5 w-5 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">Desired roles and job titles</span>
+            <span className="text-sm text-muted-foreground">
+              Desired roles and job titles
+            </span>
           </div>
-          
+
           <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
             <MapPin className="h-5 w-5 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">Location preferences</span>
+            <span className="text-sm text-muted-foreground">
+              Location preferences
+            </span>
           </div>
-          
+
           <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
             <Building className="h-5 w-5 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">Industry and company size</span>
+            <span className="text-sm text-muted-foreground">
+              Industry and company size
+            </span>
           </div>
-          
+
           <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
             <DollarSign className="h-5 w-5 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">Salary expectations</span>
+            <span className="text-sm text-muted-foreground">
+              Salary expectations
+            </span>
           </div>
-          
+
           <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
             <Clock className="h-5 w-5 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">Work type and availability</span>
+            <span className="text-sm text-muted-foreground">
+              Work type and availability
+            </span>
           </div>
         </div>
 
         <div className="text-center">
-          <Button 
-            onClick={() => navigate('/dashboard/job-matching')}
+          <Button
+            onClick={() => navigate("/work-preferences")}
             className="w-full"
           >
             Get Started
@@ -61,5 +77,5 @@ export const JobPreferencesPlaceholder = () => {
         </div>
       </div>
     </StepCard>
-  );
-};
+  )
+}

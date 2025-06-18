@@ -1,7 +1,7 @@
 import { initialSteps } from "@/components/dashboard/OnboardingSteps"
 import { DashboardLayout } from "@/components/DashboardLayout"
-import { DocumentUploadSection } from "@/components/profile-creation/DocumentUploadSection"
-import { SupportingDocsSection } from "@/components/profile-creation/SupportingDocsSection"
+import { DocumentUploadSection } from "@/components/create-profile/DocumentUploadSection"
+import { SupportingDocsSection } from "@/components/create-profile/SupportingDocsSection"
 import {
   StepCard,
   StepCardContent,
@@ -12,7 +12,7 @@ import {
 } from "@/components/StepCard"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
-import { useDocumentUpload } from "@/hooks/profile-creation/useDocumentUpload"
+import { useDocumentUpload } from "@/queries/useDocumentUpload"
 import { toast } from "@/hooks/use-toast"
 import { useSubmitProfile } from "@/queries/useSubmitProfile"
 import { AlertCircle, ArrowLeft, ArrowRight, Clock } from "lucide-react"
@@ -72,7 +72,7 @@ const ProfileCreation = () => {
             description:
               "Your profile information has been submitted and processed.",
           })
-          navigate("/dashboard/profile-snapshot")
+          navigate("/edit-profile")
         },
         onError: (error) => {
           let errorMessage =
