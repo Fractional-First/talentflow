@@ -194,6 +194,7 @@ export function useWorkPreferences() {
     setForm,
     setCurrentLocation,
     isLoading,
+    initialized,
     error:
       fullTime.errorPreferences ||
       fullTime.errorLocations ||

@@ -25,7 +25,7 @@ const WorkPreferences = () => {
   >("placement-type")
 
   // Unified form state
-  const { form, setForm, isLoading, error, setCurrentLocation } =
+  const { form, setForm, isLoading, error, setCurrentLocation, initialized } =
     useWorkPreferences()
   const { save, isSaving, error: saveError } = useSaveWorkPreferences()
 
@@ -63,7 +63,7 @@ const WorkPreferences = () => {
   })
 
   // Render
-  if (isLoading) {
+  if (isLoading || !initialized) {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
