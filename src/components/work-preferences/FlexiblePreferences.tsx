@@ -72,6 +72,18 @@ export const FlexiblePreferences = ({
         setTimezone={(timezoneId) =>
           setForm((prev) => ({ ...prev, timezone_id: timezoneId }))
         }
+        minHoursPerWeek={form.fractional.min_hours_per_week}
+        maxHoursPerWeek={form.fractional.max_hours_per_week}
+        setHoursPerWeek={(hours) =>
+          setForm((prev) => ({
+            ...prev,
+            fractional: {
+              ...prev.fractional,
+              min_hours_per_week: hours,
+              max_hours_per_week: hours,
+            },
+          }))
+        }
       />
 
       {/* Location Section */}
