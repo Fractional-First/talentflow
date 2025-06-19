@@ -77,6 +77,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             navigate("/edit-profile")
             break
           case "PROFILE_CONFIRMED":
+          case "PREFERENCES_SET":
             navigate("/dashboard")
             break
           default:

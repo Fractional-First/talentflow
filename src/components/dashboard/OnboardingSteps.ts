@@ -45,7 +45,7 @@ export const fullStepsList: Step[] = [
     id: 3,
     name: "Review Profile",
     description: "Review your profile",
-    status: "current",
+    status: "completed",
     estimatedTime: "3-5 minutes",
   },
   {

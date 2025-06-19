@@ -187,6 +187,26 @@ export function useSaveWorkPreferences() {
         await fractional.removeIndustryPreference(id)
       }
 
+      // Update onboarding status to PREFERENCES_SET if this is the first time saving preferences
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("onboarding_status")
+          .eq("id", user.id)
+          .single()
+
+        // Only update if current status is PROFILE_CONFIRMED (meaning preferences haven't been set yet)
+        if (profile?.onboarding_status === "PROFILE_CONFIRMED") {
+          await supabase
+            .from("profiles")
+            .update({ onboarding_status: "PREFERENCES_SET" })
+            .eq("id", user.id)
+        }
+      }
+
       setIsSaving(false)
       // Invalidate all relevant queries so UI is always up-to-date
       await Promise.all([
@@ -205,6 +225,10 @@ export function useSaveWorkPreferences() {
         }),
         queryClient.invalidateQueries({
           queryKey: ["fractional-industry-preferences"],
+        }),
+        queryClient.invalidateQueries({ queryKey: ["profile", user?.id] }),
+        queryClient.invalidateQueries({
+          queryKey: ["profile-snapshot", user?.id],
         }),
       ])
       return true
