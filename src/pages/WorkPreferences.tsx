@@ -45,22 +45,12 @@ const WorkPreferences = () => {
     const success = await save(form)
     if (success) {
       setCurrentStep("confirmation")
-      localStorage.setItem("onboardingComplete", "true")
     }
   }
 
   const handleGoToDashboard = () => {
     navigate("/dashboard")
   }
-
-  // Onboarding complete state
-  const [onboardingComplete, setOnboardingComplete] = useState(false)
-  useState(() => {
-    const onboardingStatus = localStorage.getItem("onboardingComplete")
-    if (onboardingStatus === "true") {
-      setOnboardingComplete(true)
-    }
-  })
 
   // Render
   if (isLoading || !initialized) {

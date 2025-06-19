@@ -74,6 +74,7 @@ export const ProtectedRoute = ({
       case "PROFILE_GENERATED":
         return <Navigate to="/edit-profile" replace />
       case "PROFILE_CONFIRMED":
+      case "PREFERENCES_SET":
         return <Navigate to="/dashboard" replace />
       default:
         return <Navigate to="/create-profile" replace />

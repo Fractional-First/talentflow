@@ -55,6 +55,7 @@ const App = () => (
                     "EMAIL_CONFIRMED",
                     "PROFILE_GENERATED",
                     "PROFILE_CONFIRMED",
+                    "PREFERENCES_SET",
                   ]}
                 >
                   <ProfileCreation />
@@ -67,7 +68,7 @@ const App = () => (
               path="/edit-profile"
               element={
                 <ProtectedRoute
-                  allowedStatuses={["PROFILE_GENERATED", "PROFILE_CONFIRMED"]}
+                  allowedStatuses={["PROFILE_GENERATED", "PROFILE_CONFIRMED", "PREFERENCES_SET"]}
                 >
                   <ProfileSnapshot />
                 </ProtectedRoute>
@@ -78,7 +79,7 @@ const App = () => (
             <Route
               path="/dashboard"
               element={
-                <ProtectedRoute allowedStatuses={["PROFILE_CONFIRMED"]}>
+                <ProtectedRoute allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}>
                   <Dashboard />
                 </ProtectedRoute>
               }
@@ -86,7 +87,7 @@ const App = () => (
             <Route
               path="/dashboard/branding"
               element={
-                <ProtectedRoute allowedStatuses={["PROFILE_CONFIRMED"]}>
+                <ProtectedRoute allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}>
                   <Branding />
                 </ProtectedRoute>
               }
@@ -94,7 +95,7 @@ const App = () => (
             <Route
               path="/work-preferences"
               element={
-                <ProtectedRoute allowedStatuses={["PROFILE_CONFIRMED"]}>
+                <ProtectedRoute allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}>
                   <WorkPreferences />
                 </ProtectedRoute>
               }
@@ -102,7 +103,7 @@ const App = () => (
             <Route
               path="/dashboard/waiting-room"
               element={
-                <ProtectedRoute allowedStatuses={["PROFILE_CONFIRMED"]}>
+                <ProtectedRoute allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}>
                   <WaitingRoom />
                 </ProtectedRoute>
               }
