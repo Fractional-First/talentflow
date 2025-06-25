@@ -26,6 +26,7 @@ const AvailabilitySection = ({
   setHoursPerWeek,
 }: AvailabilitySectionProps) => {
   const showFractionalOptions = availabilityTypes.fractional
+  const showFullTimeOptions = availabilityTypes.fullTime
 
   const [hoursPerWeek, setLocalHoursPerWeek] = React.useState([
     minHoursPerWeek || 20,
@@ -44,6 +45,28 @@ const AvailabilitySection = ({
     }
   }
 
+  // Get section title and description based on availability type
+  const getSectionInfo = () => {
+    if (showFractionalOptions) {
+      return {
+        title: "Availability & Schedule",
+        description: "Define your availability for fractional work"
+      }
+    } else if (showFullTimeOptions) {
+      return {
+        title: "Availability & Schedule", 
+        description: "Set your working timezone and availability"
+      }
+    } else {
+      return {
+        title: "Timezone Preferences",
+        description: "Set your working timezone"
+      }
+    }
+  }
+
+  const sectionInfo = getSectionInfo()
+
   return (
     <div>
       {/* Section Header */}
@@ -52,14 +75,9 @@ const AvailabilitySection = ({
           <Calendar className="h-4 w-4 text-primary" />
         </div>
         <div className="flex-1">
-          <h3 className="text-lg font-semibold">
-            {showFractionalOptions ? "Availability & Schedule" : "Timezone Preferences"}
-          </h3>
+          <h3 className="text-lg font-semibold">{sectionInfo.title}</h3>
           <p className="text-sm text-muted-foreground mt-1">
-            {showFractionalOptions 
-              ? "Define your availability for fractional work" 
-              : "Set your working timezone"
-            }
+            {sectionInfo.description}
           </p>
         </div>
       </div>
@@ -95,7 +113,7 @@ const AvailabilitySection = ({
           </div>
         )}
 
-        {/* Timezone */}
+        {/* Timezone - Always show for both full-time and fractional */}
         <div className="space-y-4">
           <Label className="text-base font-medium">Your Timezone</Label>
           <TimezoneSelector
