@@ -212,12 +212,20 @@ const ProfileSnapshot = () => {
   return <DashboardLayout steps={initialSteps} currentStep={3}>
       <div ref={mainContentRef} className="max-w-6xl mx-auto space-y-6 p-6">
         {/* Header with Auto-save Status */}
-        <div className="flex justify-between items-center">
+        <div className="relative">
           <div className="space-y-2">
             <h1 className="text-2xl font-semibold text-gray-900">Profile Snapshot</h1>
             <p className="text-sm text-gray-600">This summary is curated based on your experience and skills. Feel free to refine it to better reflect your voice by clicking on the edit icon.</p>
           </div>
-          <AutoSaveStatus status={saveStatus.status} lastSavedTime={saveStatus.lastSavedTime} onRetry={retrySave} className="flex-shrink-0" />
+          
+          {/* Auto-save Status - Fixed position in top right */}
+          <div className="absolute top-0 right-0">
+            <AutoSaveStatus 
+              status={saveStatus.status} 
+              lastSavedTime={saveStatus.lastSavedTime} 
+              onRetry={retrySave} 
+            />
+          </div>
         </div>
 
         {/* Main Layout - Two Column */}
