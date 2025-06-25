@@ -1,3 +1,4 @@
+
 import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
 import { Calendar } from "lucide-react"
@@ -26,19 +27,16 @@ const AvailabilitySection = ({
 }: AvailabilitySectionProps) => {
   const showFractionalOptions = availabilityTypes.fractional
 
-  // Use the hours from props if available, otherwise default to 20
   const [hoursPerWeek, setLocalHoursPerWeek] = React.useState([
     minHoursPerWeek || 20,
   ])
 
-  // Update local state when props change
   React.useEffect(() => {
     if (minHoursPerWeek !== null) {
       setLocalHoursPerWeek([minHoursPerWeek])
     }
   }, [minHoursPerWeek])
 
-  // Handle hours change
   const handleHoursChange = (hours: number[]) => {
     setLocalHoursPerWeek(hours)
     if (setHoursPerWeek) {
@@ -47,22 +45,31 @@ const AvailabilitySection = ({
   }
 
   return (
-    <>
-      {showFractionalOptions && (
-        <>
-          <div className="flex items-center gap-2 mb-6">
-            <Calendar className="h-5 w-5 text-primary" />
-            <div>
-              <h3 className="font-medium">Fractional Availability</h3>
-              <p className="text-sm text-muted-foreground">
-                Define your availability for fractional work
-              </p>
-            </div>
-          </div>
+    <div>
+      {/* Section Header */}
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+          <Calendar className="h-4 w-4 text-primary" />
+        </div>
+        <div className="flex-1">
+          <h3 className="text-lg font-semibold">
+            {showFractionalOptions ? "Availability & Schedule" : "Timezone Preferences"}
+          </h3>
+          <p className="text-sm text-muted-foreground mt-1">
+            {showFractionalOptions 
+              ? "Define your availability for fractional work" 
+              : "Set your working timezone"
+            }
+          </p>
+        </div>
+      </div>
 
-          <div className="space-y-6 px-4">
-            <div>
-              <Label className="text-sm mb-3 block">Hours Per Week</Label>
+      <div className="bg-background border rounded-lg p-6 space-y-6">
+        {showFractionalOptions && (
+          <div className="space-y-6">
+            {/* Hours Per Week */}
+            <div className="space-y-4">
+              <Label className="text-base font-medium">Hours Per Week</Label>
               <div className="space-y-4">
                 <Slider
                   value={hoursPerWeek}
@@ -72,28 +79,33 @@ const AvailabilitySection = ({
                   step={5}
                   className="w-full"
                 />
-                <div className="flex justify-between text-sm text-muted-foreground">
-                  <span>5 hours</span>
-                  <span className="font-medium text-foreground">
-                    {hoursPerWeek[0]} hours per week
-                  </span>
-                  <span>40 hours</span>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-muted-foreground">5 hours</span>
+                  <div className="bg-primary/10 px-3 py-1 rounded-md">
+                    <span className="font-medium text-primary">
+                      {hoursPerWeek[0]} hours per week
+                    </span>
+                  </div>
+                  <span className="text-muted-foreground">40 hours</span>
                 </div>
               </div>
             </div>
 
-            <div>
-              <Label className="text-sm mb-2 block">Your Timezone</Label>
-              <TimezoneSelector
-                selectedTimezone={timezone}
-                onTimezoneChange={setTimezone}
-                placeholder="Select your timezone..."
-              />
-            </div>
+            <hr className="border-border" />
           </div>
-        </>
-      )}
-    </>
+        )}
+
+        {/* Timezone */}
+        <div className="space-y-4">
+          <Label className="text-base font-medium">Your Timezone</Label>
+          <TimezoneSelector
+            selectedTimezone={timezone}
+            onTimezoneChange={setTimezone}
+            placeholder="Select your timezone..."
+          />
+        </div>
+      </div>
+    </div>
   )
 }
 

@@ -1,90 +1,114 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { StepCard, StepCardContent, StepCardDescription, StepCardFooter, StepCardHeader, StepCardTitle } from '@/components/StepCard';
-import { Separator } from '@/components/ui/separator';
-import { Linkedin } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { AuthBackground } from '@/components/auth/AuthBackground';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
+import { AuthBackground } from "@/components/auth/AuthBackground"
+import {
+  StepCard,
+  StepCardContent,
+  StepCardDescription,
+  StepCardFooter,
+  StepCardHeader,
+  StepCardTitle,
+} from "@/components/StepCard"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Separator } from "@/components/ui/separator"
+import { supabase } from "@/integrations/supabase/client"
+import { useGetUser } from "@/queries/auth/useGetUser"
+import { useSignIn } from "@/queries/auth/useSignIn"
+import { Linkedin } from "lucide-react"
+import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { toast } from "sonner"
 
 const Login = () => {
-  const navigate = useNavigate();
-  const { signIn, loading, user } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isLinkedInSubmitting, setIsLinkedInSubmitting] = useState(false);
+  const navigate = useNavigate()
+  const { signIn, loading } = useSignIn()
+  const { data: user } = useGetUser()
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [isLinkedInSubmitting, setIsLinkedInSubmitting] = useState(false)
 
   // Redirect to dashboard if user is already logged in
   useEffect(() => {
     if (user) {
-      navigate('/dashboard');
+      navigate("/dashboard")
     }
-  }, [user, navigate]);
+  }, [user, navigate])
 
   const handleLinkedInLogin = async () => {
     try {
-      setIsLinkedInSubmitting(true);
-      
+      setIsLinkedInSubmitting(true)
+
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'linkedin_oidc',
+        provider: "linkedin_oidc",
         options: {
-          redirectTo: `${window.location.origin}/dashboard`
-        }
-      });
-      
+          redirectTo: `${window.location.origin}/dashboard`,
+        },
+      })
+
       if (error) {
-        toast.error('Failed to sign in with LinkedIn');
-        console.error('LinkedIn OAuth error:', error);
+        toast.error("Failed to sign in with LinkedIn")
+        console.error("LinkedIn OAuth error:", error)
       }
     } catch (error) {
-      toast.error('Failed to sign in with LinkedIn');
-      console.error('LinkedIn OAuth error:', error);
+      toast.error("Failed to sign in with LinkedIn")
+      console.error("LinkedIn OAuth error:", error)
     } finally {
-      setIsLinkedInSubmitting(false);
+      setIsLinkedInSubmitting(false)
     }
-  };
+  }
 
   const handleEmailLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await signIn(email, password);
-  };
+    e.preventDefault()
+    try {
+      await signIn(email, password)
+      toast.success("Successfully logged in!")
+      navigate("/dashboard")
+    } catch (error: any) {
+      if (error.code === "email_not_confirmed") {
+        navigate("/check-email?email=" + email)
+      }
+      toast.error(error.message || "Login failed")
+    }
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12">
       <AuthBackground />
-      
+
       <div className="w-full max-w-md">
         <StepCard>
           <StepCardHeader>
             <div className="text-center mb-2">
-              <div 
-                className="inline-block cursor-pointer" 
-                onClick={() => navigate('/')}
+              <div
+                className="inline-block cursor-pointer"
+                onClick={() => navigate("/")}
               >
                 <span className="text-2xl font-semibold">TalentFlow</span>
               </div>
             </div>
-            <StepCardTitle className="text-center">Welcome to TalentFlow</StepCardTitle>
+            <StepCardTitle className="text-center">
+              Welcome to TalentFlow
+            </StepCardTitle>
             <StepCardDescription className="text-center">
               The easiest way to find your next opportunity
             </StepCardDescription>
           </StepCardHeader>
-          
+
           <StepCardContent className="space-y-6">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="w-full flex items-center justify-center gap-2"
               onClick={handleLinkedInLogin}
               disabled={isLinkedInSubmitting || loading}
             >
               <Linkedin className="h-5 w-5" />
-              <span>{isLinkedInSubmitting ? 'Connecting...' : 'Continue with LinkedIn'}</span>
+              <span>
+                {isLinkedInSubmitting
+                  ? "Connecting..."
+                  : "Continue with LinkedIn"}
+              </span>
             </Button>
-            
+
             <div className="relative">
               <Separator />
               <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-xs text-muted-foreground">
@@ -105,7 +129,7 @@ const Login = () => {
                   autoComplete="email"
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
                 <Input
@@ -117,35 +141,31 @@ const Login = () => {
                   autoComplete="current-password"
                 />
               </div>
-              
+
               <div className="flex justify-end">
-                <Button 
-                  variant="link" 
+                <Button
+                  variant="link"
                   className="p-0 h-auto text-sm"
-                  onClick={() => navigate('/forgot-password')}
+                  onClick={() => navigate("/forgot-password")}
                   type="button"
                 >
                   Forgot password?
                 </Button>
               </div>
-              
-              <Button 
-                type="submit" 
-                className="w-full"
-                disabled={loading}
-              >
-                {loading ? 'Logging in...' : 'Log in'}
+
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Logging in..." : "Log in"}
               </Button>
             </form>
           </StepCardContent>
-          
+
           <StepCardFooter className="justify-center">
             <span className="text-sm text-muted-foreground">
-              Don't have an account?{' '}
-              <Button 
-                variant="link" 
-                className="p-0 h-auto font-normal" 
-                onClick={() => navigate('/signup')}
+              Don't have an account?{" "}
+              <Button
+                variant="link"
+                className="p-0 h-auto font-normal"
+                onClick={() => navigate("/signup")}
               >
                 Sign up
               </Button>
@@ -154,7 +174,7 @@ const Login = () => {
         </StepCard>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login
