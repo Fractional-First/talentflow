@@ -1,103 +1,116 @@
-import { initialSteps } from "@/components/dashboard/OnboardingSteps"
-import { DashboardLayout } from "@/components/DashboardLayout"
-import { BasicInfoSection } from "@/components/edit-profile/BasicInfoSection"
-import { EditableArraySection } from "@/components/edit-profile/EditableArraySection"
-import { EditableTextSection } from "@/components/edit-profile/EditableTextSection"
-import { FunctionalSkillsSection } from "@/components/edit-profile/FunctionalSkillsSection"
-import { PersonasSection } from "@/components/edit-profile/PersonasSection"
-import { SuperpowersSection } from "@/components/edit-profile/SuperpowersSection"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import ProfilePictureUpload from "@/components/ProfilePictureUpload"
-import { useGetUser } from "@/queries/auth/useGetUser"
-import { toast } from "@/hooks/use-toast"
-import { useAutoSaveWithStatus } from "@/hooks/useAutoSaveWithStatus"
-import { useClickOutside } from "@/hooks/useClickOutside"
-import { usePersonaEditState } from "@/queries/usePersonaEditState"
-import { useProfileForm } from "@/queries/useProfileForm"
-import { useSuperpowerEditState } from "@/hooks/useSuperpowerEditState"
-import { supabase } from "@/integrations/supabase/client"
-import { getUserInitials } from "@/lib/utils"
-import { useProfileSnapshot } from "@/queries/useProfileSnapshot"
-import type { EditStates, ProfileData } from "@/types/profile"
-import { ArrowLeft, ArrowRight } from "lucide-react"
-import { useRef, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { useCompleteOnboarding } from "@/queries/useCompleteOnboarding"
-import { AutoSaveStatus } from "@/components/edit-profile/AutoSaveStatus"
-import { EditingTooltip } from "@/components/edit-profile/EditingTooltip"
-
+import { initialSteps } from "@/components/dashboard/OnboardingSteps";
+import { DashboardLayout } from "@/components/DashboardLayout";
+import { BasicInfoSection } from "@/components/edit-profile/BasicInfoSection";
+import { EditableArraySection } from "@/components/edit-profile/EditableArraySection";
+import { EditableTextSection } from "@/components/edit-profile/EditableTextSection";
+import { FunctionalSkillsSection } from "@/components/edit-profile/FunctionalSkillsSection";
+import { PersonasSection } from "@/components/edit-profile/PersonasSection";
+import { SuperpowersSection } from "@/components/edit-profile/SuperpowersSection";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import ProfilePictureUpload from "@/components/ProfilePictureUpload";
+import { useGetUser } from "@/queries/auth/useGetUser";
+import { toast } from "@/hooks/use-toast";
+import { useAutoSaveWithStatus } from "@/hooks/useAutoSaveWithStatus";
+import { useClickOutside } from "@/hooks/useClickOutside";
+import { usePersonaEditState } from "@/queries/usePersonaEditState";
+import { useProfileForm } from "@/queries/useProfileForm";
+import { useSuperpowerEditState } from "@/hooks/useSuperpowerEditState";
+import { supabase } from "@/integrations/supabase/client";
+import { getUserInitials } from "@/lib/utils";
+import { useProfileSnapshot } from "@/queries/useProfileSnapshot";
+import type { EditStates, ProfileData } from "@/types/profile";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useCompleteOnboarding } from "@/queries/useCompleteOnboarding";
+import { AutoSaveStatus } from "@/components/edit-profile/AutoSaveStatus";
+import { EditingTooltip } from "@/components/edit-profile/EditingTooltip";
 const ProfileSnapshot = () => {
-  const navigate = useNavigate()
-  const { data: user } = useGetUser()
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const navigate = useNavigate();
+  const {
+    data: user
+  } = useGetUser();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Fetch profile data using the new hook
-  const { profileData, isLoading, error } = useProfileSnapshot()
+  const {
+    profileData,
+    isLoading,
+    error
+  } = useProfileSnapshot();
 
   // Initialize formData state first
   const [formData, setFormData] = useProfileForm({
     user,
     profileData,
     toast: (opts: {
-      title: string
-      description: string
-      variant: "default" | "destructive"
+      title: string;
+      description: string;
+      variant: "default" | "destructive";
     }) => {
-      toast(opts)
-    },
-  })
+      toast(opts);
+    }
+  });
 
   // Add activeTab state for personas
-  const [personasActiveTab, setPersonasActiveTab] = useState("0")
-
+  const [personasActiveTab, setPersonasActiveTab] = useState("0");
   const {
     personaEditStates,
     handlePersonaLocalUpdate,
     handleAddPersona,
     handleRemovePersona,
-    syncPersonaEditStates,
-  } = usePersonaEditState({ personas: formData.personas || [], setFormData })
-
-  const { syncSuperpowerEditStates } = useSuperpowerEditState({
+    syncPersonaEditStates
+  } = usePersonaEditState({
+    personas: formData.personas || [],
+    setFormData
+  });
+  const {
+    syncSuperpowerEditStates
+  } = useSuperpowerEditState({
     superpowers: formData.superpowers || [],
-    setFormData,
-  })
+    setFormData
+  });
 
   // Replace useAutoSave with useAutoSaveWithStatus
-  const { saveStatus, retrySave } = useAutoSaveWithStatus({ 
-    user, 
-    formData, 
-    profileData, 
-    toast: (opts) => toast(opts) 
-  })
+  const {
+    saveStatus,
+    retrySave
+  } = useAutoSaveWithStatus({
+    user,
+    formData,
+    profileData,
+    toast: opts => toast(opts)
+  });
 
   // Restore toggleEdit function
   const toggleEdit = (section: keyof EditStates) => {
-    setEditStates((prev) => {
+    setEditStates(prev => {
       // If already editing this section, turn it off
       if (prev[section]) {
-        return { ...prev, [section]: false }
+        return {
+          ...prev,
+          [section]: false
+        };
       }
       // Otherwise, set only this section to true, all others to false
       const newState: EditStates = Object.keys(prev).reduce((acc, key) => {
-        acc[key as keyof EditStates] = false
-        return acc
-      }, {} as EditStates)
-      newState[section] = true
+        acc[key as keyof EditStates] = false;
+        return acc;
+      }, {} as EditStates);
+      newState[section] = true;
 
       // When entering edit mode for personas, sync local state with current data
       if (section === "personas" && formData.personas) {
-        syncPersonaEditStates(formData.personas)
+        syncPersonaEditStates(formData.personas);
       }
       // When entering edit mode for superpowers, sync local state with current data
       if (section === "superpowers" && formData.superpowers) {
-        syncSuperpowerEditStates(formData.superpowers)
+        syncSuperpowerEditStates(formData.superpowers);
       }
-      return newState
-    })
-  }
-
+      return newState;
+    });
+  };
   const [editStates, setEditStates] = useState<EditStates>({
     basicInfo: false,
     description: false,
@@ -113,119 +126,98 @@ const ProfileSnapshot = () => {
     superpowers: false,
     sweetSpot: false,
     userManual: false,
-    functionalSkills: false,
-  })
-
-  const mainContentRef = useRef<HTMLDivElement>(null)
-
+    functionalSkills: false
+  });
+  const mainContentRef = useRef<HTMLDivElement>(null);
   useClickOutside(mainContentRef, () => {
-    setEditStates((prev) => {
-      if (Object.values(prev).some((v) => v)) {
+    setEditStates(prev => {
+      if (Object.values(prev).some(v => v)) {
         const closed: EditStates = Object.keys(prev).reduce((acc, key) => {
-          acc[key as keyof EditStates] = false
-          return acc
-        }, {} as EditStates)
-        return closed
+          acc[key as keyof EditStates] = false;
+          return acc;
+        }, {} as EditStates);
+        return closed;
       }
-      return prev
-    })
-  })
-
-  const completeOnboardingMutation = useCompleteOnboarding()
-
+      return prev;
+    });
+  });
+  const completeOnboardingMutation = useCompleteOnboarding();
   const handleContinue = async () => {
-    setIsSubmitting(true)
+    setIsSubmitting(true);
     completeOnboardingMutation.mutate(undefined, {
-      onError: (error) => {
-        console.error("Error updating onboarding status:", error)
+      onError: error => {
+        console.error("Error updating onboarding status:", error);
         toast({
           title: "Error",
           description: "Failed to complete onboarding.",
-          variant: "destructive",
-        })
+          variant: "destructive"
+        });
       },
       onSettled: () => {
-        setIsSubmitting(false)
-      },
-    })
-  }
+        setIsSubmitting(false);
+      }
+    });
+  };
 
   // Handle input changes for form fields
   const handleInputChange = (field: keyof ProfileData, value: any) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
-  }
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
 
   // Handle profile picture update
   const handleProfilePictureUpdate = (imageUrl: string) => {
-    handleInputChange("profilePicture", imageUrl)
-  }
+    handleInputChange("profilePicture", imageUrl);
+  };
 
   // Check if any section is being edited
-  const isAnyFieldEditing = Object.values(editStates).some(state => state)
-
+  const isAnyFieldEditing = Object.values(editStates).some(state => state);
   if (isLoading) {
-    return (
-      <DashboardLayout steps={initialSteps} currentStep={3}>
+    return <DashboardLayout steps={initialSteps} currentStep={3}>
         <div className="max-w-6xl mx-auto space-y-6 p-6">
           <div className="text-center">Loading profile...</div>
         </div>
-      </DashboardLayout>
-    )
+      </DashboardLayout>;
   }
-
   if (error) {
-    console.error("Profile query error:", error)
-    return (
-      <DashboardLayout steps={initialSteps} currentStep={3}>
+    console.error("Profile query error:", error);
+    return <DashboardLayout steps={initialSteps} currentStep={3}>
         <div className="max-w-6xl mx-auto space-y-6 p-6">
           <div className="text-center text-red-600">
             <p>Error loading profile. Please try again.</p>
             <p className="text-sm mt-2">Error: {error.message}</p>
           </div>
         </div>
-      </DashboardLayout>
-    )
+      </DashboardLayout>;
   }
 
   // Check if we have meaningful profile data
   if (!profileData || !formData.name) {
-    return (
-      <DashboardLayout steps={initialSteps} currentStep={3}>
+    return <DashboardLayout steps={initialSteps} currentStep={3}>
         <div className="max-w-6xl mx-auto space-y-6 p-6">
           <div className="text-center">
             <p>No profile data found.</p>
             <p className="text-sm text-gray-600 mt-2">
               Please complete your profile creation first.
             </p>
-            <Button
-              onClick={() => navigate("/create-profile")}
-              className="mt-4"
-            >
+            <Button onClick={() => navigate("/create-profile")} className="mt-4">
               Go to Profile Creation
             </Button>
           </div>
         </div>
-      </DashboardLayout>
-    )
+      </DashboardLayout>;
   }
-
-  return (
-    <DashboardLayout steps={initialSteps} currentStep={3}>
+  return <DashboardLayout steps={initialSteps} currentStep={3}>
       <div ref={mainContentRef} className="max-w-6xl mx-auto space-y-6 p-6">
         {/* Header with Auto-save Status */}
         <div className="flex justify-between items-center">
           <div className="space-y-2">
             <h1 className="text-2xl font-semibold text-gray-900">Profile Snapshot</h1>
-            <p className="text-sm text-gray-600">
-              This summary is curated based on your experience and skills. Feel free to refine it to better reflect your voice.
-            </p>
+            <p className="text-sm text-gray-600">This summary is curated based on your experience and skills. Feel free to refine it to better reflect your voice by clicking on the edit icon.</p>
           </div>
-          <AutoSaveStatus
-            status={saveStatus.status}
-            lastSavedTime={saveStatus.lastSavedTime}
-            onRetry={retrySave}
-            className="flex-shrink-0"
-          />
+          <AutoSaveStatus status={saveStatus.status} lastSavedTime={saveStatus.lastSavedTime} onRetry={retrySave} className="flex-shrink-0" />
         </div>
 
         {/* Main Layout - Two Column */}
@@ -235,180 +227,71 @@ const ProfileSnapshot = () => {
             {/* Profile Image and Basic Info */}
             <div className="text-center">
               <div className="relative mb-4 inline-block">
-                <ProfilePictureUpload
-                  currentImage={formData?.profilePicture}
-                  userName={formData?.name || "User"}
-                  onImageUpdate={handleProfilePictureUpdate}
-                />
+                <ProfilePictureUpload currentImage={formData?.profilePicture} userName={formData?.name || "User"} onImageUpdate={handleProfilePictureUpdate} />
               </div>
 
               <div className="space-y-2">
-                <EditingTooltip
-                  content="Update your name, role, and location to keep your profile current"
-                  show={editStates.basicInfo}
-                >
+                <EditingTooltip content="Update your name, role, and location to keep your profile current" show={editStates.basicInfo}>
                   <div>
-                    <BasicInfoSection
-                      name={formData?.name || ""}
-                      role={formData?.role || ""}
-                      location={formData?.location || ""}
-                      isEditing={editStates.basicInfo}
-                      onEditToggle={() => toggleEdit("basicInfo")}
-                      onChange={(field, value) => handleInputChange(field, value)}
-                    />
+                    <BasicInfoSection name={formData?.name || ""} role={formData?.role || ""} location={formData?.location || ""} isEditing={editStates.basicInfo} onEditToggle={() => toggleEdit("basicInfo")} onChange={(field, value) => handleInputChange(field, value)} />
                   </div>
                 </EditingTooltip>
               </div>
             </div>
 
             {/* Description */}
-            <EditingTooltip
-              content="Write a compelling summary that captures your professional essence and value proposition"
-              show={editStates.description}
-            >
+            <EditingTooltip content="Write a compelling summary that captures your professional essence and value proposition" show={editStates.description}>
               <div>
-                <EditableTextSection
-                  title="Description"
-                  value={formData?.summary || ""}
-                  onChange={(value) => handleInputChange("summary", value)}
-                  isEditing={editStates.description}
-                  onEditToggle={() => toggleEdit("description")}
-                  placeholder="Description not available"
-                  className="bg-white"
-                  headerClassName=""
-                  labelClassName="text-base font-semibold"
-                />
+                <EditableTextSection title="Description" value={formData?.summary || ""} onChange={value => handleInputChange("summary", value)} isEditing={editStates.description} onEditToggle={() => toggleEdit("description")} placeholder="Description not available" className="bg-white" headerClassName="" labelClassName="text-base font-semibold" />
               </div>
             </EditingTooltip>
 
             {/* Key Roles */}
-            <EditingTooltip
-              content="List your key professional roles and areas of expertise"
-              show={editStates.keyRoles}
-            >
+            <EditingTooltip content="List your key professional roles and areas of expertise" show={editStates.keyRoles}>
               <div>
-                <EditableArraySection
-                  title="Key Roles"
-                  items={formData.highlights || []}
-                  isEditing={editStates.keyRoles}
-                  onEditToggle={() => toggleEdit("keyRoles")}
-                  onChange={(newArr) => handleInputChange("highlights", newArr)}
-                  placeholder="Key role"
-                  addLabel="Add Role"
-                  displayType="bullets"
-                />
+                <EditableArraySection title="Key Roles" items={formData.highlights || []} isEditing={editStates.keyRoles} onEditToggle={() => toggleEdit("keyRoles")} onChange={newArr => handleInputChange("highlights", newArr)} placeholder="Key role" addLabel="Add Role" displayType="bullets" />
               </div>
             </EditingTooltip>
 
             {/* Focus Areas */}
-            <EditingTooltip
-              content="Add the areas where you focus your professional expertise"
-              show={editStates.focusAreas}
-            >
+            <EditingTooltip content="Add the areas where you focus your professional expertise" show={editStates.focusAreas}>
               <div>
-                <EditableArraySection
-                  title="Focus Areas"
-                  items={formData.focus_areas || []}
-                  isEditing={editStates.focusAreas}
-                  onEditToggle={() => toggleEdit("focusAreas")}
-                  onChange={(newArr) => handleInputChange("focus_areas", newArr)}
-                  placeholder="Focus area"
-                  addLabel="Add Area"
-                />
+                <EditableArraySection title="Focus Areas" items={formData.focus_areas || []} isEditing={editStates.focusAreas} onEditToggle={() => toggleEdit("focusAreas")} onChange={newArr => handleInputChange("focus_areas", newArr)} placeholder="Focus area" addLabel="Add Area" />
               </div>
             </EditingTooltip>
 
             {/* Industries */}
-            <EditingTooltip
-              content="List the industries where you have experience or interest"
-              show={editStates.industries}
-            >
+            <EditingTooltip content="List the industries where you have experience or interest" show={editStates.industries}>
               <div>
-                <EditableArraySection
-                  title="Industries"
-                  items={formData.industries || []}
-                  isEditing={editStates.industries}
-                  onEditToggle={() => toggleEdit("industries")}
-                  onChange={(newArr) => handleInputChange("industries", newArr)}
-                  placeholder="Industry"
-                  addLabel="Add Industry"
-                />
+                <EditableArraySection title="Industries" items={formData.industries || []} isEditing={editStates.industries} onEditToggle={() => toggleEdit("industries")} onChange={newArr => handleInputChange("industries", newArr)} placeholder="Industry" addLabel="Add Industry" />
               </div>
             </EditingTooltip>
 
             {/* Geographical Coverage */}
-            <EditingTooltip
-              content="Specify the regions or locations where you can work or have experience"
-              show={editStates.geographicalCoverage}
-            >
+            <EditingTooltip content="Specify the regions or locations where you can work or have experience" show={editStates.geographicalCoverage}>
               <div>
-                <EditableArraySection
-                  title="Geographical Coverage"
-                  items={formData.geographical_coverage || []}
-                  isEditing={editStates.geographicalCoverage}
-                  onEditToggle={() => toggleEdit("geographicalCoverage")}
-                  onChange={(newArr) =>
-                    handleInputChange("geographical_coverage", newArr)
-                  }
-                  placeholder="Region"
-                  addLabel="Add Region"
-                />
+                <EditableArraySection title="Geographical Coverage" items={formData.geographical_coverage || []} isEditing={editStates.geographicalCoverage} onEditToggle={() => toggleEdit("geographicalCoverage")} onChange={newArr => handleInputChange("geographical_coverage", newArr)} placeholder="Region" addLabel="Add Region" />
               </div>
             </EditingTooltip>
 
             {/* Stage */}
-            <EditingTooltip
-              content="Add the company stages you prefer to work with (startup, growth, enterprise, etc.)"
-              show={editStates.stages}
-            >
+            <EditingTooltip content="Add the company stages you prefer to work with (startup, growth, enterprise, etc.)" show={editStates.stages}>
               <div>
-                <EditableArraySection
-                  title="Stage"
-                  items={formData.stage_focus || []}
-                  isEditing={editStates.stages}
-                  onEditToggle={() => toggleEdit("stages")}
-                  onChange={(newArr) => handleInputChange("stage_focus", newArr)}
-                  placeholder="Stage"
-                  addLabel="Add Stage"
-                />
+                <EditableArraySection title="Stage" items={formData.stage_focus || []} isEditing={editStates.stages} onEditToggle={() => toggleEdit("stages")} onChange={newArr => handleInputChange("stage_focus", newArr)} placeholder="Stage" addLabel="Add Stage" />
               </div>
             </EditingTooltip>
 
             {/* Personal Interests */}
-            <EditingTooltip
-              content="Share your personal interests to help others connect with you on a human level"
-              show={editStates.personalInterests}
-            >
+            <EditingTooltip content="Share your personal interests to help others connect with you on a human level" show={editStates.personalInterests}>
               <div>
-                <EditableArraySection
-                  title="Personal Interests"
-                  items={formData.personal_interests || []}
-                  isEditing={editStates.personalInterests}
-                  onEditToggle={() => toggleEdit("personalInterests")}
-                  onChange={(newArr) =>
-                    handleInputChange("personal_interests", newArr)
-                  }
-                  placeholder="Interest"
-                  addLabel="Add Interest"
-                />
+                <EditableArraySection title="Personal Interests" items={formData.personal_interests || []} isEditing={editStates.personalInterests} onEditToggle={() => toggleEdit("personalInterests")} onChange={newArr => handleInputChange("personal_interests", newArr)} placeholder="Interest" addLabel="Add Interest" />
               </div>
             </EditingTooltip>
 
             {/* Certifications */}
-            <EditingTooltip
-              content="List your relevant certifications and professional credentials"
-              show={editStates.certifications}
-            >
+            <EditingTooltip content="List your relevant certifications and professional credentials" show={editStates.certifications}>
               <div>
-                <EditableArraySection
-                  title="Certifications"
-                  items={formData.certifications || []}
-                  isEditing={editStates.certifications}
-                  onEditToggle={() => toggleEdit("certifications")}
-                  onChange={(newArr) => handleInputChange("certifications", newArr)}
-                  placeholder="Certification"
-                  addLabel="Add Certification"
-                />
+                <EditableArraySection title="Certifications" items={formData.certifications || []} isEditing={editStates.certifications} onEditToggle={() => toggleEdit("certifications")} onChange={newArr => handleInputChange("certifications", newArr)} placeholder="Certification" addLabel="Add Certification" />
               </div>
             </EditingTooltip>
           </div>
@@ -416,119 +299,44 @@ const ProfileSnapshot = () => {
           {/* Right Column - Main Content */}
           <div className="lg:col-span-2 space-y-6">
             {/* Meet Section */}
-            <EditingTooltip
-              content="Write an engaging introduction that tells your professional story and what makes you unique"
-              show={editStates.meetIntro}
-            >
+            <EditingTooltip content="Write an engaging introduction that tells your professional story and what makes you unique" show={editStates.meetIntro}>
               <div>
-                <EditableTextSection
-                  title={`Meet ${formData?.name?.split(" ")[0] || "Professional"}`}
-                  value={formData?.meet_them || ""}
-                  onChange={(value) => handleInputChange("meet_them", value)}
-                  isEditing={editStates.meetIntro}
-                  onEditToggle={() => toggleEdit("meetIntro")}
-                  placeholder="Introduction not available"
-                  bgColorClass="bg-teal-600"
-                  textColorClass="text-white"
-                  headerClassName="bg-teal-600 text-white"
-                  labelClassName="text-lg font-semibold"
-                />
+                <EditableTextSection title={`Meet ${formData?.name?.split(" ")[0] || "Professional"}`} value={formData?.meet_them || ""} onChange={value => handleInputChange("meet_them", value)} isEditing={editStates.meetIntro} onEditToggle={() => toggleEdit("meetIntro")} placeholder="Introduction not available" bgColorClass="bg-teal-600" textColorClass="text-white" headerClassName="bg-teal-600 text-white" labelClassName="text-lg font-semibold" />
               </div>
             </EditingTooltip>
 
             {/* Personas Section */}
-            <EditingTooltip
-              content="Define different professional personas that showcase various aspects of your expertise"
-              show={editStates.personas}
-            >
+            <EditingTooltip content="Define different professional personas that showcase various aspects of your expertise" show={editStates.personas}>
               <div>
-                <PersonasSection
-                  personas={formData.personas || []}
-                  personaEditStates={personaEditStates}
-                  isEditing={editStates.personas}
-                  onEditToggle={() => toggleEdit("personas")}
-                  onPersonaLocalUpdate={handlePersonaLocalUpdate}
-                  onAddPersona={handleAddPersona}
-                  onRemovePersona={handleRemovePersona}
-                  activeTab={personasActiveTab}
-                  onActiveTabChange={setPersonasActiveTab}
-                />
+                <PersonasSection personas={formData.personas || []} personaEditStates={personaEditStates} isEditing={editStates.personas} onEditToggle={() => toggleEdit("personas")} onPersonaLocalUpdate={handlePersonaLocalUpdate} onAddPersona={handleAddPersona} onRemovePersona={handleRemovePersona} activeTab={personasActiveTab} onActiveTabChange={setPersonasActiveTab} />
               </div>
             </EditingTooltip>
 
             {/* Superpowers Section */}
-            <EditingTooltip
-              content="Highlight your unique strengths and what sets you apart professionally"
-              show={editStates.superpowers}
-            >
+            <EditingTooltip content="Highlight your unique strengths and what sets you apart professionally" show={editStates.superpowers}>
               <div>
-                <SuperpowersSection
-                  superpowers={formData.superpowers || []}
-                  isEditing={editStates.superpowers}
-                  onEditToggle={() => toggleEdit("superpowers")}
-                  onSuperpowersChange={(newArr) =>
-                    handleInputChange("superpowers", newArr)
-                  }
-                />
+                <SuperpowersSection superpowers={formData.superpowers || []} isEditing={editStates.superpowers} onEditToggle={() => toggleEdit("superpowers")} onSuperpowersChange={newArr => handleInputChange("superpowers", newArr)} />
               </div>
             </EditingTooltip>
 
             {/* Sweet Spot Section */}
-            <EditingTooltip
-              content="Describe your ideal work scenarios and the type of challenges you excel at"
-              show={editStates.sweetSpot}
-            >
+            <EditingTooltip content="Describe your ideal work scenarios and the type of challenges you excel at" show={editStates.sweetSpot}>
               <div>
-                <EditableTextSection
-                  title="Sweet Spot"
-                  value={formData?.sweetspot || ""}
-                  onChange={(value) => handleInputChange("sweetspot", value)}
-                  isEditing={editStates.sweetSpot}
-                  onEditToggle={() => toggleEdit("sweetSpot")}
-                  placeholder="Sweet spot not available"
-                  className="bg-white"
-                  headerClassName="bg-teal-600 text-white"
-                  labelClassName="text-lg font-semibold"
-                />
+                <EditableTextSection title="Sweet Spot" value={formData?.sweetspot || ""} onChange={value => handleInputChange("sweetspot", value)} isEditing={editStates.sweetSpot} onEditToggle={() => toggleEdit("sweetSpot")} placeholder="Sweet spot not available" className="bg-white" headerClassName="bg-teal-600 text-white" labelClassName="text-lg font-semibold" />
               </div>
             </EditingTooltip>
 
             {/* Functional Skills */}
-            <EditingTooltip
-              content="Organize your skills by category and provide details about your expertise level"
-              show={editStates.functionalSkills}
-            >
+            <EditingTooltip content="Organize your skills by category and provide details about your expertise level" show={editStates.functionalSkills}>
               <div>
-                <FunctionalSkillsSection
-                  functionalSkills={formData.functional_skills || {}}
-                  isEditing={editStates.functionalSkills}
-                  onEditToggle={() => toggleEdit("functionalSkills")}
-                  onFunctionalSkillsChange={(skills) =>
-                    handleInputChange("functional_skills", skills)
-                  }
-                />
+                <FunctionalSkillsSection functionalSkills={formData.functional_skills || {}} isEditing={editStates.functionalSkills} onEditToggle={() => toggleEdit("functionalSkills")} onFunctionalSkillsChange={skills => handleInputChange("functional_skills", skills)} />
               </div>
             </EditingTooltip>
 
             {/* User Manual */}
-            <EditingTooltip
-              content="Share insights about your working style, communication preferences, and how others can best collaborate with you"
-              show={editStates.userManual}
-            >
+            <EditingTooltip content="Share insights about your working style, communication preferences, and how others can best collaborate with you" show={editStates.userManual}>
               <div>
-                <EditableTextSection
-                  title={`${
-                    formData?.name?.split(" ")[0] || "Professional"
-                  }'s User Manual`}
-                  value={formData?.user_manual || ""}
-                  onChange={(value) => handleInputChange("user_manual", value)}
-                  isEditing={editStates.userManual}
-                  onEditToggle={() => toggleEdit("userManual")}
-                  placeholder="User manual not available"
-                  className="bg-white"
-                  headerClassName="bg-teal-600 text-white"
-                  labelClassName="text-lg font-semibold"
-                />
+                <EditableTextSection title={`${formData?.name?.split(" ")[0] || "Professional"}'s User Manual`} value={formData?.user_manual || ""} onChange={value => handleInputChange("user_manual", value)} isEditing={editStates.userManual} onEditToggle={() => toggleEdit("userManual")} placeholder="User manual not available" className="bg-white" headerClassName="bg-teal-600 text-white" labelClassName="text-lg font-semibold" />
               </div>
             </EditingTooltip>
           </div>
@@ -541,18 +349,12 @@ const ProfileSnapshot = () => {
             Back to Profile
           </Button>
 
-          <Button
-            onClick={handleContinue}
-            disabled={isSubmitting}
-            className="bg-teal-600 hover:bg-teal-700"
-          >
+          <Button onClick={handleContinue} disabled={isSubmitting} className="bg-teal-600 hover:bg-teal-700">
             {isSubmitting ? "Processing..." : "Complete & Go to Dashboard"}
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </div>
       </div>
-    </DashboardLayout>
-  )
-}
-
-export default ProfileSnapshot
+    </DashboardLayout>;
+};
+export default ProfileSnapshot;
