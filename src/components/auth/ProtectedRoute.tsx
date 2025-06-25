@@ -16,7 +16,7 @@ export const ProtectedRoute = ({
   const { user, loading } = useAuth()
   const location = useLocation()
   const [searchParams] = useSearchParams()
-  
+
   // Query to check onboarding status
   const { data: profileData, isLoading: profileLoading } = useQuery({
     queryKey: ["profile", user?.id],
@@ -47,7 +47,7 @@ export const ProtectedRoute = ({
     )
   }
 
-  if (!user && (searchParams.get("email") === null)) {
+  if (!user && searchParams.get("email") === null) {
     // Redirect to login page if not authenticated
     return <Navigate to="/login" state={{ from: location }} replace />
   }
