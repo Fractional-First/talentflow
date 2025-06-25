@@ -63,7 +63,7 @@ export const PersonasSection: React.FC<PersonasSectionProps> = ({
             className="w-full"
           >
             <TabsList
-              className="grid w-full mb-6 bg-gray-100"
+              className="grid w-full mb-6 bg-gray-100 h-auto p-1"
               style={{
                 gridTemplateColumns: `repeat(${personas.length}, minmax(0, 1fr))`,
               }}
@@ -72,7 +72,7 @@ export const PersonasSection: React.FC<PersonasSectionProps> = ({
                 <TabsTrigger
                   key={index}
                   value={index.toString()}
-                  className="text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 px-2 whitespace-normal text-center leading-tight py-2"
+                  className="text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 px-3 py-3 whitespace-normal text-center leading-tight h-auto min-h-[3rem] flex items-center justify-center"
                   title={persona.title || `Persona ${index + 1}`}
                 >
                   <span className="break-words">
