@@ -16,34 +16,18 @@ interface SuperpowersSectionProps {
   className?: string
 }
 
-// Function to get an appropriate icon and background color for a superpower title
-const getSuperpowerConfig = (title: string) => {
+// Function to get an appropriate icon for a superpower title
+const getSuperpowerIcon = (title: string) => {
   const titleLower = title.toLowerCase()
   
   if (titleLower.includes('problem') || titleLower.includes('solving') || titleLower.includes('human')) {
-    return { 
-      Icon: Brain, 
-      bgColor: 'bg-blue-100', 
-      iconColor: 'text-blue-600' 
-    }
+    return Brain
   } else if (titleLower.includes('inclusive') || titleLower.includes('product') || titleLower.includes('design')) {
-    return { 
-      Icon: Users, 
-      bgColor: 'bg-green-100', 
-      iconColor: 'text-green-600' 
-    }
+    return Users
   } else if (titleLower.includes('system') || titleLower.includes('thinking') || titleLower.includes('technical')) {
-    return { 
-      Icon: Settings, 
-      bgColor: 'bg-purple-100', 
-      iconColor: 'text-purple-600' 
-    }
+    return Settings
   } else {
-    return { 
-      Icon: Brain, 
-      bgColor: 'bg-blue-100', 
-      iconColor: 'text-blue-600' 
-    }
+    return Brain // default icon
   }
 }
 
@@ -111,7 +95,7 @@ export const SuperpowersSection: React.FC<SuperpowersSectionProps> = ({
         <div className="space-y-4">
           {localSuperpowers && localSuperpowers.length > 0 ? (
             localSuperpowers.map((superpower, index) => {
-              const { Icon, bgColor, iconColor } = getSuperpowerConfig(superpower.title)
+              const IconComponent = getSuperpowerIcon(superpower.title)
               return (
                 <div key={index} className="space-y-2">
                   {isEditing ? (
@@ -146,8 +130,8 @@ export const SuperpowersSection: React.FC<SuperpowersSectionProps> = ({
                     </div>
                   ) : (
                     <div className="flex items-start gap-3">
-                      <div className={`flex-shrink-0 w-12 h-12 ${bgColor} rounded-full flex items-center justify-center mt-1`}>
-                        <Icon className={`w-6 h-6 ${iconColor}`} />
+                      <div className="flex-shrink-0 w-12 h-12 bg-white rounded-full border-2 border-gray-200 flex items-center justify-center mt-1">
+                        <IconComponent className="w-6 h-6" style={{ color: '#449889' }} />
                       </div>
                       <div className="flex-1">
                         <div className="font-medium text-gray-900 mb-1">
