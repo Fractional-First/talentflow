@@ -4,7 +4,7 @@ import { CheckCircle, AlertCircle, Clock } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface AutoSaveStatusProps {
-  status: "saving" | "saved" | "error"
+  status: "idle" | "saving" | "saved" | "error"
   lastSavedTime?: Date
   onRetry?: () => void
   className?: string
@@ -18,6 +18,11 @@ export const AutoSaveStatus: React.FC<AutoSaveStatusProps> = ({
 }) => {
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  }
+
+  // Don't render anything for idle status
+  if (status === "idle") {
+    return null
   }
 
   return (
