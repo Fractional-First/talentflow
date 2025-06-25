@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
-import { useGetUser } from "@/queries/auth/useGetUser"
+import { useAuth } from "@/contexts/AuthContext"
 import { ProfileData } from "@/types/profile"
 
 export type ProfileSummary = {
@@ -12,8 +12,8 @@ export type ProfileSummary = {
   skills: string[]
 }
 
-export const useProfileData = () => {
-  const { data: user } = useGetUser()
+export function useProfileData() {
+  const { user } = useAuth()
 
   return useQuery({
     queryKey: ["profile-data", user?.id],

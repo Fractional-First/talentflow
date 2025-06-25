@@ -100,7 +100,13 @@ export function useWorkPreferences() {
 
   useEffect(() => {
     async function initializeForm() {
-      if (!isLoading && !initialized) {
+      if (
+        !isLoading &&
+        !initialized &&
+        (fullTime.fullTimePreferences ||
+          fractional.fractionalPreferences ||
+          work.workPreferences)
+      ) {
         // Fetch location details for both full-time and fractional preferences
         const ftLocationIds =
           fullTime.locationPreferences?.map((lp) => lp.location_id) || []

@@ -1,10 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
-import { useGetUser } from "@/queries/auth/useGetUser"
+import { useAuth } from "@/contexts/AuthContext"
 import { useNavigate } from "react-router-dom"
 
-export const useCompleteOnboarding = () => {
-  const { data: user } = useGetUser()
+export function useCompleteOnboarding() {
+  const { user } = useAuth()
   const queryClient = useQueryClient()
   const navigate = useNavigate()
 

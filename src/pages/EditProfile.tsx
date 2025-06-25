@@ -8,7 +8,7 @@ import { PersonasSection } from "@/components/edit-profile/PersonasSection"
 import { SuperpowersSection } from "@/components/edit-profile/SuperpowersSection"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { useGetUser } from "@/queries/auth/useGetUser"
+import { useAuth } from "@/contexts/AuthContext"
 import { toast } from "@/hooks/use-toast"
 import { useAutoSave } from "@/hooks/useAutoSave"
 import { useClickOutside } from "@/hooks/useClickOutside"
@@ -26,7 +26,7 @@ import { useCompleteOnboarding } from "@/queries/useCompleteOnboarding"
 
 const ProfileSnapshot = () => {
   const navigate = useNavigate()
-  const { data: user } = useGetUser()
+  const { user } = useAuth()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   // Fetch profile data using the new hook

@@ -12,7 +12,7 @@ import {
 import { useNavigate, useLocation } from "react-router-dom"
 import { User, Briefcase, Home, Settings, LogOut, Award } from "lucide-react"
 import React from "react"
-import { useSignOut } from "@/queries/auth/useSignOut"
+import { useAuth } from "@/contexts/AuthContext"
 import { cn } from "@/lib/utils"
 
 const menuItems = [
@@ -50,7 +50,7 @@ interface AppSidebarProps {
 export function AppSidebar({ isOnboarding = false }: AppSidebarProps) {
   const navigate = useNavigate()
   const location = useLocation()
-  const { signOut } = useSignOut()
+  const { signOut } = useAuth()
 
   return (
     <Sidebar>
