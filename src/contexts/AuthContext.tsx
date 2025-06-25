@@ -100,7 +100,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(newSession?.user ?? null)
       setLoading(false)
       // Handle post-verification sign-in
-      if (event === "SIGNED_IN" && newSession?.user && !isInitialLoad) {
+      if (event === "SIGNED_IN" && newSession?.user) {
         await redirectBasedOnStatus(newSession.user)
         toast.success("Successfully signed in")
       } else if (event === "SIGNED_OUT") {

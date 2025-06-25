@@ -13,12 +13,15 @@ import { BrandHeader } from "@/components/auth/BrandHeader"
 import { Mail, ArrowLeft, RefreshCw } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 import { toast } from "sonner"
+import { useAuth } from "@/contexts/AuthContext"
 
 const CheckEmail = () => {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const [isResending, setIsResending] = useState(false)
-  const email = searchParams.get("email") || ""
+  const { user, loading } = useAuth()
+  const email = loading ? "" : user?.email || searchParams.get("email") || ""
+
 
   const handleResendEmail = async () => {
     if (!email) {

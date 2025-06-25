@@ -37,14 +37,7 @@ const App = () => (
             <Route path="/reset-password" element={<ResetPassword />} />
 
             {/* Check email - for users with SIGNED_UP status */}
-            <Route
-              path="/check-email"
-              element={
-                <ProtectedRoute allowedStatuses={["SIGNED_UP"]}>
-                  <CheckEmail />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/check-email" element={<CheckEmail />} />
 
             {/* Profile creation - for users with EMAIL_CONFIRMED, PROFILE_GENERATED, or PROFILE_CONFIRMED status */}
             <Route
@@ -68,7 +61,11 @@ const App = () => (
               path="/edit-profile"
               element={
                 <ProtectedRoute
-                  allowedStatuses={["PROFILE_GENERATED", "PROFILE_CONFIRMED", "PREFERENCES_SET"]}
+                  allowedStatuses={[
+                    "PROFILE_GENERATED",
+                    "PROFILE_CONFIRMED",
+                    "PREFERENCES_SET",
+                  ]}
                 >
                   <ProfileSnapshot />
                 </ProtectedRoute>
@@ -79,7 +76,9 @@ const App = () => (
             <Route
               path="/dashboard"
               element={
-                <ProtectedRoute allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}>
+                <ProtectedRoute
+                  allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
+                >
                   <Dashboard />
                 </ProtectedRoute>
               }
@@ -87,7 +86,9 @@ const App = () => (
             <Route
               path="/dashboard/branding"
               element={
-                <ProtectedRoute allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}>
+                <ProtectedRoute
+                  allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
+                >
                   <Branding />
                 </ProtectedRoute>
               }
@@ -95,7 +96,9 @@ const App = () => (
             <Route
               path="/work-preferences"
               element={
-                <ProtectedRoute allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}>
+                <ProtectedRoute
+                  allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
+                >
                   <WorkPreferences />
                 </ProtectedRoute>
               }
@@ -103,7 +106,9 @@ const App = () => (
             <Route
               path="/dashboard/waiting-room"
               element={
-                <ProtectedRoute allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}>
+                <ProtectedRoute
+                  allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
+                >
                   <WaitingRoom />
                 </ProtectedRoute>
               }

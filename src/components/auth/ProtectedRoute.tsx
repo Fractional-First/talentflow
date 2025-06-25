@@ -1,4 +1,4 @@
-import { Navigate, useLocation } from "react-router-dom"
+import { Navigate, useLocation, useSearchParams } from "react-router-dom"
 import { useAuth } from "@/contexts/AuthContext"
 import { Spinner } from "@/components/ui/spinner"
 import { useQuery } from "@tanstack/react-query"
@@ -15,7 +15,8 @@ export const ProtectedRoute = ({
 }: ProtectedRouteProps) => {
   const { user, loading } = useAuth()
   const location = useLocation()
-
+  const [searchParams] = useSearchParams()
+  
   // Query to check onboarding status
   const { data: profileData, isLoading: profileLoading } = useQuery({
     queryKey: ["profile", user?.id],
@@ -46,13 +47,13 @@ export const ProtectedRoute = ({
     )
   }
 
-  if (!user) {
+  if (!user && (searchParams.get("email") === null)) {
     // Redirect to login page if not authenticated
     return <Navigate to="/login" state={{ from: location }} replace />
   }
 
   // If user doesn't have email confirmed, they should only see check-email page
-  if (!user.email_confirmed_at && location.pathname !== "/check-email") {
+  if (location.pathname !== "/check-email" && !user.email_confirmed_at) {
     return <Navigate to="/check-email" replace />
   }
 
