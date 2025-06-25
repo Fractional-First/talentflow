@@ -53,6 +53,13 @@ export const FullTimePreferences = ({
           setTimezone={(timezoneId) =>
             setForm((prev) => ({ ...prev, timezone_id: timezoneId }))
           }
+          startDate={form.fullTime.start_date}
+          setStartDate={(date) =>
+            setForm((prev) => ({
+              ...prev,
+              fullTime: { ...prev.fullTime, start_date: date },
+            }))
+          }
         />
       </div>
 
