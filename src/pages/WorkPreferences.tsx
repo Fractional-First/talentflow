@@ -12,6 +12,7 @@ import {
 } from "@/components/StepCard"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Separator } from "@/components/ui/separator"
 import { Briefcase, Clock } from "lucide-react"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
@@ -80,126 +81,145 @@ const WorkPreferences = () => {
   const renderStepContent = () => {
     if (currentStep === "placement-type") {
       return (
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-foreground mb-3">
-              Select Your Preferred Placement Type
-            </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Choose how you'd like to work. You may select one or both options. This will help us tailor job opportunities 
-              and compensation structures to your preferences.
-            </p>
-          </div>
+        <StepCard>
+          <StepCardHeader className="text-center pb-8">
+            <StepCardTitle className="text-2xl">Work Preferences</StepCardTitle>
+            <StepCardDescription className="text-base mt-3 max-w-2xl mx-auto leading-relaxed">
+              Choose how you'd like to work. You may select one or both options to help us tailor job opportunities and compensation structures to your preferences.
+            </StepCardDescription>
+          </StepCardHeader>
 
-          <div className="space-y-6">
-            {/* Full-time Position Card */}
-            <div 
-              className={`relative border-2 rounded-xl transition-all duration-200 ${
-                form.fullTime.open_for_work
-                  ? "border-[#449889] bg-[#449889]/5"
-                  : "border-border hover:border-[#449889]/50"
-              }`}
-            >
-              <div className="flex items-start gap-4 p-6">
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${
-                  form.fullTime.open_for_work ? "bg-[#449889]/15" : "bg-muted"
-                }`}>
-                  <Briefcase className={`h-5 w-5 ${
-                    form.fullTime.open_for_work ? "text-[#449889]" : "text-muted-foreground"
-                  }`} />
+          <StepCardContent className="space-y-8">
+            {/* Full-time Position Section */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Briefcase className="h-4 w-4 text-primary" />
                 </div>
-                <div className="flex-1">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-xl font-semibold text-foreground">Full-time Position</h3>
-                    <Checkbox
-                      checked={form.fullTime.open_for_work}
-                      onCheckedChange={() => toggleType("fullTime")}
-                      className="h-5 w-5"
-                    />
-                  </div>
-                  <p className="text-muted-foreground text-base mb-4">
-                    40 hours per week, dedicated to one company. Traditional employment with benefits 
-                    and long-term commitment.
-                  </p>
+                <h2 className="text-xl font-semibold text-foreground">Employment Options</h2>
+              </div>
+              
+              <div className="space-y-4">
+                {/* Full-time Card */}
+                <div className="group">
+                  <button
+                    onClick={() => toggleType("fullTime")}
+                    className={`w-full p-6 rounded-xl border-2 transition-all duration-200 ${
+                      form.fullTime.open_for_work
+                        ? "border-primary bg-primary/5 shadow-sm"
+                        : "border-border hover:border-primary/50 hover:bg-muted/20"
+                    }`}
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className={`rounded-lg p-3 transition-colors ${
+                        form.fullTime.open_for_work ? "bg-primary/15" : "bg-muted group-hover:bg-primary/10"
+                      }`}>
+                        <Briefcase className={`h-5 w-5 ${
+                          form.fullTime.open_for_work ? "text-primary" : "text-muted-foreground"
+                        }`} />
+                      </div>
+                      <div className="flex-1 text-left">
+                        <div className="flex items-center justify-between mb-2">
+                          <h3 className="text-lg font-semibold">Full-time Position</h3>
+                          <Checkbox
+                            checked={form.fullTime.open_for_work}
+                            className="h-5 w-5"
+                            onCheckedChange={() => toggleType("fullTime")}
+                          />
+                        </div>
+                        <p className="text-muted-foreground leading-relaxed">
+                          40 hours per week, dedicated to one company. Traditional employment with benefits and long-term commitment.
+                        </p>
+                      </div>
+                    </div>
+                  </button>
+
+                  {/* Full-time Preferences */}
+                  {form.fullTime.open_for_work && (
+                    <div className="mt-6 ml-4 border-l-2 border-primary/20 pl-6">
+                      <div className="bg-muted/30 rounded-xl p-6">
+                        <FullTimePreferences
+                          form={form}
+                          setForm={setForm}
+                          currentLocationObj={form.currentLocationObj}
+                          setCurrentLocation={setCurrentLocation}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <Separator className="my-6" />
+
+                {/* Flexible Position Card */}
+                <div className="group">
+                  <button
+                    onClick={() => toggleType("fractional")}
+                    className={`w-full p-6 rounded-xl border-2 transition-all duration-200 ${
+                      form.fractional.open_for_work
+                        ? "border-primary bg-primary/5 shadow-sm"
+                        : "border-border hover:border-primary/50 hover:bg-muted/20"
+                    }`}
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className={`rounded-lg p-3 transition-colors ${
+                        form.fractional.open_for_work ? "bg-primary/15" : "bg-muted group-hover:bg-primary/10"
+                      }`}>
+                        <Clock className={`h-5 w-5 ${
+                          form.fractional.open_for_work ? "text-primary" : "text-muted-foreground"
+                        }`} />
+                      </div>
+                      <div className="flex-1 text-left">
+                        <div className="flex items-center justify-between mb-2">
+                          <h3 className="text-lg font-semibold">Flexible Position</h3>
+                          <Checkbox
+                            checked={form.fractional.open_for_work}
+                            className="h-5 w-5"
+                            onCheckedChange={() => toggleType("fractional")}
+                          />
+                        </div>
+                        <p className="text-muted-foreground leading-relaxed">
+                          Part-time commitment with flexible hours. Work with multiple companies simultaneously on project-based engagements.
+                        </p>
+                      </div>
+                    </div>
+                  </button>
+
+                  {/* Flexible Preferences */}
+                  {form.fractional.open_for_work && (
+                    <div className="mt-6 ml-4 border-l-2 border-primary/20 pl-6">
+                      <div className="bg-muted/30 rounded-xl p-6">
+                        <FlexiblePreferences
+                          form={form}
+                          setForm={setForm}
+                          currentLocationObj={form.currentLocationObj}
+                          setCurrentLocation={setCurrentLocation}
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
+            </div>
 
-              {/* Full-time Preferences */}
-              {form.fullTime.open_for_work && (
-                <div className="border-t bg-background/50 p-6">
-                  <FullTimePreferences
-                    form={form}
-                    setForm={setForm}
-                    currentLocationObj={form.currentLocationObj}
-                    setCurrentLocation={setCurrentLocation}
-                  />
+            {/* Action Button */}
+            <div className="pt-8 border-t">
+              <Button
+                onClick={handleContinue}
+                disabled={!hasSelection || isSaving}
+                className="w-full h-12 text-base font-medium"
+                size="lg"
+              >
+                {isSaving ? "Saving Preferences..." : "Continue"}
+              </Button>
+              {saveError && (
+                <div className="text-red-600 text-sm mt-3 text-center">
+                  {saveError.message}
                 </div>
               )}
             </div>
-
-            {/* Flexible Position Card */}
-            <div 
-              className={`relative border-2 rounded-xl transition-all duration-200 ${
-                form.fractional.open_for_work
-                  ? "border-[#449889] bg-[#449889]/5"
-                  : "border-border hover:border-[#449889]/50"
-              }`}
-            >
-              <div className="flex items-start gap-4 p-6">
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${
-                  form.fractional.open_for_work ? "bg-[#449889]/15" : "bg-muted"
-                }`}>
-                  <Clock className={`h-5 w-5 ${
-                    form.fractional.open_for_work ? "text-[#449889]" : "text-muted-foreground"
-                  }`} />
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-xl font-semibold text-foreground">Flexible Position</h3>
-                    <Checkbox
-                      checked={form.fractional.open_for_work}
-                      onCheckedChange={() => toggleType("fractional")}
-                      className="h-5 w-5"
-                    />
-                  </div>
-                  <p className="text-muted-foreground text-base mb-4">
-                    Part-time commitment with flexible hours. Work with multiple companies simultaneously 
-                    on project-based engagements.
-                  </p>
-                </div>
-              </div>
-
-              {/* Flexible Preferences */}
-              {form.fractional.open_for_work && (
-                <div className="border-t bg-background/50 p-6">
-                  <FlexiblePreferences
-                    form={form}
-                    setForm={setForm}
-                    currentLocationObj={form.currentLocationObj}
-                    setCurrentLocation={setCurrentLocation}
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Continue Button */}
-          <div className="mt-8 flex justify-center">
-            <Button
-              onClick={handleContinue}
-              disabled={!hasSelection || isSaving}
-              className="w-full max-w-md h-12 text-base font-medium bg-[#449889] hover:bg-[#449889]/90"
-              size="lg"
-            >
-              {isSaving ? "Saving Preferences..." : "Continue Setup"}
-            </Button>
-            {saveError && (
-              <div className="text-red-600 text-sm mt-3 text-center">
-                {saveError.message}
-              </div>
-            )}
-          </div>
-        </div>
+          </StepCardContent>
+        </StepCard>
       )
     }
 
@@ -208,7 +228,7 @@ const WorkPreferences = () => {
 
   return (
     <DashboardLayout>
-      <div className="container max-w-6xl py-8 px-4">{renderStepContent()}</div>
+      <div className="container max-w-4xl py-8 px-4">{renderStepContent()}</div>
     </DashboardLayout>
   )
 }

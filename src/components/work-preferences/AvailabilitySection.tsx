@@ -45,53 +45,64 @@ const AvailabilitySection = ({
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-3">
-        <Calendar className="h-5 w-5 text-[#449889]" />
-        <h3 className="text-lg font-semibold text-foreground">
-          Availability & Schedule
-        </h3>
+    <div>
+      {/* Section Header */}
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+          <Calendar className="h-4 w-4 text-primary" />
+        </div>
+        <div className="flex-1">
+          <h3 className="text-lg font-semibold">
+            {showFractionalOptions ? "Availability & Schedule" : "Timezone Preferences"}
+          </h3>
+          <p className="text-sm text-muted-foreground mt-1">
+            {showFractionalOptions 
+              ? "Define your availability for fractional work" 
+              : "Set your working timezone"
+            }
+          </p>
+        </div>
       </div>
-      <p className="text-sm text-muted-foreground pl-8">
-        Define your availability for {showFractionalOptions ? "flexible" : "full-time"} work
-      </p>
 
-      <div className="pl-8 space-y-6">
+      <div className="bg-background border rounded-lg p-6 space-y-6">
         {showFractionalOptions && (
-          <div className="space-y-4">
-            <Label className="text-base font-medium text-foreground">Hours Per Week</Label>
+          <div className="space-y-6">
+            {/* Hours Per Week */}
             <div className="space-y-4">
-              <Slider
-                value={hoursPerWeek}
-                onValueChange={handleHoursChange}
-                max={40}
-                min={5}
-                step={5}
-                className="w-full"
-              />
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-muted-foreground">5 hours</span>
-                <div className="bg-[#449889]/10 px-3 py-1 rounded-md">
-                  <span className="font-medium text-[#449889]">
-                    {hoursPerWeek[0]} hours per week
-                  </span>
+              <Label className="text-base font-medium">Hours Per Week</Label>
+              <div className="space-y-4">
+                <Slider
+                  value={hoursPerWeek}
+                  onValueChange={handleHoursChange}
+                  max={40}
+                  min={5}
+                  step={5}
+                  className="w-full"
+                />
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-muted-foreground">5 hours</span>
+                  <div className="bg-primary/10 px-3 py-1 rounded-md">
+                    <span className="font-medium text-primary">
+                      {hoursPerWeek[0]} hours per week
+                    </span>
+                  </div>
+                  <span className="text-muted-foreground">40 hours</span>
                 </div>
-                <span className="text-muted-foreground">40 hours</span>
               </div>
             </div>
+
+            <hr className="border-border" />
           </div>
         )}
 
+        {/* Timezone */}
         <div className="space-y-4">
-          <Label className="text-base font-medium text-foreground">Your Timezone</Label>
+          <Label className="text-base font-medium">Your Timezone</Label>
           <TimezoneSelector
             selectedTimezone={timezone}
             onTimezoneChange={setTimezone}
             placeholder="Select your timezone..."
           />
-          <p className="text-xs text-muted-foreground">
-            9 AM - 6 PM Eastern, 7 AM - 4 PM Central, 6 AM - 3 PM Pacific
-          </p>
         </div>
       </div>
     </div>
