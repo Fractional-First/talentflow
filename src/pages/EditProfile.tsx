@@ -1,3 +1,4 @@
+
 import { initialSteps } from "@/components/dashboard/OnboardingSteps"
 import { DashboardLayout } from "@/components/DashboardLayout"
 import { BasicInfoSection } from "@/components/edit-profile/BasicInfoSection"
@@ -8,6 +9,7 @@ import { PersonasSection } from "@/components/edit-profile/PersonasSection"
 import { SuperpowersSection } from "@/components/edit-profile/SuperpowersSection"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
+import ProfilePictureUpload from "@/components/ProfilePictureUpload"
 import { useGetUser } from "@/queries/auth/useGetUser"
 import { toast } from "@/hooks/use-toast"
 import { useAutoSave } from "@/hooks/useAutoSave"
@@ -147,6 +149,11 @@ const ProfileSnapshot = () => {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
+  // Handle profile picture update
+  const handleProfilePictureUpdate = (imageUrl: string) => {
+    handleInputChange("profilePicture", imageUrl)
+  }
+
   if (isLoading) {
     return (
       <DashboardLayout steps={initialSteps} currentStep={3}>
@@ -203,12 +210,11 @@ const ProfileSnapshot = () => {
             {/* Profile Image and Basic Info */}
             <div className="text-center">
               <div className="relative mb-4 inline-block">
-                <Avatar className="h-32 w-32 shadow-lg border-4 border-white">
-                  <AvatarImage src={formData?.profilePicture} />
-                  <AvatarFallback className="text-2xl bg-[#449889] text-white">
-                    {getUserInitials(formData?.name)}
-                  </AvatarFallback>
-                </Avatar>
+                <ProfilePictureUpload
+                  currentImage={formData?.profilePicture}
+                  userName={formData?.name || "User"}
+                  onImageUpdate={handleProfilePictureUpdate}
+                />
               </div>
 
               <div className="space-y-2">
