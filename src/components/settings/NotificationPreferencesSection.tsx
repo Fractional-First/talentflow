@@ -8,6 +8,10 @@ import { Bell } from 'lucide-react'
 import { useGetUser } from '@/queries/auth/useGetUser'
 import { supabase } from '@/integrations/supabase/client'
 
+interface NotificationPreferences {
+  email_notifications: boolean
+}
+
 export function NotificationPreferencesSection() {
   const { data: user } = useGetUser()
   const [emailNotifications, setEmailNotifications] = useState(true)
@@ -19,14 +23,19 @@ export function NotificationPreferencesSection() {
       if (!user?.id) return
       
       try {
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from('profiles')
           .select('notification_preferences')
           .eq('id', user.id)
           .single()
         
+        if (error) {
+          console.error('Error loading notification preferences:', error)
+          return
+        }
+
         if (data?.notification_preferences) {
-          const prefs = data.notification_preferences as any
+          const prefs = data.notification_preferences as NotificationPreferences
           setEmailNotifications(prefs.email_notifications ?? true)
         }
       } catch (error) {
