@@ -1,8 +1,6 @@
-import { Navigate, useLocation } from "react-router-dom"
-import { useAuth } from "@/contexts/AuthContext"
+import { Navigate, useLocation, useSearchParams } from "react-router-dom"
+import { useGetOnboardingStatus } from "../../queries/getOnboardingStatus"
 import { Spinner } from "@/components/ui/spinner"
-import { useQuery } from "@tanstack/react-query"
-import { supabase } from "@/integrations/supabase/client"
 
 interface ProtectedRouteProps {
   children: React.ReactNode
@@ -13,32 +11,11 @@ export const ProtectedRoute = ({
   children,
   allowedStatuses,
 }: ProtectedRouteProps) => {
-  const { user, loading } = useAuth()
+  const { user, onboardingStatus, isLoading } = useGetOnboardingStatus()
   const location = useLocation()
+  const [searchParams] = useSearchParams()
 
-  // Query to check onboarding status
-  const { data: profileData, isLoading: profileLoading } = useQuery({
-    queryKey: ["profile", user?.id],
-    queryFn: async () => {
-      if (!user?.id) return null
-
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("onboarding_status")
-        .eq("id", user.id)
-        .single()
-
-      if (error) {
-        console.error("Error fetching profile:", error)
-        return null
-      }
-
-      return data
-    },
-    enabled: !!user?.id,
-  })
-
-  if (loading || profileLoading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Spinner size="lg" />
@@ -46,27 +23,24 @@ export const ProtectedRoute = ({
     )
   }
 
-  if (!user) {
+  if (!user && searchParams.get("email") === null) {
     // Redirect to login page if not authenticated
     return <Navigate to="/login" state={{ from: location }} replace />
   }
 
   // If user doesn't have email confirmed, they should only see check-email page
-  if (!user.email_confirmed_at && location.pathname !== "/check-email") {
+  if (location.pathname !== "/check-email" && !user?.email_confirmed_at) {
     return <Navigate to="/check-email" replace />
   }
 
-  const currentStatus = profileData?.onboarding_status
-
-  // If no profile data, something went wrong - send to profile creation
-  if (!currentStatus) {
-    return <Navigate to="/create-profile" replace />
-  }
-
   // If allowedStatuses is provided, check if current status is allowed
-  if (allowedStatuses && !allowedStatuses.includes(currentStatus)) {
+  if (
+    allowedStatuses &&
+    onboardingStatus &&
+    !allowedStatuses.includes(onboardingStatus)
+  ) {
     // Redirect based on current onboarding status
-    switch (currentStatus) {
+    switch (onboardingStatus) {
       case "SIGNED_UP":
         return <Navigate to="/check-email" replace />
       case "EMAIL_CONFIRMED":
@@ -79,6 +53,11 @@ export const ProtectedRoute = ({
       default:
         return <Navigate to="/create-profile" replace />
     }
+  }
+
+  // If no onboarding status (user logged out or not authenticated), redirect to login
+  if (allowedStatuses && !onboardingStatus) {
+    return <Navigate to="/login" state={{ from: location }} replace />
   }
 
   return <>{children}</>

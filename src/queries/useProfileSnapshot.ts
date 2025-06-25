@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
-import { useAuth } from "@/contexts/AuthContext"
+import { useGetUser } from "@/queries/auth/useGetUser"
 // TODO: Replace with global type if available
 // import type { ProfileData } from '@/types/profile';
 
@@ -41,8 +41,8 @@ export interface ProfileData {
   profilePicture?: string
 }
 
-export function useProfileSnapshot() {
-  const { user } = useAuth()
+export const useProfileSnapshot = () => {
+  const { data: user } = useGetUser()
   const queryClient = useQueryClient()
 
   // Fetch profile data
