@@ -12,6 +12,11 @@ interface NotificationPreferences {
   email_notifications: boolean
 }
 
+// Type guard to check if the object has the expected structure
+function isNotificationPreferences(obj: any): obj is NotificationPreferences {
+  return obj && typeof obj === 'object' && typeof obj.email_notifications === 'boolean'
+}
+
 export function NotificationPreferencesSection() {
   const { data: user } = useGetUser()
   const [emailNotifications, setEmailNotifications] = useState(true)
@@ -34,9 +39,8 @@ export function NotificationPreferencesSection() {
           return
         }
 
-        if (data?.notification_preferences) {
-          const prefs = data.notification_preferences as NotificationPreferences
-          setEmailNotifications(prefs.email_notifications ?? true)
+        if (data?.notification_preferences && isNotificationPreferences(data.notification_preferences)) {
+          setEmailNotifications(data.notification_preferences.email_notifications)
         }
       } catch (error) {
         console.error('Error loading notification preferences:', error)
