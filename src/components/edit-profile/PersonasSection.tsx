@@ -72,10 +72,10 @@ export const PersonasSection: React.FC<PersonasSectionProps> = ({
                 <TabsTrigger
                   key={index}
                   value={index.toString()}
-                  className="text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 truncate px-2"
+                  className="text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 px-2 whitespace-normal text-center leading-tight py-2"
                   title={persona.title || `Persona ${index + 1}`}
                 >
-                  <span className="truncate">
+                  <span className="break-words">
                     {persona.title || `Persona ${index + 1}`}
                   </span>
                 </TabsTrigger>
@@ -123,12 +123,12 @@ export const PersonasSection: React.FC<PersonasSectionProps> = ({
                   </>
                 ) : (
                   <>
-                    <h4 className="font-medium text-base break-words">{persona.title}</h4>
+                    <h4 className="font-medium text-base break-words word-wrap">{persona.title}</h4>
                     <ul className="space-y-2 text-base text-gray-700 leading-relaxed">
                       {persona.bullets.map((bullet, bulletIndex) => (
                         <li key={bulletIndex} className="flex items-start">
                           <span className="text-gray-900 mr-2 mt-0.5 flex-shrink-0">•</span>
-                          <span className="break-words">{bullet}</span>
+                          <span className="break-words word-wrap flex-1">{bullet}</span>
                         </li>
                       ))}
                     </ul>
