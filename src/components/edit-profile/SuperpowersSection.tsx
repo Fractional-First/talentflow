@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -15,18 +16,34 @@ interface SuperpowersSectionProps {
   className?: string
 }
 
-// Function to get an appropriate icon for a superpower title
-const getSuperpowerIcon = (title: string) => {
+// Function to get an appropriate icon and background color for a superpower title
+const getSuperpowerConfig = (title: string) => {
   const titleLower = title.toLowerCase()
   
   if (titleLower.includes('problem') || titleLower.includes('solving') || titleLower.includes('human')) {
-    return Brain
+    return { 
+      Icon: Brain, 
+      bgColor: 'bg-blue-100', 
+      iconColor: 'text-blue-600' 
+    }
   } else if (titleLower.includes('inclusive') || titleLower.includes('product') || titleLower.includes('design')) {
-    return Users
+    return { 
+      Icon: Users, 
+      bgColor: 'bg-green-100', 
+      iconColor: 'text-green-600' 
+    }
   } else if (titleLower.includes('system') || titleLower.includes('thinking') || titleLower.includes('technical')) {
-    return Settings
+    return { 
+      Icon: Settings, 
+      bgColor: 'bg-purple-100', 
+      iconColor: 'text-purple-600' 
+    }
   } else {
-    return Brain // default icon
+    return { 
+      Icon: Brain, 
+      bgColor: 'bg-blue-100', 
+      iconColor: 'text-blue-600' 
+    }
   }
 }
 
@@ -94,7 +111,7 @@ export const SuperpowersSection: React.FC<SuperpowersSectionProps> = ({
         <div className="space-y-4">
           {localSuperpowers && localSuperpowers.length > 0 ? (
             localSuperpowers.map((superpower, index) => {
-              const IconComponent = getSuperpowerIcon(superpower.title)
+              const { Icon, bgColor, iconColor } = getSuperpowerConfig(superpower.title)
               return (
                 <div key={index} className="space-y-2">
                   {isEditing ? (
@@ -129,8 +146,8 @@ export const SuperpowersSection: React.FC<SuperpowersSectionProps> = ({
                     </div>
                   ) : (
                     <div className="flex items-start gap-3">
-                      <div className="flex-shrink-0 w-12 h-12 bg-white rounded-full border-2 border-teal-200 flex items-center justify-center mt-1">
-                        <IconComponent className="w-6 h-6 text-teal-600" />
+                      <div className={`flex-shrink-0 w-12 h-12 ${bgColor} rounded-full flex items-center justify-center mt-1`}>
+                        <Icon className={`w-6 h-6 ${iconColor}`} />
                       </div>
                       <div className="flex-1">
                         <div className="font-medium text-gray-900 mb-1">
@@ -167,3 +184,4 @@ export const SuperpowersSection: React.FC<SuperpowersSectionProps> = ({
     </div>
   )
 }
+

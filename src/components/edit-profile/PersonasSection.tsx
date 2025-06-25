@@ -1,3 +1,4 @@
+
 import React from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
@@ -120,9 +121,12 @@ export const PersonasSection: React.FC<PersonasSectionProps> = ({
                 ) : (
                   <>
                     <h4 className="font-medium">{persona.title}</h4>
-                    <ul className="space-y-2">
+                    <ul className="space-y-2 text-sm text-gray-700 leading-relaxed">
                       {persona.bullets.map((bullet, bulletIndex) => (
-                        <li key={bulletIndex}>• {bullet}</li>
+                        <li key={bulletIndex} className="flex items-start">
+                          <span className="text-gray-900 mr-2 mt-0.5 flex-shrink-0">•</span>
+                          <span>{bullet}</span>
+                        </li>
                       ))}
                     </ul>
                   </>
