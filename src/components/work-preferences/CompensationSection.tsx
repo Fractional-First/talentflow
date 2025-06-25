@@ -1,6 +1,5 @@
 import { DollarSign, HelpCircle } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Slider } from "@/components/ui/slider"
 import { Button } from "@/components/ui/button"
 import {
   Tooltip,
@@ -9,13 +8,14 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 
 interface CompensationSectionProps {
   paymentType: string
   setPaymentType: (type: string) => void
   rateRange: number[]
   setRateRange: (range: number[]) => void
-  showOnly?: "annual" | "hourly-daily" // New prop for conditional rendering
+  showOnly?: "annual" | "hourly-daily"
 }
 
 const CompensationSection = ({
@@ -29,11 +29,11 @@ const CompensationSection = ({
     return `$${value.toLocaleString()}`
   }
 
-  // Helper for input change
   const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const min = parseInt(e.target.value.replace(/[^\d]/g, "")) || 0
     setRateRange([min, rateRange[1]])
   }
+  
   const handleMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const max = parseInt(e.target.value.replace(/[^\d]/g, "")) || 0
     setRateRange([rateRange[0], max])
@@ -41,31 +41,29 @@ const CompensationSection = ({
 
   return (
     <div>
-      <div className="flex items-center gap-2 mb-4">
-        <DollarSign className="h-5 w-5 text-primary" />
-        <div>
-          <h3 className="font-medium">Compensation Expectations</h3>
-          <p className="text-sm text-muted-foreground">
+      {/* Section Header */}
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+          <DollarSign className="h-4 w-4 text-primary" />
+        </div>
+        <div className="flex-1">
+          <h3 className="text-lg font-semibold">Compensation Expectations</h3>
+          <p className="text-sm text-muted-foreground mt-1">
             Set your preferred compensation range
           </p>
         </div>
       </div>
 
-      {/* Display either only annual, or only hourly and daily based on showOnly prop */}
-      {showOnly === "annual" ? (
-        // Annual salary only option for full-time positions
-        <div className="mb-6">
-          <div className="bg-muted/30 rounded-md p-2 mb-4">
-            <span className="text-sm font-medium">Annual Salary</span>
-          </div>
-
-          <div className="px-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium">Rate Range</span>
+      <div className="bg-background border rounded-lg p-6">
+        {showOnly === "annual" ? (
+          // Annual salary only
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <Label className="text-base font-medium">Annual Salary Range</Label>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                       <HelpCircle className="h-4 w-4" />
                     </Button>
                   </TooltipTrigger>
@@ -77,178 +75,162 @@ const CompensationSection = ({
                 </Tooltip>
               </TooltipProvider>
             </div>
-            <div className="flex flex-col gap-2">
-              <div className="flex flex-col w-full">
-                <label className="text-sm mb-1" htmlFor="min-rate">
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="min-salary" className="text-sm font-medium">
                   Minimum
-                </label>
+                </Label>
                 <Input
-                  id="min-rate"
+                  id="min-salary"
                   type="number"
                   min={0}
                   value={rateRange[0]}
                   onChange={handleMinChange}
-                  className="w-full"
-                  placeholder="Min"
-                  inputMode="numeric"
+                  placeholder="Min salary"
+                  className="h-11"
                 />
               </div>
-              <div className="flex flex-col w-full mt-2">
-                <label className="text-sm mb-1" htmlFor="max-rate">
+              <div className="space-y-2">
+                <Label htmlFor="max-salary" className="text-sm font-medium">
                   Maximum
-                </label>
+                </Label>
                 <Input
-                  id="max-rate"
+                  id="max-salary"
                   type="number"
                   min={0}
                   value={rateRange[1]}
                   onChange={handleMaxChange}
-                  className="w-full"
-                  placeholder="Max"
-                  inputMode="numeric"
+                  placeholder="Max salary"
+                  className="h-11"
                 />
               </div>
             </div>
-            <p className="text-xs text-muted-foreground mt-2">
-              Range from {formatSalary(rateRange[0])} to{" "}
-              {formatSalary(rateRange[1])}
-            </p>
+            
+            <div className="text-xs text-muted-foreground bg-muted/50 p-3 rounded-md">
+              Range: {formatSalary(rateRange[0])} to {formatSalary(rateRange[1])} annually
+            </div>
           </div>
-        </div>
-      ) : showOnly === "hourly-daily" ? (
-        // Hourly and daily rate options only for flexible positions
-        <Tabs
-          value={paymentType}
-          onValueChange={setPaymentType}
-          className="mb-6"
-        >
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="hourly">Hourly Rate</TabsTrigger>
-            <TabsTrigger value="daily">Daily Rate</TabsTrigger>
-          </TabsList>
+        ) : showOnly === "hourly-daily" ? (
+          // Hourly and daily rates
+          <Tabs value={paymentType} onValueChange={setPaymentType} className="space-y-6">
+            <TabsList className="grid w-full grid-cols-2 h-11">
+              <TabsTrigger value="hourly" className="font-medium">Hourly Rate</TabsTrigger>
+              <TabsTrigger value="daily" className="font-medium">Daily Rate</TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="hourly" className="pt-4">
-            <div className="px-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">Hourly Rate Range</span>
+            <TabsContent value="hourly" className="space-y-6 mt-6">
+              <div className="flex items-center justify-between">
+                <Label className="text-base font-medium">Hourly Rate Range</Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                         <HelpCircle className="h-4 w-4" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
                       <p className="max-w-xs">
-                        Set your expected hourly rate range. The lower end
-                        applies to higher volume commitments (20+ hours/week),
-                        while the higher end applies to specialized or lower
-                        volume work.
+                        Higher rates apply to specialized or lower volume work, while lower rates apply to higher volume commitments.
                       </p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               </div>
-              <div className="flex flex-col gap-2">
-                <div className="flex flex-col w-full">
-                  <label className="text-sm mb-1" htmlFor="min-rate">
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="min-hourly" className="text-sm font-medium">
                     Minimum
-                  </label>
+                  </Label>
                   <Input
-                    id="min-rate"
+                    id="min-hourly"
                     type="number"
                     min={0}
                     value={rateRange[0]}
                     onChange={handleMinChange}
-                    className="w-full"
-                    placeholder="Min"
-                    inputMode="numeric"
+                    placeholder="Min hourly"
+                    className="h-11"
                   />
                 </div>
-                <div className="flex flex-col w-full mt-2">
-                  <label className="text-sm mb-1" htmlFor="max-rate">
+                <div className="space-y-2">
+                  <Label htmlFor="max-hourly" className="text-sm font-medium">
                     Maximum
-                  </label>
+                  </Label>
                   <Input
-                    id="max-rate"
+                    id="max-hourly"
                     type="number"
                     min={0}
                     value={rateRange[1]}
                     onChange={handleMaxChange}
-                    className="w-full"
-                    placeholder="Max"
-                    inputMode="numeric"
+                    placeholder="Max hourly"
+                    className="h-11"
                   />
                 </div>
               </div>
-              <p className="text-xs text-muted-foreground mt-2">
-                Range from ${rateRange[0]} to ${rateRange[1]} per hour
-              </p>
-            </div>
-          </TabsContent>
+              
+              <div className="text-xs text-muted-foreground bg-muted/50 p-3 rounded-md">
+                Range: ${rateRange[0]} to ${rateRange[1]} per hour
+              </div>
+            </TabsContent>
 
-          <TabsContent value="daily" className="pt-4">
-            <div className="px-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">Daily Rate Range</span>
+            <TabsContent value="daily" className="space-y-6 mt-6">
+              <div className="flex items-center justify-between">
+                <Label className="text-base font-medium">Daily Rate Range</Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                         <HelpCircle className="h-4 w-4" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
                       <p className="max-w-xs">
-                        Set your expected daily rate range. The lower end
-                        applies to longer engagements, while the higher end
-                        applies to shorter-term work.
+                        Higher rates apply to shorter-term engagements, while lower rates apply to longer commitments.
                       </p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               </div>
-              <div className="flex flex-col gap-2">
-                <div className="flex flex-col w-full">
-                  <label className="text-sm mb-1" htmlFor="min-rate">
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="min-daily" className="text-sm font-medium">
                     Minimum
-                  </label>
+                  </Label>
                   <Input
-                    id="min-rate"
+                    id="min-daily"
                     type="number"
                     min={0}
                     value={rateRange[0]}
                     onChange={handleMinChange}
-                    className="w-full"
-                    placeholder="Min"
-                    inputMode="numeric"
+                    placeholder="Min daily"
+                    className="h-11"
                   />
                 </div>
-                <div className="flex flex-col w-full mt-2">
-                  <label className="text-sm mb-1" htmlFor="max-rate">
+                <div className="space-y-2">
+                  <Label htmlFor="max-daily" className="text-sm font-medium">
                     Maximum
-                  </label>
+                  </Label>
                   <Input
-                    id="max-rate"
+                    id="max-daily"
                     type="number"
                     min={0}
                     value={rateRange[1]}
                     onChange={handleMaxChange}
-                    className="w-full"
-                    placeholder="Max"
-                    inputMode="numeric"
+                    placeholder="Max daily"
+                    className="h-11"
                   />
                 </div>
               </div>
-              <p className="text-xs text-muted-foreground mt-2">
-                Range from ${rateRange[0]} to ${rateRange[1]} per day
-              </p>
-            </div>
-          </TabsContent>
-        </Tabs>
-      ) : (
-        // Default case - show all options (original functionality)
-        <Tabs
+              
+              <div className="text-xs text-muted-foreground bg-muted/50 p-3 rounded-md">
+                Range: ${rateRange[0]} to ${rateRange[1]} per day
+              </div>
+            </TabsContent>
+          </Tabs>
+        ) : (
+          <Tabs
           defaultValue="annual"
           onValueChange={setPaymentType}
           className="mb-6"
@@ -439,7 +421,8 @@ const CompensationSection = ({
             </div>
           </TabsContent>
         </Tabs>
-      )}
+        )}
+      </div>
     </div>
   )
 }
