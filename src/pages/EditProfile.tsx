@@ -100,7 +100,6 @@ const ProfileSnapshot = () => {
     stages: false,
     personalInterests: false,
     certifications: false,
-    engagementOptions: false,
     meetIntro: false,
     personas: false,
     superpowers: false,
