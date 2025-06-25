@@ -122,17 +122,17 @@ export const PersonasSection: React.FC<PersonasSectionProps> = ({
                     />
                   </>
                 ) : (
-                  <>
-                    <h4 className="font-medium text-base break-words word-wrap">{persona.title}</h4>
-                    <ul className="space-y-2 text-base text-gray-700 leading-relaxed">
+                  <div className="space-y-4">
+                    <h4 className="font-medium text-lg text-gray-900">{persona.title}</h4>
+                    <ul className="space-y-3">
                       {persona.bullets.map((bullet, bulletIndex) => (
                         <li key={bulletIndex} className="flex items-start">
-                          <span className="text-gray-900 mr-2 mt-0.5 flex-shrink-0">•</span>
-                          <span className="break-words word-wrap flex-1">{bullet}</span>
+                          <span className="text-gray-900 mr-3 mt-0.5 flex-shrink-0">•</span>
+                          <span className="text-sm text-gray-700 leading-relaxed break-words flex-1">{bullet}</span>
                         </li>
                       ))}
                     </ul>
-                  </>
+                  </div>
                 )}
               </TabsContent>
             ))}
