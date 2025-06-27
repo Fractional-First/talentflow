@@ -1,8 +1,10 @@
+
 import AvailabilitySection from "@/components/work-preferences/AvailabilitySection"
 import CompensationSection from "@/components/work-preferences/CompensationSection"
 import LocationSection from "@/components/work-preferences/LocationSection"
 import { CombinedWorkPreferencesForm } from "@/hooks/useWorkPreferences"
 import IndustryPreferences from "./IndustryPreferences"
+import { Separator } from "@/components/ui/separator"
 
 interface FullTimePreferencesProps {
   form: CombinedWorkPreferencesForm
@@ -18,37 +20,53 @@ export const FullTimePreferences = ({
   setForm,
   setCurrentLocation,
 }: FullTimePreferencesProps) => {
-  const locations = form.fullTime.locations || []
   const industries = form.fullTime.industries || []
+  
   return (
-    <div className="bg-background/80 rounded-lg p-4 space-y-6">
-      {/* Full-time position only shows annual salary option */}
-      <CompensationSection
-        paymentType="annual"
-        setPaymentType={() => {}} // Lock to annual
-        rateRange={[
-          form.fullTime.min_salary || 0,
-          form.fullTime.max_salary || 0,
-        ]}
-        setRateRange={([min, max]) =>
-          setForm((prev) => ({
-            ...prev,
-            fullTime: { ...prev.fullTime, min_salary: min, max_salary: max },
-          }))
-        }
-        showOnly="annual"
-      />
+    <div className="space-y-8">
+      {/* Compensation Section */}
+      <div className="space-y-4">
+        <CompensationSection
+          paymentType="annual"
+          setPaymentType={() => {}} // Lock to annual
+          rateRange={[
+            form.fullTime.min_salary || 0,
+            form.fullTime.max_salary || 0,
+          ]}
+          setRateRange={([min, max]) =>
+            setForm((prev) => ({
+              ...prev,
+              fullTime: { ...prev.fullTime, min_salary: min, max_salary: max },
+            }))
+          }
+          showOnly="annual"
+        />
+      </div>
 
-      <AvailabilitySection
-        availabilityTypes={{ fullTime: true, fractional: false }}
-        timezone={form.timezone_id || ""}
-        setTimezone={(timezoneId) =>
-          setForm((prev) => ({ ...prev, timezone_id: timezoneId }))
-        }
-      />
+      <Separator className="my-6" />
+
+      {/* Availability Section */}
+      <div className="space-y-4">
+        <AvailabilitySection
+          availabilityTypes={{ fullTime: true, fractional: false }}
+          timezone={form.timezone_id || ""}
+          setTimezone={(timezoneId) =>
+            setForm((prev) => ({ ...prev, timezone_id: timezoneId }))
+          }
+          startDate={form.fullTime.start_date}
+          setStartDate={(date) =>
+            setForm((prev) => ({
+              ...prev,
+              fullTime: { ...prev.fullTime, start_date: date },
+            }))
+          }
+        />
+      </div>
+
+      <Separator className="my-6" />
 
       {/* Location Section */}
-      <div className="py-4">
+      <div className="space-y-4">
         <LocationSection
           form={form}
           setForm={setForm}
@@ -69,16 +87,20 @@ export const FullTimePreferences = ({
         />
       </div>
 
+      <Separator className="my-6" />
+
       {/* Industry Preferences */}
-      <IndustryPreferences
-        value={industries}
-        onChange={(ids) =>
-          setForm((prev) => ({
-            ...prev,
-            fullTime: { ...prev.fullTime, industries: ids },
-          }))
-        }
-      />
+      <div className="space-y-4">
+        <IndustryPreferences
+          value={industries}
+          onChange={(ids) =>
+            setForm((prev) => ({
+              ...prev,
+              fullTime: { ...prev.fullTime, industries: ids },
+            }))
+          }
+        />
+      </div>
     </div>
   )
 }

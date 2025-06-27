@@ -1,37 +1,120 @@
-import { useIndustries } from "@/queries/useIndustries"
-import { Briefcase } from "lucide-react"
-import React from "react"
-import Select from "react-select"
 
-interface IndustryPreferencesSelectProps {
+import { Briefcase } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Label } from "@/components/ui/label"
+import IndustrySelector from "./IndustrySelector"
+import { useIndustries } from "@/queries/useIndustries"
+
+interface IndustryPreferencesProps {
   value: string[]
-  onChange: (ids: string[]) => void
+  onChange: (industryIds: string[]) => void
 }
 
-const IndustryPreferences: React.FC<IndustryPreferencesSelectProps> = ({
-  value,
-  onChange,
-}) => {
-  const { data: industries = [], isLoading } = useIndustries()
+const IndustryPreferences = ({
+  value: industryPreferences,
+  onChange: setIndustryPreferences,
+}: IndustryPreferencesProps) => {
+  const { data: industries = [] } = useIndustries()
 
-  const options = industries.map((ind) => ({ value: ind.id, label: ind.name }))
-  const selectedOptions = options.filter((opt) => value.includes(opt.value))
+  const clearIndustryPreferences = () => {
+    setIndustryPreferences([])
+  }
+
+  const addIndustry = (industryId: string) => {
+    console.log("Adding industry:", industryId)
+    if (!industryPreferences.includes(industryId)) {
+      setIndustryPreferences([...industryPreferences, industryId])
+    }
+  }
+
+  const removeIndustry = (industryId: string) => {
+    console.log("Removing industry:", industryId)
+    setIndustryPreferences(
+      industryPreferences.filter((id) => id !== industryId)
+    )
+  }
+
+  const getIndustryName = (industryId: string) => {
+    const industry = industries.find((industry) => industry.id === industryId)
+    console.log("Looking for industry:", industryId, "Found:", industry)
+    return industry?.name || industryId
+  }
+
+  console.log("Current industryPreferences:", industryPreferences)
+  console.log("Available industries:", industries)
 
   return (
-    <div className="py-4">
-      <div className="flex items-center gap-2 mb-4">
-        <Briefcase className="h-5 w-5 text-primary" />
-        <h3 className="font-medium">Industry Preferences</h3>
+    <div>
+      {/* Section Header */}
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+          <Briefcase className="h-4 w-4 text-primary" />
+        </div>
+        <div className="flex-1">
+          <h3 className="text-lg font-semibold">Industry Preferences</h3>
+          <p className="text-sm text-muted-foreground mt-1">
+            Select your preferred industries to work in
+          </p>
+        </div>
+        {industryPreferences.length > 0 && (
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={clearIndustryPreferences}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            Clear all
+          </Button>
+        )}
       </div>
-      <Select
-        isMulti
-        isLoading={isLoading}
-        options={options}
-        value={selectedOptions}
-        onChange={(opts) => onChange(opts.map((opt) => opt.value))}
-        placeholder="Search and select industries..."
-        classNamePrefix="react-select"
-      />
+
+      <div className="bg-background border rounded-lg p-6 space-y-6">
+        {/* Industry Selector */}
+        <div className="space-y-4">
+          <Label className="text-base font-medium">Select Industries</Label>
+          <IndustrySelector
+            selectedIndustry=""
+            onIndustryChange={addIndustry}
+            placeholder="Search and select industries..."
+            excludeIndustries={industryPreferences}
+          />
+        </div>
+
+        {/* Selected Industries */}
+        {industryPreferences.length > 0 && (
+          <>
+            <hr className="border-border" />
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label className="text-base font-medium">
+                  Selected Industries
+                </Label>
+                <span className="text-sm text-muted-foreground">
+                  {industryPreferences.length} selected
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {industryPreferences.map((industryId) => (
+                  <Badge
+                    key={industryId}
+                    variant="secondary"
+                    className="flex items-center gap-2 py-1 px-3"
+                  >
+                    <span className="text-sm">{getIndustryName(industryId)}</span>
+                    <button
+                      className="ml-1 text-muted-foreground hover:text-destructive transition-colors"
+                      onClick={() => removeIndustry(industryId)}
+                    >
+                      ×
+                    </button>
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+      </div>
     </div>
   )
 }

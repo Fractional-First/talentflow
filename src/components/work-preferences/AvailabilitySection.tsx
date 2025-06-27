@@ -1,6 +1,12 @@
+
 import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
-import { Calendar } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Calendar } from "@/components/ui/calendar"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Calendar as CalendarIcon } from "lucide-react"
+import { format } from "date-fns"
+import { cn } from "@/lib/utils"
 import React from "react"
 import TimezoneSelector from "./TimezoneSelector"
 
@@ -14,6 +20,8 @@ interface AvailabilitySectionProps {
   minHoursPerWeek?: number | null
   maxHoursPerWeek?: number | null
   setHoursPerWeek?: (hours: number) => void
+  startDate?: string | null
+  setStartDate?: (date: string | null) => void
 }
 
 const AvailabilitySection = ({
@@ -23,22 +31,22 @@ const AvailabilitySection = ({
   minHoursPerWeek = 20,
   maxHoursPerWeek = 20,
   setHoursPerWeek,
+  startDate,
+  setStartDate,
 }: AvailabilitySectionProps) => {
   const showFractionalOptions = availabilityTypes.fractional
+  const showFullTimeOptions = availabilityTypes.fullTime
 
-  // Use the hours from props if available, otherwise default to 20
   const [hoursPerWeek, setLocalHoursPerWeek] = React.useState([
     minHoursPerWeek || 20,
   ])
 
-  // Update local state when props change
   React.useEffect(() => {
     if (minHoursPerWeek !== null) {
       setLocalHoursPerWeek([minHoursPerWeek])
     }
   }, [minHoursPerWeek])
 
-  // Handle hours change
   const handleHoursChange = (hours: number[]) => {
     setLocalHoursPerWeek(hours)
     if (setHoursPerWeek) {
@@ -46,23 +54,57 @@ const AvailabilitySection = ({
     }
   }
 
-  return (
-    <>
-      {showFractionalOptions && (
-        <>
-          <div className="flex items-center gap-2 mb-6">
-            <Calendar className="h-5 w-5 text-primary" />
-            <div>
-              <h3 className="font-medium">Fractional Availability</h3>
-              <p className="text-sm text-muted-foreground">
-                Define your availability for fractional work
-              </p>
-            </div>
-          </div>
+  // Get section title and description based on availability type
+  const getSectionInfo = () => {
+    if (showFractionalOptions) {
+      return {
+        title: "Availability & Schedule",
+        description: "Define your availability for fractional work"
+      }
+    } else if (showFullTimeOptions) {
+      return {
+        title: "Availability & Schedule", 
+        description: "Set your working timezone and preferred start date"
+      }
+    } else {
+      return {
+        title: "Timezone Preferences",
+        description: "Set your working timezone"
+      }
+    }
+  }
 
-          <div className="space-y-6 px-4">
-            <div>
-              <Label className="text-sm mb-3 block">Hours Per Week</Label>
+  const sectionInfo = getSectionInfo()
+
+  const selectedDate = startDate ? new Date(startDate) : undefined
+
+  const handleDateSelect = (date: Date | undefined) => {
+    if (setStartDate) {
+      setStartDate(date ? date.toISOString().split('T')[0] : null)
+    }
+  }
+
+  return (
+    <div>
+      {/* Section Header */}
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+          <CalendarIcon className="h-4 w-4 text-primary" />
+        </div>
+        <div className="flex-1">
+          <h3 className="text-lg font-semibold">{sectionInfo.title}</h3>
+          <p className="text-sm text-muted-foreground mt-1">
+            {sectionInfo.description}
+          </p>
+        </div>
+      </div>
+
+      <div className="bg-background border rounded-lg p-6 space-y-6">
+        {showFractionalOptions && (
+          <div className="space-y-6">
+            {/* Hours Per Week */}
+            <div className="space-y-4">
+              <Label className="text-base font-medium">Hours Per Week</Label>
               <div className="space-y-4">
                 <Slider
                   value={hoursPerWeek}
@@ -72,28 +114,72 @@ const AvailabilitySection = ({
                   step={5}
                   className="w-full"
                 />
-                <div className="flex justify-between text-sm text-muted-foreground">
-                  <span>5 hours</span>
-                  <span className="font-medium text-foreground">
-                    {hoursPerWeek[0]} hours per week
-                  </span>
-                  <span>40 hours</span>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-muted-foreground">5 hours</span>
+                  <div className="bg-primary/10 px-3 py-1 rounded-md">
+                    <span className="font-medium text-primary">
+                      {hoursPerWeek[0]} hours per week
+                    </span>
+                  </div>
+                  <span className="text-muted-foreground">40 hours</span>
                 </div>
               </div>
             </div>
 
-            <div>
-              <Label className="text-sm mb-2 block">Your Timezone</Label>
-              <TimezoneSelector
-                selectedTimezone={timezone}
-                onTimezoneChange={setTimezone}
-                placeholder="Select your timezone..."
-              />
-            </div>
+            <hr className="border-border" />
           </div>
-        </>
-      )}
-    </>
+        )}
+
+        {showFullTimeOptions && (
+          <div className="space-y-6">
+            {/* Preferred Start Date */}
+            <div className="space-y-4">
+              <Label className="text-base font-medium">Preferred Start Date</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !selectedDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {selectedDate ? (
+                      format(selectedDate, "PPP")
+                    ) : (
+                      <span>Select start date</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={handleDateSelect}
+                    disabled={(date) => date < new Date()}
+                    initialFocus
+                    className={cn("p-3 pointer-events-auto")}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+
+            <hr className="border-border" />
+          </div>
+        )}
+
+        {/* Timezone - Always show for both full-time and fractional */}
+        <div className="space-y-4">
+          <Label className="text-base font-medium">Your Timezone</Label>
+          <TimezoneSelector
+            selectedTimezone={timezone}
+            onTimezoneChange={setTimezone}
+            placeholder="Select your timezone..."
+          />
+        </div>
+      </div>
+    </div>
   )
 }
 

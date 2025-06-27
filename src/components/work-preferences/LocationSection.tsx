@@ -1,3 +1,4 @@
+
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
@@ -65,27 +66,25 @@ export function LocationSection({
     }))
   }
 
-  const getLocationName = (locationId: string) => {
-    const location = locationPreferences.find(
-      (loc) => loc.place_id === locationId
-    )
-    return location?.name || locationId
-  }
-
   return (
     <div>
-      <div className="flex items-center gap-2 mb-4">
-        <MapPin className="h-5 w-5 text-primary" />
-        <div>
-          <h3 className="font-medium">Location Information</h3>
-          <p className="text-sm text-muted-foreground">
-            Your current location and work eligibility
+      {/* Section Header */}
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+          <MapPin className="h-4 w-4 text-primary" />
+        </div>
+        <div className="flex-1">
+          <h3 className="text-lg font-semibold">Location & Remote Work</h3>
+          <p className="text-sm text-muted-foreground mt-1">
+            Set your location preferences and remote work availability
           </p>
         </div>
       </div>
-      <div className="space-y-4 px-4">
-        <div>
-          <h3 className="text-sm font-medium mb-2">Current Location</h3>
+
+      <div className="bg-background border rounded-lg p-6 space-y-6">
+        {/* Current Location */}
+        <div className="space-y-4">
+          <Label className="text-base font-medium">Current Location</Label>
           <LocationInputWithPopover
             value={currentLocationObj}
             onChange={setCurrentLocation}
@@ -93,29 +92,32 @@ export function LocationSection({
           />
         </div>
 
-        <div className="py-2">
+        <hr className="border-border" />
+
+        {/* Remote Work Toggle */}
+        <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <div>
-              <Label className="text-sm font-normal">Remote Work</Label>
+            <div className="space-y-1">
+              <Label className="text-base font-medium">Remote Work</Label>
               <p className="text-sm text-muted-foreground">
-                Are you interested in remote work?
+                Are you interested in remote work opportunities?
               </p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <Label
-                htmlFor="remote-toggle-step"
-                className={`text-sm ${!remotePreference && "font-medium"}`}
+                htmlFor="remote-toggle"
+                className={`text-sm transition-colors ${!remotePreference ? "text-foreground font-medium" : "text-muted-foreground"}`}
               >
                 No
               </Label>
               <Switch
-                id="remote-toggle-step"
+                id="remote-toggle"
                 checked={remotePreference}
                 onCheckedChange={setRemotePreference}
               />
               <Label
-                htmlFor="remote-toggle-step"
-                className={`text-sm ${remotePreference && "font-medium"}`}
+                htmlFor="remote-toggle"
+                className={`text-sm transition-colors ${remotePreference ? "text-foreground font-medium" : "text-muted-foreground"}`}
               >
                 Yes
               </Label>
@@ -123,54 +125,61 @@ export function LocationSection({
           </div>
         </div>
 
-        <div className="py-2">
-          <Label className="text-sm mb-2 block">Legal Work Eligibility</Label>
-          <div className="w-full">
-            <Select
-              isMulti
-              isLoading={isLoading}
-              options={countries.map((c) => ({
-                value: c.alpha2_code,
-                label: c.name,
-              }))}
-              value={countries
-                .filter((c) => workEligibility.includes(c.alpha2_code))
-                .map((c) => ({ value: c.alpha2_code, label: c.name }))}
-              onChange={(opts) =>
-                setWorkEligibility(opts.map((opt) => opt.value))
-              }
-              placeholder="Search and select countries..."
-              classNamePrefix="react-select"
-            />
-          </div>
+        <hr className="border-border" />
+
+        {/* Work Eligibility */}
+        <div className="space-y-4">
+          <Label className="text-base font-medium">Legal Work Eligibility</Label>
+          <Select
+            isMulti
+            isLoading={isLoading}
+            options={countries.map((c) => ({
+              value: c.alpha2_code,
+              label: c.name,
+            }))}
+            value={countries
+              .filter((c) => workEligibility.includes(c.alpha2_code))
+              .map((c) => ({ value: c.alpha2_code, label: c.name }))}
+            onChange={(opts) =>
+              setWorkEligibility(opts.map((opt) => opt.value))
+            }
+            placeholder="Search and select countries..."
+            classNamePrefix="react-select"
+            className="text-sm"
+          />
         </div>
 
-        <div>
-          <h3 className="text-sm font-medium mb-2">Preferred Work Locations</h3>
+        <hr className="border-border" />
+
+        {/* Preferred Locations */}
+        <div className="space-y-4">
+          <Label className="text-base font-medium">Preferred Work Locations</Label>
           <LocationInputWithPopover
             value={null}
             onChange={handleAddPreferredLocation}
             placeholder="Add preferred work locations"
           />
-          <div className="flex flex-wrap gap-2 mt-2">
-            {locationPreferences.map((location) => (
-              <Badge
-                key={location.place_id}
-                variant="secondary"
-                className="flex items-center gap-1"
-              >
-                {location.name || location.formatted_address}
-                <button
-                  onClick={() =>
-                    handleRemovePreferredLocation(location.place_id)
-                  }
-                  className="ml-1 hover:text-destructive"
+          {locationPreferences.length > 0 && (
+            <div className="flex flex-wrap gap-2 pt-2">
+              {locationPreferences.map((location) => (
+                <Badge
+                  key={location.place_id}
+                  variant="secondary"
+                  className="flex items-center gap-2 py-1 px-3"
                 >
-                  <X className="h-3 w-3" />
-                </button>
-              </Badge>
-            ))}
-          </div>
+                  <span className="text-sm">{location.name || location.formatted_address}</span>
+                  <button
+                    onClick={() =>
+                      handleRemovePreferredLocation(location.place_id)
+                    }
+                    className="ml-1 hover:text-destructive transition-colors"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
