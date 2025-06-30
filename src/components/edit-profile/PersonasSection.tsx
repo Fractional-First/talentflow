@@ -1,4 +1,3 @@
-
 import React from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
@@ -7,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Edit, Plus, X } from "lucide-react"
 import clsx from "clsx"
 import type { Persona } from "@/types/profile"
+import { EditableSection } from "@/components/EditableSection"
 
 interface PersonaEditState {
   title: string
@@ -28,6 +28,7 @@ interface PersonasSectionProps {
   activeTab: string
   onActiveTabChange: (tab: string) => void
   className?: string
+  content?: string
 }
 
 export const PersonasSection: React.FC<PersonasSectionProps> = ({
@@ -41,8 +42,9 @@ export const PersonasSection: React.FC<PersonasSectionProps> = ({
   activeTab,
   onActiveTabChange,
   className = "",
+  content = "Define different professional personas that showcase various aspects of your expertise",
 }) => {
-  return (
+  const sectionContent = (
     <div className={clsx("bg-white rounded-lg border", className)}>
       <div className="bg-teal-600 text-white rounded-t-lg flex items-center justify-between p-4">
         <h3 className="text-lg font-semibold">Personas</h3>
@@ -123,12 +125,18 @@ export const PersonasSection: React.FC<PersonasSectionProps> = ({
                   </>
                 ) : (
                   <div className="space-y-4">
-                    <h4 className="font-medium text-lg text-gray-900">{persona.title}</h4>
+                    <h4 className="font-medium text-lg text-gray-900">
+                      {persona.title}
+                    </h4>
                     <ul className="space-y-3">
                       {persona.bullets.map((bullet, bulletIndex) => (
                         <li key={bulletIndex} className="flex items-start">
-                          <span className="text-gray-900 mr-3 mt-0.5 flex-shrink-0">•</span>
-                          <span className="text-sm text-gray-700 leading-relaxed break-words flex-1">{bullet}</span>
+                          <span className="text-gray-900 mr-3 mt-0.5 flex-shrink-0">
+                            •
+                          </span>
+                          <span className="text-sm text-gray-700 leading-relaxed break-words flex-1">
+                            {bullet}
+                          </span>
                         </li>
                       ))}
                     </ul>
@@ -153,5 +161,11 @@ export const PersonasSection: React.FC<PersonasSectionProps> = ({
         )}
       </div>
     </div>
+  )
+
+  return (
+    <EditableSection isEditing={isEditing} content={content}>
+      {sectionContent}
+    </EditableSection>
   )
 }

@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -7,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Edit, Plus, X, Brain, Users, Settings } from "lucide-react"
 import clsx from "clsx"
 import type { Superpower } from "@/types/profile"
+import { EditableSection } from "@/components/EditableSection"
 
 interface SuperpowersSectionProps {
   superpowers: Superpower[]
@@ -14,17 +13,30 @@ interface SuperpowersSectionProps {
   onEditToggle: () => void
   onSuperpowersChange: (superpowers: Superpower[]) => void
   className?: string
+  content?: string
 }
 
 // Function to get an appropriate icon for a superpower title
 const getSuperpowerIcon = (title: string) => {
   const titleLower = title.toLowerCase()
-  
-  if (titleLower.includes('problem') || titleLower.includes('solving') || titleLower.includes('human')) {
+
+  if (
+    titleLower.includes("problem") ||
+    titleLower.includes("solving") ||
+    titleLower.includes("human")
+  ) {
     return Brain
-  } else if (titleLower.includes('inclusive') || titleLower.includes('product') || titleLower.includes('design')) {
+  } else if (
+    titleLower.includes("inclusive") ||
+    titleLower.includes("product") ||
+    titleLower.includes("design")
+  ) {
     return Users
-  } else if (titleLower.includes('system') || titleLower.includes('thinking') || titleLower.includes('technical')) {
+  } else if (
+    titleLower.includes("system") ||
+    titleLower.includes("thinking") ||
+    titleLower.includes("technical")
+  ) {
     return Settings
   } else {
     return Brain // default icon
@@ -37,6 +49,7 @@ export const SuperpowersSection: React.FC<SuperpowersSectionProps> = ({
   onEditToggle,
   onSuperpowersChange,
   className = "",
+  content = "Highlight your unique strengths and what sets you apart professionally",
 }) => {
   const [localSuperpowers, setLocalSuperpowers] = useState<Superpower[]>([])
 
@@ -78,7 +91,7 @@ export const SuperpowersSection: React.FC<SuperpowersSectionProps> = ({
     setLocalSuperpowers((prev) => prev.filter((_, i) => i !== index))
   }
 
-  return (
+  const sectionContent = (
     <div className={clsx("bg-white rounded-lg border", className)}>
       <div className="bg-teal-600 text-white rounded-t-lg flex items-center justify-between p-4">
         <h3 className="text-lg font-semibold">Superpowers</h3>
@@ -131,7 +144,10 @@ export const SuperpowersSection: React.FC<SuperpowersSectionProps> = ({
                   ) : (
                     <div className="flex items-start gap-3">
                       <div className="flex-shrink-0 w-12 h-12 bg-white rounded-full border-2 border-gray-200 flex items-center justify-center mt-1">
-                        <IconComponent className="w-6 h-6" style={{ color: '#449889' }} />
+                        <IconComponent
+                          className="w-6 h-6"
+                          style={{ color: "#449889" }}
+                        />
                       </div>
                       <div className="flex-1">
                         <div className="font-medium text-gray-900 mb-1">
@@ -167,5 +183,10 @@ export const SuperpowersSection: React.FC<SuperpowersSectionProps> = ({
       </div>
     </div>
   )
-}
 
+  return (
+    <EditableSection isEditing={isEditing} content={content}>
+      {sectionContent}
+    </EditableSection>
+  )
+}

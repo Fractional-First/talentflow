@@ -1,4 +1,3 @@
-
 import React from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -13,7 +12,7 @@ interface BasicInfoSectionProps {
   onEditToggle: () => void
   onChange: (field: "name" | "role" | "location", value: string) => void
   className?: string
-  tooltipContent?: string
+  content?: string
 }
 
 export const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
@@ -24,7 +23,7 @@ export const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
   onEditToggle,
   onChange,
   className = "",
-  tooltipContent = "Update your name, role, and location to keep your profile current",
+  content = "Update your name, role, and location to keep your profile current",
 }) => {
   const sectionContent = (
     <div className={className}>
@@ -81,10 +80,7 @@ export const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
   )
 
   return (
-    <EditableSection
-      isEditing={isEditing}
-      tooltipContent={tooltipContent}
-    >
+    <EditableSection isEditing={isEditing} content={content}>
       {sectionContent}
     </EditableSection>
   )

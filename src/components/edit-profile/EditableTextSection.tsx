@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Edit } from "lucide-react"
@@ -19,7 +18,7 @@ interface EditableTextSectionProps {
   labelClassName?: string
   headerClassName?: string
   textAreaClass?: string
-  tooltipContent?: string
+  content?: string
 }
 
 export const EditableTextSection: React.FC<EditableTextSectionProps> = ({
@@ -35,7 +34,7 @@ export const EditableTextSection: React.FC<EditableTextSectionProps> = ({
   labelClassName = "",
   headerClassName = "",
   textAreaClass = "",
-  tooltipContent = "Edit this section to customize your information",
+  content = "Edit this section to customize your information",
 }) => {
   const sectionContent = (
     <div className={clsx("rounded-lg border", bgColorClass, className)}>
@@ -66,7 +65,7 @@ export const EditableTextSection: React.FC<EditableTextSectionProps> = ({
               textAreaClass,
               "text-sm leading-relaxed",
               textColorClass,
-              bgColorClass.includes("teal") ? "bg-teal-500" : bgColorClass,
+              bgColorClass.includes("teal") ? "bg-teal-500" : bgColorClass
             )}
             rows={bgColorClass.includes("teal") ? 4 : 8}
             placeholder={placeholder}
@@ -86,10 +85,7 @@ export const EditableTextSection: React.FC<EditableTextSectionProps> = ({
   )
 
   return (
-    <EditableSection
-      isEditing={isEditing}
-      tooltipContent={tooltipContent}
-    >
+    <EditableSection isEditing={isEditing} content={content}>
       {sectionContent}
     </EditableSection>
   )

@@ -18,7 +18,7 @@ interface EditableArraySectionProps {
   headerClassName?: string
   bgColorClass?: string
   textColorClass?: string
-  tooltipContent?: string
+  content?: string
 }
 
 export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
@@ -34,7 +34,7 @@ export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
   headerClassName = "",
   bgColorClass = "bg-teal-600",
   textColorClass = "text-white",
-  tooltipContent = "Edit this section to customize your information",
+  content = "Edit this section to customize your information",
 }) => {
   const [localItems, setLocalItems] = useState<string[]>([])
 
@@ -127,7 +127,9 @@ export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
             <ul className="space-y-2 text-sm text-gray-700 leading-relaxed">
               {items.map((item, index) => (
                 <li key={index} className="flex items-start">
-                  <span className="text-gray-900 mr-2 mt-0.5 flex-shrink-0">•</span>
+                  <span className="text-gray-900 mr-2 mt-0.5 flex-shrink-0">
+                    •
+                  </span>
                   <span>{item}</span>
                 </li>
               ))}
@@ -152,10 +154,7 @@ export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
   )
 
   return (
-    <EditableSection
-      isEditing={isEditing}
-      tooltipContent={tooltipContent}
-    >
+    <EditableSection isEditing={isEditing} content={content}>
       {sectionContent}
     </EditableSection>
   )
