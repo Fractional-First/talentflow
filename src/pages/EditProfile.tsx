@@ -1,38 +1,37 @@
 import { initialSteps } from "@/components/dashboard/OnboardingSteps"
 import { DashboardLayout } from "@/components/DashboardLayout"
+import { AutoSaveStatus } from "@/components/edit-profile/AutoSaveStatus"
 import { BasicInfoSection } from "@/components/edit-profile/BasicInfoSection"
 import { EditableArraySection } from "@/components/edit-profile/EditableArraySection"
 import { EditableTextSection } from "@/components/edit-profile/EditableTextSection"
+import EmptyProfile from "@/components/edit-profile/EmptyProfile"
 import { FunctionalSkillsSection } from "@/components/edit-profile/FunctionalSkillsSection"
+import LoadingError from "@/components/edit-profile/LoadingError"
 import { PersonasSection } from "@/components/edit-profile/PersonasSection"
 import { SuperpowersSection } from "@/components/edit-profile/SuperpowersSection"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
 import ProfilePictureUpload from "@/components/ProfilePictureUpload"
-import { useGetUser } from "@/queries/auth/useGetUser"
+import { Button } from "@/components/ui/button"
 import { toast } from "@/hooks/use-toast"
 import { useAutoSaveWithStatus } from "@/hooks/useAutoSaveWithStatus"
 import { useClickOutside } from "@/hooks/useClickOutside"
+import { useSuperpowerEditState } from "@/hooks/useSuperpowerEditState"
+import { useGetUser } from "@/queries/auth/useGetUser"
+import { useCompleteOnboarding } from "@/queries/useCompleteOnboarding"
 import { usePersonaEditState } from "@/queries/usePersonaEditState"
 import { useProfileForm } from "@/queries/useProfileForm"
-import { useSuperpowerEditState } from "@/hooks/useSuperpowerEditState"
-import { supabase } from "@/integrations/supabase/client"
-import { getUserInitials } from "@/lib/utils"
-import { useProfileSnapshot } from "@/queries/useProfileSnapshot"
+import { useEditProfile } from "@/queries/useEditProfile"
 import type { EditStates, ProfileData } from "@/types/profile"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 import { useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { useCompleteOnboarding } from "@/queries/useCompleteOnboarding"
-import { AutoSaveStatus } from "@/components/edit-profile/AutoSaveStatus"
 
-const ProfileSnapshot = () => {
+const EditProfile = () => {
   const navigate = useNavigate()
   const { data: user } = useGetUser()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   // Fetch profile data using the new hook
-  const { profileData, isLoading, error } = useProfileSnapshot()
+  const { profileData, isLoading, error } = useEditProfile()
 
   // Initialize formData state first
   const [formData, setFormData] = useProfileForm({
@@ -161,8 +160,6 @@ const ProfileSnapshot = () => {
     handleInputChange("profilePicture", imageUrl)
   }
 
-  // Check if any section is being edited
-  const isAnyFieldEditing = Object.values(editStates).some((state) => state)
   if (isLoading) {
     return (
       <DashboardLayout steps={initialSteps} currentStep={3}>
@@ -174,39 +171,14 @@ const ProfileSnapshot = () => {
   }
   if (error) {
     console.error("Profile query error:", error)
-    return (
-      <DashboardLayout steps={initialSteps} currentStep={3}>
-        <div className="max-w-6xl mx-auto space-y-6 p-6">
-          <div className="text-center text-red-600">
-            <p>Error loading profile. Please try again.</p>
-            <p className="text-sm mt-2">Error: {error.message}</p>
-          </div>
-        </div>
-      </DashboardLayout>
-    )
+    return <LoadingError initialSteps={initialSteps} error={error} />
   }
 
   // Check if we have meaningful profile data
   if (!profileData || !formData.name) {
-    return (
-      <DashboardLayout steps={initialSteps} currentStep={3}>
-        <div className="max-w-6xl mx-auto space-y-6 p-6">
-          <div className="text-center">
-            <p>No profile data found.</p>
-            <p className="text-sm text-gray-600 mt-2">
-              Please complete your profile creation first.
-            </p>
-            <Button
-              onClick={() => navigate("/create-profile")}
-              className="mt-4"
-            >
-              Go to Profile Creation
-            </Button>
-          </div>
-        </div>
-      </DashboardLayout>
-    )
+    return <EmptyProfile initialSteps={initialSteps} />
   }
+
   return (
     <DashboardLayout steps={initialSteps} currentStep={3}>
       <div ref={mainContentRef} className="max-w-6xl mx-auto space-y-6 p-6">
@@ -469,4 +441,4 @@ const ProfileSnapshot = () => {
     </DashboardLayout>
   )
 }
-export default ProfileSnapshot
+export default EditProfile
