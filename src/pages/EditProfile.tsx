@@ -11,154 +11,33 @@ import { PersonasSection } from "@/components/edit-profile/PersonasSection"
 import { SuperpowersSection } from "@/components/edit-profile/SuperpowersSection"
 import ProfilePictureUpload from "@/components/ProfilePictureUpload"
 import { Button } from "@/components/ui/button"
-import { toast } from "@/hooks/use-toast"
-import { useAutoSaveWithStatus } from "@/hooks/useAutoSaveWithStatus"
-import { useClickOutside } from "@/hooks/useClickOutside"
-import { useSuperpowerEditState } from "@/hooks/useSuperpowerEditState"
-import { useGetUser } from "@/queries/auth/useGetUser"
-import { useCompleteOnboarding } from "@/queries/useCompleteOnboarding"
-import { usePersonaEditState } from "@/queries/usePersonaEditState"
-import { useProfileForm } from "@/queries/useProfileForm"
-import { useEditProfile } from "@/queries/useEditProfile"
-import type { EditStates, ProfileData } from "@/types/profile"
+import { useEditProfile } from "@/hooks/useEditProfile"
 import { ArrowLeft, ArrowRight } from "lucide-react"
-import { useRef, useState } from "react"
-import { useNavigate } from "react-router-dom"
 
 const EditProfile = () => {
-  const navigate = useNavigate()
-  const { data: user } = useGetUser()
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
-  // Fetch profile data using the new hook
-  const { profileData, isLoading, error } = useEditProfile()
-
-  // Initialize formData state first
-  const [formData, setFormData] = useProfileForm({
+  const {
     user,
     profileData,
-    toast: (opts: {
-      title: string
-      description: string
-      variant: "default" | "destructive"
-    }) => {
-      toast(opts)
-    },
-  })
-
-  // Add activeTab state for personas
-  const [personasActiveTab, setPersonasActiveTab] = useState("0")
-  const {
+    formData,
+    isLoading,
+    error,
+    isSubmitting,
+    editStates,
+    personasActiveTab,
     personaEditStates,
+    saveStatus,
+    mainContentRef,
+    setPersonasActiveTab,
+    toggleEdit,
+    handleContinue,
+    handleInputChange,
+    handleProfilePictureUpdate,
+    retrySave,
     handlePersonaLocalUpdate,
     handleAddPersona,
     handleRemovePersona,
-    syncPersonaEditStates,
-  } = usePersonaEditState({
-    personas: formData.personas || [],
-    setFormData,
-  })
-  const { syncSuperpowerEditStates } = useSuperpowerEditState({
-    superpowers: formData.superpowers || [],
-    setFormData,
-  })
-
-  // Replace useAutoSave with useAutoSaveWithStatus
-  const { saveStatus, retrySave } = useAutoSaveWithStatus({
-    user,
-    formData,
-    profileData,
-    toast: (opts) => toast(opts),
-  })
-
-  // Restore toggleEdit function
-  const toggleEdit = (section: keyof EditStates) => {
-    setEditStates((prev) => {
-      // If already editing this section, turn it off
-      if (prev[section]) {
-        return {
-          ...prev,
-          [section]: false,
-        }
-      }
-      // Otherwise, set only this section to true, all others to false
-      const newState: EditStates = Object.keys(prev).reduce((acc, key) => {
-        acc[key as keyof EditStates] = false
-        return acc
-      }, {} as EditStates)
-      newState[section] = true
-
-      // When entering edit mode for personas, sync local state with current data
-      if (section === "personas" && formData.personas) {
-        syncPersonaEditStates(formData.personas)
-      }
-      // When entering edit mode for superpowers, sync local state with current data
-      if (section === "superpowers" && formData.superpowers) {
-        syncSuperpowerEditStates(formData.superpowers)
-      }
-      return newState
-    })
-  }
-  const [editStates, setEditStates] = useState<EditStates>({
-    basicInfo: false,
-    description: false,
-    keyRoles: false,
-    focusAreas: false,
-    industries: false,
-    geographicalCoverage: false,
-    stages: false,
-    personalInterests: false,
-    certifications: false,
-    meetIntro: false,
-    personas: false,
-    superpowers: false,
-    sweetSpot: false,
-    userManual: false,
-    functionalSkills: false,
-  })
-  const mainContentRef = useRef<HTMLDivElement>(null)
-  useClickOutside(mainContentRef, () => {
-    setEditStates((prev) => {
-      if (Object.values(prev).some((v) => v)) {
-        const closed: EditStates = Object.keys(prev).reduce((acc, key) => {
-          acc[key as keyof EditStates] = false
-          return acc
-        }, {} as EditStates)
-        return closed
-      }
-      return prev
-    })
-  })
-  const completeOnboardingMutation = useCompleteOnboarding()
-  const handleContinue = async () => {
-    setIsSubmitting(true)
-    completeOnboardingMutation.mutate(undefined, {
-      onError: (error) => {
-        console.error("Error updating onboarding status:", error)
-        toast({
-          title: "Error",
-          description: "Failed to complete onboarding.",
-          variant: "destructive",
-        })
-      },
-      onSettled: () => {
-        setIsSubmitting(false)
-      },
-    })
-  }
-
-  // Handle input changes for form fields
-  const handleInputChange = (field: keyof ProfileData, value: any) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }))
-  }
-
-  // Handle profile picture update
-  const handleProfilePictureUpdate = (imageUrl: string) => {
-    handleInputChange("profilePicture", imageUrl)
-  }
+    navigate,
+  } = useEditProfile()
 
   if (isLoading) {
     return (

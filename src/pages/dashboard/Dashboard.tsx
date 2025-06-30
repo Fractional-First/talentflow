@@ -1,17 +1,16 @@
 import { AppSidebar } from "@/components/AppSidebar"
-import { JobPreferencesCard } from "@/components/dashboard/JobPreferencesCard"
 import { JobPreferencesPlaceholder } from "@/components/dashboard/JobPreferencesPlaceholder"
 import { OnboardingBanner } from "@/components/dashboard/OnboardingBanner"
 import { ProfileSummaryCard } from "@/components/dashboard/ProfileSummaryCard"
 import { DashboardLayout } from "@/components/DashboardLayout"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { Spinner } from "@/components/ui/spinner"
-import { useProfileSnapshot } from "@/queries/useEditProfile"
+import { useEditProfile } from "@/queries/useEditProfile"
 import { useProfileData } from "@/queries/useProfileData"
 
 // Dashboard main content with sidebar navigation
 const Dashboard = () => {
-  const { onboardingStatus, isLoading } = useProfileSnapshot()
+  const { onboardingStatus, isLoading } = useEditProfile()
   const { data: profile, isLoading: profileLoading, error } = useProfileData()
   const isOnboarding = onboardingStatus === "PROFILE_CONFIRMED"
 
