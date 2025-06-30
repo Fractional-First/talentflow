@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Camera, Upload, Save, X } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { useImageUpload } from '@/hooks/useImageUpload';
 
 interface ProfilePictureUploadProps {
   currentImage?: string;
@@ -32,6 +33,8 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
   const imgRef = useRef<HTMLImageElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  
+  const { uploadImage, deleteImage, isUploading } = useImageUpload();
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -54,46 +57,74 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
     }
   };
 
-  const getCroppedImg = useCallback(() => {
-    if (!completedCrop || !imgRef.current || !canvasRef.current) {
-      return null;
-    }
+  const getCroppedImageFile = useCallback((): Promise<File | null> => {
+    return new Promise((resolve) => {
+      if (!completedCrop || !imgRef.current || !canvasRef.current) {
+        resolve(null);
+        return;
+      }
 
-    const image = imgRef.current;
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
+      const image = imgRef.current;
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
 
-    if (!ctx) {
-      return null;
-    }
+      if (!ctx) {
+        resolve(null);
+        return;
+      }
 
-    const scaleX = image.naturalWidth / image.width;
-    const scaleY = image.naturalHeight / image.height;
+      const scaleX = image.naturalWidth / image.width;
+      const scaleY = image.naturalHeight / image.height;
 
-    // Set canvas size to the crop size
-    canvas.width = completedCrop.width;
-    canvas.height = completedCrop.height;
+      // Set canvas size to the crop size
+      canvas.width = completedCrop.width;
+      canvas.height = completedCrop.height;
 
-    // Draw the cropped image
-    ctx.drawImage(
-      image,
-      completedCrop.x * scaleX,
-      completedCrop.y * scaleY,
-      completedCrop.width * scaleX,
-      completedCrop.height * scaleY,
-      0,
-      0,
-      completedCrop.width,
-      completedCrop.height
-    );
+      // Draw the cropped image
+      ctx.drawImage(
+        image,
+        completedCrop.x * scaleX,
+        completedCrop.y * scaleY,
+        completedCrop.width * scaleX,
+        completedCrop.height * scaleY,
+        0,
+        0,
+        completedCrop.width,
+        completedCrop.height
+      );
 
-    return canvas.toDataURL('image/jpeg', 0.9);
+      canvas.toBlob((blob) => {
+        if (blob) {
+          const file = new File([blob], 'profile-picture.jpg', { type: 'image/jpeg' });
+          resolve(file);
+        } else {
+          resolve(null);
+        }
+      }, 'image/jpeg', 0.9);
+    });
   }, [completedCrop]);
 
-  const handleSave = () => {
-    const croppedImageUrl = getCroppedImg();
-    if (croppedImageUrl) {
-      onImageUpdate(croppedImageUrl);
+  const handleSave = async () => {
+    const croppedFile = await getCroppedImageFile();
+    if (!croppedFile) {
+      toast({
+        title: "Error",
+        description: "Failed to process the cropped image.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Delete the old image if it exists and is from our storage
+    if (currentImage && currentImage.includes('profile-images')) {
+      await deleteImage(currentImage);
+    }
+
+    // Upload the new image
+    const imageUrl = await uploadImage(croppedFile, 'profile');
+    
+    if (imageUrl) {
+      onImageUpdate(imageUrl);
       setIsEditing(false);
       setSelectedImage(null);
       toast({
@@ -130,9 +161,10 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
             size="sm"
             onClick={() => fileInputRef.current?.click()}
             className="text-white hover:text-white hover:bg-white/20"
+            disabled={isUploading}
           >
             <Camera className="h-6 w-6 mr-2" />
-            Change Photo
+            {isUploading ? 'Uploading...' : 'Change Photo'}
           </Button>
         </div>
       </div>
@@ -143,6 +175,7 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
         accept="image/*"
         onChange={handleFileSelect}
         className="hidden"
+        disabled={isUploading}
       />
 
       {/* Crop Dialog */}
@@ -178,13 +211,17 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={handleCancel}>
+            <Button variant="outline" onClick={handleCancel} disabled={isUploading}>
               <X className="h-4 w-4 mr-2" />
               Cancel
             </Button>
-            <Button onClick={handleSave} className="bg-teal-600 hover:bg-teal-700">
+            <Button 
+              onClick={handleSave} 
+              className="bg-teal-600 hover:bg-teal-700"
+              disabled={isUploading}
+            >
               <Save className="h-4 w-4 mr-2" />
-              Save Photo
+              {isUploading ? 'Saving...' : 'Save Photo'}
             </Button>
           </DialogFooter>
         </DialogContent>
