@@ -1,3 +1,4 @@
+
 import { initialSteps } from "@/components/dashboard/OnboardingSteps"
 import { DashboardLayout } from "@/components/DashboardLayout"
 import { AutoSaveStatus } from "@/components/edit-profile/AutoSaveStatus"
@@ -12,8 +13,7 @@ import { SuperpowersSection } from "@/components/edit-profile/SuperpowersSection
 import ProfilePictureUpload from "@/components/ProfilePictureUpload"
 import { Button } from "@/components/ui/button"
 import { useEditProfile } from "@/hooks/useEditProfile"
-import { migrateAllProfileImages } from "@/utils/migrateProfileImages"
-import { ArrowLeft, ArrowRight, Database } from "lucide-react"
+import { ArrowLeft, ArrowRight } from "lucide-react"
 
 const EditProfile = () => {
   const {
@@ -39,11 +39,6 @@ const EditProfile = () => {
     handleRemovePersona,
     navigate,
   } = useEditProfile()
-
-  const handleMigrateImages = async () => {
-    console.log('Starting profile image migration...')
-    await migrateAllProfileImages()
-  }
 
   if (isLoading) {
     return (
@@ -81,16 +76,7 @@ const EditProfile = () => {
           </div>
 
           {/* Auto-save Status - Fixed position in top right */}
-          <div className="absolute top-0 right-0 flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleMigrateImages}
-              className="text-xs"
-            >
-              <Database className="h-3 w-3 mr-1" />
-              Migrate Images
-            </Button>
+          <div className="absolute top-0 right-0">
             <AutoSaveStatus
               status={saveStatus.status}
               lastSavedTime={saveStatus.lastSavedTime}
