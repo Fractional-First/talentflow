@@ -1,5 +1,6 @@
+
 import { StepCard } from "@/components/StepCard"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { type ProfileSummary } from "@/queries/useProfileData"
@@ -36,6 +37,9 @@ export function ProfileSummaryCard({
       <div className="p-6">
         <div className="flex items-start space-x-4">
           <Avatar className="h-16 w-16 border-2 border-primary/10">
+            {profile.profilePicture && (
+              <AvatarImage src={profile.profilePicture} alt={profile.name} />
+            )}
             <AvatarFallback className="bg-primary/10 text-primary text-xl">
               {initials}
             </AvatarFallback>
