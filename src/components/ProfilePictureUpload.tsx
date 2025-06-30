@@ -22,13 +22,8 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [crop, setCrop] = useState<Crop>({
-    unit: 'px',
-    width: 100,
-    height: 100,
-    x: 0,
-    y: 0
-  });
+  // Start with no crop as recommended by react-image-crop docs
+  const [crop, setCrop] = useState<Crop>();
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
   const imgRef = useRef<HTMLImageElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -53,13 +48,7 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
         setSelectedImage(reader.result as string);
         setIsEditing(true);
         // Reset crop states - will be set properly in handleImageLoad
-        setCrop({
-          unit: 'px',
-          width: 100,
-          height: 100,
-          x: 0,
-          y: 0
-        });
+        setCrop(undefined);
         setCompletedCrop(undefined);
       };
       reader.readAsDataURL(file);
@@ -75,17 +64,19 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
     const x = (naturalWidth - minDimension) / 2;
     const y = (naturalHeight - minDimension) / 2;
     
-    // Set initial crop to be square and centered
+    // Set initial crop to be square and centered using percentage
     const initialCrop: Crop = {
-      unit: 'px',
-      x: x,
-      y: y,
-      width: minDimension,
-      height: minDimension
+      unit: '%',
+      x: (x / naturalWidth) * 100,
+      y: (y / naturalHeight) * 100,
+      width: (minDimension / naturalWidth) * 100,
+      height: (minDimension / naturalHeight) * 100
     };
     
-    // Set both crop and completedCrop to the same values
+    // Set the crop
     setCrop(initialCrop);
+    
+    // Also set completedCrop in pixel values for processing
     setCompletedCrop({
       unit: 'px',
       x: x,
