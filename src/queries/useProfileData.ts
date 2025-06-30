@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { useGetUser } from "@/queries/auth/useGetUser"
@@ -10,6 +11,7 @@ export type ProfileSummary = {
   location: string
   about: string
   skills: string[]
+  profilePicture?: string
 }
 
 export const useProfileData = () => {
@@ -43,13 +45,18 @@ export const useProfileData = () => {
       }
 
       const data = profileData.profile_data as ProfileData
+      
+      console.log("Profile data from database:", data)
+      console.log("Profile picture URL:", data.profilePicture)
+      
       return {
         name: data.name || "User",
         title: data.role || "Professional",
         company: "Company",
-        location: data.location || "Location",
+        location: data.location || "Location", 
         about: data.summary || "Professional summary not provided.",
         skills: data.focus_areas || [],
+        profilePicture: data.profilePicture,
       }
     },
     enabled: !!user?.id,

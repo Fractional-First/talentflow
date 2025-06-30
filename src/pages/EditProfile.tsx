@@ -12,7 +12,8 @@ import { SuperpowersSection } from "@/components/edit-profile/SuperpowersSection
 import ProfilePictureUpload from "@/components/ProfilePictureUpload"
 import { Button } from "@/components/ui/button"
 import { useEditProfile } from "@/hooks/useEditProfile"
-import { ArrowLeft, ArrowRight } from "lucide-react"
+import { migrateAllProfileImages } from "@/utils/migrateProfileImages"
+import { ArrowLeft, ArrowRight, Database } from "lucide-react"
 
 const EditProfile = () => {
   const {
@@ -38,6 +39,11 @@ const EditProfile = () => {
     handleRemovePersona,
     navigate,
   } = useEditProfile()
+
+  const handleMigrateImages = async () => {
+    console.log('Starting profile image migration...')
+    await migrateAllProfileImages()
+  }
 
   if (isLoading) {
     return (
@@ -75,7 +81,16 @@ const EditProfile = () => {
           </div>
 
           {/* Auto-save Status - Fixed position in top right */}
-          <div className="absolute top-0 right-0">
+          <div className="absolute top-0 right-0 flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleMigrateImages}
+              className="text-xs"
+            >
+              <Database className="h-3 w-3 mr-1" />
+              Migrate Images
+            </Button>
             <AutoSaveStatus
               status={saveStatus.status}
               lastSavedTime={saveStatus.lastSavedTime}
@@ -284,7 +299,7 @@ const EditProfile = () => {
 
             {/* User Manual */}
             <EditableTextSection
-              content="Share insights about your working style, communication preferences, and how others can best collaborate with you"
+              content={`Share insights about your working style, communication preferences, and how others can best collaborate with you`}
               title={`${
                 formData?.name?.split(" ")[0] || "Professional"
               }'s User Manual`}
