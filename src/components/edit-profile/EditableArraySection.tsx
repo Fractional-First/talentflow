@@ -1,8 +1,9 @@
+
 import React, { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Edit, Plus, X } from "lucide-react"
-import { EditableSection } from "@/components/EditableSection"
+import { EditingTooltip } from "@/components/edit-profile/EditingTooltip"
 import clsx from "clsx"
 
 interface EditableArraySectionProps {
@@ -68,95 +69,88 @@ export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
     setLocalItems((prev) => prev.filter((_, i) => i !== index))
   }
 
-  const sectionContent = (
-    <div className={clsx("bg-white rounded-lg border", className)}>
-      <div
-        className={clsx(
-          "rounded-t-lg flex items-center justify-between p-4",
-          bgColorClass,
-          textColorClass,
-          headerClassName
-        )}
-      >
-        <h3 className="text-lg font-semibold">{title}</h3>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onEditToggle}
+  return (
+    <EditingTooltip content={tooltipContent} show={isEditing}>
+      <div className={clsx("bg-white rounded-lg border", className)}>
+        <div
           className={clsx(
-            "hover:bg-white/20",
-            textColorClass.includes("white") ? "text-white" : "text-gray-600"
+            "rounded-t-lg flex items-center justify-between p-4",
+            bgColorClass,
+            textColorClass,
+            headerClassName
           )}
         >
-          <Edit className="h-4 w-4" />
-        </Button>
-      </div>
-      <div className="p-4">
-        {isEditing ? (
-          <div className="space-y-2">
-            {localItems.map((item, index) => (
-              <div key={index} className="flex gap-2 items-center">
-                <Input
-                  value={item}
-                  onChange={(e) => handleItemChange(index, e.target.value)}
-                  placeholder={placeholder}
-                  className="flex-1"
-                />
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleRemoveItem(index)}
-                  className="text-red-500 hover:text-red-700"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-            ))}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleAddItem}
-              className="w-full"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              {addLabel}
-            </Button>
-          </div>
-        ) : items && items.length > 0 ? (
-          displayType === "bullets" ? (
-            <ul className="space-y-2 text-sm text-gray-700 leading-relaxed">
-              {items.map((item, index) => (
-                <li key={index} className="flex items-start">
-                  <span className="text-gray-900 mr-2 mt-0.5 flex-shrink-0">•</span>
-                  <span>{item}</span>
-                </li>
+          <h3 className="text-lg font-semibold">{title}</h3>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onEditToggle}
+            className={clsx(
+              "hover:bg-white/20",
+              textColorClass.includes("white") ? "text-white" : "text-gray-600"
+            )}
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
+        </div>
+        <div className="p-4">
+          {isEditing ? (
+            <div className="space-y-2">
+              {localItems.map((item, index) => (
+                <div key={index} className="flex gap-2 items-center">
+                  <Input
+                    value={item}
+                    onChange={(e) => handleItemChange(index, e.target.value)}
+                    placeholder={placeholder}
+                    className="flex-1"
+                  />
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleRemoveItem(index)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
               ))}
-            </ul>
-          ) : (
-            <div className="flex flex-wrap gap-2">
-              {items.map((item, index) => (
-                <span
-                  key={index}
-                  className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
-                >
-                  {item}
-                </span>
-              ))}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleAddItem}
+                className="w-full"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                {addLabel}
+              </Button>
             </div>
-          )
-        ) : (
-          <div className="text-sm text-gray-700">{title} not available</div>
-        )}
+          ) : items && items.length > 0 ? (
+            displayType === "bullets" ? (
+              <ul className="space-y-2 text-sm text-gray-700 leading-relaxed">
+                {items.map((item, index) => (
+                  <li key={index} className="flex items-start">
+                    <span className="text-gray-900 mr-2 mt-0.5 flex-shrink-0">•</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {items.map((item, index) => (
+                  <span
+                    key={index}
+                    className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
+                  >
+                    {item}
+                  </span>
+                ))}
+              </div>
+            )
+          ) : (
+            <div className="text-sm text-gray-700">{title} not available</div>
+          )}
+        </div>
       </div>
-    </div>
-  )
-
-  return (
-    <EditableSection
-      isEditing={isEditing}
-      tooltipContent={tooltipContent}
-    >
-      {sectionContent}
-    </EditableSection>
+    </EditingTooltip>
   )
 }
