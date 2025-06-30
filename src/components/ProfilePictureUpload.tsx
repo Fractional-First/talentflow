@@ -52,9 +52,32 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
       reader.onload = () => {
         setSelectedImage(reader.result as string);
         setIsEditing(true);
+        // Reset crop states
+        setCrop({
+          unit: '%',
+          width: 100,
+          height: 100,
+          x: 0,
+          y: 0
+        });
+        setCompletedCrop(undefined);
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  // Handle image load to set initial completed crop
+  const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const { naturalWidth, naturalHeight } = e.currentTarget;
+    
+    // Set initial completed crop to cover the entire image
+    setCompletedCrop({
+      unit: 'px',
+      x: 0,
+      y: 0,
+      width: naturalWidth,
+      height: naturalHeight
+    });
   };
 
   const getCroppedImageFile = useCallback((): Promise<File | null> => {
@@ -200,6 +223,7 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
                     src={selectedImage}
                     alt="Crop preview"
                     style={{ maxHeight: '400px', maxWidth: '100%' }}
+                    onLoad={handleImageLoad}
                   />
                 </ReactCrop>
               </div>
