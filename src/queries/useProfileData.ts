@@ -45,6 +45,10 @@ export const useProfileData = () => {
       }
 
       const data = profileData.profile_data as ProfileData
+      
+      console.log("Profile data from database:", data)
+      console.log("Profile picture URL:", data.profilePicture)
+      
       return {
         name: data.name || "User",
         title: data.role || "Professional",
