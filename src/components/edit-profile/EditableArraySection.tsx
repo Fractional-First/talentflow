@@ -1,8 +1,8 @@
-
 import React, { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Edit, Plus, X } from "lucide-react"
+import { EditableSection } from "@/components/EditableSection"
 import clsx from "clsx"
 
 interface EditableArraySectionProps {
@@ -18,6 +18,7 @@ interface EditableArraySectionProps {
   headerClassName?: string
   bgColorClass?: string
   textColorClass?: string
+  tooltipContent?: string
 }
 
 export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
@@ -33,6 +34,7 @@ export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
   headerClassName = "",
   bgColorClass = "bg-teal-600",
   textColorClass = "text-white",
+  tooltipContent = "Edit this section to customize your information",
 }) => {
   const [localItems, setLocalItems] = useState<string[]>([])
 
@@ -66,7 +68,7 @@ export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
     setLocalItems((prev) => prev.filter((_, i) => i !== index))
   }
 
-  return (
+  const sectionContent = (
     <div className={clsx("bg-white rounded-lg border", className)}>
       <div
         className={clsx(
@@ -147,5 +149,14 @@ export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
         )}
       </div>
     </div>
+  )
+
+  return (
+    <EditableSection
+      isEditing={isEditing}
+      tooltipContent={tooltipContent}
+    >
+      {sectionContent}
+    </EditableSection>
   )
 }
