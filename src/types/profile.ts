@@ -1,3 +1,4 @@
+
 // Profile-related shared types
 
 export interface Persona {
@@ -55,7 +56,6 @@ export interface EditStates {
   stages: boolean
   personalInterests: boolean
   certifications: boolean
-  engagementOptions: boolean
   meetIntro: boolean
   personas: boolean
   superpowers: boolean

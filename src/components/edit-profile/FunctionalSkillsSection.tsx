@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Edit, Plus, X, Minus } from "lucide-react"
 import clsx from "clsx"
 import type { FunctionalSkill, FunctionalSkills } from "@/types/profile"
+import { EditableSection } from "@/components/EditableSection"
 
 interface FunctionalSkillsSectionProps {
   functionalSkills: FunctionalSkills
@@ -12,6 +13,7 @@ interface FunctionalSkillsSectionProps {
   onEditToggle: () => void
   onFunctionalSkillsChange: (skills: FunctionalSkills) => void
   className?: string
+  content?: string
 }
 
 export const FunctionalSkillsSection: React.FC<
@@ -22,6 +24,7 @@ export const FunctionalSkillsSection: React.FC<
   onEditToggle,
   onFunctionalSkillsChange,
   className = "",
+  content = "Organize your skills by category and provide details about your expertise level",
 }) => {
   const [localSkills, setLocalSkills] = useState<FunctionalSkills>({})
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null)
@@ -117,7 +120,7 @@ export const FunctionalSkillsSection: React.FC<
     })
   }
 
-  return (
+  const sectionContent = (
     <div className={clsx("bg-white rounded-lg border", className)}>
       <div className="bg-teal-600 text-white rounded-t-lg flex items-center justify-between p-4">
         <h3 className="text-lg font-semibold">Functional Skills</h3>
@@ -225,13 +228,22 @@ export const FunctionalSkillsSection: React.FC<
                               />
                             </div>
                           ) : (
-                            <div>
-                              <div className="font-medium text-gray-900">
-                                {skill.title}
+                            <div className="flex items-start gap-2">
+                              <span className="text-sm text-gray-700 mt-0.5">
+                                •
+                              </span>
+                              <div className="flex-1">
+                                <div className="text-sm text-gray-700">
+                                  <span className="font-medium">
+                                    {skill.title}
+                                  </span>
+                                  {skill.description && (
+                                    <span className="ml-1">
+                                      - {skill.description}
+                                    </span>
+                                  )}
+                                </div>
                               </div>
-                              <p className="text-sm text-gray-700">
-                                {skill.description}
-                              </p>
                             </div>
                           )}
                         </div>
@@ -275,5 +287,11 @@ export const FunctionalSkillsSection: React.FC<
         )}
       </div>
     </div>
+  )
+
+  return (
+    <EditableSection isEditing={isEditing} content={content}>
+      {sectionContent}
+    </EditableSection>
   )
 }

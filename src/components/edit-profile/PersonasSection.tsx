@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Edit, Plus, X } from "lucide-react"
 import clsx from "clsx"
 import type { Persona } from "@/types/profile"
+import { EditableSection } from "@/components/EditableSection"
 
 interface PersonaEditState {
   title: string
@@ -27,6 +28,7 @@ interface PersonasSectionProps {
   activeTab: string
   onActiveTabChange: (tab: string) => void
   className?: string
+  content?: string
 }
 
 export const PersonasSection: React.FC<PersonasSectionProps> = ({
@@ -40,8 +42,9 @@ export const PersonasSection: React.FC<PersonasSectionProps> = ({
   activeTab,
   onActiveTabChange,
   className = "",
+  content = "Define different professional personas that showcase various aspects of your expertise",
 }) => {
-  return (
+  const sectionContent = (
     <div className={clsx("bg-white rounded-lg border", className)}>
       <div className="bg-teal-600 text-white rounded-t-lg flex items-center justify-between p-4">
         <h3 className="text-lg font-semibold">Personas</h3>
@@ -62,7 +65,7 @@ export const PersonasSection: React.FC<PersonasSectionProps> = ({
             className="w-full"
           >
             <TabsList
-              className="grid w-full mb-6 bg-gray-100"
+              className="grid w-full mb-6 bg-gray-100 h-auto p-1"
               style={{
                 gridTemplateColumns: `repeat(${personas.length}, minmax(0, 1fr))`,
               }}
@@ -71,9 +74,12 @@ export const PersonasSection: React.FC<PersonasSectionProps> = ({
                 <TabsTrigger
                   key={index}
                   value={index.toString()}
-                  className="text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900"
+                  className="text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 px-3 py-3 whitespace-normal text-center leading-tight h-auto min-h-[3rem] flex items-center justify-center"
+                  title={persona.title || `Persona ${index + 1}`}
                 >
-                  {persona.title || `Persona ${index + 1}`}
+                  <span className="break-words">
+                    {persona.title || `Persona ${index + 1}`}
+                  </span>
                 </TabsTrigger>
               ))}
             </TabsList>
@@ -118,14 +124,23 @@ export const PersonasSection: React.FC<PersonasSectionProps> = ({
                     />
                   </>
                 ) : (
-                  <>
-                    <h4 className="font-medium">{persona.title}</h4>
-                    <ul className="space-y-2">
+                  <div className="space-y-4">
+                    <h4 className="font-medium text-lg text-gray-900">
+                      {persona.title}
+                    </h4>
+                    <ul className="space-y-3">
                       {persona.bullets.map((bullet, bulletIndex) => (
-                        <li key={bulletIndex}>• {bullet}</li>
+                        <li key={bulletIndex} className="flex items-start">
+                          <span className="text-gray-900 mr-3 mt-0.5 flex-shrink-0">
+                            •
+                          </span>
+                          <span className="text-sm text-gray-700 leading-relaxed break-words flex-1">
+                            {bullet}
+                          </span>
+                        </li>
                       ))}
                     </ul>
-                  </>
+                  </div>
                 )}
               </TabsContent>
             ))}
@@ -146,5 +161,11 @@ export const PersonasSection: React.FC<PersonasSectionProps> = ({
         )}
       </div>
     </div>
+  )
+
+  return (
+    <EditableSection isEditing={isEditing} content={content}>
+      {sectionContent}
+    </EditableSection>
   )
 }

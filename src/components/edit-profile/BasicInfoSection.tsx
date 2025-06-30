@@ -2,6 +2,7 @@ import React from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Edit } from "lucide-react"
+import { EditableSection } from "@/components/EditableSection"
 
 interface BasicInfoSectionProps {
   name: string
@@ -11,6 +12,7 @@ interface BasicInfoSectionProps {
   onEditToggle: () => void
   onChange: (field: "name" | "role" | "location", value: string) => void
   className?: string
+  content?: string
 }
 
 export const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
@@ -21,8 +23,9 @@ export const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
   onEditToggle,
   onChange,
   className = "",
+  content = "Update your name, role, and location to keep your profile current",
 }) => {
-  return (
+  const sectionContent = (
     <div className={className}>
       <div className="flex items-center justify-center mb-2 relative">
         {isEditing ? (
@@ -74,5 +77,11 @@ export const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
         )}
       </div>
     </div>
+  )
+
+  return (
+    <EditableSection isEditing={isEditing} content={content}>
+      {sectionContent}
+    </EditableSection>
   )
 }

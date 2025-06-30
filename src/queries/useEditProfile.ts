@@ -41,7 +41,7 @@ export interface ProfileData {
   profilePicture?: string
 }
 
-export const useProfileSnapshot = () => {
+export const useEditProfile = () => {
   const { data: user } = useGetUser()
   const queryClient = useQueryClient()
 

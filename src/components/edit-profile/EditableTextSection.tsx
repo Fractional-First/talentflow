@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Edit } from "lucide-react"
+import { EditableSection } from "@/components/EditableSection"
 import clsx from "clsx"
 import React from "react"
 
@@ -12,11 +13,12 @@ interface EditableTextSectionProps {
   onEditToggle: () => void
   placeholder?: string
   className?: string
-  bgColorClass?: string // e.g. 'bg-teal-600', 'bg-white', etc.
-  textColorClass?: string // e.g. 'text-white', 'text-gray-900', etc.
+  bgColorClass?: string
+  textColorClass?: string
   labelClassName?: string
   headerClassName?: string
   textAreaClass?: string
+  content?: string
 }
 
 export const EditableTextSection: React.FC<EditableTextSectionProps> = ({
@@ -32,8 +34,9 @@ export const EditableTextSection: React.FC<EditableTextSectionProps> = ({
   labelClassName = "",
   headerClassName = "",
   textAreaClass = "",
+  content = "Edit this section to customize your information",
 }) => {
-  return (
+  const sectionContent = (
     <div className={clsx("rounded-lg border", bgColorClass, className)}>
       <div
         className={clsx(
@@ -62,7 +65,7 @@ export const EditableTextSection: React.FC<EditableTextSectionProps> = ({
               textAreaClass,
               "text-sm leading-relaxed",
               textColorClass,
-              bgColorClass.includes("teal") ? "bg-teal-500" : bgColorClass,
+              bgColorClass.includes("teal") ? "bg-teal-500" : bgColorClass
             )}
             rows={bgColorClass.includes("teal") ? 4 : 8}
             placeholder={placeholder}
@@ -79,5 +82,11 @@ export const EditableTextSection: React.FC<EditableTextSectionProps> = ({
         )}
       </div>
     </div>
+  )
+
+  return (
+    <EditableSection isEditing={isEditing} content={content}>
+      {sectionContent}
+    </EditableSection>
   )
 }
