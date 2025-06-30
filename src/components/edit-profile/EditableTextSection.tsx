@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Edit } from "lucide-react"
-import { EditingTooltip } from "@/components/edit-profile/EditingTooltip"
+import { EditableSection } from "@/components/EditableSection"
 import clsx from "clsx"
 import React from "react"
 
@@ -37,53 +37,60 @@ export const EditableTextSection: React.FC<EditableTextSectionProps> = ({
   textAreaClass = "",
   tooltipContent = "Edit this section to customize your information",
 }) => {
-  return (
-    <EditingTooltip content={tooltipContent} show={isEditing}>
-      <div className={clsx("rounded-lg border", bgColorClass, className)}>
-        <div
-          className={clsx(
-            "flex items-center justify-between p-4 rounded-t-lg",
-            headerClassName
-          )}
+  const sectionContent = (
+    <div className={clsx("rounded-lg border", bgColorClass, className)}>
+      <div
+        className={clsx(
+          "flex items-center justify-between p-4 rounded-t-lg",
+          headerClassName
+        )}
+      >
+        <h3 className={clsx("text-lg font-semibold", labelClassName)}>
+          {title}
+        </h3>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onEditToggle}
+          className={"hover:bg-gray-100"}
         >
-          <h3 className={clsx("text-lg font-semibold", labelClassName)}>
-            {title}
-          </h3>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onEditToggle}
-            className={"hover:bg-gray-100"}
-          >
-            <Edit className="h-4 w-4" />
-          </Button>
-        </div>
-        <div className={clsx("p-4", textColorClass)}>
-          {isEditing ? (
-            <Textarea
-              value={value}
-              onChange={(e) => onChange(e.target.value)}
-              className={clsx(
-                textAreaClass,
-                "text-sm leading-relaxed",
-                textColorClass,
-                bgColorClass.includes("teal") ? "bg-teal-500" : bgColorClass,
-              )}
-              rows={bgColorClass.includes("teal") ? 4 : 8}
-              placeholder={placeholder}
-            />
-          ) : (
-            <div
-              className={clsx(
-                "text-sm leading-relaxed whitespace-pre-line",
-                textColorClass
-              )}
-            >
-              {value || placeholder || "Not available"}
-            </div>
-          )}
-        </div>
+          <Edit className="h-4 w-4" />
+        </Button>
       </div>
-    </EditingTooltip>
+      <div className={clsx("p-4", textColorClass)}>
+        {isEditing ? (
+          <Textarea
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            className={clsx(
+              textAreaClass,
+              "text-sm leading-relaxed",
+              textColorClass,
+              bgColorClass.includes("teal") ? "bg-teal-500" : bgColorClass,
+            )}
+            rows={bgColorClass.includes("teal") ? 4 : 8}
+            placeholder={placeholder}
+          />
+        ) : (
+          <div
+            className={clsx(
+              "text-sm leading-relaxed whitespace-pre-line",
+              textColorClass
+            )}
+          >
+            {value || placeholder || "Not available"}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+
+  return (
+    <EditableSection
+      isEditing={isEditing}
+      tooltipContent={tooltipContent}
+    >
+      {sectionContent}
+    </EditableSection>
   )
 }

@@ -239,194 +239,114 @@ const ProfileSnapshot = () => {
               </div>
 
               <div className="space-y-2">
-                <BasicInfoSection 
-                  name={formData?.name || ""} 
-                  role={formData?.role || ""} 
-                  location={formData?.location || ""} 
-                  isEditing={editStates.basicInfo} 
-                  onEditToggle={() => toggleEdit("basicInfo")} 
-                  onChange={(field, value) => handleInputChange(field, value)}
-                  tooltipContent="Update your name, role, and location to keep your profile current" 
-                />
+                <EditingTooltip content="Update your name, role, and location to keep your profile current" show={editStates.basicInfo}>
+                  <div>
+                    <BasicInfoSection name={formData?.name || ""} role={formData?.role || ""} location={formData?.location || ""} isEditing={editStates.basicInfo} onEditToggle={() => toggleEdit("basicInfo")} onChange={(field, value) => handleInputChange(field, value)} />
+                  </div>
+                </EditingTooltip>
               </div>
             </div>
 
             {/* Description */}
-            <EditableTextSection 
-              title="Description" 
-              value={formData?.summary || ""} 
-              onChange={value => handleInputChange("summary", value)} 
-              isEditing={editStates.description} 
-              onEditToggle={() => toggleEdit("description")} 
-              placeholder="Description not available" 
-              className="bg-white" 
-              headerClassName="" 
-              labelClassName="text-base font-semibold"
-              tooltipContent="Write a compelling summary that captures your professional essence and value proposition" 
-            />
+            <EditingTooltip content="Write a compelling summary that captures your professional essence and value proposition" show={editStates.description}>
+              <div>
+                <EditableTextSection title="Description" value={formData?.summary || ""} onChange={value => handleInputChange("summary", value)} isEditing={editStates.description} onEditToggle={() => toggleEdit("description")} placeholder="Description not available" className="bg-white" headerClassName="" labelClassName="text-base font-semibold" />
+              </div>
+            </EditingTooltip>
 
             {/* Key Roles */}
-            <EditableArraySection 
-              title="Key Roles" 
-              items={formData.highlights || []} 
-              isEditing={editStates.keyRoles} 
-              onEditToggle={() => toggleEdit("keyRoles")} 
-              onChange={newArr => handleInputChange("highlights", newArr)} 
-              placeholder="Key role" 
-              addLabel="Add Role" 
-              displayType="bullets"
-              tooltipContent="List your key professional roles and areas of expertise" 
-            />
+            <EditingTooltip content="List your key professional roles and areas of expertise" show={editStates.keyRoles}>
+              <div>
+                <EditableArraySection title="Key Roles" items={formData.highlights || []} isEditing={editStates.keyRoles} onEditToggle={() => toggleEdit("keyRoles")} onChange={newArr => handleInputChange("highlights", newArr)} placeholder="Key role" addLabel="Add Role" displayType="bullets" />
+              </div>
+            </EditingTooltip>
 
             {/* Focus Areas */}
-            <EditableArraySection 
-              title="Focus Areas" 
-              items={formData.focus_areas || []} 
-              isEditing={editStates.focusAreas} 
-              onEditToggle={() => toggleEdit("focusAreas")} 
-              onChange={newArr => handleInputChange("focus_areas", newArr)} 
-              placeholder="Focus area" 
-              addLabel="Add Area"
-              tooltipContent="Add the areas where you focus your professional expertise" 
-            />
+            <EditingTooltip content="Add the areas where you focus your professional expertise" show={editStates.focusAreas}>
+              <div>
+                <EditableArraySection title="Focus Areas" items={formData.focus_areas || []} isEditing={editStates.focusAreas} onEditToggle={() => toggleEdit("focusAreas")} onChange={newArr => handleInputChange("focus_areas", newArr)} placeholder="Focus area" addLabel="Add Area" />
+              </div>
+            </EditingTooltip>
 
             {/* Industries */}
-            <EditableArraySection 
-              title="Industries" 
-              items={formData.industries || []} 
-              isEditing={editStates.industries} 
-              onEditToggle={() => toggleEdit("industries")} 
-              onChange={newArr => handleInputChange("industries", newArr)} 
-              placeholder="Industry" 
-              addLabel="Add Industry"
-              tooltipContent="List the industries where you have experience or interest" 
-            />
+            <EditingTooltip content="List the industries where you have experience or interest" show={editStates.industries}>
+              <div>
+                <EditableArraySection title="Industries" items={formData.industries || []} isEditing={editStates.industries} onEditToggle={() => toggleEdit("industries")} onChange={newArr => handleInputChange("industries", newArr)} placeholder="Industry" addLabel="Add Industry" />
+              </div>
+            </EditingTooltip>
 
             {/* Geographical Coverage */}
-            <EditableArraySection 
-              title="Geographical Coverage" 
-              items={formData.geographical_coverage || []} 
-              isEditing={editStates.geographicalCoverage} 
-              onEditToggle={() => toggleEdit("geographicalCoverage")} 
-              onChange={newArr => handleInputChange("geographical_coverage", newArr)} 
-              placeholder="Region" 
-              addLabel="Add Region"
-              tooltipContent="Specify the regions or locations where you can work or have experience" 
-            />
+            <EditingTooltip content="Specify the regions or locations where you can work or have experience" show={editStates.geographicalCoverage}>
+              <div>
+                <EditableArraySection title="Geographical Coverage" items={formData.geographical_coverage || []} isEditing={editStates.geographicalCoverage} onEditToggle={() => toggleEdit("geographicalCoverage")} onChange={newArr => handleInputChange("geographical_coverage", newArr)} placeholder="Region" addLabel="Add Region" />
+              </div>
+            </EditingTooltip>
 
             {/* Stage */}
-            <EditableArraySection 
-              title="Stage" 
-              items={formData.stage_focus || []} 
-              isEditing={editStates.stages} 
-              onEditToggle={() => toggleEdit("stages")} 
-              onChange={newArr => handleInputChange("stage_focus", newArr)} 
-              placeholder="Stage" 
-              addLabel="Add Stage"
-              tooltipContent="Add the company stages you prefer to work with (startup, growth, enterprise, etc.)" 
-            />
+            <EditingTooltip content="Add the company stages you prefer to work with (startup, growth, enterprise, etc.)" show={editStates.stages}>
+              <div>
+                <EditableArraySection title="Stage" items={formData.stage_focus || []} isEditing={editStates.stages} onEditToggle={() => toggleEdit("stages")} onChange={newArr => handleInputChange("stage_focus", newArr)} placeholder="Stage" addLabel="Add Stage" />
+              </div>
+            </EditingTooltip>
 
             {/* Personal Interests */}
-            <EditableArraySection 
-              title="Personal Interests" 
-              items={formData.personal_interests || []} 
-              isEditing={editStates.personalInterests} 
-              onEditToggle={() => toggleEdit("personalInterests")} 
-              onChange={newArr => handleInputChange("personal_interests", newArr)} 
-              placeholder="Interest" 
-              addLabel="Add Interest"
-              tooltipContent="Share your personal interests to help others connect with you on a human level" 
-            />
+            <EditingTooltip content="Share your personal interests to help others connect with you on a human level" show={editStates.personalInterests}>
+              <div>
+                <EditableArraySection title="Personal Interests" items={formData.personal_interests || []} isEditing={editStates.personalInterests} onEditToggle={() => toggleEdit("personalInterests")} onChange={newArr => handleInputChange("personal_interests", newArr)} placeholder="Interest" addLabel="Add Interest" />
+              </div>
+            </EditingTooltip>
 
             {/* Certifications */}
-            <EditableArraySection 
-              title="Certifications" 
-              items={formData.certifications || []} 
-              isEditing={editStates.certifications} 
-              onEditToggle={() => toggleEdit("certifications")} 
-              onChange={newArr => handleInputChange("certifications", newArr)} 
-              placeholder="Certification" 
-              addLabel="Add Certification"
-              tooltipContent="List your relevant certifications and professional credentials" 
-            />
+            <EditingTooltip content="List your relevant certifications and professional credentials" show={editStates.certifications}>
+              <div>
+                <EditableArraySection title="Certifications" items={formData.certifications || []} isEditing={editStates.certifications} onEditToggle={() => toggleEdit("certifications")} onChange={newArr => handleInputChange("certifications", newArr)} placeholder="Certification" addLabel="Add Certification" />
+              </div>
+            </EditingTooltip>
           </div>
 
           {/* Right Column - Main Content */}
           <div className="lg:col-span-2 space-y-6">
             {/* Meet Section */}
-            <EditableTextSection 
-              title={`Meet ${formData?.name?.split(" ")[0] || "Professional"}`} 
-              value={formData?.meet_them || ""} 
-              onChange={value => handleInputChange("meet_them", value)} 
-              isEditing={editStates.meetIntro} 
-              onEditToggle={() => toggleEdit("meetIntro")} 
-              placeholder="Introduction not available" 
-              bgColorClass="bg-teal-600" 
-              textColorClass="text-white" 
-              headerClassName="bg-teal-600 text-white" 
-              labelClassName="text-lg font-semibold"
-              tooltipContent="Write an engaging introduction that tells your professional story and what makes you unique" 
-            />
+            <EditingTooltip content="Write an engaging introduction that tells your professional story and what makes you unique" show={editStates.meetIntro}>
+              <div>
+                <EditableTextSection title={`Meet ${formData?.name?.split(" ")[0] || "Professional"}`} value={formData?.meet_them || ""} onChange={value => handleInputChange("meet_them", value)} isEditing={editStates.meetIntro} onEditToggle={() => toggleEdit("meetIntro")} placeholder="Introduction not available" bgColorClass="bg-teal-600" textColorClass="text-white" headerClassName="bg-teal-600 text-white" labelClassName="text-lg font-semibold" />
+              </div>
+            </EditingTooltip>
 
             {/* Personas Section */}
-            <PersonasSection 
-              personas={formData.personas || []} 
-              personaEditStates={personaEditStates} 
-              isEditing={editStates.personas} 
-              onEditToggle={() => toggleEdit("personas")} 
-              onPersonaLocalUpdate={handlePersonaLocalUpdate} 
-              onAddPersona={handleAddPersona} 
-              onRemovePersona={handleRemovePersona} 
-              activeTab={personasActiveTab} 
-              onActiveTabChange={setPersonasActiveTab}
-              tooltipContent="Define different professional personas that showcase various aspects of your expertise" 
-            />
+            <EditingTooltip content="Define different professional personas that showcase various aspects of your expertise" show={editStates.personas}>
+              <div>
+                <PersonasSection personas={formData.personas || []} personaEditStates={personaEditStates} isEditing={editStates.personas} onEditToggle={() => toggleEdit("personas")} onPersonaLocalUpdate={handlePersonaLocalUpdate} onAddPersona={handleAddPersona} onRemovePersona={handleRemovePersona} activeTab={personasActiveTab} onActiveTabChange={setPersonasActiveTab} />
+              </div>
+            </EditingTooltip>
 
             {/* Superpowers Section */}
-            <SuperpowersSection 
-              superpowers={formData.superpowers || []} 
-              isEditing={editStates.superpowers} 
-              onEditToggle={() => toggleEdit("superpowers")} 
-              onSuperpowersChange={newArr => handleInputChange("superpowers", newArr)}
-              tooltipContent="Highlight your unique strengths and what sets you apart professionally" 
-            />
+            <EditingTooltip content="Highlight your unique strengths and what sets you apart professionally" show={editStates.superpowers}>
+              <div>
+                <SuperpowersSection superpowers={formData.superpowers || []} isEditing={editStates.superpowers} onEditToggle={() => toggleEdit("superpowers")} onSuperpowersChange={newArr => handleInputChange("superpowers", newArr)} />
+              </div>
+            </EditingTooltip>
 
             {/* Sweet Spot Section */}
-            <EditableTextSection 
-              title="Sweet Spot" 
-              value={formData?.sweetspot || ""} 
-              onChange={value => handleInputChange("sweetspot", value)} 
-              isEditing={editStates.sweetSpot} 
-              onEditToggle={() => toggleEdit("sweetSpot")} 
-              placeholder="Sweet spot not available" 
-              className="bg-white" 
-              headerClassName="bg-teal-600 text-white" 
-              labelClassName="text-lg font-semibold"
-              tooltipContent="Describe your ideal work scenarios and the type of challenges you excel at" 
-            />
+            <EditingTooltip content="Describe your ideal work scenarios and the type of challenges you excel at" show={editStates.sweetSpot}>
+              <div>
+                <EditableTextSection title="Sweet Spot" value={formData?.sweetspot || ""} onChange={value => handleInputChange("sweetspot", value)} isEditing={editStates.sweetSpot} onEditToggle={() => toggleEdit("sweetSpot")} placeholder="Sweet spot not available" className="bg-white" headerClassName="bg-teal-600 text-white" labelClassName="text-lg font-semibold" />
+              </div>
+            </EditingTooltip>
 
             {/* Functional Skills */}
-            <FunctionalSkillsSection 
-              functionalSkills={formData.functional_skills || {}} 
-              isEditing={editStates.functionalSkills} 
-              onEditToggle={() => toggleEdit("functionalSkills")} 
-              onFunctionalSkillsChange={skills => handleInputChange("functional_skills", skills)}
-              tooltipContent="Organize your skills by category and provide details about your expertise level" 
-            />
+            <EditingTooltip content="Organize your skills by category and provide details about your expertise level" show={editStates.functionalSkills}>
+              <div>
+                <FunctionalSkillsSection functionalSkills={formData.functional_skills || {}} isEditing={editStates.functionalSkills} onEditToggle={() => toggleEdit("functionalSkills")} onFunctionalSkillsChange={skills => handleInputChange("functional_skills", skills)} />
+              </div>
+            </EditingTooltip>
 
             {/* User Manual */}
-            <EditableTextSection 
-              title={`${formData?.name?.split(" ")[0] || "Professional"}'s User Manual`} 
-              value={formData?.user_manual || ""} 
-              onChange={value => handleInputChange("user_manual", value)} 
-              isEditing={editStates.userManual} 
-              onEditToggle={() => toggleEdit("userManual")} 
-              placeholder="User manual not available" 
-              className="bg-white" 
-              headerClassName="bg-teal-600 text-white" 
-              labelClassName="text-lg font-semibold"
-              tooltipContent="Share insights about your working style, communication preferences, and how others can best collaborate with you" 
-            />
+            <EditingTooltip content="Share insights about your working style, communication preferences, and how others can best collaborate with you" show={editStates.userManual}>
+              <div>
+                <EditableTextSection title={`${formData?.name?.split(" ")[0] || "Professional"}'s User Manual`} value={formData?.user_manual || ""} onChange={value => handleInputChange("user_manual", value)} isEditing={editStates.userManual} onEditToggle={() => toggleEdit("userManual")} placeholder="User manual not available" className="bg-white" headerClassName="bg-teal-600 text-white" labelClassName="text-lg font-semibold" />
+              </div>
+            </EditingTooltip>
           </div>
         </div>
 
