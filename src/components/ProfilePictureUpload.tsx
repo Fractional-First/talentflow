@@ -82,7 +82,7 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
 
   const getCroppedImageFile = useCallback((): Promise<File | null> => {
     return new Promise((resolve) => {
-      if (!completedCrop || !imgRef.current || !canvasRef.current) {
+      if (!imgRef.current || !canvasRef.current) {
         resolve(null);
         return;
       }
@@ -96,24 +96,40 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
         return;
       }
 
+      // Use completedCrop if available, otherwise use the full image dimensions
+      const cropData = completedCrop || {
+        unit: 'px' as const,
+        x: 0,
+        y: 0,
+        width: image.naturalWidth,
+        height: image.naturalHeight
+      };
+
       const scaleX = image.naturalWidth / image.width;
       const scaleY = image.naturalHeight / image.height;
 
-      // Set canvas size to the crop size
-      canvas.width = completedCrop.width;
-      canvas.height = completedCrop.height;
+      // Determine the size for a square crop (use the smaller dimension)
+      const minDimension = Math.min(cropData.width, cropData.height);
+      
+      // Set canvas size to square
+      canvas.width = minDimension;
+      canvas.height = minDimension;
+
+      // Calculate centered crop coordinates
+      const cropX = cropData.x + (cropData.width - minDimension) / 2;
+      const cropY = cropData.y + (cropData.height - minDimension) / 2;
 
       // Draw the cropped image
       ctx.drawImage(
         image,
-        completedCrop.x * scaleX,
-        completedCrop.y * scaleY,
-        completedCrop.width * scaleX,
-        completedCrop.height * scaleY,
+        cropX * scaleX,
+        cropY * scaleY,
+        minDimension * scaleX,
+        minDimension * scaleY,
         0,
         0,
-        completedCrop.width,
-        completedCrop.height
+        minDimension,
+        minDimension
       );
 
       canvas.toBlob((blob) => {
