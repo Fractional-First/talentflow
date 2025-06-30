@@ -23,7 +23,7 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [crop, setCrop] = useState<Crop>({
-    unit: '%',
+    unit: 'px',
     width: 100,
     height: 100,
     x: 0,
@@ -52,9 +52,9 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
       reader.onload = () => {
         setSelectedImage(reader.result as string);
         setIsEditing(true);
-        // Reset crop states
+        // Reset crop states - will be set properly in handleImageLoad
         setCrop({
-          unit: '%',
+          unit: 'px',
           width: 100,
           height: 100,
           x: 0,
@@ -66,23 +66,38 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
     }
   };
 
-  // Handle image load to set initial completed crop
+  // Handle image load to set initial completed crop with proper pixel values
   const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const { naturalWidth, naturalHeight } = e.currentTarget;
     
-    // Set initial completed crop to cover the entire image
+    // Calculate a square crop centered in the image
+    const minDimension = Math.min(naturalWidth, naturalHeight);
+    const x = (naturalWidth - minDimension) / 2;
+    const y = (naturalHeight - minDimension) / 2;
+    
+    // Set initial crop to be square and centered
+    const initialCrop: Crop = {
+      unit: 'px',
+      x: x,
+      y: y,
+      width: minDimension,
+      height: minDimension
+    };
+    
+    // Set both crop and completedCrop to the same values
+    setCrop(initialCrop);
     setCompletedCrop({
       unit: 'px',
-      x: 0,
-      y: 0,
-      width: naturalWidth,
-      height: naturalHeight
+      x: x,
+      y: y,
+      width: minDimension,
+      height: minDimension
     });
   };
 
   const getCroppedImageFile = useCallback((): Promise<File | null> => {
     return new Promise((resolve) => {
-      if (!imgRef.current || !canvasRef.current) {
+      if (!imgRef.current || !canvasRef.current || !completedCrop) {
         resolve(null);
         return;
       }
@@ -96,40 +111,24 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
         return;
       }
 
-      // Use completedCrop if available, otherwise use the full image dimensions
-      const cropData = completedCrop || {
-        unit: 'px' as const,
-        x: 0,
-        y: 0,
-        width: image.naturalWidth,
-        height: image.naturalHeight
-      };
-
       const scaleX = image.naturalWidth / image.width;
       const scaleY = image.naturalHeight / image.height;
 
-      // Determine the size for a square crop (use the smaller dimension)
-      const minDimension = Math.min(cropData.width, cropData.height);
-      
-      // Set canvas size to square
-      canvas.width = minDimension;
-      canvas.height = minDimension;
-
-      // Calculate centered crop coordinates
-      const cropX = cropData.x + (cropData.width - minDimension) / 2;
-      const cropY = cropData.y + (cropData.height - minDimension) / 2;
+      // Set canvas size to the crop size (should be square)
+      canvas.width = completedCrop.width;
+      canvas.height = completedCrop.height;
 
       // Draw the cropped image
       ctx.drawImage(
         image,
-        cropX * scaleX,
-        cropY * scaleY,
-        minDimension * scaleX,
-        minDimension * scaleY,
+        completedCrop.x * scaleX,
+        completedCrop.y * scaleY,
+        completedCrop.width * scaleX,
+        completedCrop.height * scaleY,
         0,
         0,
-        minDimension,
-        minDimension
+        completedCrop.width,
+        completedCrop.height
       );
 
       canvas.toBlob((blob) => {
