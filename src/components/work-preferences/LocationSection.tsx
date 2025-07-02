@@ -5,7 +5,13 @@ import { Badge } from "@/components/ui/badge"
 import { useCountries } from "@/queries/useCountries"
 import { MapPin, X } from "lucide-react"
 import React from "react"
-import Select from "react-select"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import LocationInputWithPopover, { GooglePlace } from "./LocationAutocomplete"
 import { CombinedWorkPreferencesForm } from "@/hooks/useWorkPreferences"
 
@@ -64,6 +70,14 @@ export function LocationSection({
         ),
       },
     }))
+  }
+
+  const handleEligibilityToggle = (countryCode: string) => {
+    if (workEligibility.includes(countryCode)) {
+      setWorkEligibility(workEligibility.filter((code) => code !== countryCode))
+    } else {
+      setWorkEligibility([...workEligibility, countryCode])
+    }
   }
 
   return (
@@ -131,22 +145,44 @@ export function LocationSection({
         <div className="space-y-4">
           <Label className="text-base font-medium">Legal Work Eligibility</Label>
           <Select
-            isMulti
-            isLoading={isLoading}
-            options={countries.map((c) => ({
-              value: c.alpha2_code,
-              label: c.name,
-            }))}
-            value={countries
-              .filter((c) => workEligibility.includes(c.alpha2_code))
-              .map((c) => ({ value: c.alpha2_code, label: c.name }))}
-            onChange={(opts) =>
-              setWorkEligibility(opts.map((opt) => opt.value))
-            }
-            placeholder="Search and select countries..."
-            classNamePrefix="react-select"
-            className="text-sm"
-          />
+            value=""
+            onValueChange={handleEligibilityToggle}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Search and select countries..." />
+            </SelectTrigger>
+            <SelectContent>
+              {countries.map((country) => (
+                <SelectItem key={country.alpha2_code} value={country.alpha2_code}>
+                  {country.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          
+          {/* Selected countries display */}
+          {workEligibility.length > 0 && (
+            <div className="flex flex-wrap gap-2 pt-2">
+              {workEligibility.map((countryCode) => {
+                const country = countries.find((c) => c.alpha2_code === countryCode)
+                return (
+                  <Badge
+                    key={countryCode}
+                    variant="secondary"
+                    className="flex items-center gap-2 py-1 px-3"
+                  >
+                    <span className="text-sm">{country?.name}</span>
+                    <button
+                      onClick={() => handleEligibilityToggle(countryCode)}
+                      className="ml-1 hover:text-destructive transition-colors"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                )
+              })}
+            </div>
+          )}
         </div>
 
         <hr className="border-border" />
