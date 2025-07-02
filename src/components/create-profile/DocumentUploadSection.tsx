@@ -1,5 +1,5 @@
 
-import { Linkedin, File } from "lucide-react";
+import { Linkedin, File, HelpCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { DocumentUpload } from "./DocumentUpload";
 import { toast } from "@/hooks/use-toast";
@@ -82,7 +82,7 @@ export const DocumentUploadSection = ({
         }}>
           <div className="flex gap-2">
             <div className="mt-0.5">
-              <File className="h-5 w-5 text-[#449889]" />
+              <HelpCircle className="h-5 w-5 text-[#449889]" />
             </div>
             <div>
               <AlertTitle className="mb-1 font-semibold" style={{
