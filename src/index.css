@@ -115,7 +115,10 @@
   }
 
   .caption, .label {
-    @apply text-caption font-urbanist;
+    font-size: 14px;
+    line-height: 1.5;
+    font-weight: 400;
+    font-family: "Urbanist", "Helvetica Neue", Arial, sans-serif;
   }
 
   button {
@@ -191,7 +194,10 @@
   }
 
   .text-caption {
-    @apply text-caption font-urbanist;
+    font-size: 14px;
+    line-height: 1.5;
+    font-weight: 400;
+    font-family: "Urbanist", "Helvetica Neue", Arial, sans-serif;
   }
 
   .text-button {
