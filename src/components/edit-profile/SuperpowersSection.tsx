@@ -1,11 +1,13 @@
+
 import React, { useState, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
-import { Edit, Plus, X, Brain, Users, Settings } from "lucide-react"
+import { Edit, Plus, X } from "lucide-react"
 import clsx from "clsx"
 import type { Superpower } from "@/types/profile"
 import { EditableSection } from "@/components/EditableSection"
+import { getSuperpowerIcons } from "@/utils/superpowerIcons"
 
 interface SuperpowersSectionProps {
   superpowers: Superpower[]
@@ -14,33 +16,6 @@ interface SuperpowersSectionProps {
   onSuperpowersChange: (superpowers: Superpower[]) => void
   className?: string
   content?: string
-}
-
-// Function to get an appropriate icon for a superpower title
-const getSuperpowerIcon = (title: string) => {
-  const titleLower = title.toLowerCase()
-
-  if (
-    titleLower.includes("problem") ||
-    titleLower.includes("solving") ||
-    titleLower.includes("human")
-  ) {
-    return Brain
-  } else if (
-    titleLower.includes("inclusive") ||
-    titleLower.includes("product") ||
-    titleLower.includes("design")
-  ) {
-    return Users
-  } else if (
-    titleLower.includes("system") ||
-    titleLower.includes("thinking") ||
-    titleLower.includes("technical")
-  ) {
-    return Settings
-  } else {
-    return Brain // default icon
-  }
 }
 
 export const SuperpowersSection: React.FC<SuperpowersSectionProps> = ({
@@ -91,6 +66,9 @@ export const SuperpowersSection: React.FC<SuperpowersSectionProps> = ({
     setLocalSuperpowers((prev) => prev.filter((_, i) => i !== index))
   }
 
+  // Get superpowers with their intelligent icon assignments
+  const superpowersWithIcons = getSuperpowerIcons(localSuperpowers || [])
+
   const sectionContent = (
     <div className={clsx("bg-white rounded-lg border", className)}>
       <div className="bg-teal-600 text-white rounded-t-lg flex items-center justify-between p-4">
@@ -106,9 +84,9 @@ export const SuperpowersSection: React.FC<SuperpowersSectionProps> = ({
       </div>
       <div className="p-4">
         <div className="space-y-4">
-          {localSuperpowers && localSuperpowers.length > 0 ? (
-            localSuperpowers.map((superpower, index) => {
-              const IconComponent = getSuperpowerIcon(superpower.title)
+          {superpowersWithIcons && superpowersWithIcons.length > 0 ? (
+            superpowersWithIcons.map((superpower, index) => {
+              const IconComponent = superpower.icon
               return (
                 <div key={index} className="space-y-2">
                   {isEditing ? (
