@@ -94,24 +94,29 @@
   }
 
   body {
-    @apply bg-background text-foreground font-urbanist antialiased;
+    @apply bg-background text-foreground antialiased;
+    font-family: "Urbanist", "Helvetica Neue", Arial, sans-serif;
   }
 
   /* Responsive Typography Classes */
   h1 {
-    @apply text-h1-mobile md:text-h1-desktop font-urbanist;
+    @apply text-h1-mobile md:text-h1-desktop;
+    font-family: "Urbanist", "Helvetica Neue", Arial, sans-serif;
   }
 
   h2 {
-    @apply text-h2-mobile md:text-h2-desktop font-urbanist;
+    @apply text-h2-mobile md:text-h2-desktop;
+    font-family: "Urbanist", "Helvetica Neue", Arial, sans-serif;
   }
 
   h3 {
-    @apply text-h3-mobile md:text-h3-desktop font-urbanist;
+    @apply text-h3-mobile md:text-h3-desktop;
+    font-family: "Urbanist", "Helvetica Neue", Arial, sans-serif;
   }
 
   p, div {
-    @apply text-body-mobile md:text-body-desktop font-urbanist;
+    @apply text-body-mobile md:text-body-desktop;
+    font-family: "Urbanist", "Helvetica Neue", Arial, sans-serif;
   }
 
   .caption, .label {
@@ -122,7 +127,10 @@
   }
 
   button {
-    @apply text-button font-urbanist;
+    font-size: 16px;
+    line-height: 1.4;
+    font-weight: 500;
+    font-family: "Urbanist", "Helvetica Neue", Arial, sans-serif;
   }
 
   /* Modern scrollbar styles */
@@ -178,19 +186,23 @@
 
   /* Typography utility classes */
   .text-h1 {
-    @apply text-h1-mobile md:text-h1-desktop font-urbanist;
+    @apply text-h1-mobile md:text-h1-desktop;
+    font-family: "Urbanist", "Helvetica Neue", Arial, sans-serif;
   }
 
   .text-h2 {
-    @apply text-h2-mobile md:text-h2-desktop font-urbanist;
+    @apply text-h2-mobile md:text-h2-desktop;
+    font-family: "Urbanist", "Helvetica Neue", Arial, sans-serif;
   }
 
   .text-h3 {
-    @apply text-h3-mobile md:text-h3-desktop font-urbanist;
+    @apply text-h3-mobile md:text-h3-desktop;
+    font-family: "Urbanist", "Helvetica Neue", Arial, sans-serif;
   }
 
   .text-body {
-    @apply text-body-mobile md:text-body-desktop font-urbanist;
+    @apply text-body-mobile md:text-body-desktop;
+    font-family: "Urbanist", "Helvetica Neue", Arial, sans-serif;
   }
 
   .text-caption {
@@ -201,7 +213,10 @@
   }
 
   .text-button {
-    @apply text-button font-urbanist;
+    font-size: 16px;
+    line-height: 1.4;
+    font-weight: 500;
+    font-family: "Urbanist", "Helvetica Neue", Arial, sans-serif;
   }
 }
 
