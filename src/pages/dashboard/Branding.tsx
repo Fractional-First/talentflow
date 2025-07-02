@@ -1,3 +1,4 @@
+
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { DashboardLayout } from "@/components/DashboardLayout"
@@ -9,7 +10,6 @@ import {
   StepCardHeader,
   StepCardTitle,
 } from "@/components/StepCard"
-import { Step } from "@/components/OnboardingProgress"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -21,7 +21,6 @@ import {
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import {
-  ArrowRight,
   ArrowLeft,
   Sparkles,
   Lock,
@@ -30,52 +29,10 @@ import {
   Award,
   BookOpen,
 } from "lucide-react"
-import { Separator } from "@/components/ui/separator"
 import { BlurImage } from "@/components/BlurImage"
 
 const Branding = () => {
   const navigate = useNavigate()
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
-  // Include all steps in the dashboard view
-  const steps: Step[] = [
-    {
-      id: 1,
-      name: "Sign Up",
-      description: "Create your account",
-      status: "completed",
-    },
-    {
-      id: 2,
-      name: "Profile",
-      description: "Enter your information",
-      status: "completed",
-    },
-    {
-      id: 3,
-      name: "Profile Snapshot",
-      description: "Review your profile",
-      status: "completed",
-    },
-    {
-      id: 4,
-      name: "Agreement",
-      description: "Sign legal documents",
-      status: "completed",
-    },
-    {
-      id: 5,
-      name: "Branding",
-      description: "Enhance your profile",
-      status: "current",
-    },
-    {
-      id: 6,
-      name: "Job Matching",
-      description: "Get matched to jobs",
-      status: "upcoming",
-    },
-  ]
 
   const brandingTools = [
     {
@@ -121,32 +78,18 @@ const Branding = () => {
     },
   ]
 
-  const handleContinue = () => {
-    setIsSubmitting(true)
-
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false)
-      navigate("/work-preferences")
-    }, 1000)
-  }
-
-  const handleSkip = () => {
-    navigate("/work-preferences")
-  }
-
   return (
-    <DashboardLayout steps={steps} currentStep={5}>
-      <div className="space-y-6">
+    <DashboardLayout>
+      <div className="space-y-8">
         <StepCard>
           <StepCardHeader>
-            <div className="flex items-center">
-              <StepCardTitle>Enhance Your Professional Brand</StepCardTitle>
-              <Badge variant="outline" className="ml-2">
+            <div className="flex items-center gap-3">
+              <StepCardTitle className="text-3xl font-semibold">Enhance Your Professional Brand</StepCardTitle>
+              <Badge variant="outline" className="text-sm px-3 py-1 rounded-full">
                 Optional
               </Badge>
             </div>
-            <StepCardDescription>
+            <StepCardDescription className="text-lg mt-3 text-muted-foreground">
               Take advantage of our tools to enhance your professional brand and
               increase your chances of finding the perfect match
             </StepCardDescription>
@@ -167,7 +110,7 @@ const Branding = () => {
                       className="object-cover w-full h-full"
                     />
                     {tool.premium && (
-                      <Badge className="absolute top-2 right-2 bg-primary">
+                      <Badge className="absolute top-2 right-2 bg-primary rounded-full">
                         Premium
                       </Badge>
                     )}
@@ -179,7 +122,7 @@ const Branding = () => {
                         <div className="bg-primary/10 p-2 rounded-full mr-3">
                           <tool.icon className="h-5 w-5 text-primary" />
                         </div>
-                        <CardTitle className="text-lg">{tool.title}</CardTitle>
+                        <CardTitle className="text-xl font-medium">{tool.title}</CardTitle>
                       </div>
                       {!tool.free && (
                         <div className="flex items-center text-muted-foreground">
@@ -189,13 +132,13 @@ const Branding = () => {
                       )}
                     </div>
 
-                    <CardDescription>{tool.description}</CardDescription>
+                    <CardDescription className="text-base mt-2">{tool.description}</CardDescription>
                   </CardHeader>
 
                   <CardFooter>
                     <Button
                       variant={tool.free ? "default" : "outline"}
-                      className="w-full"
+                      className="w-full rounded-full"
                     >
                       {tool.free ? "Start Now" : "Upgrade to Access"}
                     </Button>
@@ -208,8 +151,8 @@ const Branding = () => {
 
         <StepCard>
           <StepCardHeader>
-            <StepCardTitle>Upgrade to Premium</StepCardTitle>
-            <StepCardDescription>
+            <StepCardTitle className="text-2xl font-medium">Upgrade to Premium</StepCardTitle>
+            <StepCardDescription className="text-base mt-2">
               Get access to all branding tools and premium features to maximize
               your opportunities
             </StepCardDescription>
@@ -222,58 +165,46 @@ const Branding = () => {
                   <Sparkles className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-medium mb-1">Premium Benefits</h3>
-                  <p className="text-sm text-muted-foreground mb-3">
+                  <h3 className="text-xl font-medium mb-2">Premium Benefits</h3>
+                  <p className="text-base text-muted-foreground mb-4">
                     Unlock additional features and tools to enhance your
                     professional journey
                   </p>
 
-                  <ul className="space-y-2 text-sm">
+                  <ul className="space-y-3 text-base">
                     <li className="flex items-center">
-                      <Star className="h-4 w-4 text-primary mr-2" />
+                      <Star className="h-4 w-4 text-primary mr-3 flex-shrink-0" />
                       <span>Priority job matching and recommendations</span>
                     </li>
                     <li className="flex items-center">
-                      <Star className="h-4 w-4 text-primary mr-2" />
+                      <Star className="h-4 w-4 text-primary mr-3 flex-shrink-0" />
                       <span>Access to exclusive career coaching sessions</span>
                     </li>
                     <li className="flex items-center">
-                      <Star className="h-4 w-4 text-primary mr-2" />
-                      <span>
-                        Advanced personality and skills assessment tools
-                      </span>
+                      <Star className="h-4 w-4 text-primary mr-3 flex-shrink-0" />
+                      <span>Advanced personality and skills assessment tools</span>
                     </li>
                     <li className="flex items-center">
-                      <Star className="h-4 w-4 text-primary mr-2" />
+                      <Star className="h-4 w-4 text-primary mr-3 flex-shrink-0" />
                       <span>Personal branding workshops and resources</span>
                     </li>
                   </ul>
                 </div>
               </div>
 
-              <Button className="w-full mt-2">Upgrade to Premium</Button>
+              <Button className="w-full mt-4 rounded-full">Upgrade to Premium</Button>
             </div>
           </StepCardContent>
 
-          <StepCardFooter className="flex justify-between pt-6">
+          <StepCardFooter className="flex justify-start pt-6">
             <Button
               variant="outline"
-              onClick={() => navigate("/dashboard/agreement")}
+              onClick={() => navigate("/dashboard")}
+              className="rounded-full"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back
+              Back to Dashboard
             </Button>
-
-            <div className="space-x-3">
-              <Button variant="ghost" onClick={handleSkip}>
-                Skip for Now
-              </Button>
-
-              <Button onClick={handleContinue} disabled={isSubmitting}>
-                {isSubmitting ? "Processing..." : "Continue"}
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
           </StepCardFooter>
         </StepCard>
       </div>
