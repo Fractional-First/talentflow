@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 
 interface DocumentUploadProps {
   title: string
-  description: string
+  description: string | React.ReactNode
   icon?: React.ReactNode
   file?: File
   onUpload: (file: File) => void
@@ -41,7 +41,7 @@ export const DocumentUpload = ({
         <div className="bg-primary/10 p-3 rounded-full mr-3">{icon}</div>
         <div>
           <h3 className="font-medium">{title}</h3>
-          <p className="text-sm text-muted-foreground">{description}</p>
+          <div className="text-sm text-muted-foreground">{description}</div>
         </div>
       </div>
       <div className="border-2 border-dashed border-muted rounded-lg p-6 text-center">
