@@ -61,40 +61,43 @@ export const DocumentUploadSection = ({
         </div>
       </Alert>
 
-      {/* LINKEDIN PDF UPLOAD */}
-      <DocumentUpload 
-        title="Upload LinkedIn Profile (PDF)" 
-        description="Download your LinkedIn profile as a PDF, then upload it here to share your professional information in detail."
-        icon={<Linkedin className="h-6 w-6 text-[#0A66C2]" />} 
-        file={linkedinFile} 
-        onUpload={onLinkedInUpload} 
-        onRemove={onLinkedInRemove} 
-        accept=".pdf" 
-      />
+      {/* LINKEDIN PDF UPLOAD SECTION */}
+      <div className="space-y-4">
+        {/* LINKEDIN PDF UPLOAD */}
+        <DocumentUpload 
+          title="Upload LinkedIn Profile (PDF)" 
+          description="Download your LinkedIn profile as a PDF, then upload it here to share your professional information in detail."
+          icon={<Linkedin className="h-6 w-6 text-[#0A66C2]" />} 
+          file={linkedinFile} 
+          onUpload={onLinkedInUpload} 
+          onRemove={onLinkedInRemove} 
+          accept=".pdf" 
+        />
 
-      {/* LINKEDIN INSTRUCTIONS INFO BOX */}
-      <Alert className="mb-4" style={{
-        background: "#E6F4F2",
-        borderColor: "#BFE3DD"
-      }}>
-        <div className="flex gap-2">
-          <div className="mt-0.5">
-            <File className="h-5 w-5 text-[#449889]" />
+        {/* LINKEDIN INSTRUCTIONS INFO BOX - directly under Upload LinkedIn Profile */}
+        <Alert className="mb-4" style={{
+          background: "#E6F4F2",
+          borderColor: "#BFE3DD"
+        }}>
+          <div className="flex gap-2">
+            <div className="mt-0.5">
+              <File className="h-5 w-5 text-[#449889]" />
+            </div>
+            <div>
+              <AlertTitle className="mb-1 font-semibold" style={{
+                color: "#449889"
+              }}>
+                How to Save LinkedIn Profile as PDF (Desktop only):
+              </AlertTitle>
+              <AlertDescription className="text-sm" style={{
+                color: "#1A1A1A"
+              }}>
+                Log in at linkedin.com → Click <strong>Me</strong> (top right) → <strong>View Profile</strong> → Click <strong>More</strong> (or Resources) → Select <strong>Save to PDF</strong> → PDF downloads automatically.
+              </AlertDescription>
+            </div>
           </div>
-          <div>
-            <AlertTitle className="mb-1 font-semibold" style={{
-              color: "#449889"
-            }}>
-              How to Save LinkedIn Profile as PDF (Desktop only):
-            </AlertTitle>
-            <AlertDescription className="text-sm" style={{
-              color: "#1A1A1A"
-            }}>
-              Log in at linkedin.com → Click <strong>Me</strong> (top right) → <strong>View Profile</strong> → Click <strong>More</strong> (or Resources) → Select <strong>Save to PDF</strong> → PDF downloads automatically.
-            </AlertDescription>
-          </div>
-        </div>
-      </Alert>
+        </Alert>
+      </div>
 
       {/* RESUME UPLOAD */}
       <DocumentUpload 
