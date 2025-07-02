@@ -13,7 +13,7 @@ interface DocumentUploadSectionProps {
 }
 
 const LINKEDIN_PDF_GUIDE_URL =
-  "https://www.linkedin.com/help/linkedin/answer/a521735/how-to-save-a-profile-as-a-pdf?lang=en"
+  "https://www.linkedin.com/help/linkedin/answer/a541960"
 
 export const DocumentUploadSection = ({
   linkedinFile,
