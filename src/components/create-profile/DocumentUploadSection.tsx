@@ -62,19 +62,20 @@ export const DocumentUploadSection = ({
       </Alert>
 
       {/* LINKEDIN PDF UPLOAD SECTION */}
-      <div className="space-y-4">
-        {/* LINKEDIN PDF UPLOAD */}
-        <DocumentUpload 
-          title="Upload LinkedIn Profile (PDF)" 
-          description="Download your LinkedIn profile as a PDF, then upload it here to share your professional information in detail."
-          icon={<Linkedin className="h-6 w-6 text-[#0A66C2]" />} 
-          file={linkedinFile} 
-          onUpload={onLinkedInUpload} 
-          onRemove={onLinkedInRemove} 
-          accept=".pdf" 
-        />
+      <div className="border rounded-lg p-6">
+        <div className="flex items-center mb-4">
+          <div className="bg-primary/10 p-3 rounded-full mr-3">
+            <Linkedin className="h-6 w-6 text-[#0A66C2]" />
+          </div>
+          <div>
+            <h3 className="font-medium">Upload LinkedIn Profile (PDF)</h3>
+            <div className="text-sm text-muted-foreground">
+              Download your LinkedIn profile as a PDF, then upload it here to share your professional information in detail.
+            </div>
+          </div>
+        </div>
 
-        {/* LINKEDIN INSTRUCTIONS INFO BOX - directly under Upload LinkedIn Profile */}
+        {/* LINKEDIN INSTRUCTIONS INFO BOX - directly under title */}
         <Alert className="mb-4" style={{
           background: "#E6F4F2",
           borderColor: "#BFE3DD"
@@ -97,6 +98,74 @@ export const DocumentUploadSection = ({
             </div>
           </div>
         </Alert>
+
+        {/* LINKEDIN UPLOAD COMPONENT */}
+        <div className="border-2 border-dashed border-muted rounded-lg p-6 text-center">
+          {linkedinFile ? (
+            <div className="flex flex-col items-center">
+              <div className="bg-primary/10 p-3 rounded-full mb-3">
+                <File className="h-6 w-6 text-primary" />
+              </div>
+              <p className="mb-1 font-medium">File uploaded successfully</p>
+              <p className="text-sm text-muted-foreground mb-3">{linkedinFile.name}</p>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  className="px-3 py-1 text-sm border rounded hover:bg-gray-50"
+                  onClick={() => document.getElementById("linkedin-upload")?.click()}
+                >
+                  Replace
+                </button>
+                <button
+                  type="button"
+                  className="px-3 py-1 text-sm text-red-600 hover:text-red-700 hover:bg-red-100 rounded"
+                  onClick={onLinkedInRemove}
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center">
+              <div className="bg-muted/50 p-3 rounded-full mb-3">
+                <File className="h-6 w-6 text-muted-foreground" />
+              </div>
+              <p className="mb-1 font-medium">Drag and drop your LinkedIn PDF here</p>
+              <p className="text-sm text-muted-foreground mb-3">
+                Supports PDF, up to 5MB
+              </p>
+              <div>
+                <button
+                  type="button"
+                  className="px-4 py-2 border rounded hover:bg-gray-50"
+                  onClick={() => document.getElementById("linkedin-upload")?.click()}
+                >
+                  Select File
+                </button>
+                <input
+                  id="linkedin-upload"
+                  type="file"
+                  className="hidden"
+                  accept=".pdf"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files.length > 0) {
+                      const file = e.target.files[0];
+                      if (file.size > 5 * 1024 * 1024) {
+                        toast({
+                          title: "File too large",
+                          description: "Please select a file smaller than 5MB.",
+                          variant: "destructive",
+                        });
+                        return;
+                      }
+                      onLinkedInUpload(file);
+                    }
+                  }}
+                />
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* RESUME UPLOAD */}
