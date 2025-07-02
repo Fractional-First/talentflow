@@ -1,4 +1,5 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+@import url("https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -89,11 +90,36 @@
 @layer base {
   * {
     @apply border-border;
-    font-family: "Inter", Helvetica Neue, Arial, sans-serif;
+    font-family: "Urbanist", "Helvetica Neue", Arial, sans-serif;
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background text-foreground font-urbanist antialiased;
+  }
+
+  /* Responsive Typography Classes */
+  h1 {
+    @apply text-h1-mobile md:text-h1-desktop font-urbanist;
+  }
+
+  h2 {
+    @apply text-h2-mobile md:text-h2-desktop font-urbanist;
+  }
+
+  h3 {
+    @apply text-h3-mobile md:text-h3-desktop font-urbanist;
+  }
+
+  p, div {
+    @apply text-body-mobile md:text-body-desktop font-urbanist;
+  }
+
+  .caption, .label {
+    @apply text-caption font-urbanist;
+  }
+
+  button {
+    @apply text-button font-urbanist;
   }
 
   /* Modern scrollbar styles */
@@ -145,6 +171,31 @@
 
   .progress-connector-active {
     @apply bg-primary;
+  }
+
+  /* Typography utility classes */
+  .text-h1 {
+    @apply text-h1-mobile md:text-h1-desktop font-urbanist;
+  }
+
+  .text-h2 {
+    @apply text-h2-mobile md:text-h2-desktop font-urbanist;
+  }
+
+  .text-h3 {
+    @apply text-h3-mobile md:text-h3-desktop font-urbanist;
+  }
+
+  .text-body {
+    @apply text-body-mobile md:text-body-desktop font-urbanist;
+  }
+
+  .text-caption {
+    @apply text-caption font-urbanist;
+  }
+
+  .text-button {
+    @apply text-button font-urbanist;
   }
 }
 

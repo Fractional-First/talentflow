@@ -1,3 +1,4 @@
+
 import { initialSteps } from "@/components/dashboard/OnboardingSteps"
 import { DashboardLayout } from "@/components/DashboardLayout"
 import { DocumentUploadSection } from "@/components/create-profile/DocumentUploadSection"
@@ -106,7 +107,7 @@ const ProfileCreation = () => {
         <div className="max-w-6xl mx-auto space-y-6 p-6">
           <div className="flex flex-col items-center justify-center">
             <Spinner size="lg" className="text-teal-600 mb-4" />
-            <h1 className="text-2xl font-semibold text-gray-900">
+            <h1 className="text-h2 text-gray-900 font-urbanist">
               Generating profile...
             </h1>
           </div>
@@ -116,13 +117,13 @@ const ProfileCreation = () => {
           <div className="space-y-6">
             <StepCard>
               <StepCardHeader>
-                <StepCardTitle>Create Your Profile</StepCardTitle>
-                <StepCardDescription>
+                <StepCardTitle className="text-h2 font-urbanist">Create Your Profile</StepCardTitle>
+                <StepCardDescription className="text-body font-urbanist">
                   Tell us about your professional background and career goals
                 </StepCardDescription>
                 <div className="flex items-center mt-2 bg-muted/40 px-3 py-2 rounded-md">
                   <Clock className="h-4 w-4 text-muted-foreground mr-2" />
-                  <span className="text-sm text-muted-foreground">
+                  <span className="text-caption text-muted-foreground font-urbanist">
                     Estimated completion time: <strong>5-7 minutes</strong>
                   </span>
                 </div>
@@ -133,10 +134,10 @@ const ProfileCreation = () => {
                 {validationErrors.length > 0 && (
                   <Alert className="mb-4 bg-red-50 border-red-200">
                     <AlertCircle className="h-5 w-5 text-red-600" />
-                    <AlertTitle className="mb-1 font-semibold text-red-800">
+                    <AlertTitle className="mb-1 text-h3 text-red-800 font-urbanist">
                       Validation Error
                     </AlertTitle>
-                    <AlertDescription className="text-sm text-red-900">
+                    <AlertDescription className="text-caption text-red-900 font-urbanist">
                       <ul className="list-disc ml-4">
                         {validationErrors.map((error, index) => (
                           <li key={index}>{error}</li>
@@ -150,10 +151,10 @@ const ProfileCreation = () => {
                 {serverError && (
                   <Alert className="mb-4 bg-red-50 border-red-200">
                     <AlertCircle className="h-5 w-5 text-red-600" />
-                    <AlertTitle className="mb-1 font-semibold text-red-800">
+                    <AlertTitle className="mb-1 text-h3 text-red-800 font-urbanist">
                       Connection Error
                     </AlertTitle>
-                    <AlertDescription className="text-sm text-red-900">
+                    <AlertDescription className="text-caption text-red-900 font-urbanist">
                       {serverError}
                       <p className="mt-1 text-xs">
                         You can continue filling out the form and try submitting
@@ -188,6 +189,7 @@ const ProfileCreation = () => {
                 variant="outline"
                 onClick={() => navigate("/dashboard")}
                 type="button"
+                className="font-urbanist"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Dashboard
@@ -198,6 +200,7 @@ const ProfileCreation = () => {
                 disabled={
                   submitProfileMutation.isPending || !hasRequiredDocuments
                 }
+                className="font-urbanist"
               >
                 {submitProfileMutation.isPending ? "Saving..." : "Continue"}
                 <ArrowRight className="ml-2 h-4 w-4" />
