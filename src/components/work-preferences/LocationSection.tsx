@@ -3,7 +3,7 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
 import { useCountries } from "@/queries/useCountries"
-import { MapPin, X } from "lucide-react"
+import { MapPin, X, Globe, ChevronDown } from "lucide-react"
 import React from "react"
 import {
   Select,
@@ -148,8 +148,11 @@ export function LocationSection({
             value=""
             onValueChange={handleEligibilityToggle}
           >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Search and select countries..." />
+            <SelectTrigger className="w-full text-sm">
+              <div className="flex items-center gap-2">
+                <Globe className="h-4 w-4" />
+                <SelectValue placeholder="Search and select countries..." />
+              </div>
             </SelectTrigger>
             <SelectContent>
               {countries.map((country) => (

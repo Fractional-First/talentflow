@@ -1,7 +1,7 @@
 
 import { useTimezones } from "@/queries/useTimezones"
 import { useState } from "react"
-import { Check, ChevronsUpDown, Clock } from "lucide-react"
+import { Check, ChevronDown, Clock } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -36,12 +36,12 @@ const TimezoneSelector = ({
 
   if (isLoading) {
     return (
-      <Button variant="outline" disabled className="w-full justify-between">
+      <Button variant="outline" disabled className="w-full justify-between text-sm">
         <div className="flex items-center gap-2">
           <Clock className="h-4 w-4" />
           Loading timezones...
         </div>
-        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
       </Button>
     )
   }
@@ -53,13 +53,13 @@ const TimezoneSelector = ({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-full justify-between"
+          className="w-full justify-between text-sm"
         >
           <div className="flex items-center gap-2">
             <Clock className="h-4 w-4" />
             {selectedTimezoneData ? selectedTimezoneData.text : placeholder}
           </div>
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent

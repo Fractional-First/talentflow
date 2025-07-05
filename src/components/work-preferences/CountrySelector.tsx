@@ -1,7 +1,7 @@
 
 import { useCountries } from "@/queries/useCountries"
 import { useState } from "react"
-import { Check, ChevronsUpDown, Globe } from "lucide-react"
+import { Check, ChevronDown, Globe } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -28,7 +28,7 @@ interface CountrySelectorProps {
 const CountrySelector = ({
   selectedCountries,
   onCountriesChange,
-  placeholder = "Search and select countries",
+  placeholder = "Search and select countries...",
 }: CountrySelectorProps) => {
   const [open, setOpen] = useState(false)
   const { data: countries = [], isLoading } = useCountries()
@@ -51,12 +51,12 @@ const CountrySelector = ({
 
   if (isLoading) {
     return (
-      <Button variant="outline" disabled className="w-full justify-between text-body-mobile md:text-body-desktop">
+      <Button variant="outline" disabled className="w-full justify-between text-sm">
         <div className="flex items-center gap-2">
           <Globe className="h-4 w-4" />
           Loading countries...
         </div>
-        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
       </Button>
     )
   }
@@ -69,7 +69,7 @@ const CountrySelector = ({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-full justify-between text-body-mobile md:text-body-desktop"
+            className="w-full justify-between text-sm"
           >
             <div className="flex items-center gap-2">
               <Globe className="h-4 w-4" />
@@ -77,7 +77,7 @@ const CountrySelector = ({
                 ? `${selectedCountries.length} countries selected`
                 : placeholder}
             </div>
-            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
         <PopoverContent
