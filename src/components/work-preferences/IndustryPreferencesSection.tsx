@@ -1,3 +1,4 @@
+
 import { Briefcase } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -63,8 +64,8 @@ const IndustryPreferencesSection = ({
         <div>
           <label className="text-sm mb-2 block">Select Industry</label>
           <IndustrySelector
-            selectedIndustry=""
-            onIndustryChange={addIndustry}
+            selectedIndustries={[]}
+            onIndustriesChange={addIndustry}
             placeholder="Search and select industries..."
             excludeIndustries={industryPreferences}
           />

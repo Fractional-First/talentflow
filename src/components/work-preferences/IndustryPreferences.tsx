@@ -74,8 +74,8 @@ const IndustryPreferences = ({
         <div className="space-y-4">
           <Label className="text-base font-medium">Select Industries</Label>
           <IndustrySelector
-            selectedIndustry=""
-            onIndustryChange={addIndustry}
+            selectedIndustries={[]}
+            onIndustriesChange={addIndustry}
             placeholder="Search and select industries..."
             excludeIndustries={industryPreferences}
           />

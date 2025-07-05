@@ -33,7 +33,7 @@ const LocationSelect = ({
 }: LocationSelectProps) => {
   const [open, setOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
-  const { data: searchResults = [], isLoading } = useGooglePlaces(searchQuery)
+  const { placePredictions, isPlacePredictionsLoading } = useGooglePlaces()
 
   const handleLocationToggle = (location: GooglePlace) => {
     const isSelected = selectedLocations.some(
@@ -87,18 +87,31 @@ const LocationSelect = ({
               onValueChange={setSearchQuery}
             />
             <CommandList>
-              {isLoading ? (
+              {isPlacePredictionsLoading ? (
                 <CommandEmpty>Searching...</CommandEmpty>
-              ) : searchResults.length === 0 && searchQuery ? (
+              ) : placePredictions.length === 0 && searchQuery ? (
                 <CommandEmpty>No locations found.</CommandEmpty>
               ) : searchQuery === "" ? (
                 <CommandEmpty>Start typing to search locations...</CommandEmpty>
               ) : (
                 <CommandGroup>
-                  {searchResults.map((location) => {
+                  {placePredictions.map((prediction) => {
+                    const location: GooglePlace = {
+                      place_id: prediction.place_id,
+                      name: prediction.structured_formatting?.main_text || prediction.description,
+                      formatted_address: prediction.description,
+                      city: null,
+                      state_province: null,
+                      country_code: null,
+                      latitude: null,
+                      longitude: null,
+                      place_types: prediction.types || []
+                    }
+                    
                     const isSelected = selectedLocations.some(
                       (selected) => selected.place_id === location.place_id
                     )
+                    
                     return (
                       <CommandItem
                         key={location.place_id}
