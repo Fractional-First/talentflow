@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react"
 import { useGooglePlaces } from "../../queries/useGooglePlaces"
 import { Input } from "@/components/ui/input"
@@ -16,8 +17,8 @@ export type GooglePlace = {
 }
 
 interface LocationInputWithPopoverProps {
-  value: string | GooglePlace
-  onChange: (value: string | GooglePlace) => void
+  selectedLocation: GooglePlace | null
+  onLocationChange: (location: GooglePlace | null) => void
   placeholder?: string
 }
 
@@ -38,8 +39,8 @@ function extractCountryCode(components) {
 }
 
 const LocationInputWithPopover: React.FC<LocationInputWithPopoverProps> = ({
-  value,
-  onChange,
+  selectedLocation,
+  onLocationChange,
   placeholder = "Enter location...",
 }) => {
   const [showPopover, setShowPopover] = useState(false)
@@ -51,16 +52,14 @@ const LocationInputWithPopover: React.FC<LocationInputWithPopoverProps> = ({
     placesService,
   } = useGooglePlaces()
 
-  // Update input value when value prop changes
+  // Update input value when selectedLocation prop changes
   useEffect(() => {
-    if (typeof value === "string") {
-      setInputValue(value)
-    } else if (value) {
-      setInputValue(value.formatted_address || value.name || "")
+    if (selectedLocation) {
+      setInputValue(selectedLocation.formatted_address || selectedLocation.name || "")
     } else {
       setInputValue("")
     }
-  }, [value])
+  }, [selectedLocation])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value
@@ -99,7 +98,7 @@ const LocationInputWithPopover: React.FC<LocationInputWithPopoverProps> = ({
             longitude: placeDetails.geometry?.location?.lng(),
             place_types: placeDetails.types,
           }
-          onChange(locationObj)
+          onLocationChange(locationObj)
           setInputValue("") // Clear the input after selection
         }
         setShowPopover(false)

@@ -1,4 +1,5 @@
-import { IndustrySelector } from "@/components/IndustrySelector"
+
+import { IndustrySelector } from "@/components/work-preferences/IndustrySelector"
 import { Building2 } from "lucide-react"
 
 interface IndustryPreferencesSectionProps {
@@ -31,8 +32,8 @@ const IndustryPreferencesSection = ({
 
       <div className="bg-background border rounded-lg p-6">
         <IndustrySelector
-          selectedIndustryIds={selectedIndustryIds}
-          onIndustryChange={onIndustryChange}
+          selectedIndustries={selectedIndustryIds}
+          onIndustriesChange={onIndustryChange}
         />
       </div>
     </div>

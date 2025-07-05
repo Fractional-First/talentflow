@@ -27,19 +27,23 @@ export const FullTimePreferences = ({
       {/* Compensation Section */}
       <div className="space-y-4">
         <CompensationSection
-          paymentType="annual"
-          setPaymentType={() => {}} // Lock to annual
-          rateRange={[
-            form.fullTime.min_salary || 0,
-            form.fullTime.max_salary || 0,
-          ]}
-          setRateRange={([min, max]) =>
+          compensationType="salary"
+          setCompensationType={() => {}} // Lock to salary for full-time
+          minCompensation={form.fullTime.min_salary || 0}
+          maxCompensation={form.fullTime.max_salary || 0}
+          setMinCompensation={(min) =>
             setForm((prev) => ({
               ...prev,
-              fullTime: { ...prev.fullTime, min_salary: min, max_salary: max },
+              fullTime: { ...prev.fullTime, min_salary: min },
             }))
           }
-          showOnly="annual"
+          setMaxCompensation={(max) =>
+            setForm((prev) => ({
+              ...prev,
+              fullTime: { ...prev.fullTime, max_salary: max },
+            }))
+          }
+          isFullTime={true}
         />
       </div>
 
@@ -68,22 +72,17 @@ export const FullTimePreferences = ({
       {/* Location Section */}
       <div className="space-y-4">
         <LocationSection
-          form={form}
-          setForm={setForm}
-          type="fullTime"
           currentLocationObj={form.currentLocationObj}
           setCurrentLocation={setCurrentLocation}
-          workEligibility={form.work_eligibility || []}
-          setWorkEligibility={(codes) =>
-            setForm((prev) => ({ ...prev, work_eligibility: codes }))
-          }
-          remotePreference={form.fullTime.remote_ok || false}
-          setRemotePreference={(val) =>
-            setForm((prev) => ({
-              ...prev,
-              fullTime: { ...prev.fullTime, remote_ok: val },
-            }))
-          }
+          selectedLocationIds={form.fullTime.locations?.map(l => l.place_id) || []}
+          onLocationChange={(locationIds) => {
+            // Convert location IDs back to location objects if needed
+            // For now, we'll need to handle this conversion properly
+            console.log("Location IDs changed:", locationIds)
+          }}
+          showWorkLocations={true}
+          title="Location Preferences"
+          description="Set your location preferences for full-time work"
         />
       </div>
 
