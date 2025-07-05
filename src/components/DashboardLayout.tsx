@@ -60,7 +60,7 @@ export function DashboardLayout({
             <img 
               src="/lovable-uploads/daefe55a-8953-4582-8fc8-12a66755ac2a.png" 
               alt="Fractional First" 
-              className="h-9 w-auto cursor-pointer"
+              className="h-12 w-auto cursor-pointer"
               onClick={() => navigate('/')}
             />
           </div>
