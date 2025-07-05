@@ -132,17 +132,13 @@ export default {
 			},
 			fontSize: {
 				// H1 (Hero Title) - 32px → 48px, weight 700, line-height 1.2
-				'h1-mobile': ['32px', { lineHeight: '1.2', fontWeight: '700' }],
-				'h1-desktop': ['48px', { lineHeight: '1.2', fontWeight: '700' }],
+				'h1': ['clamp(32px, 5vw, 48px)', { lineHeight: '1.2', fontWeight: '700' }],
 				// H2 (Section) - 24px → 36px, weight 600, line-height 1.3
-				'h2-mobile': ['24px', { lineHeight: '1.3', fontWeight: '600' }],
-				'h2-desktop': ['36px', { lineHeight: '1.3', fontWeight: '600' }],
+				'h2': ['clamp(24px, 4vw, 36px)', { lineHeight: '1.3', fontWeight: '600' }],
 				// H3 (Subhead) - 20px → 28px, weight 500-600, line-height 1.4
-				'h3-mobile': ['20px', { lineHeight: '1.4', fontWeight: '500' }],
-				'h3-desktop': ['28px', { lineHeight: '1.4', fontWeight: '600' }],
+				'h3': ['clamp(20px, 3.5vw, 28px)', { lineHeight: '1.4', fontWeight: '600' }],
 				// Body Text - 16px → 18px, weight 400-500, line-height 1.6
-				'body-mobile': ['16px', { lineHeight: '1.6', fontWeight: '400' }],
-				'body-desktop': ['18px', { lineHeight: '1.6', fontWeight: '500' }],
+				'body': ['clamp(16px, 2.5vw, 18px)', { lineHeight: '1.6', fontWeight: '500' }],
 				// Caption/Label - 14px, weight 400, line-height 1.5
 				'caption': ['14px', { lineHeight: '1.5', fontWeight: '400' }],
 				// Button Text - 16px, weight 500-600, line-height 1.4
