@@ -127,8 +127,22 @@ export default {
 				'pulse-soft': 'pulse-soft 2s infinite ease-in-out'
 			},
 			fontFamily: {
-				sans: ['Inter', 'sans-serif'],
-				'sf-pro': ['"SF Pro Display"', 'sans-serif']
+				sans: ['Urbanist', 'Helvetica Neue', 'Arial', 'sans-serif'],
+				urbanist: ['Urbanist', 'Helvetica Neue', 'Arial', 'sans-serif']
+			},
+			fontSize: {
+				// H1 (Hero Title) - 32px → 48px, weight 700, line-height 1.2
+				'h1': ['clamp(2rem, 5vw, 3rem)', { lineHeight: '1.2', fontWeight: '700' }],
+				// H2 (Section) - 24px → 36px, weight 600, line-height 1.3
+				'h2': ['clamp(1.5rem, 4vw, 2.25rem)', { lineHeight: '1.3', fontWeight: '600' }],
+				// H3 (Subhead) - 20px → 28px, weight 500-600, line-height 1.4
+				'h3': ['clamp(1.25rem, 3.5vw, 1.75rem)', { lineHeight: '1.4', fontWeight: '600' }],
+				// Body Text - 16px → 18px, weight 400-500, line-height 1.6
+				'body': ['clamp(1rem, 2.5vw, 1.125rem)', { lineHeight: '1.6', fontWeight: '500' }],
+				// Caption/Label - 14px, weight 400, line-height 1.5
+				'caption': ['0.875rem', { lineHeight: '1.5', fontWeight: '400' }],
+				// Button Text - 16px, weight 500-600, line-height 1.4
+				'button': ['1rem', { lineHeight: '1.4', fontWeight: '500' }],
 			},
 			boxShadow: {
 				'glass': '0 8px 32px rgba(0, 0, 0, 0.05)',

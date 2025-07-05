@@ -16,7 +16,7 @@ const JobSearchStatusSection = ({
       <div className="flex items-center gap-2">
         <Clock className="h-5 w-5 text-primary" />
         <div>
-          <h3 className="font-medium">Job Search Status</h3>
+          <h3 className="text-lg font-semibold">Job Search Status</h3>
           <p className="text-sm text-muted-foreground">Set your current job search status</p>
         </div>
       </div>

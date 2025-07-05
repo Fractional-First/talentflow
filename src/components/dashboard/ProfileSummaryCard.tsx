@@ -63,7 +63,7 @@ export function ProfileSummaryCard({
             {profile.skills.map((skill, index) => (
               <span
                 key={index}
-                className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-teal-100 text-teal-800"
+                className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
               >
                 {skill}
               </span>
