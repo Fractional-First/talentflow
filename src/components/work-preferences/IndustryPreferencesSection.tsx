@@ -1,40 +1,58 @@
 
-import IndustrySelector from "@/components/work-preferences/IndustrySelector"
-import { Building2 } from "lucide-react"
+import { Briefcase } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import IndustrySelector from "./IndustrySelector"
+import { useIndustries } from "@/queries/useIndustries"
 
 interface IndustryPreferencesSectionProps {
-  selectedIndustryIds: string[]
-  onIndustryChange: (industries: string[]) => void
-  title?: string
-  description?: string
+  industryPreferences: string[]
+  setIndustryPreferences: React.Dispatch<React.SetStateAction<string[]>>
 }
 
 const IndustryPreferencesSection = ({
-  selectedIndustryIds,
-  onIndustryChange,
-  title = "Industry Preferences",
-  description = "Select industries you'd like to work in",
+  industryPreferences,
+  setIndustryPreferences,
 }: IndustryPreferencesSectionProps) => {
+  const { data: industries = [] } = useIndustries()
+
+  const clearIndustryPreferences = () => {
+    setIndustryPreferences([])
+  }
+
+  const handleIndustriesChange = (newIndustries: string[]) => {
+    console.log("Industries changed:", newIndustries)
+    setIndustryPreferences(newIndustries)
+  }
+
+  console.log("Current industryPreferences:", industryPreferences)
+  console.log("Available industries:", industries)
+
   return (
     <div>
-      {/* Section Header */}
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-          <Building2 className="h-4 w-4 text-primary" />
-        </div>
+      <div className="flex items-center gap-2 mb-4">
+        <Briefcase className="h-5 w-5 text-primary" />
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-foreground">{title}</h3>
-          <p className="text-sm text-muted-foreground mt-1">
-            {description}
+          <h3 className="font-medium">Industry Preferences</h3>
+          <p className="text-sm text-muted-foreground">
+            Select your preferred industries
           </p>
         </div>
+        {industryPreferences.length > 0 && (
+          <Button variant="ghost" size="sm" onClick={clearIndustryPreferences}>
+            Clear all
+          </Button>
+        )}
       </div>
 
-      <div className="bg-background border rounded-lg p-6">
-        <IndustrySelector
-          selectedIndustries={selectedIndustryIds}
-          onIndustriesChange={onIndustryChange}
-        />
+      <div className="space-y-4 px-4">
+        <div>
+          <label className="text-sm mb-2 block">Select Industry</label>
+          <IndustrySelector
+            selectedIndustries={industryPreferences}
+            onIndustriesChange={handleIndustriesChange}
+            placeholder="Search and select industries..."
+          />
+        </div>
       </div>
     </div>
   )

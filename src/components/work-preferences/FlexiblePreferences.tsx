@@ -27,50 +27,46 @@ export const FlexiblePreferences = ({
       {/* Compensation Section */}
       <div className="space-y-4">
         <CompensationSection
-          compensationType={
+          paymentType={
             form.fractional.payment_type === "annual"
               ? "hourly"
-              : (form.fractional.payment_type as "hourly" | "daily") || "hourly"
+              : form.fractional.payment_type || "hourly"
           }
-          setCompensationType={(type) =>
+          setPaymentType={(type) =>
             setForm((prev) => ({
               ...prev,
               fractional: { ...prev.fractional, payment_type: type },
             }))
           }
-          minCompensation={
+          rateRange={
             form.fractional.payment_type === "daily"
-              ? form.fractional.min_daily_rate || 0
-              : form.fractional.min_hourly_rate || 0
+              ? [
+                  form.fractional.min_daily_rate || 0,
+                  form.fractional.max_daily_rate || 0,
+                ]
+              : [
+                  form.fractional.min_hourly_rate || 0,
+                  form.fractional.max_hourly_rate || 0,
+                ]
           }
-          maxCompensation={
-            form.fractional.payment_type === "daily"
-              ? form.fractional.max_daily_rate || 0
-              : form.fractional.max_hourly_rate || 0
-          }
-          setMinCompensation={(min) =>
+          setRateRange={([min, max]) =>
             setForm((prev) => ({
               ...prev,
               fractional: {
                 ...prev.fractional,
                 ...(prev.fractional.payment_type === "daily"
-                  ? { min_daily_rate: min }
-                  : { min_hourly_rate: min }),
+                  ? {
+                      min_daily_rate: min,
+                      max_daily_rate: max,
+                    }
+                  : {
+                      min_hourly_rate: min,
+                      max_hourly_rate: max,
+                    }),
               },
             }))
           }
-          setMaxCompensation={(max) =>
-            setForm((prev) => ({
-              ...prev,
-              fractional: {
-                ...prev.fractional,
-                ...(prev.fractional.payment_type === "daily"
-                  ? { max_daily_rate: max }
-                  : { max_hourly_rate: max }),
-              },
-            }))
-          }
-          isFullTime={false}
+          showOnly="hourly-daily"
         />
       </div>
 
@@ -104,17 +100,22 @@ export const FlexiblePreferences = ({
       {/* Location Section */}
       <div className="space-y-4">
         <LocationSection
+          form={form}
+          setForm={setForm}
+          type="fractional"
           currentLocationObj={form.currentLocationObj}
           setCurrentLocation={setCurrentLocation}
-          selectedLocationIds={form.fractional.locations?.map(l => l.place_id) || []}
-          onLocationChange={(locationIds) => {
-            // Convert location IDs back to location objects if needed
-            // For now, we'll need to handle this conversion properly
-            console.log("Location IDs changed:", locationIds)
-          }}
-          showWorkLocations={true}
-          title="Location Preferences"
-          description="Set your location preferences for flexible work"
+          workEligibility={form.work_eligibility || []}
+          setWorkEligibility={(codes) =>
+            setForm((prev) => ({ ...prev, work_eligibility: codes }))
+          }
+          remotePreference={form.fractional.remote_ok || false}
+          setRemotePreference={(val) =>
+            setForm((prev) => ({
+              ...prev,
+              fractional: { ...prev.fractional, remote_ok: val },
+            }))
+          }
         />
       </div>
 

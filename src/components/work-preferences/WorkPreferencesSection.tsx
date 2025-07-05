@@ -206,8 +206,8 @@ const WorkPreferencesSection = ({
           </div>
 
           <IndustryPreferencesSection
-            selectedIndustryIds={industryPreferences}
-            onIndustryChange={setIndustryPreferences}
+            industryPreferences={industryPreferences}
+            setIndustryPreferences={setIndustryPreferences}
           />
 
           <div className="pt-4">
