@@ -3,6 +3,7 @@ import { initialSteps } from "@/components/dashboard/OnboardingSteps"
 import { DashboardLayout } from "@/components/DashboardLayout"
 import { DocumentUploadSection } from "@/components/create-profile/DocumentUploadSection"
 import { SupportingDocsSection } from "@/components/create-profile/SupportingDocsSection"
+import { ProfileLoadingUI } from "@/components/create-profile/ProfileLoadingUI"
 import {
   StepCard,
   StepCardContent,
@@ -19,7 +20,6 @@ import { useSubmitProfile } from "@/queries/useSubmitProfile"
 import { AlertCircle, ArrowLeft, ArrowRight, Clock } from "lucide-react"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { Spinner } from "@/components/ui/spinner"
 
 const ProfileCreation = () => {
   const navigate = useNavigate()
@@ -104,14 +104,7 @@ const ProfileCreation = () => {
   return (
     <DashboardLayout steps={initialSteps} currentStep={2}>
       {submitProfileMutation.isPending ? (
-        <div className="max-w-6xl mx-auto space-y-6 p-6">
-          <div className="flex flex-col items-center justify-center">
-            <Spinner size="lg" className="text-teal-600 mb-4" />
-            <h1 className="text-h2 text-gray-900 font-urbanist">
-              Generating profile...
-            </h1>
-          </div>
-        </div>
+        <ProfileLoadingUI />
       ) : (
         <form onSubmit={handleSubmit}>
           <div className="space-y-6">
