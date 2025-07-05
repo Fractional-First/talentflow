@@ -16,7 +16,7 @@ const Index = () => {
       <header className="container mx-auto px-6 py-6 flex items-center justify-between">
         <div className="cursor-pointer" onClick={() => navigate('/')}>
           <img 
-            src="/lovable-uploads/d41b4a66-0c4b-46f6-9452-81c8d948d25f.png" 
+            src="/lovable-uploads/daefe55a-8953-4582-8fc8-12a66755ac2a.png" 
             alt="Fractional First" 
             className="h-8 w-auto"
           />
