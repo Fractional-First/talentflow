@@ -21,11 +21,9 @@ const IndustryPreferences = ({
     setIndustryPreferences([])
   }
 
-  const addIndustry = (industryId: string) => {
-    console.log("Adding industry:", industryId)
-    if (!industryPreferences.includes(industryId)) {
-      setIndustryPreferences([...industryPreferences, industryId])
-    }
+  const handleIndustriesChange = (newIndustries: string[]) => {
+    console.log("Industries changed:", newIndustries)
+    setIndustryPreferences(newIndustries)
   }
 
   const removeIndustry = (industryId: string) => {
@@ -74,10 +72,9 @@ const IndustryPreferences = ({
         <div className="space-y-4">
           <Label className="text-base font-medium">Select Industries</Label>
           <IndustrySelector
-            selectedIndustries={[]}
-            onIndustriesChange={addIndustry}
+            selectedIndustries={industryPreferences}
+            onIndustriesChange={handleIndustriesChange}
             placeholder="Search and select industries..."
-            excludeIndustries={industryPreferences}
           />
         </div>
 
