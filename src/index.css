@@ -96,27 +96,6 @@
     font-family: "Urbanist", "Helvetica Neue", Arial, sans-serif;
   }
 
-  /* Base Typography Elements */
-  h1 {
-    @apply text-h1 font-urbanist;
-  }
-
-  h2 {
-    @apply text-h2 font-urbanist;
-  }
-
-  h3 {
-    @apply text-h3 font-urbanist;
-  }
-
-  p, div {
-    @apply text-body font-urbanist;
-  }
-
-  button {
-    @apply text-button font-urbanist;
-  }
-
   /* Modern scrollbar styles */
   ::-webkit-scrollbar {
     width: 8px;
@@ -166,31 +145,6 @@
 
   .progress-connector-active {
     @apply bg-primary;
-  }
-
-  /* Typography utility classes */
-  .text-h1 {
-    @apply text-h1 font-urbanist;
-  }
-
-  .text-h2 {
-    @apply text-h2 font-urbanist;
-  }
-
-  .text-h3 {
-    @apply text-h3 font-urbanist;
-  }
-
-  .text-body {
-    @apply text-body font-urbanist;
-  }
-
-  .text-caption {
-    @apply text-caption font-urbanist;
-  }
-
-  .text-button {
-    @apply text-button font-urbanist;
   }
 }
 
