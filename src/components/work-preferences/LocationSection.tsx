@@ -172,14 +172,15 @@ export function LocationSection({
                   <Badge
                     key={countryCode}
                     variant="secondary"
-                    className="flex items-center gap-2 py-1 px-3"
+                    className="bg-primary/10 text-primary border-primary/20 px-3 py-1 rounded-full hover:bg-primary/15"
                   >
-                    <span className="text-sm">{country?.name}</span>
+                    {country?.name}
                     <button
                       onClick={() => handleEligibilityToggle(countryCode)}
-                      className="ml-1 hover:text-destructive transition-colors"
+                      className="ml-2 hover:text-primary/80"
+                      type="button"
                     >
-                      <X className="h-3 w-3" />
+                      ×
                     </button>
                   </Badge>
                 )
@@ -204,16 +205,17 @@ export function LocationSection({
                 <Badge
                   key={location.place_id}
                   variant="secondary"
-                  className="flex items-center gap-2 py-1 px-3"
+                  className="bg-primary/10 text-primary border-primary/20 px-3 py-1 rounded-full hover:bg-primary/15"
                 >
-                  <span className="text-sm">{location.name || location.formatted_address}</span>
+                  {location.name || location.formatted_address}
                   <button
                     onClick={() =>
                       handleRemovePreferredLocation(location.place_id)
                     }
-                    className="ml-1 hover:text-destructive transition-colors"
+                    className="ml-2 hover:text-primary/80"
+                    type="button"
                   >
-                    <X className="h-3 w-3" />
+                    ×
                   </button>
                 </Badge>
               ))}
