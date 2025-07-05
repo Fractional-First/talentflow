@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -139,7 +140,7 @@ export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
               {items.map((item, index) => (
                 <span
                   key={index}
-                  className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
+                  className="px-3 py-1 bg-primary text-primary-foreground rounded-full text-sm font-medium"
                 >
                   {item}
                 </span>
