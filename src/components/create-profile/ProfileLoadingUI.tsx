@@ -116,7 +116,7 @@ export const ProfileLoadingUI = () => {
           <div className="bg-primary/10 p-4 rounded-full">
             <IconComponent className="h-8 w-8 text-primary animate-pulse" />
           </div>
-          <h1 className="text-h2 text-gray-900 font-urbanist animate-fade-in">
+          <h1 className="text-h3 text-gray-900 font-urbanist animate-fade-in">
             {currentMessage.text}
           </h1>
         </div>
