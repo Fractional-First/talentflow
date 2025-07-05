@@ -18,7 +18,7 @@ const Index = () => {
           <img 
             src="/lovable-uploads/daefe55a-8953-4582-8fc8-12a66755ac2a.png" 
             alt="Fractional First" 
-            className="h-10 w-auto"
+            className="h-8 w-auto"
           />
         </div>
         <div>
