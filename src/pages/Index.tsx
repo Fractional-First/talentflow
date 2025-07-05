@@ -14,7 +14,13 @@ const Index = () => {
       </div>
       
       <header className="container mx-auto px-6 py-6 flex items-center justify-between">
-        <div className="text-h3 font-semibold">TalentFlow</div>
+        <div className="cursor-pointer" onClick={() => navigate('/')}>
+          <img 
+            src="/lovable-uploads/d41b4a66-0c4b-46f6-9452-81c8d948d25f.png" 
+            alt="Fractional First" 
+            className="h-8 w-auto"
+          />
+        </div>
         <div>
           <Button 
             variant="ghost" 
@@ -36,7 +42,7 @@ const Index = () => {
           </div>
           
           <h1 className="text-h1 tracking-tight">
-            Streamline your career journey with <span className="text-primary">TalentFlow</span>
+            Streamline your career journey with <span className="text-primary">Fractional First</span>
           </h1>
           
           <p className="text-body text-muted-foreground">

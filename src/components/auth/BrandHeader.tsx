@@ -10,7 +10,11 @@ export const BrandHeader = () => {
         className="inline-block cursor-pointer" 
         onClick={() => navigate('/')}
       >
-        <span className="text-2xl font-semibold">TalentFlow</span>
+        <img 
+          src="/lovable-uploads/d41b4a66-0c4b-46f6-9452-81c8d948d25f.png" 
+          alt="Fractional First" 
+          className="h-8 w-auto"
+        />
       </div>
     </div>
   );
