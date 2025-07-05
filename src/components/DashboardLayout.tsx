@@ -1,4 +1,3 @@
-
 import { ReactNode, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { OnboardingProgress, Step } from './OnboardingProgress';
@@ -38,12 +37,10 @@ export function DashboardLayout({
     </div>
   );
 
-  // Sidebar Layout
   if (sidebar) {
     return (
       <div className="min-h-screen w-full flex">
         {backgroundEffect}
-        {/* Sidebar goes here */}
         {children /* in sidebar mode, the layout is custom and children handle the rest */}
       </div>
     );
@@ -60,7 +57,7 @@ export function DashboardLayout({
             <img 
               src="/lovable-uploads/daefe55a-8953-4582-8fc8-12a66755ac2a.png" 
               alt="Fractional First" 
-              className="h-6 w-auto cursor-pointer"
+              className="h-8 w-auto cursor-pointer"
               onClick={() => navigate('/')}
             />
           </div>
