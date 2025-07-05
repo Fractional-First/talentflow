@@ -1,3 +1,4 @@
+
 import { Briefcase } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -17,20 +18,6 @@ const IndustryPreferencesSection = ({
 
   const clearIndustryPreferences = () => {
     setIndustryPreferences([])
-  }
-
-  const addIndustry = (industryId: string) => {
-    console.log("Adding industry:", industryId)
-    if (!industryPreferences.includes(industryId)) {
-      setIndustryPreferences([...industryPreferences, industryId])
-    }
-  }
-
-  const removeIndustry = (industryId: string) => {
-    console.log("Removing industry:", industryId)
-    setIndustryPreferences(
-      industryPreferences.filter((id) => id !== industryId)
-    )
   }
 
   const getIndustryName = (industryId: string) => {
@@ -63,10 +50,9 @@ const IndustryPreferencesSection = ({
         <div>
           <label className="text-sm mb-2 block">Select Industry</label>
           <IndustrySelector
-            selectedIndustry=""
-            onIndustryChange={addIndustry}
+            selectedIndustries={industryPreferences}
+            onIndustriesChange={setIndustryPreferences}
             placeholder="Search and select industries..."
-            excludeIndustries={industryPreferences}
           />
         </div>
 
@@ -86,7 +72,7 @@ const IndustryPreferencesSection = ({
                   <span>{getIndustryName(industryId)}</span>
                   <button
                     className="ml-1 text-muted-foreground hover:text-foreground"
-                    onClick={() => removeIndustry(industryId)}
+                    onClick={() => setIndustryPreferences(industryPreferences.filter(id => id !== industryId))}
                   >
                     ×
                   </button>
