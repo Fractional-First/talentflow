@@ -93,7 +93,7 @@ const AvailabilitySection = ({
         </div>
         <div className="flex-1">
           <h3 className="text-lg font-semibold">{sectionInfo.title}</h3>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-body-mobile md:text-body-desktop text-muted-foreground mt-1">
             {sectionInfo.description}
           </p>
         </div>
@@ -110,15 +110,15 @@ const AvailabilitySection = ({
                   value={hoursPerWeek}
                   onValueChange={handleHoursChange}
                   max={40}
-                  min={5}
-                  step={5}
+                  min={1}
+                  step={1}
                   className="w-full"
                 />
                 <div className="flex justify-between items-center text-sm">
-                  <span className="text-muted-foreground">5 hours</span>
-                  <div className="bg-primary/10 px-3 py-1 rounded-md">
+                  <span className="text-muted-foreground">1 hour</span>
+                  <div className="bg-primary/10 px-3 py-1 rounded-full">
                     <span className="font-medium text-primary">
-                      {hoursPerWeek[0]} hours per week
+                      {hoursPerWeek[0]} {hoursPerWeek[0] === 1 ? 'hour' : 'hours'} per week
                     </span>
                   </div>
                   <span className="text-muted-foreground">40 hours</span>

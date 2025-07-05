@@ -1,5 +1,8 @@
+
+import { useCountries } from "@/queries/useCountries"
 import { useState } from "react"
-import { Check, ChevronsUpDown, Globe, X } from "lucide-react"
+import { Check, ChevronsUpDown, Globe } from "lucide-react"
+import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
   Command,
@@ -15,128 +18,84 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { Badge } from "@/components/ui/badge"
-import { useCountries, useRegions, type Country } from "@/queries/useCountries"
-import { cn } from "@/lib/utils"
 
 interface CountrySelectorProps {
   selectedCountries: string[]
   onCountriesChange: (countries: string[]) => void
   placeholder?: string
-  maxSelections?: number
-  onClearAll?: () => void
 }
 
-export function CountrySelector({
+const CountrySelector = ({
   selectedCountries,
   onCountriesChange,
-  placeholder = "Select countries...",
-  maxSelections = 10,
-  onClearAll,
-}: CountrySelectorProps) {
+  placeholder = "Search and select countries",
+}: CountrySelectorProps) => {
   const [open, setOpen] = useState(false)
-  const [searchValue, setSearchValue] = useState("")
-  const [filterByRegion, setFilterByRegion] = useState<string | null>(null)
-
   const { data: countries = [], isLoading } = useCountries()
-  const { data: regions = [] } = useRegions()
 
-  const filteredCountries = countries.filter((country) => {
-    const matchesSearch =
-      country.name.toLowerCase().includes(searchValue.toLowerCase()) ||
-      country.alpha2_code.toLowerCase().includes(searchValue.toLowerCase())
-    const matchesRegion = !filterByRegion || country.region === filterByRegion
-    return matchesSearch && matchesRegion
-  })
+  const selectedCountryNames = countries
+    .filter((country) => selectedCountries.includes(country.alpha2_code))
+    .map((country) => country.name)
 
-  const toggleCountry = (countryCode: string) => {
+  const handleCountryToggle = (countryCode: string) => {
     if (selectedCountries.includes(countryCode)) {
-      onCountriesChange(
-        selectedCountries.filter((code) => code !== countryCode)
-      )
-    } else if (selectedCountries.length < maxSelections) {
+      onCountriesChange(selectedCountries.filter((c) => c !== countryCode))
+    } else {
       onCountriesChange([...selectedCountries, countryCode])
     }
   }
 
   const removeCountry = (countryCode: string) => {
-    onCountriesChange(selectedCountries.filter((code) => code !== countryCode))
+    onCountriesChange(selectedCountries.filter((c) => c !== countryCode))
   }
 
-  const getSelectedCountryNames = () => {
-    return countries
-      .filter((country) => selectedCountries.includes(country.alpha2_code))
-      .map((country) => ({ code: country.alpha2_code, name: country.name }))
+  if (isLoading) {
+    return (
+      <Button variant="outline" disabled className="w-full justify-between text-body-mobile md:text-body-desktop">
+        <div className="flex items-center gap-2">
+          <Globe className="h-4 w-4" />
+          Loading countries...
+        </div>
+        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+      </Button>
+    )
   }
-
-  const selectedCountryData = getSelectedCountryNames()
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-full justify-between"
-            disabled={isLoading}
+            className="w-full justify-between text-body-mobile md:text-body-desktop"
           >
             <div className="flex items-center gap-2">
               <Globe className="h-4 w-4" />
-              {selectedCountries.length === 0
-                ? placeholder
-                : `${selectedCountries.length} selected`}
+              {selectedCountries.length > 0
+                ? `${selectedCountries.length} countries selected`
+                : placeholder}
             </div>
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
         <PopoverContent
           className="w-full p-0"
-          align="start"
           style={{ width: "var(--radix-popover-trigger-width)" }}
         >
           <Command>
-            <CommandInput
-              placeholder="Search countries..."
-              value={searchValue}
-              onValueChange={setSearchValue}
-            />
+            <CommandInput placeholder="Search countries..." />
             <CommandList>
-              <CommandEmpty>No countries found.</CommandEmpty>
-
-              {/* Region filters */}
-              <CommandGroup heading="Filter by Region">
-                <CommandItem onSelect={() => setFilterByRegion(null)}>
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      !filterByRegion ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                  All Regions
-                </CommandItem>
-                {regions.map((region) => (
-                  <CommandItem
-                    key={region}
-                    onSelect={() => setFilterByRegion(region)}
-                  >
-                    <Check
-                      className={cn(
-                        "mr-2 h-4 w-4",
-                        filterByRegion === region ? "opacity-100" : "opacity-0"
-                      )}
-                    />
-                    {region}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-
-              {/* Countries */}
-              <CommandGroup heading="Countries">
-                {filteredCountries.map((country) => (
+              <CommandEmpty>No country found.</CommandEmpty>
+              <CommandGroup>
+                {countries.map((country) => (
                   <CommandItem
                     key={country.alpha2_code}
-                    onSelect={() => toggleCountry(country.alpha2_code)}
+                    value={country.name}
+                    onSelect={() => {
+                      handleCountryToggle(country.alpha2_code)
+                    }}
                   >
                     <Check
                       className={cn(
@@ -146,17 +105,7 @@ export function CountrySelector({
                           : "opacity-0"
                       )}
                     />
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-xs bg-muted px-1 rounded">
-                        {country.alpha2_code}
-                      </span>
-                      <span>{country.name}</span>
-                      {country.region && (
-                        <span className="text-xs text-muted-foreground">
-                          • {country.region}
-                        </span>
-                      )}
-                    </div>
+                    <span>{country.name}</span>
                   </CommandItem>
                 ))}
               </CommandGroup>
@@ -165,26 +114,32 @@ export function CountrySelector({
         </PopoverContent>
       </Popover>
 
-      {/* Selected countries display */}
+      {/* Selected Countries Pills */}
       {selectedCountries.length > 0 && (
         <div className="flex flex-wrap gap-2">
-          {selectedCountryData.map(({ code, name }) => (
-            <Badge
-              key={code}
-              variant="outline"
-              className="flex items-center gap-1"
-            >
-              <span>{name}</span>
-              <button
-                className="ml-1 text-muted-foreground hover:text-foreground"
-                onClick={() => removeCountry(code)}
+          {selectedCountryNames.map((countryName) => {
+            const country = countries.find((c) => c.name === countryName)
+            return (
+              <Badge
+                key={country?.alpha2_code}
+                variant="secondary"
+                className="bg-primary/10 text-primary border-primary/20 px-3 py-1 rounded-full hover:bg-primary/15"
               >
-                ×
-              </button>
-            </Badge>
-          ))}
+                {countryName}
+                <button
+                  onClick={() => removeCountry(country?.alpha2_code || "")}
+                  className="ml-2 hover:text-primary/80"
+                  type="button"
+                >
+                  ×
+                </button>
+              </Badge>
+            )
+          })}
         </div>
       )}
     </div>
   )
 }
+
+export default CountrySelector

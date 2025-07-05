@@ -127,7 +127,7 @@ const WorkPreferences = () => {
                             onCheckedChange={() => toggleType("fullTime")}
                           />
                         </div>
-                        <p className="text-muted-foreground leading-relaxed">
+                        <p className="text-body-mobile md:text-body-desktop text-muted-foreground leading-relaxed">
                           40 hours per week, dedicated to one company. Traditional employment with benefits and long-term commitment.
                         </p>
                       </div>
@@ -178,7 +178,7 @@ const WorkPreferences = () => {
                             onCheckedChange={() => toggleType("fractional")}
                           />
                         </div>
-                        <p className="text-muted-foreground leading-relaxed">
+                        <p className="text-body-mobile md:text-body-desktop text-muted-foreground leading-relaxed">
                           Part-time commitment with flexible hours. Work with multiple companies simultaneously on project-based engagements.
                         </p>
                       </div>
@@ -207,7 +207,7 @@ const WorkPreferences = () => {
               <Button
                 onClick={handleContinue}
                 disabled={!hasSelection || isSaving}
-                className="w-full h-12 text-base font-medium"
+                className="w-full h-12 text-base font-medium rounded-full"
                 size="lg"
               >
                 {isSaving ? "Saving Preferences..." : "Continue"}
