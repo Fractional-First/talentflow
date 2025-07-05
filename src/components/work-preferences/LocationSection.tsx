@@ -1,3 +1,4 @@
+
 import { Label } from "@/components/ui/label"
 import LocationAutocomplete from "./LocationAutocomplete"
 import LocationSelect from "./LocationSelect"
@@ -22,6 +23,24 @@ const LocationSection = ({
   title = "Location Preferences",
   description = "Set your location preferences",
 }: LocationSectionProps) => {
+  // Convert selectedLocationIds to GooglePlace objects for LocationSelect
+  const selectedLocations = selectedLocationIds.map(id => ({
+    place_id: id,
+    name: id, // This will need to be properly resolved from location data
+    formatted_address: id,
+    city: null,
+    state_province: null,
+    country_code: null,
+    latitude: null,
+    longitude: null,
+    place_types: []
+  }))
+
+  const handleLocationSelectChange = (locations: any[]) => {
+    const locationIds = locations.map(loc => loc.place_id)
+    onLocationChange(locationIds)
+  }
+
   return (
     <div>
       {/* Section Header */}
@@ -56,8 +75,8 @@ const LocationSection = ({
             <div className="space-y-4">
               <Label className="text-sm font-medium text-foreground">Preferred Work Locations</Label>
               <LocationSelect
-                selectedLocationIds={selectedLocationIds}
-                onLocationChange={onLocationChange}
+                selectedLocations={selectedLocations}
+                onLocationsChange={handleLocationSelectChange}
                 placeholder="Search and select work locations..."
               />
             </div>

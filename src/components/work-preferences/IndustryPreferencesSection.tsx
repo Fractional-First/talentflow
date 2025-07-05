@@ -1,5 +1,5 @@
 
-import { IndustrySelector } from "@/components/work-preferences/IndustrySelector"
+import IndustrySelector from "@/components/work-preferences/IndustrySelector"
 import { Building2 } from "lucide-react"
 
 interface IndustryPreferencesSectionProps {
