@@ -93,7 +93,7 @@ const AvailabilitySection = ({
         </div>
         <div className="flex-1">
           <h3 className="text-lg font-semibold">{sectionInfo.title}</h3>
-          <p className="text-body-mobile md:text-body-desktop text-muted-foreground mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             {sectionInfo.description}
           </p>
         </div>
@@ -104,7 +104,7 @@ const AvailabilitySection = ({
           <div className="space-y-6">
             {/* Hours Per Week */}
             <div className="space-y-4">
-              <Label className="text-base font-medium">Hours Per Week</Label>
+              <Label className="text-sm font-medium">Hours Per Week</Label>
               <div className="space-y-4">
                 <Slider
                   value={hoursPerWeek}
@@ -134,13 +134,13 @@ const AvailabilitySection = ({
           <div className="space-y-6">
             {/* Preferred Start Date */}
             <div className="space-y-4">
-              <Label className="text-base font-medium">Preferred Start Date</Label>
+              <Label className="text-sm font-medium">Preferred Start Date</Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
                     className={cn(
-                      "w-full justify-start text-left font-normal",
+                      "w-full justify-start text-left font-normal text-sm",
                       !selectedDate && "text-muted-foreground"
                     )}
                   >
@@ -171,7 +171,7 @@ const AvailabilitySection = ({
 
         {/* Timezone - Always show for both full-time and fractional */}
         <div className="space-y-4">
-          <Label className="text-base font-medium">Your Timezone</Label>
+          <Label className="text-sm font-medium">Your Timezone</Label>
           <TimezoneSelector
             selectedTimezone={timezone}
             onTimezoneChange={setTimezone}

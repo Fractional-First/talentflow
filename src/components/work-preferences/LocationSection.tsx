@@ -98,7 +98,7 @@ export function LocationSection({
       <div className="bg-background border rounded-lg p-6 space-y-6">
         {/* Current Location */}
         <div className="space-y-4">
-          <Label className="text-base font-medium">Current Location</Label>
+          <Label className="text-sm font-medium">Current Location</Label>
           <LocationInputWithPopover
             value={currentLocationObj}
             onChange={setCurrentLocation}
@@ -112,7 +112,7 @@ export function LocationSection({
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <Label className="text-base font-medium">Remote Work</Label>
+              <Label className="text-sm font-medium">Remote Work</Label>
               <p className="text-sm text-muted-foreground">
                 Are you interested in remote work opportunities?
               </p>
@@ -143,7 +143,7 @@ export function LocationSection({
 
         {/* Work Eligibility */}
         <div className="space-y-4">
-          <Label className="text-base font-medium">Legal Work Eligibility</Label>
+          <Label className="text-sm font-medium">Legal Work Eligibility</Label>
           <Select
             value=""
             onValueChange={handleEligibilityToggle}
@@ -192,7 +192,7 @@ export function LocationSection({
 
         {/* Preferred Locations */}
         <div className="space-y-4">
-          <Label className="text-base font-medium">Preferred Work Locations</Label>
+          <Label className="text-sm font-medium">Preferred Work Locations</Label>
           <LocationInputWithPopover
             value={null}
             onChange={handleAddPreferredLocation}

@@ -32,7 +32,7 @@ const IndustryPreferencesSection = ({
       <div className="flex items-center gap-2 mb-4">
         <Briefcase className="h-5 w-5 text-primary" />
         <div className="flex-1">
-          <h3 className="font-medium">Industry Preferences</h3>
+          <h3 className="text-lg font-semibold">Industry Preferences</h3>
           <p className="text-sm text-muted-foreground">
             Select your preferred industries
           </p>
@@ -46,7 +46,7 @@ const IndustryPreferencesSection = ({
 
       <div className="space-y-4 px-4">
         <div>
-          <label className="text-sm mb-2 block">Select Industry</label>
+          <label className="text-sm font-medium mb-2 block">Select Industry</label>
           <IndustrySelector
             selectedIndustries={industryPreferences}
             onIndustriesChange={handleIndustriesChange}
