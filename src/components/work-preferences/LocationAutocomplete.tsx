@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react"
 import { useGooglePlaces } from "../../queries/useGooglePlaces"
 import { Input } from "@/components/ui/input"
@@ -45,7 +44,12 @@ const LocationInputWithPopover: React.FC<LocationInputWithPopoverProps> = ({
 }) => {
   const [showPopover, setShowPopover] = useState(false)
   const [inputValue, setInputValue] = useState("")
-  const { data: searchResults, isLoading, placesService, getPlacePredictions } = useGooglePlaces(inputValue)
+  const {
+    placePredictions,
+    getPlacePredictions,
+    isPlacePredictionsLoading,
+    placesService,
+  } = useGooglePlaces()
 
   // Update input value when value prop changes
   useEffect(() => {
@@ -62,46 +66,45 @@ const LocationInputWithPopover: React.FC<LocationInputWithPopoverProps> = ({
     const newValue = e.target.value
     setInputValue(newValue)
     if (newValue.trim()) {
+      getPlacePredictions({ input: newValue })
       setShowPopover(true)
     } else {
       setShowPopover(false)
     }
   }
 
-  const handlePredictionClick = (prediction: GooglePlace) => {
-    if (placesService) {
-      placesService.getDetails(
-        {
-          placeId: prediction.place_id,
-          fields: [
-            "place_id",
-            "name",
-            "formatted_address",
-            "address_components",
-            "geometry",
-            "types",
-          ],
-        },
-        (placeDetails) => {
-          if (placeDetails) {
-            const locationObj = {
-              place_id: placeDetails.place_id,
-              name: placeDetails.name || prediction.name,
-              formatted_address: placeDetails.formatted_address,
-              city: extractCity(placeDetails.address_components),
-              state_province: extractState(placeDetails.address_components),
-              country_code: extractCountryCode(placeDetails.address_components),
-              latitude: placeDetails.geometry?.location?.lat(),
-              longitude: placeDetails.geometry?.location?.lng(),
-              place_types: placeDetails.types,
-            }
-            onChange(locationObj)
-            setInputValue("") // Clear the input after selection
+  const handlePredictionClick = (prediction: any) => {
+    placesService?.getDetails(
+      {
+        placeId: prediction.place_id,
+        fields: [
+          "place_id",
+          "name",
+          "formatted_address",
+          "address_components",
+          "geometry",
+          "types",
+        ],
+      },
+      (placeDetails) => {
+        if (placeDetails) {
+          const locationObj = {
+            place_id: placeDetails.place_id,
+            name: placeDetails.name || prediction.description,
+            formatted_address: placeDetails.formatted_address,
+            city: extractCity(placeDetails.address_components),
+            state_province: extractState(placeDetails.address_components),
+            country_code: extractCountryCode(placeDetails.address_components),
+            latitude: placeDetails.geometry?.location?.lat(),
+            longitude: placeDetails.geometry?.location?.lng(),
+            place_types: placeDetails.types,
           }
-          setShowPopover(false)
+          onChange(locationObj)
+          setInputValue("") // Clear the input after selection
         }
-      )
-    }
+        setShowPopover(false)
+      }
+    )
   }
 
   return (
@@ -113,7 +116,7 @@ const LocationInputWithPopover: React.FC<LocationInputWithPopoverProps> = ({
         placeholder={placeholder}
       />
       {showPopover &&
-        (searchResults.length > 0 || isLoading) && (
+        (placePredictions.length > 0 || isPlacePredictionsLoading) && (
           <div
             style={{
               position: "absolute",
@@ -127,16 +130,16 @@ const LocationInputWithPopover: React.FC<LocationInputWithPopoverProps> = ({
               zIndex: 1000,
             }}
           >
-            {isLoading ? (
+            {isPlacePredictionsLoading ? (
               <div style={{ padding: "8px" }}>Loading...</div>
             ) : (
-              searchResults.map((prediction) => (
+              placePredictions.map((prediction) => (
                 <div
                   key={prediction.place_id}
                   onClick={() => handlePredictionClick(prediction)}
                   className="p-2 cursor-pointer hover:bg-gray-100"
                 >
-                  {prediction.formatted_address || prediction.name}
+                  {prediction.description}
                 </div>
               ))
             )}

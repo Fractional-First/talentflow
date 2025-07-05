@@ -21,6 +21,20 @@ const IndustryPreferences = ({
     setIndustryPreferences([])
   }
 
+  const addIndustry = (industryId: string) => {
+    console.log("Adding industry:", industryId)
+    if (!industryPreferences.includes(industryId)) {
+      setIndustryPreferences([...industryPreferences, industryId])
+    }
+  }
+
+  const removeIndustry = (industryId: string) => {
+    console.log("Removing industry:", industryId)
+    setIndustryPreferences(
+      industryPreferences.filter((id) => id !== industryId)
+    )
+  }
+
   const getIndustryName = (industryId: string) => {
     const industry = industries.find((industry) => industry.id === industryId)
     console.log("Looking for industry:", industryId, "Found:", industry)
@@ -60,9 +74,10 @@ const IndustryPreferences = ({
         <div className="space-y-4">
           <Label className="text-base font-medium">Select Industries</Label>
           <IndustrySelector
-            selectedIndustries={industryPreferences}
-            onIndustriesChange={setIndustryPreferences}
+            selectedIndustry=""
+            onIndustryChange={addIndustry}
             placeholder="Search and select industries..."
+            excludeIndustries={industryPreferences}
           />
         </div>
 
@@ -84,12 +99,12 @@ const IndustryPreferences = ({
                   <Badge
                     key={industryId}
                     variant="secondary"
-                    className="bg-primary/10 text-primary border-primary/20 px-3 py-1 rounded-full hover:bg-primary/15"
+                    className="flex items-center gap-2 py-1 px-3"
                   >
                     <span className="text-sm">{getIndustryName(industryId)}</span>
                     <button
-                      className="ml-2 text-muted-foreground hover:text-destructive transition-colors"
-                      onClick={() => setIndustryPreferences(industryPreferences.filter(id => id !== industryId))}
+                      className="ml-1 text-muted-foreground hover:text-destructive transition-colors"
+                      onClick={() => removeIndustry(industryId)}
                     >
                       ×
                     </button>
