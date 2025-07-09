@@ -57,7 +57,12 @@ export function DashboardLayout({
       <header className="border-b border-border/40 bg-background/80 backdrop-blur-md sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <span className="text-xl font-semibold">TalentFlow</span>
+            <img 
+              src="/lovable-uploads/daefe55a-8953-4582-8fc8-12a66755ac2a.png" 
+              alt="Fractional First" 
+              className="h-12 w-auto cursor-pointer"
+              onClick={() => navigate('/')}
+            />
           </div>
 
           <div className="flex items-center space-x-2">
@@ -84,7 +89,7 @@ export function DashboardLayout({
 
       <footer className="border-t border-border/40 py-6 mt-10">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>© 2025 TalentFlow. All rights reserved.</p>
+          <p>© 2025 Fractional First. All rights reserved.</p>
         </div>
       </footer>
     </div>

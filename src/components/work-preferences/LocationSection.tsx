@@ -3,9 +3,15 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
 import { useCountries } from "@/queries/useCountries"
-import { MapPin, X } from "lucide-react"
+import { MapPin, X, Globe, ChevronDown } from "lucide-react"
 import React from "react"
-import Select from "react-select"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import LocationInputWithPopover, { GooglePlace } from "./LocationAutocomplete"
 import { CombinedWorkPreferencesForm } from "@/hooks/useWorkPreferences"
 
@@ -66,6 +72,14 @@ export function LocationSection({
     }))
   }
 
+  const handleEligibilityToggle = (countryCode: string) => {
+    if (workEligibility.includes(countryCode)) {
+      setWorkEligibility(workEligibility.filter((code) => code !== countryCode))
+    } else {
+      setWorkEligibility([...workEligibility, countryCode])
+    }
+  }
+
   return (
     <div>
       {/* Section Header */}
@@ -84,7 +98,7 @@ export function LocationSection({
       <div className="bg-background border rounded-lg p-6 space-y-6">
         {/* Current Location */}
         <div className="space-y-4">
-          <Label className="text-base font-medium">Current Location</Label>
+          <Label className="text-sm font-medium">Current Location</Label>
           <LocationInputWithPopover
             value={currentLocationObj}
             onChange={setCurrentLocation}
@@ -98,7 +112,7 @@ export function LocationSection({
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <Label className="text-base font-medium">Remote Work</Label>
+              <Label className="text-sm font-medium">Remote Work</Label>
               <p className="text-sm text-muted-foreground">
                 Are you interested in remote work opportunities?
               </p>
@@ -129,31 +143,57 @@ export function LocationSection({
 
         {/* Work Eligibility */}
         <div className="space-y-4">
-          <Label className="text-base font-medium">Legal Work Eligibility</Label>
+          <Label className="text-sm font-medium">Legal Work Eligibility</Label>
           <Select
-            isMulti
-            isLoading={isLoading}
-            options={countries.map((c) => ({
-              value: c.alpha2_code,
-              label: c.name,
-            }))}
-            value={countries
-              .filter((c) => workEligibility.includes(c.alpha2_code))
-              .map((c) => ({ value: c.alpha2_code, label: c.name }))}
-            onChange={(opts) =>
-              setWorkEligibility(opts.map((opt) => opt.value))
-            }
-            placeholder="Search and select countries..."
-            classNamePrefix="react-select"
-            className="text-sm"
-          />
+            value=""
+            onValueChange={handleEligibilityToggle}
+          >
+            <SelectTrigger className="w-full text-sm">
+              <div className="flex items-center gap-2">
+                <Globe className="h-4 w-4" />
+                <SelectValue placeholder="Search and select countries..." />
+              </div>
+            </SelectTrigger>
+            <SelectContent>
+              {countries.map((country) => (
+                <SelectItem key={country.alpha2_code} value={country.alpha2_code}>
+                  {country.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          
+          {/* Selected countries display */}
+          {workEligibility.length > 0 && (
+            <div className="flex flex-wrap gap-2 pt-2">
+              {workEligibility.map((countryCode) => {
+                const country = countries.find((c) => c.alpha2_code === countryCode)
+                return (
+                  <Badge
+                    key={countryCode}
+                    variant="secondary"
+                    className="bg-primary/10 text-primary border-primary/20 px-3 py-1 rounded-full hover:bg-primary/15"
+                  >
+                    {country?.name}
+                    <button
+                      onClick={() => handleEligibilityToggle(countryCode)}
+                      className="ml-2 hover:text-primary/80"
+                      type="button"
+                    >
+                      ×
+                    </button>
+                  </Badge>
+                )
+              })}
+            </div>
+          )}
         </div>
 
         <hr className="border-border" />
 
         {/* Preferred Locations */}
         <div className="space-y-4">
-          <Label className="text-base font-medium">Preferred Work Locations</Label>
+          <Label className="text-sm font-medium">Preferred Work Locations</Label>
           <LocationInputWithPopover
             value={null}
             onChange={handleAddPreferredLocation}
@@ -165,16 +205,17 @@ export function LocationSection({
                 <Badge
                   key={location.place_id}
                   variant="secondary"
-                  className="flex items-center gap-2 py-1 px-3"
+                  className="bg-primary/10 text-primary border-primary/20 px-3 py-1 rounded-full hover:bg-primary/15"
                 >
-                  <span className="text-sm">{location.name || location.formatted_address}</span>
+                  {location.name || location.formatted_address}
                   <button
                     onClick={() =>
                       handleRemovePreferredLocation(location.place_id)
                     }
-                    className="ml-1 hover:text-destructive transition-colors"
+                    className="ml-2 hover:text-primary/80"
+                    type="button"
                   >
-                    <X className="h-3 w-3" />
+                    ×
                   </button>
                 </Badge>
               ))}
