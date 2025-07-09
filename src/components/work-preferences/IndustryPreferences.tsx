@@ -1,7 +1,6 @@
 
 import { Briefcase } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
 import IndustrySelector from "./IndustrySelector"
 import { useIndustries } from "@/queries/useIndustries"
@@ -21,24 +20,9 @@ const IndustryPreferences = ({
     setIndustryPreferences([])
   }
 
-  const addIndustry = (industryId: string) => {
-    console.log("Adding industry:", industryId)
-    if (!industryPreferences.includes(industryId)) {
-      setIndustryPreferences([...industryPreferences, industryId])
-    }
-  }
-
-  const removeIndustry = (industryId: string) => {
-    console.log("Removing industry:", industryId)
-    setIndustryPreferences(
-      industryPreferences.filter((id) => id !== industryId)
-    )
-  }
-
-  const getIndustryName = (industryId: string) => {
-    const industry = industries.find((industry) => industry.id === industryId)
-    console.log("Looking for industry:", industryId, "Found:", industry)
-    return industry?.name || industryId
+  const handleIndustriesChange = (newIndustries: string[]) => {
+    console.log("Industries changed:", newIndustries)
+    setIndustryPreferences(newIndustries)
   }
 
   console.log("Current industryPreferences:", industryPreferences)
@@ -74,46 +58,11 @@ const IndustryPreferences = ({
         <div className="space-y-4">
           <Label className="text-base font-medium">Select Industries</Label>
           <IndustrySelector
-            selectedIndustry=""
-            onIndustryChange={addIndustry}
+            selectedIndustries={industryPreferences}
+            onIndustriesChange={handleIndustriesChange}
             placeholder="Search and select industries..."
-            excludeIndustries={industryPreferences}
           />
         </div>
-
-        {/* Selected Industries */}
-        {industryPreferences.length > 0 && (
-          <>
-            <hr className="border-border" />
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <Label className="text-base font-medium">
-                  Selected Industries
-                </Label>
-                <span className="text-sm text-muted-foreground">
-                  {industryPreferences.length} selected
-                </span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {industryPreferences.map((industryId) => (
-                  <Badge
-                    key={industryId}
-                    variant="secondary"
-                    className="flex items-center gap-2 py-1 px-3"
-                  >
-                    <span className="text-sm">{getIndustryName(industryId)}</span>
-                    <button
-                      className="ml-1 text-muted-foreground hover:text-destructive transition-colors"
-                      onClick={() => removeIndustry(industryId)}
-                    >
-                      ×
-                    </button>
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          </>
-        )}
       </div>
     </div>
   )

@@ -14,7 +14,13 @@ const Index = () => {
       </div>
       
       <header className="container mx-auto px-6 py-6 flex items-center justify-between">
-        <div className="text-xl font-semibold">TalentFlow</div>
+        <div className="cursor-pointer" onClick={() => navigate('/')}>
+          <img 
+            src="/lovable-uploads/daefe55a-8953-4582-8fc8-12a66755ac2a.png" 
+            alt="Fractional First" 
+            className="h-16 w-auto"
+          />
+        </div>
         <div>
           <Button 
             variant="ghost" 
@@ -31,15 +37,15 @@ const Index = () => {
       
       <main className="flex-1 container mx-auto px-6 py-12 flex flex-col md:flex-row items-center">
         <div className="md:w-1/2 space-y-6 animate-slide-up">
-          <div className="inline-block px-3 py-1 bg-primary/10 rounded-full text-sm font-medium text-primary mb-2">
+          <div className="inline-block px-3 py-1 bg-primary/10 rounded-full text-caption font-medium text-primary mb-2">
             Talent Onboarding Platform
           </div>
           
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
-            Streamline your career journey with <span className="text-primary">TalentFlow</span>
+          <h1 className="text-h1 tracking-tight">
+            Streamline your career journey with <span className="text-primary">Fractional First</span>
           </h1>
           
-          <p className="text-xl text-muted-foreground">
+          <p className="text-body text-muted-foreground">
             A modern platform that guides you through every step of your professional onboarding experience.
           </p>
           

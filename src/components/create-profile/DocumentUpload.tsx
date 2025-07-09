@@ -3,13 +3,14 @@ import { Button } from "@/components/ui/button"
 
 interface DocumentUploadProps {
   title: string
-  description: string
+  description: string | React.ReactNode
   icon?: React.ReactNode
   file?: File
   onUpload: (file: File) => void
   onRemove: () => void
   accept?: string
   maxSize?: number
+  linkedinInstructionsComponent?: () => React.ReactNode 
   className?: string
 }
 
@@ -22,7 +23,9 @@ export const DocumentUpload = ({
   onRemove,
   accept = ".pdf,.doc,.docx",
   maxSize = 5,
+  linkedinInstructionsComponent = null,
   className,
+
 }: DocumentUploadProps) => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -41,9 +44,12 @@ export const DocumentUpload = ({
         <div className="bg-primary/10 p-3 rounded-full mr-3">{icon}</div>
         <div>
           <h3 className="font-medium">{title}</h3>
-          <p className="text-sm text-muted-foreground">{description}</p>
+          <div className="text-sm text-muted-foreground">{description}</div>
         </div>
       </div>
+      {linkedinInstructionsComponent && (
+        <div className="mb-4">{linkedinInstructionsComponent()}</div>
+      )}
       <div className="border-2 border-dashed border-muted rounded-lg p-6 text-center">
         {file ? (
           <div className="flex flex-col items-center">

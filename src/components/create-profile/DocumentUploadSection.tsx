@@ -1,4 +1,4 @@
-import { Linkedin, File } from "lucide-react"
+import { Linkedin, File, HelpCircle } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { DocumentUpload } from "./DocumentUpload"
 import { toast } from "@/hooks/use-toast"
@@ -13,7 +13,7 @@ interface DocumentUploadSectionProps {
 }
 
 const LINKEDIN_PDF_GUIDE_URL =
-  "https://www.linkedin.com/help/linkedin/answer/a521735/how-to-save-a-profile-as-a-pdf?lang=en"
+  "https://www.linkedin.com/help/linkedin/answer/a541960"
 
 export const DocumentUploadSection = ({
   linkedinFile,
@@ -28,7 +28,10 @@ export const DocumentUploadSection = ({
       {/* INSTRUCTIONAL HELPER TEXT */}
       <Alert
         className="mb-4"
-        style={{ background: "#E6F4F2", borderColor: "#BFE3DD" }}
+        style={{
+          background: "#E6F4F2",
+          borderColor: "#BFE3DD",
+        }}
       >
         <div className="flex gap-2">
           <div className="mt-0.5">
@@ -37,11 +40,18 @@ export const DocumentUploadSection = ({
           <div>
             <AlertTitle
               className="mb-1 font-semibold"
-              style={{ color: "#449889" }}
+              style={{
+                color: "#449889",
+              }}
             >
               Profile Information Requirements
             </AlertTitle>
-            <AlertDescription className="text-sm" style={{ color: "#1A1A1A" }}>
+            <AlertDescription
+              className="text-sm"
+              style={{
+                color: "#1A1A1A",
+              }}
+            >
               <p className="mb-1">
                 At least <strong>one</strong> of the following is required:
               </p>
@@ -55,31 +65,56 @@ export const DocumentUploadSection = ({
                   <span className="font-semibold">PDF</span>
                 </li>
               </ul>
-              <div className="flex items-center mt-2 text-xs">
-                <a
-                  href={LINKEDIN_PDF_GUIDE_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline font-medium"
-                  style={{ color: "#449889" }}
-                >
-                  How to export your LinkedIn profile →
-                </a>
-              </div>
             </AlertDescription>
           </div>
         </div>
       </Alert>
 
+      {/* LINKEDIN PDF UPLOAD SECTION */}
       {/* LINKEDIN PDF UPLOAD */}
       <DocumentUpload
         title="Upload LinkedIn Profile (PDF)"
         description="Download your LinkedIn profile as a PDF, then upload it here to share your professional information in detail."
         icon={<Linkedin className="h-6 w-6 text-[#0A66C2]" />}
+        linkedinInstructionsComponent={() => (
+          <Alert
+            className="mb-4"
+            style={{
+              background: "#E6F4F2",
+              borderColor: "#BFE3DD",
+            }}
+          >
+            <div className="flex gap-2">
+              <div className="mt-0.5">
+                <HelpCircle className="h-5 w-5 text-[#449889]" />
+              </div>
+              <div>
+                <AlertTitle
+                  className="mb-1 font-semibold"
+                  style={{
+                    color: "#449889",
+                  }}
+                >
+                  How to Save LinkedIn Profile as PDF (Desktop only):
+                </AlertTitle>
+                <AlertDescription
+                  className="text-sm"
+                  style={{
+                    color: "#1A1A1A",
+                  }}
+                >
+                  Log in at linkedin.com → Click <strong>Me</strong> (top right)
+                  → <strong>View Profile</strong> → Click <strong>More</strong>{" "}
+                  (or Resources) → Select <strong>Save to PDF</strong> → PDF
+                  downloads automatically.
+                </AlertDescription>
+              </div>
+            </div>
+          </Alert>
+        )}
         file={linkedinFile}
         onUpload={onLinkedInUpload}
         onRemove={onLinkedInRemove}
-        accept=".pdf"
       />
 
       {/* RESUME UPLOAD */}

@@ -104,21 +104,21 @@ const AvailabilitySection = ({
           <div className="space-y-6">
             {/* Hours Per Week */}
             <div className="space-y-4">
-              <Label className="text-base font-medium">Hours Per Week</Label>
+              <Label className="text-sm font-medium">Hours Per Week</Label>
               <div className="space-y-4">
                 <Slider
                   value={hoursPerWeek}
                   onValueChange={handleHoursChange}
                   max={40}
-                  min={5}
-                  step={5}
+                  min={1}
+                  step={1}
                   className="w-full"
                 />
                 <div className="flex justify-between items-center text-sm">
-                  <span className="text-muted-foreground">5 hours</span>
-                  <div className="bg-primary/10 px-3 py-1 rounded-md">
+                  <span className="text-muted-foreground">1 hour</span>
+                  <div className="bg-primary/10 px-3 py-1 rounded-full">
                     <span className="font-medium text-primary">
-                      {hoursPerWeek[0]} hours per week
+                      {hoursPerWeek[0]} {hoursPerWeek[0] === 1 ? 'hour' : 'hours'} per week
                     </span>
                   </div>
                   <span className="text-muted-foreground">40 hours</span>
@@ -134,13 +134,13 @@ const AvailabilitySection = ({
           <div className="space-y-6">
             {/* Preferred Start Date */}
             <div className="space-y-4">
-              <Label className="text-base font-medium">Preferred Start Date</Label>
+              <Label className="text-sm font-medium">Preferred Start Date</Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
                     className={cn(
-                      "w-full justify-start text-left font-normal",
+                      "w-full justify-start text-left font-normal text-sm",
                       !selectedDate && "text-muted-foreground"
                     )}
                   >
@@ -171,7 +171,7 @@ const AvailabilitySection = ({
 
         {/* Timezone - Always show for both full-time and fractional */}
         <div className="space-y-4">
-          <Label className="text-base font-medium">Your Timezone</Label>
+          <Label className="text-sm font-medium">Your Timezone</Label>
           <TimezoneSelector
             selectedTimezone={timezone}
             onTimezoneChange={setTimezone}
