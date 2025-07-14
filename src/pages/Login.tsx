@@ -1,4 +1,6 @@
+
 import { AuthBackground } from "@/components/auth/AuthBackground"
+import { BrandHeader } from "@/components/auth/BrandHeader"
 import {
   StepCard,
   StepCardContent,
@@ -78,19 +80,12 @@ const Login = () => {
       <div className="w-full max-w-md">
         <StepCard>
           <StepCardHeader>
-            <div className="text-center mb-2">
-              <div
-                className="inline-block cursor-pointer"
-                onClick={() => navigate("/")}
-              >
-                <span className="text-2xl font-semibold">TalentFlow</span>
-              </div>
-            </div>
+            <BrandHeader />
             <StepCardTitle className="text-center">
               Welcome Back
             </StepCardTitle>
             <StepCardDescription className="text-center">
-              Welcome back — let's get you where you need to be
+              Let's get you where you need to be
             </StepCardDescription>
           </StepCardHeader>
 
