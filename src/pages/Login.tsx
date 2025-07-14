@@ -1,4 +1,3 @@
-
 import { AuthBackground } from "@/components/auth/AuthBackground"
 import {
   StepCard,
@@ -88,7 +87,7 @@ const Login = () => {
               </div>
             </div>
             <StepCardTitle className="text-center">
-              Welcome to TalentFlow
+              Welcome Back
             </StepCardTitle>
             <StepCardDescription className="text-center">
               Welcome back — let's get you where you need to be
