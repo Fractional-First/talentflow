@@ -4,7 +4,6 @@ import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/s
 import { AppSidebar } from '@/components/AppSidebar'
 import { ProfileInfoSection } from '@/components/settings/ProfileInfoSection'
 import { PasswordSecuritySection } from '@/components/settings/PasswordSecuritySection'
-import { NotificationPreferencesSection } from '@/components/settings/NotificationPreferencesSection'
 import { AccountActionsSection } from '@/components/settings/AccountActionsSection'
 
 export default function Settings() {
@@ -24,7 +23,6 @@ export default function Settings() {
             <div className="max-w-2xl mx-auto p-4 space-y-6">
               <ProfileInfoSection />
               <PasswordSecuritySection />
-              <NotificationPreferencesSection />
               <AccountActionsSection />
             </div>
           </div>

@@ -13,8 +13,6 @@ export function ProfileInfoSection() {
   const { data: user } = useGetUser()
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
-    firstName: user?.user_metadata?.first_name || '',
-    lastName: user?.user_metadata?.last_name || '',
     email: user?.email || '',
   })
 
@@ -23,10 +21,6 @@ export function ProfileInfoSection() {
     try {
       const { error } = await supabase.auth.updateUser({
         email: formData.email,
-        data: {
-          first_name: formData.firstName,
-          last_name: formData.lastName,
-        },
       })
 
       if (error) throw error
@@ -56,32 +50,6 @@ export function ProfileInfoSection() {
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-4">
-          <div>
-            <Label htmlFor="firstName" className="text-base font-medium">
-              First Name
-            </Label>
-            <Input
-              id="firstName"
-              value={formData.firstName}
-              onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-              className="h-12 text-base mt-2"
-              placeholder="Enter your first name"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="lastName" className="text-base font-medium">
-              Last Name
-            </Label>
-            <Input
-              id="lastName"
-              value={formData.lastName}
-              onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-              className="h-12 text-base mt-2"
-              placeholder="Enter your last name"
-            />
-          </div>
-
           <div>
             <Label htmlFor="email" className="text-base font-medium">
               Email Address
