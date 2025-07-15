@@ -1,3 +1,4 @@
+
 import { Toaster as Sonner } from "@/components/ui/sonner"
 import { Toaster } from "@/components/ui/toaster"
 import { TooltipProvider } from "@/components/ui/tooltip"
@@ -18,6 +19,7 @@ import ProfileSnapshot from "./pages/EditProfile"
 import WaitingRoom from "./pages/dashboard/WaitingRoom"
 import WorkPreferences from "./pages/WorkPreferences"
 import AuthCallback from "./pages/AuthCallback"
+import Settings from "./pages/Settings"
 
 const queryClient = new QueryClient()
 
@@ -108,6 +110,16 @@ const App = () => (
                 allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
               >
                 <WaitingRoom />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute
+                allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
+              >
+                <Settings />
               </ProtectedRoute>
             }
           />

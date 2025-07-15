@@ -1,3 +1,4 @@
+
 import {
   Sidebar,
   SidebarContent,
@@ -38,7 +39,7 @@ const menuItems = [
   },
   {
     title: "Settings",
-    path: "/dashboard/branding",
+    path: "/settings",
     icon: Settings,
   },
 ]
