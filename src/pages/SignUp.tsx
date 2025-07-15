@@ -1,3 +1,4 @@
+
 import {
   StepCard,
   StepCardContent,
@@ -52,7 +53,7 @@ const SignUp = () => {
               Create your account
             </StepCardTitle>
             <StepCardDescription className="text-center">
-              Join TalentFlow to start your onboarding journey
+              Start your onboarding journey with us today
             </StepCardDescription>
           </StepCardHeader>
 
