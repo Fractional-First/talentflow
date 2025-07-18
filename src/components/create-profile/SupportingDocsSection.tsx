@@ -18,7 +18,7 @@ import { toast } from "@/hooks/use-toast"
 interface SupportingDocsSectionProps {
   docs: Array<{ title: string; file: File }>
   links: Array<{ title: string; link: string }>
-  addDocument: (title: string, file: File) => void
+  addDocument: (title: string, file: File, description: string) => void
   addLink: (title: string, url: string) => void
   removeDoc: (index: number) => void
   removeLink: (index: number) => void
@@ -63,7 +63,7 @@ export const SupportingDocsSection = ({
         })
         return
       }
-      addDocument(title, file)
+      addDocument(title, file, description)
     } else {
       if (!url) {
         toast({
@@ -95,7 +95,7 @@ export const SupportingDocsSection = ({
           </div>
           <div>
             <h3 className="font-medium">
-              Supporting Documents & Links (Optional)
+              Supporting Documents (Optional)
             </h3>
             <p className="text-sm text-muted-foreground">
               Add publications, news articles, portfolios, or other resources
