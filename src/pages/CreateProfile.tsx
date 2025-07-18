@@ -36,6 +36,8 @@ const ProfileCreation = () => {
     removeSupportingLink,
   } = useDocumentUpload()
 
+  console.log(profile)
+
   const submitProfileMutation = useSubmitProfile()
 
   const [validationErrors, setValidationErrors] = useState<string[]>([])

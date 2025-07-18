@@ -38,10 +38,10 @@ export const useDocumentUpload = () => {
   }
 
   // Supporting docs/links handlers
-  const addSupportingDocument = (title: string, file: File) => {
+  const addSupportingDocument = (title: string, file: File, description: string) => {
     setProfile((prev) => ({
       ...prev,
-      docs: [...prev.docs, { title, file }],
+      docs: [...prev.docs, { title, file, description }],
     }))
   }
 
