@@ -75,9 +75,6 @@ export const JobPreferencesPlaceholder = () => {
             Get Started
             <ArrowRight className="h-4 w-4 ml-2" />
           </Button>
-          <p className="text-xs text-muted-foreground mt-3">
-            This will help us match you with the right opportunities
-          </p>
         </div>
       </div>
     </StepCard>
