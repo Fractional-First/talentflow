@@ -308,7 +308,8 @@ const EditProfile = () => {
           <Button
             onClick={handleContinue}
             disabled={isSubmitting}
-            className="bg-teal-600 hover:bg-teal-700"
+            style={{ backgroundColor: '#449889' }}
+            className="hover:opacity-90 text-white"
           >
             {isSubmitting ? "Processing..." : "Complete & Go to Dashboard"}
             <ArrowRight className="ml-2 h-4 w-4" />
