@@ -10,9 +10,26 @@ import {
   Building,
   Clock,
 } from "lucide-react"
+import { useWorkPreferences } from "@/hooks/useWorkPreferences"
 
 export const JobPreferencesPlaceholder = () => {
   const navigate = useNavigate()
+  const { form, initialized } = useWorkPreferences()
+
+  // Check if user has any preferences set
+  const hasPreferences = initialized && (
+    form.fullTime.min_salary !== null ||
+    form.fullTime.max_salary !== null ||
+    form.fullTime.locations.length > 0 ||
+    form.fullTime.industries.length > 0 ||
+    form.fractional.min_hourly_rate !== null ||
+    form.fractional.max_hourly_rate !== null ||
+    form.fractional.locations.length > 0 ||
+    form.fractional.industries.length > 0 ||
+    form.work_eligibility.length > 0
+  )
+
+  const buttonText = hasPreferences ? "Update Preferences" : "Get Started"
 
   return (
     <StepCard className="h-[600px] flex flex-col">
@@ -72,7 +89,7 @@ export const JobPreferencesPlaceholder = () => {
             className="w-full text-white hover:opacity-90"
             style={{ backgroundColor: '#449889' }}
           >
-            Get Started
+            {buttonText}
             <ArrowRight className="h-4 w-4 ml-2" />
           </Button>
         </div>
