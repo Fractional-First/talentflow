@@ -38,7 +38,7 @@ export const EditableTextSection: React.FC<EditableTextSectionProps> = ({
   content = "Edit this section to customize your information",
 }) => {
   const sectionContent = (
-    <div className={clsx("rounded-lg border", bgColorClass, className)}>
+    <div className={clsx("bg-white rounded-lg border", className)}>
       <div className="flex items-center justify-between p-1 pl-4 rounded-t-lg bg-[#449889] text-white">
         <h3 className="text-lg font-semibold text-white">
           {title}
@@ -52,18 +52,17 @@ export const EditableTextSection: React.FC<EditableTextSectionProps> = ({
           <Edit className="h-4 w-4" />
         </Button>
       </div>
-      <div className={clsx("p-4", textColorClass)}>
+      <div className={clsx("p-4 bg-white", textColorClass)}>
         {isEditing ? (
           <Textarea
             value={value}
             onChange={(e) => onChange(e.target.value)}
             className={clsx(
               textAreaClass,
-              "text-sm leading-relaxed",
-              textColorClass,
-              bgColorClass.includes("teal") ? "bg-teal-500" : bgColorClass
+              "text-sm leading-relaxed bg-white",
+              textColorClass
             )}
-            rows={bgColorClass.includes("teal") ? 4 : 8}
+            rows={8}
             placeholder={placeholder}
           />
         ) : (
