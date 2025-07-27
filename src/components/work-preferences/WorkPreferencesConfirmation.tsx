@@ -16,6 +16,8 @@ interface WorkPreferencesConfirmationProps {
 export const WorkPreferencesConfirmation = ({
   onGoToDashboard,
 }: WorkPreferencesConfirmationProps) => {
+  const navigate = useNavigate()
+
   return (
     <StepCard>
       <StepCardContent>
@@ -24,9 +26,19 @@ export const WorkPreferencesConfirmation = ({
             <CheckCircle className="h-8 w-8 text-primary" />
           </div>
           <h3 className="text-xl font-semibold mb-2">Success!</h3>
-          <p className="text-muted-foreground mb-6">
+          <p className="text-muted-foreground mb-4">
             Your job preferences have been saved. We'll use these to find the
             best opportunities for you.
+          </p>
+          <p className="text-muted-foreground mb-6">
+            While you're here, why not{" "}
+            <button
+              className="text-primary underline underline-offset-2 hover:text-primary/80"
+              onClick={() => navigate("/branding")}
+            >
+              explore personal branding options
+            </button>{" "}
+            to help you stand out?
           </p>
           <Button onClick={onGoToDashboard} className="w-full">
             Go to Dashboard
