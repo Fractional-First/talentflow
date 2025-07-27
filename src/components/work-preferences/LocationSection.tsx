@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/popover"
 import { useGooglePlaces } from "@/queries/useGooglePlaces"
 import { GooglePlace } from "./LocationAutocomplete"
+import LocationInputWithPopover from "./LocationAutocomplete"
 import { CombinedWorkPreferencesForm } from "@/hooks/useWorkPreferences"
 
 interface LocationSectionProps {
