@@ -1,11 +1,24 @@
-
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import { useCountries } from "@/queries/useCountries"
-import { MapPin, Globe } from "lucide-react"
+import { MapPin, Globe, ChevronsUpDown, Check } from "lucide-react"
 import React, { useState } from "react"
+import { cn } from "@/lib/utils"
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import LocationInputWithPopover, { GooglePlace } from "./LocationAutocomplete"
 import { CombinedWorkPreferencesForm } from "@/hooks/useWorkPreferences"
 
@@ -38,13 +51,8 @@ export function LocationSection({
     type === "fullTime" ? form.fullTime.locations : form.fractional.locations
 
   const { data: countries = [], isLoading } = useCountries()
-  const [countrySearchValue, setCountrySearchValue] = useState("")
-  const [showCountryDropdown, setShowCountryDropdown] = useState(false)
-
-  // Filter countries based on search input
-  const filteredCountries = countries.filter((country) =>
-    country.name.toLowerCase().includes(countrySearchValue.toLowerCase())
-  )
+  const [countryOpen, setCountryOpen] = useState(false)
+  const [locationOpen, setLocationOpen] = useState(false)
 
   const handleAddPreferredLocation = (location: string | GooglePlace) => {
     if (typeof location === "string") return
@@ -73,22 +81,23 @@ export function LocationSection({
     }))
   }
 
-  const handleCountryInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    setCountrySearchValue(value)
-    setShowCountryDropdown(value.trim().length > 0)
-  }
-
-  const handleCountrySelect = (country: any) => {
-    if (!workEligibility.includes(country.alpha2_code)) {
-      setWorkEligibility([...workEligibility, country.alpha2_code])
+  const handleCountryToggle = (countryCode: string) => {
+    if (workEligibility.includes(countryCode)) {
+      setWorkEligibility(workEligibility.filter((code) => code !== countryCode))
+    } else {
+      setWorkEligibility([...workEligibility, countryCode])
     }
-    setCountrySearchValue("")
-    setShowCountryDropdown(false)
   }
 
-  const handleRemoveCountry = (countryCode: string) => {
-    setWorkEligibility(workEligibility.filter((code) => code !== countryCode))
+  const handleLocationToggle = (location: GooglePlace) => {
+    const exists = locationPreferences.some(
+      (loc) => loc.place_id === location.place_id
+    )
+    if (exists) {
+      handleRemovePreferredLocation(location.place_id)
+    } else {
+      handleAddPreferredLocation(location)
+    }
   }
 
   return (
@@ -155,31 +164,56 @@ export function LocationSection({
         {/* Work Eligibility */}
         <div className="space-y-4">
           <Label className="text-sm font-medium">Legal Work Eligibility</Label>
-          <div className="relative">
-            <div className="relative">
-              <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="text"
-                value={countrySearchValue}
-                onChange={handleCountryInputChange}
-                placeholder="Search and select countries..."
-                className="pl-10"
-              />
-            </div>
-            {showCountryDropdown && filteredCountries.length > 0 && (
-              <div className="absolute top-full left-0 right-0 bg-background border rounded-md shadow-lg z-50 max-h-48 overflow-y-auto">
-                {filteredCountries.map((country) => (
-                  <div
-                    key={country.alpha2_code}
-                    onClick={() => handleCountrySelect(country)}
-                    className="p-3 cursor-pointer hover:bg-muted text-sm"
-                  >
-                    {country.name}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <Popover open={countryOpen} onOpenChange={setCountryOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                role="combobox"
+                aria-expanded={countryOpen}
+                className="w-full justify-between text-body-mobile md:text-body-desktop"
+              >
+                <div className="flex items-center gap-2">
+                  <Globe className="h-4 w-4" />
+                  {workEligibility.length > 0
+                    ? `${workEligibility.length} countries selected`
+                    : "Search and select countries..."}
+                </div>
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent
+              className="w-full p-0"
+              style={{ width: "var(--radix-popover-trigger-width)" }}
+            >
+              <Command>
+                <CommandInput placeholder="Search countries..." />
+                <CommandList>
+                  <CommandEmpty>No country found.</CommandEmpty>
+                  <CommandGroup>
+                    {countries.map((country) => (
+                      <CommandItem
+                        key={country.alpha2_code}
+                        value={country.name}
+                        onSelect={() => {
+                          handleCountryToggle(country.alpha2_code)
+                        }}
+                      >
+                        <Check
+                          className={cn(
+                            "mr-2 h-4 w-4",
+                            workEligibility.includes(country.alpha2_code)
+                              ? "opacity-100"
+                              : "opacity-0"
+                          )}
+                        />
+                        <span>{country.name}</span>
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
           
           {/* Selected countries display */}
           {workEligibility.length > 0 && (
@@ -194,7 +228,7 @@ export function LocationSection({
                   >
                     {country?.name}
                     <button
-                      onClick={() => handleRemoveCountry(countryCode)}
+                      onClick={() => handleCountryToggle(countryCode)}
                       className="ml-2 hover:text-primary/80"
                       type="button"
                     >
