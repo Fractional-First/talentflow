@@ -1,4 +1,3 @@
-
 import { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -49,7 +48,7 @@ export function StepCardTitle({
 }) {
   return (
     <h2 className={cn("text-2xl font-medium tracking-tight", className)}>
-      {children}
+      Job Preferences
     </h2>
   );
 }
