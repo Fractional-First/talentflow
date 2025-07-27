@@ -17,14 +17,16 @@ export const JobPreferencesPlaceholder = () => {
   return (
     <StepCard className="min-h-[600px] flex flex-col">
       <div className="p-6 flex-1 flex flex-col">
-        <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
+        <div className="flex items-start gap-4 mb-6">
+          <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 flex-shrink-0">
             <Briefcase className="h-8 w-8 text-primary" />
           </div>
-          <h3 className="text-xl font-semibold mb-2">Job Preferences</h3>
-          <p className="text-muted-foreground">
-            Help us understand what you're looking for in your next role
-          </p>
+          <div className="flex-1">
+            <h3 className="text-xl font-semibold mb-2">Job Preferences</h3>
+            <p className="text-muted-foreground">
+              Help us understand what you're looking for in your next role
+            </p>
+          </div>
         </div>
 
         <div className="space-y-4 mb-6 flex-1">
