@@ -121,15 +121,13 @@ const WorkPreferences = () => {
                       <div className="flex-1 text-left">
                         <div className="flex items-center justify-between mb-2">
                           <h3 className="text-lg font-semibold">Full-time Position</h3>
-                          <Checkbox
-                            checked={form.fullTime.open_for_work}
-                            className="h-5 w-5 cursor-pointer"
-                            onCheckedChange={() => toggleType("fullTime")}
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              toggleType("fullTime")
-                            }}
-                          />
+                          <div onClick={(e) => e.stopPropagation()}>
+                            <Checkbox
+                              checked={form.fullTime.open_for_work}
+                              className="h-5 w-5 cursor-pointer"
+                              onCheckedChange={() => toggleType("fullTime")}
+                            />
+                          </div>
                         </div>
                         <p className="text-body-mobile md:text-body-desktop text-muted-foreground leading-relaxed">
                           40 hours per week, dedicated to one company. Traditional employment with benefits and long-term commitment.
@@ -176,15 +174,13 @@ const WorkPreferences = () => {
                       <div className="flex-1 text-left">
                         <div className="flex items-center justify-between mb-2">
                           <h3 className="text-lg font-semibold">Flexible Position</h3>
-                          <Checkbox
-                            checked={form.fractional.open_for_work}
-                            className="h-5 w-5 cursor-pointer"
-                            onCheckedChange={() => toggleType("fractional")}
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              toggleType("fractional")
-                            }}
-                          />
+                          <div onClick={(e) => e.stopPropagation()}>
+                            <Checkbox
+                              checked={form.fractional.open_for_work}
+                              className="h-5 w-5 cursor-pointer"
+                              onCheckedChange={() => toggleType("fractional")}
+                            />
+                          </div>
                         </div>
                         <p className="text-body-mobile md:text-body-desktop text-muted-foreground leading-relaxed">
                           Part-time commitment with flexible hours. Work with multiple companies simultaneously on project-based engagements.
