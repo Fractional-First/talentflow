@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useCallback } from 'react';
 import ReactCrop, { Crop, PixelCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
@@ -171,7 +170,14 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
     }
   };
 
-  const initials = userName.split(' ').map(n => n[0]).join('').toUpperCase();
+  // Filter initials to only include alphabetic characters
+  const initials = userName
+    .split(' ')
+    .map(n => n.replace(/[^A-Za-z]/g, '')) // Remove non-alphabetic characters
+    .filter(n => n.length > 0) // Remove empty strings
+    .map(n => n[0])
+    .join('')
+    .toUpperCase();
 
   return (
     <>
@@ -251,7 +257,7 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
               disabled={isUploading}
             >
               <Save className="h-4 w-4 mr-2" />
-              {isUploading ? 'Saving...' : 'Save Photo'}
+              {isUploading ? 'Saving..' : 'Save Photo'}
             </Button>
           </DialogFooter>
         </DialogContent>
