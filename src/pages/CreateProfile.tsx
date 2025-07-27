@@ -134,7 +134,7 @@ const ProfileCreation = () => {
 
       <div className="container mx-auto px-4 py-6 flex-1">
         <div className="max-w-4xl mx-auto">
-          <main className="mt-8">
+          <main>
             {submitProfileMutation.isPending ? (
               <ProfileLoadingUI />
             ) : (
