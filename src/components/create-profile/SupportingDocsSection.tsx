@@ -112,7 +112,7 @@ export const SupportingDocsSection = ({
         </Button>
       </div>
       <Alert
-        className="mb-4 bg-white"
+        className="mb-4 bg-background"
         style={{ borderColor: "#BFE3DD" }}
       >
         <div className="flex gap-2">
