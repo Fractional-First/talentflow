@@ -124,6 +124,10 @@ const WorkPreferences = () => {
                           <Checkbox
                             checked={form.fullTime.open_for_work}
                             className="h-5 w-5"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              toggleType("fullTime")
+                            }}
                             onCheckedChange={() => toggleType("fullTime")}
                           />
                         </div>
@@ -175,6 +179,10 @@ const WorkPreferences = () => {
                           <Checkbox
                             checked={form.fractional.open_for_work}
                             className="h-5 w-5"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              toggleType("fractional")
+                            }}
                             onCheckedChange={() => toggleType("fractional")}
                           />
                         </div>

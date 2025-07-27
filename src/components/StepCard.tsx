@@ -1,96 +1,77 @@
+
 import { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
 interface StepCardProps {
   children: ReactNode;
   className?: string;
-  animate?: boolean;
 }
 
-export function StepCard({ 
-  children, 
-  className,
-  animate = true
-}: StepCardProps) {
+export function StepCard({ children, className }: StepCardProps) {
   return (
-    <div 
-      className={cn(
-        "glass-card rounded-2xl px-8 py-6 md:px-10 md:py-8 w-full",
-        animate && "animate-scale-in",
-        className
-      )}
-    >
+    <div className={cn(
+      "bg-white rounded-2xl border border-border shadow-sm overflow-hidden",
+      className
+    )}>
       {children}
     </div>
   );
 }
 
-export function StepCardHeader({ 
-  children, 
-  className 
-}: { 
+interface StepCardHeaderProps {
   children: ReactNode;
   className?: string;
-}) {
+}
+
+export function StepCardHeader({ children, className }: StepCardHeaderProps) {
   return (
-    <div className={cn("mb-6", className)}>
+    <div className={cn("px-6 py-8 border-b border-border", className)}>
       {children}
     </div>
   );
+}
+
+interface StepCardContentProps {
+  children: ReactNode;
+  className?: string;
+}
+
+export function StepCardContent({ children, className }: StepCardContentProps) {
+  return (
+    <div className={cn("px-6 py-8", className)}>
+      {children}
+    </div>
+  );
+}
+
+interface StepCardTitleProps {
+  children: ReactNode;
+  className?: string;
 }
 
 export function StepCardTitle({ 
-  children,
+  children, 
   className 
-}: { 
-  children: ReactNode;
-  className?: string;
-}) {
+}: StepCardTitleProps) {
   return (
     <h2 className={cn("text-2xl font-medium tracking-tight", className)}>
-      Job Preferences
+      {children}
     </h2>
   );
 }
 
-export function StepCardDescription({ 
-  children,
-  className 
-}: { 
+interface StepCardDescriptionProps {
   children: ReactNode;
   className?: string;
-}) {
+}
+
+export function StepCardDescription({ 
+  children, 
+  className 
+}: StepCardDescriptionProps) {
   return (
-    <p className={cn("text-muted-foreground mt-2", className)}>
+    <p className={cn("text-muted-foreground", className)}>
       {children}
     </p>
-  );
-}
-
-export function StepCardContent({ 
-  children,
-  className 
-}: { 
-  children: ReactNode;
-  className?: string;
-}) {
-  return (
-    <div className={cn("space-y-4", className)}>
-      {children}
-    </div>
-  );
-}
-
-export function StepCardFooter({ 
-  children,
-  className 
-}: { 
-  children: ReactNode;
-  className?: string;
-}) {
-  return (
-    <div className={cn("mt-6 flex items-center justify-end gap-2", className)}>
-      {children}
-    </div>
   );
 }
