@@ -1,9 +1,7 @@
-
 import { useState } from "react"
 import { supabase } from "@/integrations/supabase/client"
 import { useNavigate } from "react-router-dom"
 import { useQueryClient } from "@tanstack/react-query"
-import { cleanupAuthState } from "@/utils/authUtils"
 
 export function useSignOut() {
   const [loading, setLoading] = useState(false)
@@ -13,26 +11,19 @@ export function useSignOut() {
   const signOut = async () => {
     setLoading(true)
     try {
-      // Clean up auth state first
-      cleanupAuthState()
+      const { error } = await supabase.auth.signOut()
+      if (error) throw error
 
-      // Clear all queries
-      queryClient.clear()
+      // Clear all auth-related queries
+      queryClient.removeQueries({ queryKey: ["user"] })
+      queryClient.removeQueries({ queryKey: ["profile"] })
 
-      // Attempt global sign out
-      try {
-        const { error } = await supabase.auth.signOut({ scope: 'global' })
-        if (error) console.error('Sign out error:', error)
-      } catch (error) {
-        console.error('Sign out error:', error)
-      }
+      // Small delay to ensure auth state is updated
+      await new Promise((resolve) => setTimeout(resolve, 100))
 
-      // Force page reload to ensure clean state
-      window.location.href = '/login'
+      navigate("/login")
     } catch (error) {
-      console.error('Sign out error:', error)
-      // Force reload even if there's an error
-      window.location.href = '/login'
+      console.error("Sign out error:", error)
     } finally {
       setLoading(false)
     }
