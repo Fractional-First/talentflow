@@ -3,8 +3,9 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import { useCountries } from "@/queries/useCountries"
-import { MapPin, Globe } from "lucide-react"
+import { MapPin, Globe, Wifi } from "lucide-react"
 import React, { useState } from "react"
 import LocationInputWithPopover, { GooglePlace } from "./LocationAutocomplete"
 import { CombinedWorkPreferencesForm } from "@/hooks/useWorkPreferences"
@@ -61,6 +62,24 @@ export function LocationSection({
     }
   }
 
+  const handleAddRemoteLocation = () => {
+    const remoteLocation: GooglePlace = {
+      place_id: "remote",
+      name: "Remote",
+      formatted_address: "Remote Work",
+    }
+    
+    if (!locationPreferences.some((loc) => loc.place_id === "remote")) {
+      setForm((prev) => ({
+        ...prev,
+        [type]: {
+          ...prev[type],
+          locations: [...locationPreferences, remoteLocation],
+        },
+      }))
+    }
+  }
+
   const handleRemovePreferredLocation = (placeId: string) => {
     setForm((prev) => ({
       ...prev,
@@ -90,6 +109,8 @@ export function LocationSection({
   const handleRemoveCountry = (countryCode: string) => {
     setWorkEligibility(workEligibility.filter((code) => code !== countryCode))
   }
+
+  const hasRemoteLocation = locationPreferences.some((loc) => loc.place_id === "remote")
 
   return (
     <div>
@@ -212,11 +233,25 @@ export function LocationSection({
         {/* Preferred Locations */}
         <div className="space-y-4">
           <Label className="text-sm font-medium">Preferred Work Locations</Label>
-          <LocationInputWithPopover
-            value={null}
-            onChange={handleAddPreferredLocation}
-            placeholder="Add preferred work locations"
-          />
+          <div className="flex gap-2">
+            <div className="flex-1">
+              <LocationInputWithPopover
+                value={null}
+                onChange={handleAddPreferredLocation}
+                placeholder="Add preferred work locations"
+              />
+            </div>
+            <Button
+              type="button"
+              onClick={handleAddRemoteLocation}
+              disabled={hasRemoteLocation}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <Wifi className="h-4 w-4" />
+              Remote
+            </Button>
+          </div>
           {locationPreferences.length > 0 && (
             <div className="flex flex-wrap gap-2 pt-2">
               {locationPreferences.map((location) => (
@@ -225,7 +260,14 @@ export function LocationSection({
                   variant="secondary"
                   className="bg-primary/10 text-primary border-primary/20 px-3 py-1 rounded-full hover:bg-primary/15"
                 >
-                  {location.name || location.formatted_address}
+                  {location.place_id === "remote" ? (
+                    <div className="flex items-center gap-1">
+                      <Wifi className="h-3 w-3" />
+                      {location.name}
+                    </div>
+                  ) : (
+                    location.name || location.formatted_address
+                  )}
                   <button
                     onClick={() =>
                       handleRemovePreferredLocation(location.place_id)
