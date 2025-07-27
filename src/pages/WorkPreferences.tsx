@@ -214,7 +214,7 @@ const WorkPreferences = () => {
                 className="w-full h-12 text-base font-medium rounded-full"
                 size="lg"
               >
-                {isSaving ? "Saving Preferences..." : "Continue"}
+                {isSaving ? "Saving Job Preferences..." : "Continue"}
               </Button>
               {saveError && (
                 <div className="text-red-600 text-sm mt-3 text-center">
