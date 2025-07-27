@@ -52,26 +52,20 @@ export const EditableTextSection: React.FC<EditableTextSectionProps> = ({
           <Edit className="h-4 w-4" />
         </Button>
       </div>
-      <div className={clsx("p-4 bg-white", textColorClass)}>
+      <div className="p-4 bg-white">
         {isEditing ? (
           <Textarea
             value={value}
             onChange={(e) => onChange(e.target.value)}
             className={clsx(
               textAreaClass,
-              "text-sm leading-relaxed bg-white",
-              textColorClass
+              "text-sm leading-relaxed bg-white text-gray-700"
             )}
             rows={8}
             placeholder={placeholder}
           />
         ) : (
-          <div
-            className={clsx(
-              "text-sm leading-relaxed whitespace-pre-line",
-              textColorClass
-            )}
-          >
+          <div className="text-sm leading-relaxed whitespace-pre-line text-gray-700">
             {value || placeholder || "Not available"}
           </div>
         )}
