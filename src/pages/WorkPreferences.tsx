@@ -123,8 +123,12 @@ const WorkPreferences = () => {
                           <h3 className="text-lg font-semibold">Full-time Position</h3>
                           <Checkbox
                             checked={form.fullTime.open_for_work}
-                            className="h-5 w-5"
+                            className="h-5 w-5 cursor-pointer"
                             onCheckedChange={() => toggleType("fullTime")}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              toggleType("fullTime")
+                            }}
                           />
                         </div>
                         <p className="text-body-mobile md:text-body-desktop text-muted-foreground leading-relaxed">
@@ -174,8 +178,12 @@ const WorkPreferences = () => {
                           <h3 className="text-lg font-semibold">Flexible Position</h3>
                           <Checkbox
                             checked={form.fractional.open_for_work}
-                            className="h-5 w-5"
+                            className="h-5 w-5 cursor-pointer"
                             onCheckedChange={() => toggleType("fractional")}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              toggleType("fractional")
+                            }}
                           />
                         </div>
                         <p className="text-body-mobile md:text-body-desktop text-muted-foreground leading-relaxed">
