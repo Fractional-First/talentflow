@@ -75,3 +75,19 @@ export function StepCardDescription({
     </p>
   );
 }
+
+interface StepCardFooterProps {
+  children: ReactNode;
+  className?: string;
+}
+
+export function StepCardFooter({ 
+  children, 
+  className 
+}: StepCardFooterProps) {
+  return (
+    <div className={cn("px-6 py-8 border-t border-border", className)}>
+      {children}
+    </div>
+  );
+}
