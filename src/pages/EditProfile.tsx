@@ -42,7 +42,7 @@ const EditProfile = () => {
 
   if (isLoading) {
     return (
-      <DashboardLayout steps={initialSteps} currentStep={3}>
+      <DashboardLayout>
         <div className="max-w-6xl mx-auto space-y-6 p-6">
           <div className="text-center">Loading profile...</div>
         </div>
@@ -60,7 +60,7 @@ const EditProfile = () => {
   }
 
   return (
-    <DashboardLayout steps={initialSteps} currentStep={3}>
+    <DashboardLayout>
       <div ref={mainContentRef} className="max-w-6xl mx-auto space-y-6 p-6">
         {/* Header with Auto-save Status */}
         <div className="relative">
