@@ -16,8 +16,10 @@ export const JobPreferencesPlaceholder = () => {
   const navigate = useNavigate()
   const { form, initialized } = useWorkPreferences()
 
-  // Check if user has any preferences set
+  // Check if user has any preferences set - including open_for_work flags
   const hasPreferences = initialized && (
+    form.fullTime.open_for_work ||
+    form.fractional.open_for_work ||
     form.fullTime.min_salary !== null ||
     form.fullTime.max_salary !== null ||
     form.fullTime.locations.length > 0 ||
