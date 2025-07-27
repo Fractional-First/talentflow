@@ -15,7 +15,7 @@ export const JobPreferencesPlaceholder = () => {
   const navigate = useNavigate()
 
   return (
-    <StepCard className="min-h-[600px] flex flex-col">
+    <StepCard className="h-[600px] flex flex-col">
       <div className="p-6 flex-1 flex flex-col">
         <div className="flex items-start gap-4 mb-6">
           <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 flex-shrink-0">

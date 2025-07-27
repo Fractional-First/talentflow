@@ -27,7 +27,7 @@ export function ProfileSummaryCard({
     .toUpperCase()
 
   return (
-    <StepCard className={cn("min-h-[600px] flex flex-col", className)}>
+    <StepCard className={cn("h-[600px] flex flex-col", className)}>
       {readonly && (
         <div className="flex items-center gap-2 p-4 border-b bg-green-50 text-green-800">
           <CheckCircle className="h-4 w-4" />
