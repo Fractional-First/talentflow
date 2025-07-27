@@ -83,7 +83,7 @@ const WorkPreferences = () => {
       return (
         <StepCard>
           <StepCardHeader className="text-center pb-8">
-            <StepCardTitle className="text-2xl">Work Preferences</StepCardTitle>
+            <StepCardTitle className="text-2xl">Job Preferences</StepCardTitle>
             <StepCardDescription className="text-base mt-3 max-w-2xl mx-auto leading-relaxed">
               Choose how you'd like to work. You may select one or both options to help us tailor job opportunities and compensation structures to your preferences.
             </StepCardDescription>
@@ -102,13 +102,13 @@ const WorkPreferences = () => {
               <div className="space-y-4">
                 {/* Full-time Card */}
                 <div className="group">
-                  <button
-                    onClick={() => toggleType("fullTime")}
-                    className={`w-full p-6 rounded-xl border-2 transition-all duration-200 ${
+                  <div
+                    className={`w-full p-6 rounded-xl border-2 transition-all duration-200 cursor-pointer ${
                       form.fullTime.open_for_work
                         ? "border-primary bg-primary/5 shadow-sm"
                         : "border-border hover:border-primary/50 hover:bg-muted/20"
                     }`}
+                    onClick={() => toggleType("fullTime")}
                   >
                     <div className="flex items-start gap-4">
                       <div className={`rounded-lg p-3 transition-colors ${
@@ -124,10 +124,6 @@ const WorkPreferences = () => {
                           <Checkbox
                             checked={form.fullTime.open_for_work}
                             className="h-5 w-5"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              toggleType("fullTime")
-                            }}
                             onCheckedChange={() => toggleType("fullTime")}
                           />
                         </div>
@@ -136,7 +132,7 @@ const WorkPreferences = () => {
                         </p>
                       </div>
                     </div>
-                  </button>
+                  </div>
 
                   {/* Full-time Preferences */}
                   {form.fullTime.open_for_work && (
@@ -157,13 +153,13 @@ const WorkPreferences = () => {
 
                 {/* Flexible Position Card */}
                 <div className="group">
-                  <button
-                    onClick={() => toggleType("fractional")}
-                    className={`w-full p-6 rounded-xl border-2 transition-all duration-200 ${
+                  <div
+                    className={`w-full p-6 rounded-xl border-2 transition-all duration-200 cursor-pointer ${
                       form.fractional.open_for_work
                         ? "border-primary bg-primary/5 shadow-sm"
                         : "border-border hover:border-primary/50 hover:bg-muted/20"
                     }`}
+                    onClick={() => toggleType("fractional")}
                   >
                     <div className="flex items-start gap-4">
                       <div className={`rounded-lg p-3 transition-colors ${
@@ -179,10 +175,6 @@ const WorkPreferences = () => {
                           <Checkbox
                             checked={form.fractional.open_for_work}
                             className="h-5 w-5"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              toggleType("fractional")
-                            }}
                             onCheckedChange={() => toggleType("fractional")}
                           />
                         </div>
@@ -191,7 +183,7 @@ const WorkPreferences = () => {
                         </p>
                       </div>
                     </div>
-                  </button>
+                  </div>
 
                   {/* Flexible Preferences */}
                   {form.fractional.open_for_work && (
