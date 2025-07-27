@@ -6,10 +6,11 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { toast } from '@/hooks/use-toast'
-import { Trash } from 'lucide-react'
+import { Trash, RotateCcw } from 'lucide-react'
 import { useSignOut } from '@/queries/auth/useSignOut'
 import { supabase } from '@/integrations/supabase/client'
 import { useGetUser } from '@/queries/auth/useGetUser'
+import { resetUserState } from '@/utils/authUtils'
 
 export function AccountActionsSection() {
   const { data: user } = useGetUser()
@@ -58,6 +59,12 @@ export function AccountActionsSection() {
     }
   }
 
+  const handleResetUserState = async () => {
+    if (confirm('Are you sure you want to reset the user state? This will log you out and clear all auth data.')) {
+      await resetUserState()
+    }
+  }
+
   return (
     <Card className="w-full border-red-200">
       <CardHeader className="pb-4">
@@ -67,6 +74,21 @@ export function AccountActionsSection() {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
+        <div className="space-y-3">
+          <h4 className="font-medium text-red-700">User State</h4>
+          <p className="text-sm text-gray-600">
+            Reset user authentication state and clear all stored auth data.
+          </p>
+          <Button
+            onClick={handleResetUserState}
+            variant="outline"
+            className="w-full h-12 text-base font-medium border-orange-200 text-orange-700 hover:bg-orange-50"
+          >
+            <RotateCcw className="h-4 w-4 mr-2" />
+            Reset User State
+          </Button>
+        </div>
+
         <div className="space-y-3">
           <h4 className="font-medium text-red-700">Danger Zone</h4>
           <p className="text-sm text-gray-600">
