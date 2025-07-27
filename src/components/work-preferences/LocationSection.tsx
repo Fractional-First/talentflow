@@ -4,10 +4,26 @@ import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { useCountries } from "@/queries/useCountries"
-import { MapPin, Globe } from "lucide-react"
+import { MapPin, Globe, Check, ChevronsUpDown } from "lucide-react"
 import React, { useState } from "react"
 import LocationInputWithPopover, { GooglePlace } from "./LocationAutocomplete"
 import { CombinedWorkPreferencesForm } from "@/hooks/useWorkPreferences"
+import { Button } from "@/components/ui/button"
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { cn } from "@/lib/utils"
+import { useGooglePlaces } from "@/queries/useGooglePlaces"
 
 interface LocationSectionProps {
   form: CombinedWorkPreferencesForm
@@ -38,19 +54,53 @@ export function LocationSection({
     type === "fullTime" ? form.fullTime.locations : form.fractional.locations
 
   const { data: countries = [], isLoading } = useCountries()
+  const [countryOpen, setCountryOpen] = useState(false)
   const [countrySearchValue, setCountrySearchValue] = useState("")
-  const [showCountryDropdown, setShowCountryDropdown] = useState(false)
+  const [locationOpen, setLocationOpen] = useState(false)
+  const [locationSearchValue, setLocationSearchValue] = useState("")
+  const { placePredictions, getPlacePredictions, isPlacePredictionsLoading } = useGooglePlaces()
 
   // Filter countries based on search input
   const filteredCountries = countries.filter((country) =>
     country.name.toLowerCase().includes(countrySearchValue.toLowerCase())
   )
 
+  // Handle location search
+  React.useEffect(() => {
+    if (locationSearchValue.trim() && locationSearchValue.toLowerCase() !== "remote") {
+      getPlacePredictions({ input: locationSearchValue })
+    }
+  }, [locationSearchValue, getPlacePredictions])
+
   const handleAddPreferredLocation = (location: string | GooglePlace) => {
-    if (typeof location === "string") return
-    if (
-      !locationPreferences.some((loc) => loc.place_id === location.place_id)
-    ) {
+    if (typeof location === "string") {
+      // Handle "Remote" selection
+      if (location === "Remote") {
+        const remoteLocation: GooglePlace = {
+          place_id: "remote",
+          name: "Remote",
+          formatted_address: "Remote Work",
+          city: null,
+          state_province: null,
+          country_code: null,
+          latitude: null,
+          longitude: null,
+          place_types: ["remote"]
+        }
+        if (!locationPreferences.some((loc) => loc.place_id === "remote")) {
+          setForm((prev) => ({
+            ...prev,
+            [type]: {
+              ...prev[type],
+              locations: [...locationPreferences, remoteLocation],
+            },
+          }))
+        }
+      }
+      return
+    }
+    
+    if (!locationPreferences.some((loc) => loc.place_id === location.place_id)) {
       setForm((prev) => ({
         ...prev,
         [type]: {
@@ -73,22 +123,26 @@ export function LocationSection({
     }))
   }
 
-  const handleCountryInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    setCountrySearchValue(value)
-    setShowCountryDropdown(value.trim().length > 0)
-  }
-
-  const handleCountrySelect = (country: any) => {
-    if (!workEligibility.includes(country.alpha2_code)) {
+  const handleCountryToggle = (country: any) => {
+    const isSelected = workEligibility.includes(country.alpha2_code)
+    if (isSelected) {
+      setWorkEligibility(workEligibility.filter((code) => code !== country.alpha2_code))
+    } else {
       setWorkEligibility([...workEligibility, country.alpha2_code])
     }
-    setCountrySearchValue("")
-    setShowCountryDropdown(false)
   }
 
-  const handleRemoveCountry = (countryCode: string) => {
-    setWorkEligibility(workEligibility.filter((code) => code !== countryCode))
+  const handleLocationToggle = (location: GooglePlace | string) => {
+    if (typeof location === "string") {
+      handleAddPreferredLocation(location)
+    } else {
+      const isSelected = locationPreferences.some((loc) => loc.place_id === location.place_id)
+      if (isSelected) {
+        handleRemovePreferredLocation(location.place_id)
+      } else {
+        handleAddPreferredLocation(location)
+      }
+    }
   }
 
   return (
@@ -155,31 +209,61 @@ export function LocationSection({
         {/* Work Eligibility */}
         <div className="space-y-4">
           <Label className="text-sm font-medium">Legal Work Eligibility</Label>
-          <div className="relative">
-            <div className="relative">
-              <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="text"
-                value={countrySearchValue}
-                onChange={handleCountryInputChange}
-                placeholder="Search and select countries..."
-                className="pl-10"
-              />
-            </div>
-            {showCountryDropdown && filteredCountries.length > 0 && (
-              <div className="absolute top-full left-0 right-0 bg-background border rounded-md shadow-lg z-50 max-h-48 overflow-y-auto">
-                {filteredCountries.map((country) => (
-                  <div
-                    key={country.alpha2_code}
-                    onClick={() => handleCountrySelect(country)}
-                    className="p-3 cursor-pointer hover:bg-muted text-sm"
-                  >
-                    {country.name}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <Popover open={countryOpen} onOpenChange={setCountryOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                role="combobox"
+                aria-expanded={countryOpen}
+                className="w-full justify-between"
+              >
+                <div className="flex items-center gap-2">
+                  <Globe className="h-4 w-4" />
+                  {workEligibility.length > 0
+                    ? `${workEligibility.length} countries selected`
+                    : "Select countries where you can legally work"}
+                </div>
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-full p-0" align="start">
+              <Command shouldFilter={false}>
+                <CommandInput
+                  placeholder="Search countries..."
+                  value={countrySearchValue}
+                  onValueChange={setCountrySearchValue}
+                />
+                <CommandList>
+                  {isLoading ? (
+                    <CommandEmpty>Loading countries...</CommandEmpty>
+                  ) : filteredCountries.length === 0 ? (
+                    <CommandEmpty>No countries found.</CommandEmpty>
+                  ) : (
+                    <CommandGroup>
+                      {filteredCountries.map((country) => {
+                        const isSelected = workEligibility.includes(country.alpha2_code)
+                        return (
+                          <CommandItem
+                            key={country.alpha2_code}
+                            value={country.name}
+                            onSelect={() => handleCountryToggle(country)}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                isSelected ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                            {country.name}
+                          </CommandItem>
+                        )
+                      })}
+                    </CommandGroup>
+                  )}
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
           
           {/* Selected countries display */}
           {workEligibility.length > 0 && (
@@ -194,7 +278,7 @@ export function LocationSection({
                   >
                     {country?.name}
                     <button
-                      onClick={() => handleRemoveCountry(countryCode)}
+                      onClick={() => setWorkEligibility(workEligibility.filter((code) => code !== countryCode))}
                       className="ml-2 hover:text-primary/80"
                       type="button"
                     >
@@ -212,11 +296,103 @@ export function LocationSection({
         {/* Preferred Locations */}
         <div className="space-y-4">
           <Label className="text-sm font-medium">Preferred Work Locations</Label>
-          <LocationInputWithPopover
-            value={null}
-            onChange={handleAddPreferredLocation}
-            placeholder="Add preferred work locations"
-          />
+          <Popover open={locationOpen} onOpenChange={setLocationOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                role="combobox"
+                aria-expanded={locationOpen}
+                className="w-full justify-between"
+              >
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4" />
+                  {locationPreferences.length > 0
+                    ? `${locationPreferences.length} locations selected`
+                    : "Select preferred work locations"}
+                </div>
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-full p-0" align="start">
+              <Command shouldFilter={false}>
+                <CommandInput
+                  placeholder="Search locations..."
+                  value={locationSearchValue}
+                  onValueChange={setLocationSearchValue}
+                />
+                <CommandList>
+                  {isPlacePredictionsLoading ? (
+                    <CommandEmpty>Searching...</CommandEmpty>
+                  ) : (
+                    <CommandGroup>
+                      {/* Remote option */}
+                      {locationSearchValue.toLowerCase().includes("remote") || locationSearchValue === "" ? (
+                        <CommandItem
+                          key="remote"
+                          value="Remote"
+                          onSelect={() => handleLocationToggle("Remote")}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              locationPreferences.some((loc) => loc.place_id === "remote") ? "opacity-100" : "opacity-0"
+                            )}
+                          />
+                          Remote
+                        </CommandItem>
+                      ) : null}
+                      
+                      {/* Google Places results */}
+                      {placePredictions.map((prediction) => {
+                        const location: GooglePlace = {
+                          place_id: prediction.place_id,
+                          name: prediction.structured_formatting?.main_text || prediction.description,
+                          formatted_address: prediction.description,
+                          city: null,
+                          state_province: null,
+                          country_code: null,
+                          latitude: null,
+                          longitude: null,
+                          place_types: prediction.types || []
+                        }
+                        
+                        const isSelected = locationPreferences.some((loc) => loc.place_id === location.place_id)
+                        
+                        return (
+                          <CommandItem
+                            key={location.place_id}
+                            value={location.name}
+                            onSelect={() => handleLocationToggle(location)}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                isSelected ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                            <div className="flex flex-col">
+                              <span>{location.name}</span>
+                              {location.formatted_address && (
+                                <span className="text-xs text-muted-foreground">
+                                  {location.formatted_address}
+                                </span>
+                              )}
+                            </div>
+                          </CommandItem>
+                        )
+                      })}
+                      
+                      {placePredictions.length === 0 && locationSearchValue && !locationSearchValue.toLowerCase().includes("remote") && (
+                        <CommandEmpty>No locations found.</CommandEmpty>
+                      )}
+                    </CommandGroup>
+                  )}
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+          
+          {/* Selected locations display */}
           {locationPreferences.length > 0 && (
             <div className="flex flex-wrap gap-2 pt-2">
               {locationPreferences.map((location) => (
@@ -227,9 +403,7 @@ export function LocationSection({
                 >
                   {location.name || location.formatted_address}
                   <button
-                    onClick={() =>
-                      handleRemovePreferredLocation(location.place_id)
-                    }
+                    onClick={() => handleRemovePreferredLocation(location.place_id)}
                     className="ml-2 hover:text-primary/80"
                     type="button"
                   >
