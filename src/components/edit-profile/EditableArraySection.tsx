@@ -71,7 +71,7 @@ export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
 
   const sectionContent = (
     <div className={clsx("bg-white rounded-lg border", className)}>
-      <div className="rounded-t-lg flex items-center justify-between p-1 bg-[#449889] text-white">
+      <div className="rounded-t-lg flex items-center justify-between p-1 pl-4 bg-[#449889] text-white">
         <h3 className="text-lg font-semibold">{title}</h3>
         <Button
           variant="ghost"

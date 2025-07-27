@@ -39,7 +39,7 @@ export const EditableTextSection: React.FC<EditableTextSectionProps> = ({
 }) => {
   const sectionContent = (
     <div className={clsx("rounded-lg border", bgColorClass, className)}>
-      <div className="flex items-center justify-between p-1 rounded-t-lg bg-[#449889] text-white">
+      <div className="flex items-center justify-between p-1 pl-4 rounded-t-lg bg-[#449889] text-white">
         <h3 className="text-lg font-semibold text-white">
           {title}
         </h3>

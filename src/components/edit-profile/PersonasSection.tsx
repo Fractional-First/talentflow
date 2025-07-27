@@ -47,7 +47,7 @@ export const PersonasSection: React.FC<PersonasSectionProps> = ({
 }) => {
   const sectionContent = (
     <div className={clsx("bg-white rounded-lg border", className)}>
-      <div className="bg-[#449889] text-white rounded-t-lg flex items-center justify-between p-1">
+      <div className="bg-[#449889] text-white rounded-t-lg flex items-center justify-between p-1 pl-4">
         <h3 className="text-lg font-semibold">Personas</h3>
         <Button
           variant="ghost"
