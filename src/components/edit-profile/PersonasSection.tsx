@@ -1,3 +1,4 @@
+
 import React from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
@@ -46,7 +47,7 @@ export const PersonasSection: React.FC<PersonasSectionProps> = ({
 }) => {
   const sectionContent = (
     <div className={clsx("bg-white rounded-lg border", className)}>
-      <div className="bg-teal-600 text-white rounded-t-lg flex items-center justify-between p-4">
+      <div className="bg-[#449889] text-white rounded-t-lg flex items-center justify-between p-1">
         <h3 className="text-lg font-semibold">Personas</h3>
         <Button
           variant="ghost"

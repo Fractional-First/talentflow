@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -70,12 +71,7 @@ export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
 
   const sectionContent = (
     <div className={clsx("bg-white rounded-lg border", className)}>
-      <div
-        className={clsx(
-          "rounded-t-lg flex items-center justify-between p-2",
-          headerClassName || "bg-[#449889] text-white"
-        )}
-      >
+      <div className="rounded-t-lg flex items-center justify-between p-1 bg-[#449889] text-white">
         <h3 className="text-lg font-semibold">{title}</h3>
         <Button
           variant="ghost"
