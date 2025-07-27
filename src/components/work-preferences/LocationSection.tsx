@@ -1,4 +1,3 @@
-
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
@@ -20,9 +19,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { useGooglePlaces } from "@/queries/useGooglePlaces"
-import { GooglePlace } from "./LocationAutocomplete"
-import LocationInputWithPopover from "./LocationAutocomplete"
+import LocationInputWithPopover, { GooglePlace } from "./LocationAutocomplete"
 import { CombinedWorkPreferencesForm } from "@/hooks/useWorkPreferences"
 
 interface LocationSectionProps {
@@ -54,10 +51,35 @@ export function LocationSection({
     type === "fullTime" ? form.fullTime.locations : form.fractional.locations
 
   const { data: countries = [], isLoading } = useCountries()
-  const { placePredictions, isPlacePredictionsLoading } = useGooglePlaces()
   const [countryOpen, setCountryOpen] = useState(false)
   const [locationOpen, setLocationOpen] = useState(false)
-  const [locationSearchQuery, setLocationSearchQuery] = useState("")
+
+  const handleAddPreferredLocation = (location: string | GooglePlace) => {
+    if (typeof location === "string") return
+    if (
+      !locationPreferences.some((loc) => loc.place_id === location.place_id)
+    ) {
+      setForm((prev) => ({
+        ...prev,
+        [type]: {
+          ...prev[type],
+          locations: [...locationPreferences, location],
+        },
+      }))
+    }
+  }
+
+  const handleRemovePreferredLocation = (placeId: string) => {
+    setForm((prev) => ({
+      ...prev,
+      [type]: {
+        ...prev[type],
+        locations: locationPreferences.filter(
+          (loc) => loc.place_id !== placeId
+        ),
+      },
+    }))
+  }
 
   const handleCountryToggle = (countryCode: string) => {
     if (workEligibility.includes(countryCode)) {
@@ -72,36 +94,10 @@ export function LocationSection({
       (loc) => loc.place_id === location.place_id
     )
     if (exists) {
-      setForm((prev) => ({
-        ...prev,
-        [type]: {
-          ...prev[type],
-          locations: locationPreferences.filter(
-            (loc) => loc.place_id !== location.place_id
-          ),
-        },
-      }))
+      handleRemovePreferredLocation(location.place_id)
     } else {
-      setForm((prev) => ({
-        ...prev,
-        [type]: {
-          ...prev[type],
-          locations: [...locationPreferences, location],
-        },
-      }))
+      handleAddPreferredLocation(location)
     }
-  }
-
-  const removeLocation = (placeId: string) => {
-    setForm((prev) => ({
-      ...prev,
-      [type]: {
-        ...prev[type],
-        locations: locationPreferences.filter(
-          (loc) => loc.place_id !== placeId
-        ),
-      },
-    }))
   }
 
   return (
@@ -250,90 +246,11 @@ export function LocationSection({
         {/* Preferred Locations */}
         <div className="space-y-4">
           <Label className="text-sm font-medium">Preferred Work Locations</Label>
-          <Popover open={locationOpen} onOpenChange={setLocationOpen}>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                role="combobox"
-                aria-expanded={locationOpen}
-                className="w-full justify-between text-body-mobile md:text-body-desktop"
-              >
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4" />
-                  {locationPreferences.length > 0
-                    ? `${locationPreferences.length} locations selected`
-                    : "Search and select locations..."}
-                </div>
-                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent
-              className="w-full p-0"
-              style={{ width: "var(--radix-popover-trigger-width)" }}
-            >
-              <Command shouldFilter={false}>
-                <CommandInput
-                  placeholder="Search locations..."
-                  value={locationSearchQuery}
-                  onValueChange={setLocationSearchQuery}
-                />
-                <CommandList>
-                  {isPlacePredictionsLoading ? (
-                    <CommandEmpty>Searching...</CommandEmpty>
-                  ) : placePredictions.length === 0 && locationSearchQuery ? (
-                    <CommandEmpty>No locations found.</CommandEmpty>
-                  ) : locationSearchQuery === "" ? (
-                    <CommandEmpty>Start typing to search locations...</CommandEmpty>
-                  ) : (
-                    <CommandGroup>
-                      {placePredictions.map((prediction) => {
-                        const location: GooglePlace = {
-                          place_id: prediction.place_id,
-                          name: prediction.structured_formatting?.main_text || prediction.description,
-                          formatted_address: prediction.description,
-                          city: null,
-                          state_province: null,
-                          country_code: null,
-                          latitude: null,
-                          longitude: null,
-                          place_types: prediction.types || []
-                        }
-                        
-                        const isSelected = locationPreferences.some(
-                          (selected) => selected.place_id === location.place_id
-                        )
-                        
-                        return (
-                          <CommandItem
-                            key={location.place_id}
-                            value={location.name}
-                            onSelect={() => handleLocationToggle(location)}
-                          >
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                isSelected ? "opacity-100" : "opacity-0"
-                              )}
-                            />
-                            <div className="flex flex-col">
-                              <span>{location.name}</span>
-                              {location.formatted_address && (
-                                <span className="text-xs text-muted-foreground">
-                                  {location.formatted_address}
-                                </span>
-                              )}
-                            </div>
-                          </CommandItem>
-                        )
-                      })}
-                    </CommandGroup>
-                  )}
-                </CommandList>
-              </Command>
-            </PopoverContent>
-          </Popover>
-
-          {/* Selected locations display */}
+          <LocationInputWithPopover
+            value={null}
+            onChange={handleAddPreferredLocation}
+            placeholder="Add preferred work locations"
+          />
           {locationPreferences.length > 0 && (
             <div className="flex flex-wrap gap-2 pt-2">
               {locationPreferences.map((location) => (
@@ -344,7 +261,9 @@ export function LocationSection({
                 >
                   {location.name || location.formatted_address}
                   <button
-                    onClick={() => removeLocation(location.place_id)}
+                    onClick={() =>
+                      handleRemovePreferredLocation(location.place_id)
+                    }
                     className="ml-2 hover:text-primary/80"
                     type="button"
                   >
