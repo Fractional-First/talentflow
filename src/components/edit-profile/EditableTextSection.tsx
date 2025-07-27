@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Edit } from "lucide-react"
@@ -40,18 +41,18 @@ export const EditableTextSection: React.FC<EditableTextSectionProps> = ({
     <div className={clsx("rounded-lg border", bgColorClass, className)}>
       <div
         className={clsx(
-          "flex items-center justify-between p-4 rounded-t-lg",
-          headerClassName
+          "flex items-center justify-between p-2 rounded-t-lg",
+          headerClassName || "bg-[#449889] text-white"
         )}
       >
-        <h3 className={clsx("text-lg font-semibold", labelClassName)}>
+        <h3 className={clsx("text-lg font-semibold", labelClassName || "text-white")}>
           {title}
         </h3>
         <Button
           variant="ghost"
           size="sm"
           onClick={onEditToggle}
-          className={"hover:bg-gray-100"}
+          className={"hover:bg-white/20 text-white"}
         >
           <Edit className="h-4 w-4" />
         </Button>
