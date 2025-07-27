@@ -13,7 +13,7 @@ import { SuperpowersSection } from "@/components/edit-profile/SuperpowersSection
 import ProfilePictureUpload from "@/components/ProfilePictureUpload"
 import { Button } from "@/components/ui/button"
 import { useEditProfile } from "@/hooks/useEditProfile"
-import { ArrowLeft, ArrowRight } from "lucide-react"
+import { ArrowLeft, ArrowRight, Edit } from "lucide-react"
 
 const EditProfile = () => {
   const {
@@ -65,13 +65,10 @@ const EditProfile = () => {
         {/* Header with Auto-save Status */}
         <div className="relative">
           <div className="space-y-2">
-            <h1 className="text-2xl font-semibold text-gray-900">
-              Profile Snapshot
-            </h1>
             <p className="text-sm text-gray-600">
               This summary is curated based on your experience and skills. Feel
               free to refine it to better reflect your voice by clicking on the
-              edit icon.
+              edit icon <Edit className="h-4 w-4 inline-block ml-1" />.
             </p>
           </div>
 
