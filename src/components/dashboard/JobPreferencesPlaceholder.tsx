@@ -1,3 +1,4 @@
+
 import { StepCard } from "@/components/StepCard"
 import { Button } from "@/components/ui/button"
 import { useNavigate } from "react-router-dom"
@@ -66,7 +67,8 @@ export const JobPreferencesPlaceholder = () => {
         <div className="text-center">
           <Button
             onClick={() => navigate("/work-preferences")}
-            className="w-full"
+            className="w-full text-white hover:opacity-90"
+            style={{ backgroundColor: '#449889' }}
           >
             Get Started
             <ArrowRight className="h-4 w-4 ml-2" />

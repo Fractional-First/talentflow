@@ -71,7 +71,11 @@ export function ProfileSummaryCard({
           </div>
         </div>
         <div className="mt-8 flex flex-col items-center">
-          <Button onClick={() => navigate("/edit-profile")} className="w-full">
+          <Button 
+            onClick={() => navigate("/edit-profile")} 
+            className="w-full text-white hover:opacity-90"
+            style={{ backgroundColor: '#449889' }}
+          >
             Edit Profile
             <ArrowRight className="h-4 w-4 ml-2" />
           </Button>
