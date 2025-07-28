@@ -28,53 +28,46 @@ import {
   Users,
   Award,
   BookOpen,
+  User,
+  UsersRound,
 } from "lucide-react"
 import { BlurImage } from "@/components/BlurImage"
 
 const Branding = () => {
   const navigate = useNavigate()
 
-  const brandingTools = [
+  const coachingServices = [
     {
       id: 1,
-      title: "Personality Assessment",
+      title: "Executive 1:1 Coaching",
+      subheadline: "Perform Better. Relate Better. Feel Better.",
       description:
-        "Discover your work style, strengths, and ideal work environment with our comprehensive personality assessment.",
-      icon: Users,
-      free: true,
+        "Personalized coaching designed to accelerate your leadership growth and well-being.",
+      bulletPoints: [
+        "Tailored to your unique leadership context",
+        "3-month engagement with up to 3 sessions per month",
+        "Complimentary intake process to assess fit"
+      ],
+      icon: User,
+      ctaText: "Schedule Intro Call",
       imageSrc:
-        "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+        "https://images.unsplash.com/photo-1597773150796-e5c14ebecbf5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
     },
     {
       id: 2,
-      title: "Skills Analysis",
+      title: "Leadership Team Coaching",
+      subheadline: "Elevate Team Effectiveness and Collective Results",
       description:
-        "Get insights on your skills and discover areas for improvement and development.",
-      icon: Award,
-      free: true,
+        "Strengthen your leadership team's relationships, decision-making, and results through customized team coaching aligned to your business context.",
+      bulletPoints: [
+        "Designed around your team's existing meeting cadence",
+        "Balances business tasks with deep relationship work",
+        "Starts with a free intake consultation and proposal"
+      ],
+      icon: UsersRound,
+      ctaText: "Request Coaching Proposal",
       imageSrc:
-        "https://images.unsplash.com/photo-1525130413817-d45c1d127c42?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
-    },
-    {
-      id: 3,
-      title: "Career Coaching",
-      description:
-        "Connect with a career coach who will provide personalized guidance and feedback on your professional journey.",
-      icon: Star,
-      free: false,
-      premium: true,
-      imageSrc:
-        "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
-    },
-    {
-      id: 4,
-      title: "Personal Branding Workshop",
-      description:
-        "Learn how to build and communicate your personal brand to stand out in the job market.",
-      icon: BookOpen,
-      free: false,
-      imageSrc:
-        "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1774&q=80",
+        "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
     },
   ]
 
@@ -84,67 +77,78 @@ const Branding = () => {
         <StepCard>
           <StepCardHeader>
             <div className="flex items-center gap-3">
-              <StepCardTitle className="text-3xl font-semibold">Enhance Your Professional Brand</StepCardTitle>
+              <StepCardTitle className="text-3xl font-semibold">Professional Coaching by Trusted Partners</StepCardTitle>
               <Badge variant="outline" className="text-sm px-3 py-1 rounded-full">
                 Optional
               </Badge>
             </div>
             <StepCardDescription className="text-lg mt-3 text-muted-foreground">
-              Take advantage of our tools to enhance your professional brand and
-              increase your chances of finding the perfect match
+              Achieve greater clarity, alignment, and effectiveness—whether you're leading solo or as a team.
             </StepCardDescription>
           </StepCardHeader>
 
           <StepCardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {brandingTools.map((tool, index) => (
+              {coachingServices.map((service, index) => (
                 <Card
-                  key={tool.id}
-                  className={`overflow-hidden transition-all duration-300 hover:shadow-medium animate-slide-up`}
+                  key={service.id}
+                  className={`overflow-hidden transition-all duration-300 hover:shadow-medium animate-slide-up border-2 border-primary/10 bg-primary/2`}
                   style={{ animationDelay: `${index * 0.15}s` }}
                 >
                   <div className="relative h-40 overflow-hidden">
                     <BlurImage
-                      src={tool.imageSrc}
-                      alt={tool.title}
+                      src={service.imageSrc}
+                      alt={service.title}
                       className="object-cover w-full h-full"
                     />
-                    {tool.premium && (
-                      <Badge className="absolute top-2 right-2 bg-primary rounded-full">
-                        Premium
-                      </Badge>
-                    )}
+                    <Badge className="absolute top-2 right-2 bg-primary rounded-full">
+                      Premium Partner Service
+                    </Badge>
                   </div>
 
                   <CardHeader className="pb-2">
                     <div className="flex justify-between items-start">
                       <div className="flex items-center">
                         <div className="bg-primary/10 p-2 rounded-full mr-3">
-                          <tool.icon className="h-5 w-5 text-primary" />
+                          <service.icon className="h-5 w-5 text-primary" />
                         </div>
-                        <CardTitle className="text-xl font-medium">{tool.title}</CardTitle>
+                        <div>
+                          <CardTitle className="text-xl font-medium">{service.title}</CardTitle>
+                          <p className="text-sm font-medium text-primary mt-1">{service.subheadline}</p>
+                        </div>
                       </div>
-                      {!tool.free && (
-                        <div className="flex items-center text-muted-foreground">
-                          <Lock className="h-4 w-4 mr-1" />
-                          <span className="text-xs">Paid</span>
-                        </div>
-                      )}
                     </div>
 
-                    <CardDescription className="text-base mt-2">{tool.description}</CardDescription>
+                    <CardDescription className="text-base mt-2">{service.description}</CardDescription>
+                    
+                    <div className="mt-3">
+                      <ul className="space-y-1">
+                        {service.bulletPoints.map((point, bulletIndex) => (
+                          <li key={bulletIndex} className="flex items-start text-sm text-muted-foreground">
+                            <span className="text-primary mr-2 mt-1">•</span>
+                            <span>{point}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </CardHeader>
 
                   <CardFooter>
                     <Button
-                      variant={tool.free ? "default" : "outline"}
+                      variant="default"
                       className="w-full rounded-full"
                     >
-                      {tool.free ? "Start Now" : "Upgrade to Access"}
+                      {service.ctaText}
                     </Button>
                   </CardFooter>
                 </Card>
               ))}
+            </div>
+            
+            <div className="mt-6 text-center">
+              <p className="text-sm text-muted-foreground">
+                These coaching offerings are delivered by trusted partners of Fractional First. Intake is commitment-free and designed to help you clarify your goals before engaging.
+              </p>
             </div>
           </StepCardContent>
         </StepCard>
