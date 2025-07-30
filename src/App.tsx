@@ -3,11 +3,10 @@ import { Toaster as Sonner } from "@/components/ui/sonner"
 import { Toaster } from "@/components/ui/toaster"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { BrowserRouter, Route, Routes } from "react-router-dom"
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
 import { ProtectedRoute } from "./components/auth/ProtectedRoute"
 import CheckEmail from "./pages/CheckEmail"
 import ForgotPassword from "./pages/ForgotPassword"
-import Index from "./pages/Index"
 import Login from "./pages/Login"
 import NotFound from "./pages/NotFound"
 import ResetPassword from "./pages/ResetPassword"
@@ -30,8 +29,10 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          {/* Redirect root to login */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          
           {/* Public routes */}
-          <Route path="/" element={<Index />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
