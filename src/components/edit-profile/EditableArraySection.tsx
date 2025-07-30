@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -32,7 +33,7 @@ export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
   displayType = "tags",
   className = "",
   headerClassName = "",
-  bgColorClass = "bg-teal-600",
+  bgColorClass = "bg-[#449889]",
   textColorClass = "text-white",
   content = "Edit this section to customize your information",
 }) => {
@@ -70,23 +71,13 @@ export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
 
   const sectionContent = (
     <div className={clsx("bg-white rounded-lg border", className)}>
-      <div
-        className={clsx(
-          "rounded-t-lg flex items-center justify-between p-4",
-          bgColorClass,
-          textColorClass,
-          headerClassName
-        )}
-      >
+      <div className="rounded-t-lg flex items-center justify-between p-1 pl-4 bg-[#449889] text-white">
         <h3 className="text-lg font-semibold">{title}</h3>
         <Button
           variant="ghost"
           size="sm"
           onClick={onEditToggle}
-          className={clsx(
-            "hover:bg-white/20",
-            textColorClass.includes("white") ? "text-white" : "text-gray-600"
-          )}
+          className="hover:bg-white/20 text-white"
         >
           <Edit className="h-4 w-4" />
         </Button>

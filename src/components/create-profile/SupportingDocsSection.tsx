@@ -1,3 +1,4 @@
+
 import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -112,8 +113,8 @@ export const SupportingDocsSection = ({
         </Button>
       </div>
       <Alert
-        className="mb-4"
-        style={{ background: "#E6F4F2", borderColor: "#BFE3DD" }}
+        className="mb-4 bg-card"
+        style={{ borderColor: "#BFE3DD" }}
       >
         <div className="flex gap-2">
           <div className="mt-0.5">

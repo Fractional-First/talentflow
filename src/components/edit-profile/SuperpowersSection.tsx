@@ -71,7 +71,7 @@ export const SuperpowersSection: React.FC<SuperpowersSectionProps> = ({
 
   const sectionContent = (
     <div className={clsx("bg-white rounded-lg border", className)}>
-      <div className="bg-teal-600 text-white rounded-t-lg flex items-center justify-between p-4">
+      <div className="bg-[#449889] text-white rounded-t-lg flex items-center justify-between p-1 pl-4">
         <h3 className="text-lg font-semibold">Superpowers</h3>
         <Button
           variant="ghost"

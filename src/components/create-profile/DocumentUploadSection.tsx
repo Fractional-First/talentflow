@@ -1,3 +1,5 @@
+
+
 import { Linkedin, File, HelpCircle } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { DocumentUpload } from "./DocumentUpload"
@@ -27,9 +29,8 @@ export const DocumentUploadSection = ({
     <div className="space-y-6">
       {/* INSTRUCTIONAL HELPER TEXT */}
       <Alert
-        className="mb-4"
+        className="mb-4 bg-card"
         style={{
-          background: "#E6F4F2",
           borderColor: "#BFE3DD",
         }}
       >
@@ -78,9 +79,8 @@ export const DocumentUploadSection = ({
         icon={<Linkedin className="h-6 w-6 text-[#0A66C2]" />}
         linkedinInstructionsComponent={() => (
           <Alert
-            className="mb-4"
+            className="mb-4 bg-card"
             style={{
-              background: "#E6F4F2",
               borderColor: "#BFE3DD",
             }}
           >

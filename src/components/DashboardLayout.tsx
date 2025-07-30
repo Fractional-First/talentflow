@@ -81,7 +81,7 @@ export function DashboardLayout({
           {steps && currentStep !== undefined && (
             <OnboardingProgress steps={steps} currentStep={currentStep} />
           )}
-          <main className={cn("mt-8", className)}>
+          <main className={cn(steps && currentStep !== undefined ? "mt-8" : "", className)}>
             {children}
           </main>
         </div>

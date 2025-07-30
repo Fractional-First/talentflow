@@ -13,7 +13,7 @@ import { SuperpowersSection } from "@/components/edit-profile/SuperpowersSection
 import ProfilePictureUpload from "@/components/ProfilePictureUpload"
 import { Button } from "@/components/ui/button"
 import { useEditProfile } from "@/hooks/useEditProfile"
-import { ArrowLeft, ArrowRight } from "lucide-react"
+import { ArrowLeft, ArrowRight, Edit } from "lucide-react"
 
 const EditProfile = () => {
   const {
@@ -42,7 +42,7 @@ const EditProfile = () => {
 
   if (isLoading) {
     return (
-      <DashboardLayout steps={initialSteps} currentStep={3}>
+      <DashboardLayout>
         <div className="max-w-6xl mx-auto space-y-6 p-6">
           <div className="text-center">Loading profile...</div>
         </div>
@@ -60,18 +60,15 @@ const EditProfile = () => {
   }
 
   return (
-    <DashboardLayout steps={initialSteps} currentStep={3}>
+    <DashboardLayout>
       <div ref={mainContentRef} className="max-w-6xl mx-auto space-y-6 p-6">
         {/* Header with Auto-save Status */}
         <div className="relative">
           <div className="space-y-2">
-            <h1 className="text-2xl font-semibold text-gray-900">
-              Profile Snapshot
-            </h1>
             <p className="text-sm text-gray-600">
               This summary is curated based on your experience and skills. Feel
               free to refine it to better reflect your voice by clicking on the
-              edit icon.
+              edit icon <Edit className="h-4 w-4 inline-block ml-1" />.
             </p>
           </div>
 
@@ -311,7 +308,8 @@ const EditProfile = () => {
           <Button
             onClick={handleContinue}
             disabled={isSubmitting}
-            className="bg-teal-600 hover:bg-teal-700"
+            style={{ backgroundColor: '#449889' }}
+            className="hover:opacity-90 text-white"
           >
             {isSubmitting ? "Processing..." : "Complete & Go to Dashboard"}
             <ArrowRight className="ml-2 h-4 w-4" />
