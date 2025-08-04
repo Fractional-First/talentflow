@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { useParams } from "react-router-dom"
+import { useState } from "react"
 import { supabase } from "@/integrations/supabase/client"
 import { ProfileData } from "@/types/profile"
 import { BasicInfoSection } from "@/components/edit-profile/BasicInfoSection"
@@ -14,6 +15,7 @@ import NotFound from "./NotFound"
 
 const PublicProfile = () => {
   const { userId } = useParams<{ userId: string }>()
+  const [personasActiveTab, setPersonasActiveTab] = useState("0")
 
   const { data: profileData, isLoading, error } = useQuery({
     queryKey: ["public-profile", userId],
@@ -231,8 +233,8 @@ const PublicProfile = () => {
               onPersonaLocalUpdate={() => {}} // No-op for read-only
               onAddPersona={() => {}} // No-op for read-only
               onRemovePersona={() => {}} // No-op for read-only
-              activeTab="0"
-              onActiveTabChange={() => {}} // No-op for read-only
+              activeTab={personasActiveTab}
+              onActiveTabChange={setPersonasActiveTab}
               readOnly={true}
             />
 
