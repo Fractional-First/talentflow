@@ -23,7 +23,11 @@ const Dashboard = () => {
   }
 
   if (profileLoading) {
-    return <div>Loading profile...</div>
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Spinner size="lg" />
+      </div>
+    )
   }
 
   if (error) {
