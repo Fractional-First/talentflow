@@ -45,6 +45,8 @@ export const ProtectedRoute = ({
         return <Navigate to="/check-email" replace />
       case "EMAIL_CONFIRMED":
         return <Navigate to="/create-profile" replace />
+      case "SET_PASSWORD":
+        return <Navigate to="/change-password" replace />
       case "PROFILE_GENERATED":
         return <Navigate to="/edit-profile" replace />
       case "PROFILE_CONFIRMED":

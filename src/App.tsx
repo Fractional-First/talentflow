@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
 import { ProtectedRoute } from "./components/auth/ProtectedRoute"
 import CheckEmail from "./pages/CheckEmail"
+import ChangePassword from "./pages/ChangePassword"
 import ForgotPassword from "./pages/ForgotPassword"
 import Login from "./pages/Login"
 import NotFound from "./pages/NotFound"
@@ -40,6 +41,16 @@ const App = () => (
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/check-email" element={<CheckEmail />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
+          
+          {/* Change password route - for users with SET_PASSWORD status */}
+          <Route
+            path="/change-password"
+            element={
+              <ProtectedRoute allowedStatuses={["SET_PASSWORD"]}>
+                <ChangePassword />
+              </ProtectedRoute>
+            }
+          />
           
           {/* Public profile route - no auth required */}
           <Route path="/profile/:userId" element={<PublicProfile />} />
