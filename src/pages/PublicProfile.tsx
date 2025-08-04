@@ -51,6 +51,18 @@ const PublicProfile = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white border-b border-border">
+        <div className="max-w-6xl mx-auto px-6 py-4">
+          <a 
+            href="https://fractionalfirst.com" 
+            className="text-2xl font-bold text-foreground hover:text-primary transition-colors"
+          >
+            Fractional First
+          </a>
+        </div>
+      </header>
+      
       <div className="max-w-6xl mx-auto space-y-6 p-6">
         {/* Main Layout - Two Column */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
