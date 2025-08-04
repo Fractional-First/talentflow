@@ -12,12 +12,14 @@ interface ProfilePictureUploadProps {
   currentImage?: string;
   userName: string;
   onImageUpdate: (imageUrl: string) => void;
+  readOnly?: boolean;
 }
 
 const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
   currentImage,
   userName,
-  onImageUpdate
+  onImageUpdate,
+  readOnly = false
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -190,18 +192,20 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
         </Avatar>
         
         {/* Upload overlay */}
-        <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => fileInputRef.current?.click()}
-            className="text-white hover:text-white hover:bg-white/20"
-            disabled={isUploading}
-          >
-            <Camera className="h-6 w-6 mr-2" />
-            {isUploading ? 'Uploading...' : 'Change Photo'}
-          </Button>
-        </div>
+        {!readOnly && (
+          <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => fileInputRef.current?.click()}
+              className="text-white hover:text-white hover:bg-white/20"
+              disabled={isUploading}
+            >
+              <Camera className="h-6 w-6 mr-2" />
+              {isUploading ? 'Uploading...' : 'Change Photo'}
+            </Button>
+          </div>
+        )}
       </div>
 
       <input

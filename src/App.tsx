@@ -15,6 +15,7 @@ import Branding from "./pages/dashboard/Branding"
 import Dashboard from "./pages/dashboard/Dashboard"
 import ProfileCreation from "./pages/CreateProfile"
 import ProfileSnapshot from "./pages/EditProfile"
+import PublicProfile from "./pages/PublicProfile"
 import WaitingRoom from "./pages/dashboard/WaitingRoom"
 import WorkPreferences from "./pages/WorkPreferences"
 import AuthCallback from "./pages/AuthCallback"
@@ -39,6 +40,9 @@ const App = () => (
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/check-email" element={<CheckEmail />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
+          
+          {/* Public profile route - no auth required */}
+          <Route path="/profile/:userId" element={<PublicProfile />} />
 
           {/* Profile creation - for users with EMAIL_CONFIRMED, PROFILE_GENERATED, or PROFILE_CONFIRMED status */}
           <Route
