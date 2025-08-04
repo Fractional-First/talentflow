@@ -12,6 +12,7 @@ import { PersonasSection } from "@/components/edit-profile/PersonasSection"
 import { SuperpowersSection } from "@/components/edit-profile/SuperpowersSection"
 import ProfilePictureUpload from "@/components/ProfilePictureUpload"
 import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
 import { useEditProfile } from "@/hooks/useEditProfile"
 import { ArrowLeft, ArrowRight, Edit } from "lucide-react"
 
@@ -43,8 +44,8 @@ const EditProfile = () => {
   if (isLoading) {
     return (
       <DashboardLayout>
-        <div className="max-w-6xl mx-auto space-y-6 p-6">
-          <div className="text-center">Loading profile...</div>
+        <div className="min-h-[60vh] flex items-center justify-center">
+          <Spinner size="lg" />
         </div>
       </DashboardLayout>
     )
