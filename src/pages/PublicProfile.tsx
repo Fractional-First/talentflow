@@ -9,6 +9,7 @@ import { FunctionalSkillsSection } from "@/components/edit-profile/FunctionalSki
 import { PersonasSection } from "@/components/edit-profile/PersonasSection"
 import { SuperpowersSection } from "@/components/edit-profile/SuperpowersSection"
 import ProfilePictureUpload from "@/components/ProfilePictureUpload"
+import { Spinner } from "@/components/ui/spinner"
 import NotFound from "./NotFound"
 
 const PublicProfile = () => {
@@ -37,10 +38,8 @@ const PublicProfile = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="max-w-6xl mx-auto space-y-6 p-6">
-          <div className="text-center">Loading profile...</div>
-        </div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Spinner size="lg" />
       </div>
     )
   }
