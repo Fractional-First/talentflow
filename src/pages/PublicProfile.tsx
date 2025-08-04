@@ -51,15 +51,18 @@ const PublicProfile = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-border">
-        <div className="max-w-6xl mx-auto px-6 py-4">
-          <a 
-            href="https://fractionalfirst.com" 
-            className="text-2xl font-bold text-foreground hover:text-primary transition-colors"
-          >
-            Fractional First
-          </a>
+      {/* Header matching site style */}
+      <header className="border-b border-border/40 bg-background/80 backdrop-blur-md sticky top-0 z-10">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <a href="https://fractionalfirst.com">
+              <img 
+                src="/lovable-uploads/daefe55a-8953-4582-8fc8-12a66755ac2a.png" 
+                alt="Fractional First" 
+                className="h-12 w-auto cursor-pointer"
+              />
+            </a>
+          </div>
         </div>
       </header>
       
