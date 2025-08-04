@@ -16,6 +16,7 @@ interface SuperpowersSectionProps {
   onSuperpowersChange: (superpowers: Superpower[]) => void
   className?: string
   content?: string
+  readOnly?: boolean
 }
 
 export const SuperpowersSection: React.FC<SuperpowersSectionProps> = ({
@@ -25,6 +26,7 @@ export const SuperpowersSection: React.FC<SuperpowersSectionProps> = ({
   onSuperpowersChange,
   className = "",
   content = "Highlight your unique strengths and what sets you apart professionally",
+  readOnly = false,
 }) => {
   const [localSuperpowers, setLocalSuperpowers] = useState<Superpower[]>([])
 
@@ -73,14 +75,16 @@ export const SuperpowersSection: React.FC<SuperpowersSectionProps> = ({
     <div className={clsx("bg-white rounded-lg border", className)}>
       <div className="bg-[#449889] text-white rounded-t-lg flex items-center justify-between p-1 pl-4">
         <h3 className="text-lg font-semibold">Superpowers</h3>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onEditToggle}
-          className="text-white hover:bg-white/20"
-        >
-          <Edit className="h-4 w-4" />
-        </Button>
+        {!readOnly && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onEditToggle}
+            className="text-white hover:bg-white/20"
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
+        )}
       </div>
       <div className="p-4">
         <div className="space-y-4">

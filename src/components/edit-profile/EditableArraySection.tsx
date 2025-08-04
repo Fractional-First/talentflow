@@ -20,6 +20,7 @@ interface EditableArraySectionProps {
   bgColorClass?: string
   textColorClass?: string
   content?: string
+  readOnly?: boolean
 }
 
 export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
@@ -36,6 +37,7 @@ export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
   bgColorClass = "bg-[#449889]",
   textColorClass = "text-white",
   content = "Edit this section to customize your information",
+  readOnly = false,
 }) => {
   const [localItems, setLocalItems] = useState<string[]>([])
 
@@ -73,14 +75,16 @@ export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
     <div className={clsx("bg-white rounded-lg border", className)}>
       <div className="rounded-t-lg flex items-center justify-between p-1 pl-4 bg-[#449889] text-white">
         <h3 className="text-lg font-semibold">{title}</h3>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onEditToggle}
-          className="hover:bg-white/20 text-white"
-        >
-          <Edit className="h-4 w-4" />
-        </Button>
+        {!readOnly && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onEditToggle}
+            className="hover:bg-white/20 text-white"
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
+        )}
       </div>
       <div className="p-4">
         {isEditing ? (

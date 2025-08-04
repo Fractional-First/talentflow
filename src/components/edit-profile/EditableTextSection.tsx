@@ -20,6 +20,7 @@ interface EditableTextSectionProps {
   headerClassName?: string
   textAreaClass?: string
   content?: string
+  readOnly?: boolean
 }
 
 export const EditableTextSection: React.FC<EditableTextSectionProps> = ({
@@ -36,6 +37,7 @@ export const EditableTextSection: React.FC<EditableTextSectionProps> = ({
   headerClassName = "",
   textAreaClass = "",
   content = "Edit this section to customize your information",
+  readOnly = false,
 }) => {
   const sectionContent = (
     <div className={clsx("bg-white rounded-lg border", className)}>
@@ -43,14 +45,16 @@ export const EditableTextSection: React.FC<EditableTextSectionProps> = ({
         <h3 className="text-lg font-semibold text-white">
           {title}
         </h3>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onEditToggle}
-          className="hover:bg-white/20 text-white"
-        >
-          <Edit className="h-4 w-4" />
-        </Button>
+        {!readOnly && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onEditToggle}
+            className="hover:bg-white/20 text-white"
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
+        )}
       </div>
       <div className="p-4 bg-white">
         {isEditing ? (

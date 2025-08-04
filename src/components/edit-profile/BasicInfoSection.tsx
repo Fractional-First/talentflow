@@ -13,6 +13,7 @@ interface BasicInfoSectionProps {
   onChange: (field: "name" | "role" | "location", value: string) => void
   className?: string
   content?: string
+  readOnly?: boolean
 }
 
 export const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
@@ -24,6 +25,7 @@ export const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
   onChange,
   className = "",
   content = "Update your name, role, and location to keep your profile current",
+  readOnly = false,
 }) => {
   const sectionContent = (
     <div className={className}>
@@ -40,14 +42,16 @@ export const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
             {name || "Name not available"}
           </h1>
         )}
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onEditToggle}
-          className="absolute right-0 top-1/2 -translate-y-1/2"
-        >
-          <Edit className="h-4 w-4" />
-        </Button>
+        {!readOnly && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onEditToggle}
+            className="absolute right-0 top-1/2 -translate-y-1/2"
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
+        )}
       </div>
       <div className="space-y-2 text-center">
         {isEditing ? (

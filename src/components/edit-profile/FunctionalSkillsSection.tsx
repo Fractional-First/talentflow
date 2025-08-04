@@ -15,6 +15,7 @@ interface FunctionalSkillsSectionProps {
   onFunctionalSkillsChange: (skills: FunctionalSkills) => void
   className?: string
   content?: string
+  readOnly?: boolean
 }
 
 export const FunctionalSkillsSection: React.FC<
@@ -26,6 +27,7 @@ export const FunctionalSkillsSection: React.FC<
   onFunctionalSkillsChange,
   className = "",
   content = "Organize your skills by category and provide details about your expertise level",
+  readOnly = false,
 }) => {
   const [localSkills, setLocalSkills] = useState<FunctionalSkills>({})
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null)
@@ -125,14 +127,16 @@ export const FunctionalSkillsSection: React.FC<
     <div className={clsx("bg-white rounded-lg border", className)}>
       <div className="bg-[#449889] text-white rounded-t-lg flex items-center justify-between p-1 pl-4">
         <h3 className="text-lg font-semibold">Functional Skills</h3>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onEditToggle}
-          className="text-white hover:bg-white/20"
-        >
-          <Edit className="h-4 w-4" />
-        </Button>
+        {!readOnly && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onEditToggle}
+            className="text-white hover:bg-white/20"
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
+        )}
       </div>
       <div className="p-4">
         {Object.keys(localSkills).length > 0 ? (

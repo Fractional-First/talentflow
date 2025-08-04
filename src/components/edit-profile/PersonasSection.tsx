@@ -30,6 +30,7 @@ interface PersonasSectionProps {
   onActiveTabChange: (tab: string) => void
   className?: string
   content?: string
+  readOnly?: boolean
 }
 
 export const PersonasSection: React.FC<PersonasSectionProps> = ({
@@ -44,19 +45,22 @@ export const PersonasSection: React.FC<PersonasSectionProps> = ({
   onActiveTabChange,
   className = "",
   content = "Define different professional personas that showcase various aspects of your expertise",
+  readOnly = false,
 }) => {
   const sectionContent = (
     <div className={clsx("bg-white rounded-lg border", className)}>
       <div className="bg-[#449889] text-white rounded-t-lg flex items-center justify-between p-1 pl-4">
         <h3 className="text-lg font-semibold">Personas</h3>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onEditToggle}
-          className="text-white hover:bg-white/20"
-        >
-          <Edit className="h-4 w-4" />
-        </Button>
+        {!readOnly && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onEditToggle}
+            className="text-white hover:bg-white/20"
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
+        )}
       </div>
       <div className="p-4">
         {personas && personas.length > 0 ? (
