@@ -645,6 +645,7 @@ export type Database = {
         | "PROFILE_GENERATED"
         | "PROFILE_CONFIRMED"
         | "PREFERENCES_SET"
+        | "SET_PASSWORD"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -779,6 +780,7 @@ export const Constants = {
         "PROFILE_GENERATED",
         "PROFILE_CONFIRMED",
         "PREFERENCES_SET",
+        "SET_PASSWORD",
       ],
     },
   },
