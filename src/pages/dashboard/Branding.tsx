@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { DashboardLayout } from "@/components/DashboardLayout"
@@ -190,12 +189,9 @@ const Branding = () => {
               ))}
             </div>
             
-            <div className="mt-6 text-center space-y-2">
+            <div className="mt-6 text-center">
               <p className="text-sm text-muted-foreground">
                 These coaching offerings are delivered by trusted partners of Fractional First. Intake is commitment-free and designed to help you clarify your goals before engaging.
-              </p>
-              <p className="text-sm text-muted-foreground">
-                These services are delivered by Ikigai Leading, a trusted coaching partner. All sessions begin with a no-pressure intake to clarify goals and ensure fit.
               </p>
             </div>
           </StepCardContent>
