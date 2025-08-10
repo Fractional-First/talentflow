@@ -53,7 +53,7 @@ const App = () => (
           />
           
           {/* Public profile route - no auth required */}
-          <Route path="/profile/:userId" element={<PublicProfile />} />
+          <Route path="/profile/:slug" element={<PublicProfile />} />
 
           {/* Profile creation - for users with EMAIL_CONFIRMED, PROFILE_GENERATED, or PROFILE_CONFIRMED status */}
           <Route

@@ -1,8 +1,7 @@
-import { useQuery } from "@tanstack/react-query"
 import { useParams } from "react-router-dom"
 import { useState } from "react"
-import { supabase } from "@/integrations/supabase/client"
 import { ProfileData } from "@/types/profile"
+import { usePublicProfile } from "@/queries/usePublicProfile"
 import { BasicInfoSection } from "@/components/edit-profile/BasicInfoSection"
 import { EditableArraySection } from "@/components/edit-profile/EditableArraySection"
 import { EditableTextSection } from "@/components/edit-profile/EditableTextSection"
@@ -14,29 +13,10 @@ import { Spinner } from "@/components/ui/spinner"
 import NotFound from "./NotFound"
 
 const PublicProfile = () => {
-  const { userId } = useParams<{ userId: string }>()
+  const { slug } = useParams<{ slug: string }>()
   const [personasActiveTab, setPersonasActiveTab] = useState("0")
 
-  const { data: profileData, isLoading, error } = useQuery({
-    queryKey: ["public-profile", userId],
-    queryFn: async (): Promise<ProfileData | null> => {
-      if (!userId) throw new Error("No user ID provided")
-
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("profile_data")
-        .eq("id", userId)
-        .single()
-
-      if (error) {
-        console.error("Error loading public profile:", error)
-        throw error
-      }
-
-      return data?.profile_data as ProfileData || null
-    },
-    enabled: !!userId,
-  })
+  const { data: profileData, isLoading, error } = usePublicProfile(slug || "")
 
   if (isLoading) {
     return (
