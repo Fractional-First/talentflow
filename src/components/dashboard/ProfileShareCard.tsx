@@ -33,7 +33,7 @@ export function ProfileShareCard() {
   })
 
   const profileUrl = profileSlug 
-    ? `https://talent.fractionalfirst.com/profile/${profileSlug}`
+    ? `${window.location.origin}/profile/${profileSlug}`
     : ""
 
   const copyToClipboard = async () => {

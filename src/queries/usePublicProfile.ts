@@ -5,21 +5,25 @@ import { ProfileData } from "@/types/profile"
 export const usePublicProfile = (slug: string) => {
   return useQuery({
     queryKey: ["public-profile", slug],
-    queryFn: async () => {
+    queryFn: async (): Promise<ProfileData | null> => {
       if (!slug) throw new Error("No profile slug provided")
 
       const { data, error } = await supabase
         .from("profiles")
-        .select("profile_data")
+        .select("profile_data, first_name, last_name")
         .eq("profile_slug", slug)
-        .single()
+        .maybeSingle()
 
       if (error) {
-        console.error("Error loading public profile:", error)
+        console.error("Error fetching public profile:", error)
         throw error
       }
 
-      return data?.profile_data as ProfileData | null
+      if (!data) {
+        return null
+      }
+
+      return data.profile_data as ProfileData
     },
     enabled: !!slug,
   })
