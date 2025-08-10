@@ -438,6 +438,7 @@ export type Database = {
           notification_preferences: Json | null
           onboarding_status: Database["public"]["Enums"]["onboarding_status"]
           profile_data: Json
+          profile_slug: string
           profile_version: string
           updated_at: string
         }
@@ -450,6 +451,7 @@ export type Database = {
           notification_preferences?: Json | null
           onboarding_status?: Database["public"]["Enums"]["onboarding_status"]
           profile_data?: Json
+          profile_slug: string
           profile_version?: string
           updated_at?: string
         }
@@ -462,6 +464,7 @@ export type Database = {
           notification_preferences?: Json | null
           onboarding_status?: Database["public"]["Enums"]["onboarding_status"]
           profile_data?: Json
+          profile_slug?: string
           profile_version?: string
           updated_at?: string
         }
@@ -635,7 +638,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_unique_profile_slug: {
+        Args: { p_user_id: string; p_first_name: string; p_last_name: string }
+        Returns: string
+      }
     }
     Enums: {
       document_type: "resume" | "linkedin" | "other"
