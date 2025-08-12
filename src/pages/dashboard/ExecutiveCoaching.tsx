@@ -1,5 +1,4 @@
 
-
 import { useNavigate } from "react-router-dom"
 import { DashboardLayout } from "@/components/DashboardLayout"
 import {
@@ -28,7 +27,7 @@ const ExecutiveCoaching = () => {
                 <User className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <StepCardTitle className="text-3xl font-semibold">Executive 1:1 Coaching</StepCardTitle>
+                <StepCardTitle className="text-3xl font-semibold">Executive / Founder 1:1 Coaching</StepCardTitle>
                 <p className="text-xl text-primary font-medium mt-1">Perform Better. Relate Better. Feel Better.</p>
               </div>
             </div>
@@ -42,20 +41,12 @@ const ExecutiveCoaching = () => {
             </div>
 
             <StepCardDescription className="text-lg leading-relaxed">
-              Personalized coaching to accelerate your leadership growth and well-being.
+              Every leader operates in a unique context — shaped by your life experiences, skills, interests, challenges, and triggers. You are unlike anyone else. And yet, you share the universal drive of all leaders: to perform better, relate better, and feel better in both work and life.
             </StepCardDescription>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-              <div className="text-center">
-                <h4 className="font-medium text-primary mb-2">Tailored to your unique leadership context</h4>
-              </div>
-              <div className="text-center">
-                <h4 className="font-medium text-primary mb-2">3-month engagement with up to 3 sessions per month</h4>
-              </div>
-              <div className="text-center">
-                <h4 className="font-medium text-primary mb-2">Free, zero-commitment intro call to assess fit</h4>
-              </div>
-            </div>
+            <StepCardDescription className="text-lg leading-relaxed mt-4">
+              In 1:1 Coaching, we focus entirely on you and your access to these outcomes. We work quickly and directly, so you start seeing meaningful change fast.
+            </StepCardDescription>
           </StepCardHeader>
 
           <StepCardContent>
@@ -186,4 +177,3 @@ const ExecutiveCoaching = () => {
 }
 
 export default ExecutiveCoaching
-
