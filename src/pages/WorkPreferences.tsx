@@ -82,35 +82,35 @@ const WorkPreferences = () => {
     if (currentStep === "placement-type") {
       return (
         <StepCard>
-          <StepCardHeader className="text-center pb-8">
+          <StepCardHeader className="text-center pb-6 md:pb-8">
             <StepCardTitle className="text-2xl">Work Preferences</StepCardTitle>
             <StepCardDescription className="text-base mt-3 max-w-2xl mx-auto leading-relaxed">
               Choose how you'd like to work. You may select one or both options to help us tailor job opportunities and compensation structures to your preferences.
             </StepCardDescription>
           </StepCardHeader>
 
-          <StepCardContent className="space-y-8">
+          <StepCardContent className="space-y-6 md:space-y-8">
             {/* Full-time Position Section */}
-            <div className="space-y-6">
-              <div className="flex items-center gap-3 mb-4">
+            <div className="space-y-4 md:space-y-6">
+              <div className="flex items-center gap-3 mb-3 md:mb-4">
                 <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                   <Briefcase className="h-4 w-4 text-primary" />
                 </div>
                 <h2 className="text-xl font-semibold text-foreground">Employment Options</h2>
               </div>
               
-              <div className="space-y-4">
+              <div className="space-y-3 md:space-y-4">
                 {/* Full-time Card */}
                 <div className="group">
                   <button
                     onClick={() => toggleType("fullTime")}
-                    className={`w-full p-6 rounded-xl border-2 transition-all duration-200 ${
+                    className={`w-full p-4 md:p-6 rounded-xl border-2 transition-all duration-200 ${
                       form.fullTime.open_for_work
                         ? "border-primary bg-primary/5 shadow-sm"
                         : "border-border hover:border-primary/50 hover:bg-muted/20"
                     }`}
                   >
-                    <div className="flex flex-col md:flex-row md:items-start gap-4">
+                    <div className="flex flex-col md:flex-row md:items-start gap-3 md:gap-4">
                       <div className={`rounded-lg p-3 transition-colors self-center md:self-start ${
                         form.fullTime.open_for_work ? "bg-primary/15" : "bg-muted group-hover:bg-primary/10"
                       }`}>
@@ -143,8 +143,8 @@ const WorkPreferences = () => {
 
                   {/* Full-time Preferences */}
                   {form.fullTime.open_for_work && (
-                    <div className="mt-6 ml-0 md:ml-4 border-l-0 md:border-l-2 border-primary/20 pl-0 md:pl-6">
-                      <div className="bg-muted/30 rounded-xl p-6">
+                    <div className="mt-4 md:mt-6 ml-0 md:ml-4 border-l-0 md:border-l-2 border-primary/20 pl-0 md:pl-6">
+                      <div className="bg-muted/30 rounded-xl p-4 md:p-6">
                         <FullTimePreferences
                           form={form}
                           setForm={setForm}
@@ -156,19 +156,19 @@ const WorkPreferences = () => {
                   )}
                 </div>
 
-                <Separator className="my-6" />
+                <Separator className="my-4 md:my-6" />
 
                 {/* Flexible Position Card */}
                 <div className="group">
                   <button
                     onClick={() => toggleType("fractional")}
-                    className={`w-full p-6 rounded-xl border-2 transition-all duration-200 ${
+                    className={`w-full p-4 md:p-6 rounded-xl border-2 transition-all duration-200 ${
                       form.fractional.open_for_work
                         ? "border-primary bg-primary/5 shadow-sm"
                         : "border-border hover:border-primary/50 hover:bg-muted/20"
                     }`}
                   >
-                    <div className="flex flex-col md:flex-row md:items-start gap-4">
+                    <div className="flex flex-col md:flex-row md:items-start gap-3 md:gap-4">
                       <div className={`rounded-lg p-3 transition-colors self-center md:self-start ${
                         form.fractional.open_for_work ? "bg-primary/15" : "bg-muted group-hover:bg-primary/10"
                       }`}>
@@ -201,8 +201,8 @@ const WorkPreferences = () => {
 
                   {/* Flexible Preferences */}
                   {form.fractional.open_for_work && (
-                    <div className="mt-6 ml-0 md:ml-4 border-l-0 md:border-l-2 border-primary/20 pl-0 md:pl-6">
-                      <div className="bg-muted/30 rounded-xl p-6">
+                    <div className="mt-4 md:mt-6 ml-0 md:ml-4 border-l-0 md:border-l-2 border-primary/20 pl-0 md:pl-6">
+                      <div className="bg-muted/30 rounded-xl p-4 md:p-6">
                         <FlexiblePreferences
                           form={form}
                           setForm={setForm}
@@ -217,7 +217,7 @@ const WorkPreferences = () => {
             </div>
 
             {/* Action Button */}
-            <div className="pt-8 border-t">
+            <div className="pt-6 md:pt-8 border-t">
               <Button
                 onClick={handleContinue}
                 disabled={!hasSelection || isSaving}
@@ -242,7 +242,7 @@ const WorkPreferences = () => {
 
   return (
     <DashboardLayout>
-      <div className="container max-w-4xl py-8 px-4">{renderStepContent()}</div>
+      <div className="container max-w-4xl py-6 md:py-8 px-2 md:px-4">{renderStepContent()}</div>
     </DashboardLayout>
   )
 }

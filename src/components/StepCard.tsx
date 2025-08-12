@@ -16,7 +16,7 @@ export function StepCard({
   return (
     <div 
       className={cn(
-        "glass-card rounded-2xl px-8 py-6 md:px-10 md:py-8 w-full",
+        "glass-card rounded-2xl px-4 py-4 md:px-10 md:py-8 w-full",
         animate && "animate-scale-in",
         className
       )}
