@@ -81,126 +81,251 @@ const WorkPreferencesSection = ({
         <StepCardTitle>Work Preferences</StepCardTitle>
       </StepCardHeader>
       <StepCardContent>
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="actively-looking">Actively Looking for Work</Label>
-            <Switch
-              id="actively-looking"
-              checked={activelyLooking}
-              onCheckedChange={setActivelyLooking}
-            />
+        <div className="space-y-8">
+          {/* Job Search Status */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 rounded-lg bg-muted/30">
+            <div className="space-y-1">
+              <Label htmlFor="actively-looking" className="text-base font-medium">
+                Actively Looking for Work
+              </Label>
+              <p className="text-sm text-muted-foreground">
+                Set your current job search status
+              </p>
+            </div>
+            <div className="flex items-center space-x-3">
+              <Switch
+                id="actively-looking"
+                checked={activelyLooking}
+                onCheckedChange={setActivelyLooking}
+              />
+              <span className="text-sm font-medium whitespace-nowrap">
+                {activelyLooking ? 'Actively Looking' : 'Passively Looking'}
+              </span>
+            </div>
           </div>
 
-          <div className="space-y-4">
-            <h4 className="font-medium">Work Location Preferences</h4>
+          {/* Work Location Preferences */}
+          <div className="space-y-6">
             <div className="space-y-2">
-              <div className="flex items-center space-x-2">
+              <h4 className="text-lg font-semibold">Work Location Preferences</h4>
+              <p className="text-sm text-muted-foreground">
+                Select your preferred work arrangements
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="flex items-start space-x-3 p-3 rounded-lg hover:bg-muted/50 transition-colors">
                 <Checkbox
                   id="relocation"
                   checked={openToRelocation}
                   onCheckedChange={setOpenToRelocation}
+                  className="mt-0.5"
                 />
-                <Label htmlFor="relocation">Open to Relocation</Label>
+                <div className="space-y-1">
+                  <Label htmlFor="relocation" className="text-sm font-medium leading-none">
+                    Open to Relocation
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Willing to move for the right opportunity
+                  </p>
+                </div>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-start space-x-3 p-3 rounded-lg hover:bg-muted/50 transition-colors">
                 <Checkbox
                   id="remote"
                   checked={openToRemote}
                   onCheckedChange={setOpenToRemote}
+                  className="mt-0.5"
                 />
-                <Label htmlFor="remote">Open to Remote Work</Label>
+                <div className="space-y-1">
+                  <Label htmlFor="remote" className="text-sm font-medium leading-none">
+                    Open to Remote Work
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Work from anywhere setup
+                  </p>
+                </div>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-start space-x-3 p-3 rounded-lg hover:bg-muted/50 transition-colors">
                 <Checkbox
                   id="hybrid"
                   checked={openToHybrid}
                   onCheckedChange={setOpenToHybrid}
+                  className="mt-0.5"
                 />
-                <Label htmlFor="hybrid">Open to Hybrid Work</Label>
+                <div className="space-y-1">
+                  <Label htmlFor="hybrid" className="text-sm font-medium leading-none">
+                    Open to Hybrid Work
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Mix of remote and office work
+                  </p>
+                </div>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-start space-x-3 p-3 rounded-lg hover:bg-muted/50 transition-colors">
                 <Checkbox
                   id="onsite"
                   checked={openToOnsite}
                   onCheckedChange={setOpenToOnsite}
+                  className="mt-0.5"
                 />
-                <Label htmlFor="onsite">Open to On-site Work</Label>
+                <div className="space-y-1">
+                  <Label htmlFor="onsite" className="text-sm font-medium leading-none">
+                    Open to On-site Work
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Traditional office environment
+                  </p>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="space-y-4">
-            <h4 className="font-medium">Employment Type Preferences</h4>
+          {/* Employment Type Preferences */}
+          <div className="space-y-6">
             <div className="space-y-2">
-              <div className="flex items-center space-x-2">
+              <h4 className="text-lg font-semibold">Employment Type Preferences</h4>
+              <p className="text-sm text-muted-foreground">
+                Select the types of employment you're interested in
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="flex items-start space-x-3 p-3 rounded-lg hover:bg-muted/50 transition-colors">
                 <Checkbox
                   id="contract"
                   checked={openToContract}
                   onCheckedChange={setOpenToContract}
+                  className="mt-0.5"
                 />
-                <Label htmlFor="contract">Open to Contract Work</Label>
+                <div className="space-y-1">
+                  <Label htmlFor="contract" className="text-sm font-medium leading-none">
+                    Open to Contract Work
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Project-based employment
+                  </p>
+                </div>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-start space-x-3 p-3 rounded-lg hover:bg-muted/50 transition-colors">
                 <Checkbox
                   id="full-time"
                   checked={openToFullTime}
                   onCheckedChange={setOpenToFullTime}
+                  className="mt-0.5"
                 />
-                <Label htmlFor="full-time">Open to Full-time Work</Label>
+                <div className="space-y-1">
+                  <Label htmlFor="full-time" className="text-sm font-medium leading-none">
+                    Open to Full-time Work
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Traditional 40-hour work week
+                  </p>
+                </div>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-start space-x-3 p-3 rounded-lg hover:bg-muted/50 transition-colors">
                 <Checkbox
                   id="part-time"
                   checked={openToPartTime}
                   onCheckedChange={setOpenToPartTime}
+                  className="mt-0.5"
                 />
-                <Label htmlFor="part-time">Open to Part-time Work</Label>
+                <div className="space-y-1">
+                  <Label htmlFor="part-time" className="text-sm font-medium leading-none">
+                    Open to Part-time Work
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Reduced hours schedule
+                  </p>
+                </div>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-start space-x-3 p-3 rounded-lg hover:bg-muted/50 transition-colors">
                 <Checkbox
                   id="internship"
                   checked={openToInternship}
                   onCheckedChange={setOpenToInternship}
+                  className="mt-0.5"
                 />
-                <Label htmlFor="internship">Open to Internships</Label>
+                <div className="space-y-1">
+                  <Label htmlFor="internship" className="text-sm font-medium leading-none">
+                    Open to Internships
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Learning and development opportunities
+                  </p>
+                </div>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-start space-x-3 p-3 rounded-lg hover:bg-muted/50 transition-colors">
                 <Checkbox
                   id="temporary"
                   checked={openToTemporary}
                   onCheckedChange={setOpenToTemporary}
+                  className="mt-0.5"
                 />
-                <Label htmlFor="temporary">Open to Temporary Work</Label>
+                <div className="space-y-1">
+                  <Label htmlFor="temporary" className="text-sm font-medium leading-none">
+                    Open to Temporary Work
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Short-term assignments
+                  </p>
+                </div>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-start space-x-3 p-3 rounded-lg hover:bg-muted/50 transition-colors">
                 <Checkbox
                   id="volunteer"
                   checked={openToVolunteer}
                   onCheckedChange={setOpenToVolunteer}
+                  className="mt-0.5"
                 />
-                <Label htmlFor="volunteer">Open to Volunteer Work</Label>
+                <div className="space-y-1">
+                  <Label htmlFor="volunteer" className="text-sm font-medium leading-none">
+                    Open to Volunteer Work
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Unpaid community service
+                  </p>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="space-y-4">
-            <h4 className="font-medium">Other Preferences</h4>
+          {/* Other Preferences */}
+          <div className="space-y-6">
             <div className="space-y-2">
-              <div className="flex items-center space-x-2">
+              <h4 className="text-lg font-semibold">Other Preferences</h4>
+              <p className="text-sm text-muted-foreground">
+                Specify any additional work preferences
+              </p>
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-start space-x-3 p-3 rounded-lg hover:bg-muted/50 transition-colors">
                 <Checkbox
                   id="other"
                   checked={openToOther}
                   onCheckedChange={setOpenToOther}
+                  className="mt-0.5"
                 />
-                <Label htmlFor="other">Open to Other Types of Work</Label>
+                <div className="space-y-1">
+                  <Label htmlFor="other" className="text-sm font-medium leading-none">
+                    Open to Other Types of Work
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Specify custom work arrangements
+                  </p>
+                </div>
               </div>
               {openToOther && (
-                <Textarea
-                  placeholder="Please specify other work preferences..."
-                  value={otherPreferences}
-                  onChange={(e) => setOtherPreferences(e.target.value)}
-                  className="mt-2"
-                />
+                <div className="ml-6 space-y-2">
+                  <Label htmlFor="other-preferences" className="text-sm font-medium">
+                    Please specify:
+                  </Label>
+                  <Textarea
+                    id="other-preferences"
+                    placeholder="Please specify other work preferences..."
+                    value={otherPreferences}
+                    onChange={(e) => setOtherPreferences(e.target.value)}
+                    className="min-h-[80px] text-sm"
+                  />
+                </div>
               )}
             </div>
           </div>
@@ -210,8 +335,8 @@ const WorkPreferencesSection = ({
             setIndustryPreferences={setIndustryPreferences}
           />
 
-          <div className="pt-4">
-            <Button className="w-full">Save Preferences</Button>
+          <div className="pt-6">
+            <Button className="w-full h-12 text-base">Save Preferences</Button>
           </div>
         </div>
       </StepCardContent>
