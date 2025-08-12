@@ -95,18 +95,18 @@ export const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
               {location || "Location not available"}
             </p>
             
-            {/* LinkedIn Link - Inline with icon */}
+            {/* LinkedIn Link - Horizontal layout with aligned centers */}
             {linkedinUrl && (
               <div className="flex justify-center items-center pt-1">
                 <a
                   href={linkedinUrl.startsWith('http') ? linkedinUrl : `https://${linkedinUrl}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-2 py-1.5 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-md transition-all duration-200 touch-manipulation min-h-[40px] text-sm font-medium"
+                  className="inline-flex items-center justify-center gap-2 px-3 py-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-md transition-all duration-200 touch-manipulation min-h-[48px] max-w-[200px] flex-shrink-0"
                   aria-label="View LinkedIn Profile"
                 >
-                  <Linkedin className="h-4 w-4 shrink-0" />
-                  <span>LinkedIn</span>
+                  <Linkedin className="h-4 w-4 flex-shrink-0" />
+                  <span className="text-sm font-medium truncate">LinkedIn</span>
                 </a>
               </div>
             )}
