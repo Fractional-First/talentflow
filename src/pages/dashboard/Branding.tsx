@@ -1,4 +1,5 @@
 
+
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { DashboardLayout } from "@/components/DashboardLayout"
@@ -40,7 +41,7 @@ const Branding = () => {
       bulletPoints: [
         "Tailored to your unique leadership context",
         "3-month engagement with up to 3 sessions per month",
-        "Complimentary intake process to assess fit"
+        "Free, zero-commitment intro call to assess fit"
       ],
       icon: User,
       ctaText: "Schedule Intro Call",
@@ -50,13 +51,13 @@ const Branding = () => {
     {
       id: 2,
       title: "Leadership Team Coaching",
-      subheadline: "Elevate Team Effectiveness and Collective Results",
+      subheadline: "Elevate Team Effectiveness and Outcomes",
       description:
-        "Strengthen your leadership team's relationships, decision-making, and results through customized team coaching aligned to your business context.",
+        "Strengthen your leadership team's relationships, decision-making, and impact through customized team coaching aligned to your business context.",
       bulletPoints: [
         "Designed around your team's existing meeting cadence",
         "Balances business tasks with deep relationship work",
-        "Starts with a free intake consultation and proposal"
+        "Free, zero-commitment intro call and proposal"
       ],
       icon: UsersRound,
       ctaText: "Request Coaching Proposal",
@@ -71,13 +72,13 @@ const Branding = () => {
         <StepCard>
           <StepCardHeader>
             <div className="flex items-center gap-3">
-              <StepCardTitle className="text-3xl font-semibold">Professional Coaching by Trusted Partners</StepCardTitle>
+              <StepCardTitle className="text-3xl font-semibold">Professional Coaching With Trusted Partners</StepCardTitle>
               <Badge variant="outline" className="text-sm px-3 py-1 rounded-full">
                 Optional
               </Badge>
             </div>
             <StepCardDescription className="text-lg mt-3 text-muted-foreground">
-              Achieve greater clarity, alignment, and effectiveness—whether you're leading solo or as a team.
+              Whether you're leading solo or as a team, master your leadership journey with greater clarity, alignment, and effectiveness.
             </StepCardDescription>
           </StepCardHeader>
 
@@ -141,7 +142,7 @@ const Branding = () => {
             
             <div className="mt-6 text-center">
               <p className="text-sm text-muted-foreground">
-                These coaching offerings are delivered by trusted partners of Fractional First. Intake is commitment-free and designed to help you clarify your goals before engaging.
+                These coaching offerings are delivered by trusted partners of Fractional First. The commitment-free intro / intake calls are honest conversations designed to help you clarify your goals before engaging.
               </p>
             </div>
           </StepCardContent>
@@ -163,3 +164,4 @@ const Branding = () => {
 }
 
 export default Branding
+
