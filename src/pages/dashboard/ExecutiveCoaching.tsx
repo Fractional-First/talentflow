@@ -10,7 +10,7 @@ import {
   StepCardTitle,
 } from "@/components/StepCard"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, User, Clock, CheckCircle, ExternalLink } from "lucide-react"
+import { ArrowLeft, User, Clock, CheckCircle, ExternalLink, FileText } from "lucide-react"
 import { BlurImage } from "@/components/BlurImage"
 
 const ExecutiveCoaching = () => {
@@ -72,44 +72,66 @@ const ExecutiveCoaching = () => {
                 </ul>
               </div>
 
-              {/* Coach Profile Section */}
+              {/* Intake Process Section */}
               <div className="bg-background/50 border border-border/50 rounded-lg p-6">
                 <div className="flex items-center gap-3 mb-4">
-                  <User className="h-5 w-5 text-primary" />
-                  <h3 className="text-xl font-semibold">Your Coach</h3>
+                  <FileText className="h-5 w-5 text-primary" />
+                  <h3 className="text-xl font-semibold">Intake Process</h3>
                 </div>
-                <div className="flex items-start gap-4 mb-4">
-                  <div className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
-                    <BlurImage
-                      src="/lovable-uploads/ad669935-8bce-40c6-810e-e417c08e6be3.png"
-                      alt="Stephen Burke"
-                      className="object-cover w-full h-full"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="text-lg font-medium">Stephen Burke</h4>
-                    <p className="text-muted-foreground">Executive & Leadership Coach</p>
-                  </div>
-                </div>
-                <p className="text-muted-foreground leading-relaxed mb-4">
-                  Stephen is a visionary leader and executive coach with a unique blend of global engineering leadership and profound expertise in human potential and organizational systems. He is dedicated to empowering individuals, teams, and entire organizations to "CREATE their best lives, do their best work, make the biggest positive impact and minimize their suffering along the way."
-                </p>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  asChild
-                  className="gap-2"
-                >
-                  <a 
-                    href="https://www.linkedin.com/in/stephenburkehi/" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                  >
-                    View Stephen's Profile
-                    <ExternalLink className="h-3 w-3" />
-                  </a>
-                </Button>
+                <ul className="space-y-3 text-muted-foreground">
+                  <li className="flex items-start">
+                    <CheckCircle className="h-4 w-4 text-primary mr-3 mt-1 flex-shrink-0" />
+                    <span>30-minute complimentary intro call to explore fit and answer questions</span>
+                  </li>
+                  <li className="flex items-start">
+                    <CheckCircle className="h-4 w-4 text-primary mr-3 mt-1 flex-shrink-0" />
+                    <span>90-minute intake session to establish context, goals, and coaching approach</span>
+                  </li>
+                  <li className="flex items-start">
+                    <CheckCircle className="h-4 w-4 text-primary mr-3 mt-1 flex-shrink-0" />
+                    <span>Simple assessment tools to understand your strengths and growth edges</span>
+                  </li>
+                </ul>
               </div>
+            </div>
+
+            {/* Coach Profile Section */}
+            <div className="bg-background/50 border border-border/50 rounded-lg p-6 mt-8">
+              <div className="flex items-center gap-3 mb-4">
+                <User className="h-5 w-5 text-primary" />
+                <h3 className="text-xl font-semibold">Your Coach</h3>
+              </div>
+              <div className="flex items-start gap-4 mb-4">
+                <div className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
+                  <BlurImage
+                    src="/lovable-uploads/ad669935-8bce-40c6-810e-e417c08e6be3.png"
+                    alt="Stephen Burke"
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-lg font-medium">Stephen Burke</h4>
+                  <p className="text-muted-foreground">Executive & Leadership Coach</p>
+                </div>
+              </div>
+              <p className="text-muted-foreground leading-relaxed mb-4">
+                Stephen is a visionary leader and executive coach with a unique blend of global engineering leadership and profound expertise in human potential and organizational systems. He is dedicated to empowering individuals, teams, and entire organizations to "CREATE their best lives, do their best work, make the biggest positive impact and minimize their suffering along the way."
+              </p>
+              <Button
+                variant="outline"
+                size="sm"
+                asChild
+                className="gap-2"
+              >
+                <a 
+                  href="https://www.linkedin.com/in/stephenburkehi/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  View Stephen's Profile
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+              </Button>
             </div>
 
             {/* CTA Section */}
