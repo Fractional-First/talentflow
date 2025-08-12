@@ -97,7 +97,7 @@ const Branding = () => {
                       className="object-cover w-full h-full"
                     />
                     <Badge className="absolute top-2 right-2 bg-primary rounded-full">
-                      Premium Partner Service
+                      Paid Service
                     </Badge>
                   </div>
 
