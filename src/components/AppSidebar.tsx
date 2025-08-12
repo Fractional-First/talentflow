@@ -23,7 +23,7 @@ const menuItems = [
     icon: Home,
   },
   {
-    title: "Profile Snapshot",
+    title: "My Profile",
     path: "/edit-profile",
     icon: User,
   },
