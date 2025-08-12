@@ -44,6 +44,7 @@ export interface ProfileData {
   geographical_coverage?: string[]
   profilePicture?: string
   engagement_options?: string[]
+  linkedin_url?: string
 }
 
 export interface EditStates {
@@ -62,4 +63,5 @@ export interface EditStates {
   sweetSpot: boolean
   userManual: boolean
   functionalSkills: boolean
+  linkedinUrl: boolean
 }

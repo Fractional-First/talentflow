@@ -1,4 +1,3 @@
-
 import { initialSteps } from "@/components/dashboard/OnboardingSteps"
 import { DashboardLayout } from "@/components/DashboardLayout"
 import { AutoSaveStatus } from "@/components/edit-profile/AutoSaveStatus"
@@ -103,6 +102,7 @@ const EditProfile = () => {
                   name={formData?.name || ""}
                   role={formData?.role || ""}
                   location={formData?.location || ""}
+                  linkedinUrl={formData?.linkedin_url || ""}
                   isEditing={editStates.basicInfo}
                   onEditToggle={() => toggleEdit("basicInfo")}
                   onChange={(field, value) => handleInputChange(field, value)}

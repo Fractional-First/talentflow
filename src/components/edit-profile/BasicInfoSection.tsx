@@ -1,16 +1,18 @@
+
 import React from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Edit } from "lucide-react"
+import { Edit, Linkedin } from "lucide-react"
 import { EditableSection } from "@/components/EditableSection"
 
 interface BasicInfoSectionProps {
   name: string
   role: string
   location: string
+  linkedinUrl?: string
   isEditing: boolean
   onEditToggle: () => void
-  onChange: (field: "name" | "role" | "location", value: string) => void
+  onChange: (field: "name" | "role" | "location" | "linkedin_url", value: string) => void
   className?: string
   content?: string
   readOnly?: boolean
@@ -20,6 +22,7 @@ export const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
   name,
   role,
   location,
+  linkedinUrl,
   isEditing,
   onEditToggle,
   onChange,
@@ -68,6 +71,12 @@ export const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
               className="text-sm text-center"
               placeholder="Location"
             />
+            <Input
+              value={linkedinUrl || ""}
+              onChange={(e) => onChange("linkedin_url", e.target.value)}
+              className="text-sm text-center"
+              placeholder="LinkedIn Profile URL"
+            />
           </>
         ) : (
           <>
@@ -77,6 +86,19 @@ export const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
             <p className="text-sm text-gray-500">
               {location || "Location not available"}
             </p>
+            {linkedinUrl && (
+              <div className="flex justify-center mt-3">
+                <a
+                  href={linkedinUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors"
+                >
+                  <Linkedin className="h-5 w-5" />
+                  <span className="text-sm">LinkedIn Profile</span>
+                </a>
+              </div>
+            )}
           </>
         )}
       </div>

@@ -1,3 +1,4 @@
+
 import { useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { toast } from "@/hooks/use-toast"
@@ -76,6 +77,7 @@ export const useEditProfile = () => {
     sweetSpot: false,
     userManual: false,
     functionalSkills: false,
+    linkedinUrl: false,
   })
 
   // Toggle edit function
