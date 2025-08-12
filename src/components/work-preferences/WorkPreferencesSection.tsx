@@ -1,3 +1,4 @@
+
 import {
   StepCard,
   StepCardContent,
@@ -118,10 +119,10 @@ const WorkPreferencesSection = ({
                   id="relocation"
                   checked={openToRelocation}
                   onCheckedChange={setOpenToRelocation}
-                  className="mt-0.5"
+                  className="mt-0.5 flex-shrink-0"
                 />
-                <div className="space-y-1">
-                  <Label htmlFor="relocation" className="text-sm font-medium leading-none">
+                <div className="space-y-1 min-w-0 flex-1">
+                  <Label htmlFor="relocation" className="text-sm font-medium leading-none block">
                     Open to Relocation
                   </Label>
                   <p className="text-xs text-muted-foreground">
@@ -134,10 +135,10 @@ const WorkPreferencesSection = ({
                   id="remote"
                   checked={openToRemote}
                   onCheckedChange={setOpenToRemote}
-                  className="mt-0.5"
+                  className="mt-0.5 flex-shrink-0"
                 />
-                <div className="space-y-1">
-                  <Label htmlFor="remote" className="text-sm font-medium leading-none">
+                <div className="space-y-1 min-w-0 flex-1">
+                  <Label htmlFor="remote" className="text-sm font-medium leading-none block">
                     Open to Remote Work
                   </Label>
                   <p className="text-xs text-muted-foreground">
@@ -150,10 +151,10 @@ const WorkPreferencesSection = ({
                   id="hybrid"
                   checked={openToHybrid}
                   onCheckedChange={setOpenToHybrid}
-                  className="mt-0.5"
+                  className="mt-0.5 flex-shrink-0"
                 />
-                <div className="space-y-1">
-                  <Label htmlFor="hybrid" className="text-sm font-medium leading-none">
+                <div className="space-y-1 min-w-0 flex-1">
+                  <Label htmlFor="hybrid" className="text-sm font-medium leading-none block">
                     Open to Hybrid Work
                   </Label>
                   <p className="text-xs text-muted-foreground">
@@ -166,10 +167,10 @@ const WorkPreferencesSection = ({
                   id="onsite"
                   checked={openToOnsite}
                   onCheckedChange={setOpenToOnsite}
-                  className="mt-0.5"
+                  className="mt-0.5 flex-shrink-0"
                 />
-                <div className="space-y-1">
-                  <Label htmlFor="onsite" className="text-sm font-medium leading-none">
+                <div className="space-y-1 min-w-0 flex-1">
+                  <Label htmlFor="onsite" className="text-sm font-medium leading-none block">
                     Open to On-site Work
                   </Label>
                   <p className="text-xs text-muted-foreground">
@@ -194,10 +195,10 @@ const WorkPreferencesSection = ({
                   id="contract"
                   checked={openToContract}
                   onCheckedChange={setOpenToContract}
-                  className="mt-0.5"
+                  className="mt-0.5 flex-shrink-0"
                 />
-                <div className="space-y-1">
-                  <Label htmlFor="contract" className="text-sm font-medium leading-none">
+                <div className="space-y-1 min-w-0 flex-1">
+                  <Label htmlFor="contract" className="text-sm font-medium leading-none block">
                     Open to Contract Work
                   </Label>
                   <p className="text-xs text-muted-foreground">
@@ -210,10 +211,10 @@ const WorkPreferencesSection = ({
                   id="full-time"
                   checked={openToFullTime}
                   onCheckedChange={setOpenToFullTime}
-                  className="mt-0.5"
+                  className="mt-0.5 flex-shrink-0"
                 />
-                <div className="space-y-1">
-                  <Label htmlFor="full-time" className="text-sm font-medium leading-none">
+                <div className="space-y-1 min-w-0 flex-1">
+                  <Label htmlFor="full-time" className="text-sm font-medium leading-none block">
                     Open to Full-time Work
                   </Label>
                   <p className="text-xs text-muted-foreground">
@@ -226,10 +227,10 @@ const WorkPreferencesSection = ({
                   id="part-time"
                   checked={openToPartTime}
                   onCheckedChange={setOpenToPartTime}
-                  className="mt-0.5"
+                  className="mt-0.5 flex-shrink-0"
                 />
-                <div className="space-y-1">
-                  <Label htmlFor="part-time" className="text-sm font-medium leading-none">
+                <div className="space-y-1 min-w-0 flex-1">
+                  <Label htmlFor="part-time" className="text-sm font-medium leading-none block">
                     Open to Part-time Work
                   </Label>
                   <p className="text-xs text-muted-foreground">
@@ -242,10 +243,10 @@ const WorkPreferencesSection = ({
                   id="internship"
                   checked={openToInternship}
                   onCheckedChange={setOpenToInternship}
-                  className="mt-0.5"
+                  className="mt-0.5 flex-shrink-0"
                 />
-                <div className="space-y-1">
-                  <Label htmlFor="internship" className="text-sm font-medium leading-none">
+                <div className="space-y-1 min-w-0 flex-1">
+                  <Label htmlFor="internship" className="text-sm font-medium leading-none block">
                     Open to Internships
                   </Label>
                   <p className="text-xs text-muted-foreground">
@@ -258,10 +259,10 @@ const WorkPreferencesSection = ({
                   id="temporary"
                   checked={openToTemporary}
                   onCheckedChange={setOpenToTemporary}
-                  className="mt-0.5"
+                  className="mt-0.5 flex-shrink-0"
                 />
-                <div className="space-y-1">
-                  <Label htmlFor="temporary" className="text-sm font-medium leading-none">
+                <div className="space-y-1 min-w-0 flex-1">
+                  <Label htmlFor="temporary" className="text-sm font-medium leading-none block">
                     Open to Temporary Work
                   </Label>
                   <p className="text-xs text-muted-foreground">
@@ -274,10 +275,10 @@ const WorkPreferencesSection = ({
                   id="volunteer"
                   checked={openToVolunteer}
                   onCheckedChange={setOpenToVolunteer}
-                  className="mt-0.5"
+                  className="mt-0.5 flex-shrink-0"
                 />
-                <div className="space-y-1">
-                  <Label htmlFor="volunteer" className="text-sm font-medium leading-none">
+                <div className="space-y-1 min-w-0 flex-1">
+                  <Label htmlFor="volunteer" className="text-sm font-medium leading-none block">
                     Open to Volunteer Work
                   </Label>
                   <p className="text-xs text-muted-foreground">
@@ -302,10 +303,10 @@ const WorkPreferencesSection = ({
                   id="other"
                   checked={openToOther}
                   onCheckedChange={setOpenToOther}
-                  className="mt-0.5"
+                  className="mt-0.5 flex-shrink-0"
                 />
-                <div className="space-y-1">
-                  <Label htmlFor="other" className="text-sm font-medium leading-none">
+                <div className="space-y-1 min-w-0 flex-1">
+                  <Label htmlFor="other" className="text-sm font-medium leading-none block">
                     Open to Other Types of Work
                   </Label>
                   <p className="text-xs text-muted-foreground">
@@ -314,7 +315,7 @@ const WorkPreferencesSection = ({
                 </div>
               </div>
               {openToOther && (
-                <div className="ml-6 space-y-2">
+                <div className="space-y-2">
                   <Label htmlFor="other-preferences" className="text-sm font-medium">
                     Please specify:
                   </Label>
