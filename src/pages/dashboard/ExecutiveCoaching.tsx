@@ -1,3 +1,4 @@
+
 import { useNavigate } from "react-router-dom"
 import { DashboardLayout } from "@/components/DashboardLayout"
 import {
@@ -121,8 +122,12 @@ const ExecutiveCoaching = () => {
             <div className="bg-primary/5 border border-primary/20 rounded-lg p-6 mt-8">
               <h3 className="text-xl font-semibold mb-4">Your Coach</h3>
               <div className="flex items-center gap-4">
-                <div className="bg-primary/10 p-3 rounded-full">
-                  <User className="h-8 w-8 text-primary" />
+                <div className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
+                  <BlurImage
+                    src="/lovable-uploads/ad669935-8bce-40c6-810e-e417c08e6be3.png"
+                    alt="Stephen Burke"
+                    className="object-cover w-full h-full"
+                  />
                 </div>
                 <div className="flex-1">
                   <h4 className="text-lg font-medium">Stephen Burke</h4>
