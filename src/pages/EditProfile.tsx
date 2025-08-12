@@ -303,7 +303,7 @@ const EditProfile = () => {
         <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 pt-6 px-2 sm:px-0">
           <Button variant="outline" onClick={() => navigate("/create-profile")} className="w-full sm:w-auto">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Profile
+            Recreate Profile
           </Button>
 
           <Button
