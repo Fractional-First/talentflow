@@ -1,153 +1,234 @@
 
-import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
 import { DashboardLayout } from "@/components/DashboardLayout"
-import { initialSteps } from "@/components/dashboard/OnboardingSteps"
-import { StepCard, StepCardContent, StepCardDescription, StepCardFooter, StepCardHeader, StepCardTitle } from "@/components/StepCard"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useToast } from "@/hooks/use-toast"
-import { useSaveWorkPreferences } from "@/hooks/useSaveWorkPreferences"
-import { useWorkPreferences, CombinedWorkPreferencesForm } from "@/hooks/useWorkPreferences"
-import { ArrowLeft, ArrowRight } from "lucide-react"
+import { WorkPreferencesConfirmation } from "@/components/work-preferences/WorkPreferencesConfirmation"
 import { FlexiblePreferences } from "@/components/work-preferences/FlexiblePreferences"
 import { FullTimePreferences } from "@/components/work-preferences/FullTimePreferences"
-import WorkPreferencesSection from "@/components/work-preferences/WorkPreferencesSection"
+import {
+  StepCard,
+  StepCardContent,
+  StepCardDescription,
+  StepCardHeader,
+  StepCardTitle,
+} from "@/components/StepCard"
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Separator } from "@/components/ui/separator"
+import { Briefcase, Clock } from "lucide-react"
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { Spinner } from "@/components/ui/spinner"
+import { useWorkPreferences } from "@/hooks/useWorkPreferences"
+import { useSaveWorkPreferences } from "@/hooks/useSaveWorkPreferences"
 
 const WorkPreferences = () => {
   const navigate = useNavigate()
-  const { toast } = useToast()
-  const [activeTab, setActiveTab] = useState("flexible")
-  
-  const {
-    form,
-    setForm,
-    setCurrentLocation,
-    isLoading: loadingPreferences
-  } = useWorkPreferences()
+  const [currentStep, setCurrentStep] = useState<
+    "placement-type" | "confirmation"
+  >("placement-type")
 
-  const { save: savePreferences, isSaving: savingPreferences } = useSaveWorkPreferences()
+  // Unified form state
+  const { form, setForm, isLoading, error, setCurrentLocation, initialized } =
+    useWorkPreferences()
+  const { save, isSaving, error: saveError } = useSaveWorkPreferences()
 
-  // Set default availability type based on active tab
-  useEffect(() => {
-    if (activeTab === "flexible") {
-      setForm(prev => ({
-        ...prev,
-        availability_type: "fractional"
-      }))
-    } else if (activeTab === "fulltime") {
-      setForm(prev => ({
-        ...prev,
-        availability_type: "full_time"
-      }))
-    }
-  }, [activeTab, setForm])
+  // Handle toggling placement types
+  const toggleType = (type: "fullTime" | "fractional") => {
+    setForm((prev) => ({
+      ...prev,
+      [type]: {
+        ...prev[type],
+        open_for_work: !prev[type].open_for_work,
+      },
+    }))
+  }
 
-  const handleSave = async () => {
-    const finalForm = {
-      ...form,
-      availability_type: activeTab === "flexible" ? "fractional" as const : "full_time" as const
-    }
-
-    const success = await savePreferences(finalForm)
+  // Save/Continue logic
+  const handleContinue = async () => {
+    const success = await save(form)
     if (success) {
-      toast({
-        title: "Success",
-        description: "Your work preferences have been saved successfully.",
-      })
-      navigate("/dashboard")
-    } else {
-      toast({
-        title: "Error",
-        description: "There was an error saving your preferences. Please try again.",
-        variant: "destructive",
-      })
+      setCurrentStep("confirmation")
     }
   }
 
-  if (loadingPreferences) {
+  const handleGoToDashboard = () => {
+    navigate("/dashboard")
+  }
+
+  // Render
+  if (isLoading || !initialized) {
     return (
-      <DashboardLayout steps={initialSteps} currentStep={3}>
-        <div className="min-h-[60vh] flex items-center justify-center">
-          <div>Loading preferences...</div>
+      <DashboardLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Spinner size="lg" />
         </div>
       </DashboardLayout>
     )
   }
 
-  return (
-    <DashboardLayout steps={initialSteps} currentStep={3}>
-      <div className="w-full max-w-none px-4 sm:px-6 lg:px-8 mx-auto">
-        <StepCard className="w-full max-w-4xl mx-auto">
-          <StepCardHeader>
-            <StepCardTitle>Work Preferences</StepCardTitle>
-            <StepCardDescription>
-              Tell us about your ideal work arrangements and preferences
+  if (error) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center min-h-[60vh] text-red-600">
+          Error loading preferences: {error.message}
+        </div>
+      </DashboardLayout>
+    )
+  }
+
+  const hasSelection =
+    form.fullTime.open_for_work || form.fractional.open_for_work
+
+  const renderStepContent = () => {
+    if (currentStep === "placement-type") {
+      return (
+        <StepCard>
+          <StepCardHeader className="text-center pb-8">
+            <StepCardTitle className="text-2xl">Work Preferences</StepCardTitle>
+            <StepCardDescription className="text-base mt-3 max-w-2xl mx-auto leading-relaxed">
+              Choose how you'd like to work. You may select one or both options to help us tailor job opportunities and compensation structures to your preferences.
             </StepCardDescription>
           </StepCardHeader>
 
-          <StepCardContent>
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-8">
-                <TabsTrigger value="flexible">Fractional/Consulting</TabsTrigger>
-                <TabsTrigger value="fulltime">Full-Time</TabsTrigger>
-              </TabsList>
-
-              <div className="w-full overflow-hidden">
-                <TabsContent value="flexible" className="mt-0">
-                  <div className="space-y-6 w-full">
-                    <FlexiblePreferences
-                      form={form}
-                      setForm={setForm}
-                      currentLocationObj={form.currentLocationObj}
-                      setCurrentLocation={setCurrentLocation}
-                    />
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="fulltime" className="mt-0">
-                  <div className="space-y-6 w-full">
-                    <FullTimePreferences
-                      form={form}
-                      setForm={setForm}
-                      currentLocationObj={form.currentLocationObj}
-                      setCurrentLocation={setCurrentLocation}
-                    />
-                  </div>
-                </TabsContent>
+          <StepCardContent className="space-y-8">
+            {/* Full-time Position Section */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Briefcase className="h-4 w-4 text-primary" />
+                </div>
+                <h2 className="text-xl font-semibold text-foreground">Employment Options</h2>
               </div>
-            </Tabs>
+              
+              <div className="space-y-4">
+                {/* Full-time Card */}
+                <div className="group">
+                  <button
+                    onClick={() => toggleType("fullTime")}
+                    className={`w-full p-6 rounded-xl border-2 transition-all duration-200 ${
+                      form.fullTime.open_for_work
+                        ? "border-primary bg-primary/5 shadow-sm"
+                        : "border-border hover:border-primary/50 hover:bg-muted/20"
+                    }`}
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className={`rounded-lg p-3 transition-colors ${
+                        form.fullTime.open_for_work ? "bg-primary/15" : "bg-muted group-hover:bg-primary/10"
+                      }`}>
+                        <Briefcase className={`h-5 w-5 ${
+                          form.fullTime.open_for_work ? "text-primary" : "text-muted-foreground"
+                        }`} />
+                      </div>
+                      <div className="flex-1 text-left">
+                        <div className="flex items-center justify-between mb-2">
+                          <h3 className="text-lg font-semibold">Full-time Position</h3>
+                          <Checkbox
+                            checked={form.fullTime.open_for_work}
+                            className="h-5 w-5"
+                            onCheckedChange={() => toggleType("fullTime")}
+                          />
+                        </div>
+                        <p className="text-body-mobile md:text-body-desktop text-muted-foreground leading-relaxed">
+                          40 hours per week, dedicated to one company. Traditional employment with benefits and long-term commitment.
+                        </p>
+                      </div>
+                    </div>
+                  </button>
 
-            <div className="mt-8 w-full">
-              <WorkPreferencesSection
-                form={form}
-                setForm={setForm}
-              />
+                  {/* Full-time Preferences */}
+                  {form.fullTime.open_for_work && (
+                    <div className="mt-6 ml-4 border-l-2 border-primary/20 pl-6">
+                      <div className="bg-muted/30 rounded-xl p-6">
+                        <FullTimePreferences
+                          form={form}
+                          setForm={setForm}
+                          currentLocationObj={form.currentLocationObj}
+                          setCurrentLocation={setCurrentLocation}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <Separator className="my-6" />
+
+                {/* Flexible Position Card */}
+                <div className="group">
+                  <button
+                    onClick={() => toggleType("fractional")}
+                    className={`w-full p-6 rounded-xl border-2 transition-all duration-200 ${
+                      form.fractional.open_for_work
+                        ? "border-primary bg-primary/5 shadow-sm"
+                        : "border-border hover:border-primary/50 hover:bg-muted/20"
+                    }`}
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className={`rounded-lg p-3 transition-colors ${
+                        form.fractional.open_for_work ? "bg-primary/15" : "bg-muted group-hover:bg-primary/10"
+                      }`}>
+                        <Clock className={`h-5 w-5 ${
+                          form.fractional.open_for_work ? "text-primary" : "text-muted-foreground"
+                        }`} />
+                      </div>
+                      <div className="flex-1 text-left">
+                        <div className="flex items-center justify-between mb-2">
+                          <h3 className="text-lg font-semibold">Flexible Position</h3>
+                          <Checkbox
+                            checked={form.fractional.open_for_work}
+                            className="h-5 w-5"
+                            onCheckedChange={() => toggleType("fractional")}
+                          />
+                        </div>
+                        <p className="text-body-mobile md:text-body-desktop text-muted-foreground leading-relaxed">
+                          Part-time commitment with flexible hours. Work with multiple companies simultaneously on project-based engagements.
+                        </p>
+                      </div>
+                    </div>
+                  </button>
+
+                  {/* Flexible Preferences */}
+                  {form.fractional.open_for_work && (
+                    <div className="mt-6 ml-4 border-l-2 border-primary/20 pl-6">
+                      <div className="bg-muted/30 rounded-xl p-6">
+                        <FlexiblePreferences
+                          form={form}
+                          setForm={setForm}
+                          currentLocationObj={form.currentLocationObj}
+                          setCurrentLocation={setCurrentLocation}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Action Button */}
+            <div className="pt-8 border-t">
+              <Button
+                onClick={handleContinue}
+                disabled={!hasSelection || isSaving}
+                className="w-full h-12 text-base font-medium rounded-full"
+                size="lg"
+              >
+                {isSaving ? "Saving Preferences..." : "Continue"}
+              </Button>
+              {saveError && (
+                <div className="text-red-600 text-sm mt-3 text-center">
+                  {saveError.message}
+                </div>
+              )}
             </div>
           </StepCardContent>
-
-          <StepCardFooter className="flex-col sm:flex-row gap-4">
-            <Button
-              variant="outline"
-              onClick={() => navigate("/edit-profile")}
-              className="w-full sm:w-auto order-2 sm:order-1"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Profile
-            </Button>
-
-            <Button
-              onClick={handleSave}
-              disabled={savingPreferences}
-              style={{ backgroundColor: '#449889' }}
-              className="hover:opacity-90 text-white w-full sm:w-auto order-1 sm:order-2"
-            >
-              {savingPreferences ? "Saving..." : "Complete Setup"}
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </StepCardFooter>
         </StepCard>
-      </div>
+      )
+    }
+
+    return <WorkPreferencesConfirmation onGoToDashboard={handleGoToDashboard} />
+  }
+
+  return (
+    <DashboardLayout>
+      <div className="container max-w-4xl py-8 px-4">{renderStepContent()}</div>
     </DashboardLayout>
   )
 }

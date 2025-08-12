@@ -85,13 +85,13 @@ const AvailabilitySection = ({
   }
 
   return (
-    <div className="w-full">
+    <div>
       {/* Section Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
-        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
           <CalendarIcon className="h-4 w-4 text-primary" />
         </div>
-        <div className="flex-1 min-w-0">
+        <div className="flex-1">
           <h3 className="text-lg font-semibold">{sectionInfo.title}</h3>
           <p className="text-sm text-muted-foreground mt-1">
             {sectionInfo.description}
@@ -99,7 +99,7 @@ const AvailabilitySection = ({
         </div>
       </div>
 
-      <div className="bg-background border rounded-lg p-4 sm:p-6 space-y-6 w-full overflow-hidden">
+      <div className="bg-background border rounded-lg p-6 space-y-6">
         {showFractionalOptions && (
           <div className="space-y-6">
             {/* Hours Per Week */}
@@ -114,9 +114,9 @@ const AvailabilitySection = ({
                   step={1}
                   className="w-full"
                 />
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 text-sm">
+                <div className="flex justify-between items-center text-sm">
                   <span className="text-muted-foreground">1 hour</span>
-                  <div className="bg-primary/10 px-3 py-1 rounded-full text-center">
+                  <div className="bg-primary/10 px-3 py-1 rounded-full">
                     <span className="font-medium text-primary">
                       {hoursPerWeek[0]} {hoursPerWeek[0] === 1 ? 'hour' : 'hours'} per week
                     </span>
@@ -144,14 +144,12 @@ const AvailabilitySection = ({
                       !selectedDate && "text-muted-foreground"
                     )}
                   >
-                    <CalendarIcon className="mr-2 h-4 w-4 shrink-0" />
-                    <span className="truncate">
-                      {selectedDate ? (
-                        format(selectedDate, "PPP")
-                      ) : (
-                        "Select start date"
-                      )}
-                    </span>
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {selectedDate ? (
+                      format(selectedDate, "PPP")
+                    ) : (
+                      <span>Select start date</span>
+                    )}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
@@ -174,13 +172,11 @@ const AvailabilitySection = ({
         {/* Timezone - Always show for both full-time and fractional */}
         <div className="space-y-4">
           <Label className="text-sm font-medium">Your Timezone</Label>
-          <div className="w-full">
-            <TimezoneSelector
-              selectedTimezone={timezone}
-              onTimezoneChange={setTimezone}
-              placeholder="Select your timezone..."
-            />
-          </div>
+          <TimezoneSelector
+            selectedTimezone={timezone}
+            onTimezoneChange={setTimezone}
+            placeholder="Select your timezone..."
+          />
         </div>
       </div>
     </div>

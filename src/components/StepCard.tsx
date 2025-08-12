@@ -16,7 +16,7 @@ export function StepCard({
   return (
     <div 
       className={cn(
-        "glass-card rounded-2xl px-4 py-6 sm:px-8 sm:py-6 md:px-10 md:py-8 w-full max-w-full overflow-hidden",
+        "glass-card rounded-2xl px-8 py-6 md:px-10 md:py-8 w-full",
         animate && "animate-scale-in",
         className
       )}
@@ -48,7 +48,7 @@ export function StepCardTitle({
   className?: string;
 }) {
   return (
-    <h2 className={cn("text-xl sm:text-2xl font-medium tracking-tight", className)}>
+    <h2 className={cn("text-2xl font-medium tracking-tight", className)}>
       {children}
     </h2>
   );
@@ -62,7 +62,7 @@ export function StepCardDescription({
   className?: string;
 }) {
   return (
-    <p className={cn("text-muted-foreground mt-2 text-sm sm:text-base", className)}>
+    <p className={cn("text-muted-foreground mt-2", className)}>
       {children}
     </p>
   );
@@ -76,7 +76,7 @@ export function StepCardContent({
   className?: string;
 }) {
   return (
-    <div className={cn("space-y-4 w-full overflow-hidden", className)}>
+    <div className={cn("space-y-4", className)}>
       {children}
     </div>
   );
@@ -90,7 +90,7 @@ export function StepCardFooter({
   className?: string;
 }) {
   return (
-    <div className={cn("mt-6 flex items-center justify-end gap-2 w-full", className)}>
+    <div className={cn("mt-6 flex items-center justify-end gap-2", className)}>
       {children}
     </div>
   );
