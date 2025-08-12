@@ -10,7 +10,7 @@ import {
   StepCardTitle,
 } from "@/components/StepCard"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, UsersRound, Clock, CheckCircle, Linkedin, ExternalLink, User } from "lucide-react"
+import { ArrowLeft, UsersRound, Clock, CheckCircle, ExternalLink, User } from "lucide-react"
 import { BlurImage } from "@/components/BlurImage"
 
 const TeamCoaching = () => {
@@ -109,7 +109,6 @@ const TeamCoaching = () => {
                     target="_blank" 
                     rel="noopener noreferrer"
                   >
-                    <Linkedin className="h-4 w-4" />
                     View Stephen's Profile
                     <ExternalLink className="h-3 w-3" />
                   </a>
@@ -120,8 +119,9 @@ const TeamCoaching = () => {
             {/* CTA Section */}
             <div className="text-center mt-8">
               <Button size="lg" className="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-full text-lg">
-                → Schedule Your Intro Call
+                Schedule Your Intro Call
               </Button>
+              <p className="text-sm text-muted-foreground mt-2">30-minute intro call is complimentary</p>
             </div>
           </StepCardContent>
 
