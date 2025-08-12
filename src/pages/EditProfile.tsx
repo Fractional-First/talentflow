@@ -65,7 +65,7 @@ const EditProfile = () => {
       <div ref={mainContentRef} className="max-w-6xl mx-auto space-y-6 p-4 sm:p-6">
         {/* Header with Auto-save Status */}
         <div className="relative">
-          <div className="space-y-2">
+          <div className="space-y-2 text-center">
             <p className="text-sm text-gray-600">
               This summary is curated based on your experience and skills. Feel
               free to refine it to better reflect your voice by clicking on the
