@@ -51,10 +51,10 @@ const CountrySelector = ({
 
   if (isLoading) {
     return (
-      <Button variant="outline" disabled className="w-full justify-between text-sm">
-        <div className="flex items-center gap-2">
-          <Globe className="h-4 w-4" />
-          Loading countries...
+      <Button variant="outline" disabled className="w-full justify-between text-sm h-10">
+        <div className="flex items-center gap-2 flex-1 truncate">
+          <Globe className="h-4 w-4 shrink-0" />
+          <span className="truncate">Loading countries...</span>
         </div>
         <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
       </Button>
@@ -69,13 +69,15 @@ const CountrySelector = ({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-full justify-between text-sm"
+            className="w-full justify-between text-sm h-10"
           >
-            <div className="flex items-center gap-2">
-              <Globe className="h-4 w-4" />
-              {selectedCountries.length > 0
-                ? `${selectedCountries.length} countries selected`
-                : placeholder}
+            <div className="flex items-center gap-2 flex-1 truncate">
+              <Globe className="h-4 w-4 shrink-0" />
+              <span className="truncate">
+                {selectedCountries.length > 0
+                  ? `${selectedCountries.length} countries selected`
+                  : placeholder}
+              </span>
             </div>
             <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
@@ -96,16 +98,17 @@ const CountrySelector = ({
                     onSelect={() => {
                       handleCountryToggle(country.alpha2_code)
                     }}
+                    className="truncate"
                   >
                     <Check
                       className={cn(
-                        "mr-2 h-4 w-4",
+                        "mr-2 h-4 w-4 shrink-0",
                         selectedCountries.includes(country.alpha2_code)
                           ? "opacity-100"
                           : "opacity-0"
                       )}
                     />
-                    <span>{country.name}</span>
+                    <span className="truncate">{country.name}</span>
                   </CommandItem>
                 ))}
               </CommandGroup>
@@ -123,12 +126,12 @@ const CountrySelector = ({
               <Badge
                 key={country?.alpha2_code}
                 variant="secondary"
-                className="bg-primary/10 text-primary border-primary/20 px-3 py-1 rounded-full hover:bg-primary/15"
+                className="bg-primary/10 text-primary border-primary/20 px-3 py-1 rounded-full hover:bg-primary/15 max-w-full"
               >
-                {countryName}
+                <span className="truncate">{countryName}</span>
                 <button
                   onClick={() => removeCountry(country?.alpha2_code || "")}
-                  className="ml-2 hover:text-primary/80"
+                  className="ml-2 hover:text-primary/80 shrink-0"
                   type="button"
                 >
                   ×
