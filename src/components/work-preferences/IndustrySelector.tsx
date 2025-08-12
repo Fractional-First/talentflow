@@ -52,10 +52,10 @@ const IndustrySelector = ({
 
   if (isLoading) {
     return (
-      <Button variant="outline" disabled className="w-full justify-between text-body-mobile md:text-body-desktop">
-        <div className="flex items-center gap-2">
-          <Building className="h-4 w-4" />
-          Loading industries...
+      <Button variant="outline" disabled className="w-full justify-between text-sm h-10">
+        <div className="flex items-center gap-2 flex-1 truncate">
+          <Building className="h-4 w-4 shrink-0" />
+          <span className="truncate">Loading industries...</span>
         </div>
         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
       </Button>
@@ -70,13 +70,15 @@ const IndustrySelector = ({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-full justify-between text-body-mobile md:text-body-desktop"
+            className="w-full justify-between text-sm h-10"
           >
-            <div className="flex items-center gap-2">
-              <Building className="h-4 w-4" />
-              {selectedIndustries.length > 0
-                ? `${selectedIndustries.length} industries selected`
-                : placeholder}
+            <div className="flex items-center gap-2 flex-1 truncate">
+              <Building className="h-4 w-4 shrink-0" />
+              <span className="truncate">
+                {selectedIndustries.length > 0
+                  ? `${selectedIndustries.length} industries selected`
+                  : placeholder}
+              </span>
             </div>
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
@@ -97,16 +99,17 @@ const IndustrySelector = ({
                     onSelect={() => {
                       handleIndustryToggle(industry.id)
                     }}
+                    className="truncate"
                   >
                     <Check
                       className={cn(
-                        "mr-2 h-4 w-4",
+                        "mr-2 h-4 w-4 shrink-0",
                         selectedIndustries.includes(industry.id)
                           ? "opacity-100"
                           : "opacity-0"
                       )}
                     />
-                    <span>{industry.name}</span>
+                    <span className="truncate">{industry.name}</span>
                   </CommandItem>
                 ))}
               </CommandGroup>
@@ -124,12 +127,12 @@ const IndustrySelector = ({
               <Badge
                 key={industry?.id}
                 variant="secondary"
-                className="bg-primary/10 text-primary border-primary/20 px-3 py-1 rounded-full hover:bg-primary/15"
+                className="bg-primary/10 text-primary border-primary/20 px-3 py-1 rounded-full hover:bg-primary/15 max-w-full"
               >
-                {industryName}
+                <span className="truncate">{industryName}</span>
                 <button
                   onClick={() => removeIndustry(industry?.id || "")}
-                  className="ml-2 hover:text-primary/80"
+                  className="ml-2 hover:text-primary/80 shrink-0"
                   type="button"
                 >
                   ×
