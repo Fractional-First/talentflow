@@ -33,9 +33,9 @@ export const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
   const sectionContent = (
     <div className={`${className} px-4 py-6 md:px-6`}>
       {/* Name Section with Edit Button */}
-      <div className="flex flex-col items-center space-y-4 md:space-y-2 md:flex-row md:items-center md:justify-center relative">
+      <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-center md:space-y-0 relative">
         {isEditing ? (
-          <div className="w-full max-w-sm">
+          <div className="w-full max-w-sm mx-auto md:mx-0">
             <Input
               value={name}
               onChange={(e) => onChange("name", e.target.value)}
@@ -44,7 +44,7 @@ export const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
             />
           </div>
         ) : (
-          <h1 className="text-xl md:text-2xl font-bold text-center leading-tight">
+          <h1 className="text-xl md:text-2xl font-bold text-center leading-tight flex-1">
             {name || "Name not available"}
           </h1>
         )}
@@ -55,7 +55,7 @@ export const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
             variant="ghost"
             size="sm"
             onClick={onEditToggle}
-            className="shrink-0 md:absolute md:right-0 md:top-1/2 md:-translate-y-1/2 h-10 w-10 rounded-full hover:bg-primary/10"
+            className="shrink-0 self-center md:absolute md:right-0 md:top-1/2 md:-translate-y-1/2 h-10 w-10 rounded-full hover:bg-primary/10"
             aria-label="Edit profile information"
           >
             <Edit className="h-4 w-4" />
@@ -64,7 +64,7 @@ export const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
       </div>
 
       {/* Role and Location Section */}
-      <div className="mt-6 space-y-4 text-center">
+      <div className="mt-6 space-y-3 text-center">
         {isEditing ? (
           <div className="space-y-4 max-w-sm mx-auto">
             <Input
@@ -87,7 +87,7 @@ export const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
             />
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2">
             <p className="text-base md:text-lg text-foreground font-medium leading-relaxed">
               {role || "Role not available"}
             </p>
@@ -95,18 +95,18 @@ export const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
               {location || "Location not available"}
             </p>
             
-            {/* LinkedIn Link */}
+            {/* LinkedIn Link - Inline with icon */}
             {linkedinUrl && (
-              <div className="flex justify-center pt-2">
+              <div className="flex justify-center items-center pt-1">
                 <a
                   href={linkedinUrl.startsWith('http') ? linkedinUrl : `https://${linkedinUrl}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-3 py-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-all duration-200 touch-manipulation min-h-[44px]"
+                  className="inline-flex items-center gap-1.5 px-2 py-1.5 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-md transition-all duration-200 touch-manipulation min-h-[40px] text-sm font-medium"
                   aria-label="View LinkedIn Profile"
                 >
-                  <Linkedin className="h-5 w-5 shrink-0" />
-                  <span className="text-sm font-medium">LinkedIn Profile</span>
+                  <Linkedin className="h-4 w-4 shrink-0" />
+                  <span>LinkedIn</span>
                 </a>
               </div>
             )}
