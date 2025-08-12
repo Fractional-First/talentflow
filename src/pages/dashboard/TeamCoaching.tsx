@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom"
 import { DashboardLayout } from "@/components/DashboardLayout"
 import {
@@ -28,7 +27,7 @@ const TeamCoaching = () => {
               </div>
               <div>
                 <StepCardTitle className="text-3xl font-semibold">Leadership Team Coaching</StepCardTitle>
-                <p className="text-xl text-primary font-medium mt-1">Improve Team Effectiveness, Fulfilment, and Results.</p>
+                <p className="text-xl text-primary font-medium mt-1">Elevate Team Effectiveness and Outcomes</p>
               </div>
             </div>
             
@@ -41,12 +40,20 @@ const TeamCoaching = () => {
             </div>
 
             <StepCardDescription className="text-lg leading-relaxed">
-              Every leadership team is its own relationship system — with a unique character, strengths, and challenges. All teams aspire to deliver exceptional results. But truly great teams go further: they create an environment of deep trust, honest dialogue, commitment, and alignment.
+              Customized coaching to strengthen your leadership team's relationships, decision-making, and impact.
             </StepCardDescription>
             
-            <StepCardDescription className="text-lg leading-relaxed mt-4">
-              This engagement is about achieving both — operational excellence and the most rewarding team experience you've ever had — all in the flow of your real work together.
-            </StepCardDescription>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+              <div className="text-center">
+                <h4 className="font-medium text-primary mb-2">Designed around your team's meeting cadence</h4>
+              </div>
+              <div className="text-center">
+                <h4 className="font-medium text-primary mb-2">Balances business priorities with deep relationship work</h4>
+              </div>
+              <div className="text-center">
+                <h4 className="font-medium text-primary mb-2">Free, zero-commitment intro call and proposal</h4>
+              </div>
+            </div>
           </StepCardHeader>
 
           <StepCardContent>
