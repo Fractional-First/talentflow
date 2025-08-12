@@ -119,17 +119,24 @@ const WorkPreferences = () => {
                         }`} />
                       </div>
                       <div className="flex-1 text-center md:text-left">
-                        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2 gap-2">
-                          <h3 className="text-lg font-semibold">Full-time Position</h3>
+                        <div className="flex flex-col gap-2">
+                          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                            <h3 className="text-lg font-semibold">Full-time Position</h3>
+                            <Checkbox
+                              checked={form.fullTime.open_for_work}
+                              className="h-5 w-5 self-center md:self-auto hidden md:block"
+                              onCheckedChange={() => toggleType("fullTime")}
+                            />
+                          </div>
+                          <p className="text-body-mobile md:text-body-desktop text-muted-foreground leading-relaxed">
+                            40 hours per week, dedicated to one company. Traditional employment with benefits and long-term commitment.
+                          </p>
                           <Checkbox
                             checked={form.fullTime.open_for_work}
-                            className="h-5 w-5 self-center md:self-auto"
+                            className="h-5 w-5 self-center mt-2 md:hidden"
                             onCheckedChange={() => toggleType("fullTime")}
                           />
                         </div>
-                        <p className="text-body-mobile md:text-body-desktop text-muted-foreground leading-relaxed">
-                          40 hours per week, dedicated to one company. Traditional employment with benefits and long-term commitment.
-                        </p>
                       </div>
                     </div>
                   </button>
@@ -170,17 +177,24 @@ const WorkPreferences = () => {
                         }`} />
                       </div>
                       <div className="flex-1 text-center md:text-left">
-                        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2 gap-2">
-                          <h3 className="text-lg font-semibold">Flexible Position</h3>
+                        <div className="flex flex-col gap-2">
+                          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                            <h3 className="text-lg font-semibold">Flexible Position</h3>
+                            <Checkbox
+                              checked={form.fractional.open_for_work}
+                              className="h-5 w-5 self-center md:self-auto hidden md:block"
+                              onCheckedChange={() => toggleType("fractional")}
+                            />
+                          </div>
+                          <p className="text-body-mobile md:text-body-desktop text-muted-foreground leading-relaxed">
+                            Part-time commitment with flexible hours. Work with multiple companies simultaneously on project-based engagements.
+                          </p>
                           <Checkbox
                             checked={form.fractional.open_for_work}
-                            className="h-5 w-5 self-center md:self-auto"
+                            className="h-5 w-5 self-center mt-2 md:hidden"
                             onCheckedChange={() => toggleType("fractional")}
                           />
                         </div>
-                        <p className="text-body-mobile md:text-body-desktop text-muted-foreground leading-relaxed">
-                          Part-time commitment with flexible hours. Work with multiple companies simultaneously on project-based engagements.
-                        </p>
                       </div>
                     </div>
                   </button>
