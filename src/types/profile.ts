@@ -25,6 +25,7 @@ export interface ProfileData {
   role?: string
   summary?: string
   location?: string
+  linkedin_url?: string
   personas?: Persona[]
   meet_them?: string
   sweetspot?: string
