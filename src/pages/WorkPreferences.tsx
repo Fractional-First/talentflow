@@ -12,7 +12,7 @@ import { useWorkPreferences, CombinedWorkPreferencesForm } from "@/hooks/useWork
 import { ArrowLeft, ArrowRight } from "lucide-react"
 import { FlexiblePreferences } from "@/components/work-preferences/FlexiblePreferences"
 import { FullTimePreferences } from "@/components/work-preferences/FullTimePreferences"
-import { WorkPreferencesSection } from "@/components/work-preferences/WorkPreferencesSection"
+import WorkPreferencesSection from "@/components/work-preferences/WorkPreferencesSection"
 
 const WorkPreferences = () => {
   const navigate = useNavigate()
@@ -22,12 +22,11 @@ const WorkPreferences = () => {
   const {
     form,
     setForm,
-    currentLocationObj,
     setCurrentLocation,
     isLoading: loadingPreferences
   } = useWorkPreferences()
 
-  const { mutate: savePreferences, isPending: savingPreferences } = useSaveWorkPreferences()
+  const { save: savePreferences, isSaving: savingPreferences } = useSaveWorkPreferences()
 
   // Set default availability type based on active tab
   useEffect(() => {
@@ -44,29 +43,26 @@ const WorkPreferences = () => {
     }
   }, [activeTab, setForm])
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const finalForm = {
       ...form,
       availability_type: activeTab === "flexible" ? "fractional" as const : "full_time" as const
     }
 
-    savePreferences(finalForm, {
-      onSuccess: () => {
-        toast({
-          title: "Success",
-          description: "Your work preferences have been saved successfully.",
-        })
-        navigate("/dashboard")
-      },
-      onError: (error) => {
-        console.error("Error saving preferences:", error)
-        toast({
-          title: "Error",
-          description: "There was an error saving your preferences. Please try again.",
-          variant: "destructive",
-        })
-      },
-    })
+    const success = await savePreferences(finalForm)
+    if (success) {
+      toast({
+        title: "Success",
+        description: "Your work preferences have been saved successfully.",
+      })
+      navigate("/dashboard")
+    } else {
+      toast({
+        title: "Error",
+        description: "There was an error saving your preferences. Please try again.",
+        variant: "destructive",
+      })
+    }
   }
 
   if (loadingPreferences) {
@@ -103,7 +99,7 @@ const WorkPreferences = () => {
                     <FlexiblePreferences
                       form={form}
                       setForm={setForm}
-                      currentLocationObj={currentLocationObj}
+                      currentLocationObj={form.currentLocationObj}
                       setCurrentLocation={setCurrentLocation}
                     />
                   </div>
@@ -114,7 +110,7 @@ const WorkPreferences = () => {
                     <FullTimePreferences
                       form={form}
                       setForm={setForm}
-                      currentLocationObj={currentLocationObj}
+                      currentLocationObj={form.currentLocationObj}
                       setCurrentLocation={setCurrentLocation}
                     />
                   </div>
