@@ -10,8 +10,7 @@ import {
   StepCardTitle,
 } from "@/components/StepCard"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, User, Clock, DollarSign, CheckCircle, Linkedin, ExternalLink } from "lucide-react"
+import { ArrowLeft, User, Clock, CheckCircle, Linkedin, ExternalLink } from "lucide-react"
 import { BlurImage } from "@/components/BlurImage"
 
 const ExecutiveCoaching = () => {
@@ -73,82 +72,41 @@ const ExecutiveCoaching = () => {
                 </ul>
               </div>
 
-              {/* Investment Section */}
-              <div className="bg-background/50 border border-border/50 rounded-lg p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <DollarSign className="h-5 w-5 text-primary" />
-                  <h3 className="text-xl font-semibold">Investment</h3>
-                </div>
-                <div className="text-2xl font-bold text-primary mb-2">$8,000</div>
-                <p className="text-muted-foreground">50% at the start, 50% at midpoint.</p>
-              </div>
-            </div>
-
-            {/* Intake Process Section */}
-            <div className="bg-primary/5 border border-primary/20 rounded-lg p-6 mt-8">
-              <h3 className="text-xl font-semibold mb-4">Intake Process (Complimentary)</h3>
-              <div className="space-y-4">
-                <div className="flex items-start">
-                  <Badge variant="outline" className="mr-4 mt-1">1</Badge>
-                  <div>
-                    <h4 className="font-medium">Intro Call (30 mins)</h4>
-                    <p className="text-muted-foreground">Get to know each other.</p>
+              {/* Coach Profile Section */}
+              <div className="bg-primary/5 border border-primary/20 rounded-lg p-6">
+                <h3 className="text-xl font-semibold mb-4">Your Coach</h3>
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
+                    <BlurImage
+                      src="/lovable-uploads/ad669935-8bce-40c6-810e-e417c08e6be3.png"
+                      alt="Stephen Burke"
+                      className="object-cover w-full h-full"
+                    />
                   </div>
-                </div>
-                <div className="flex items-start">
-                  <Badge variant="outline" className="mr-4 mt-1">2</Badge>
-                  <div>
-                    <h4 className="font-medium">Discovery Call (50 mins)</h4>
-                    <p className="text-muted-foreground">Clarify your objectives.</p>
+                  <div className="flex-1">
+                    <h4 className="text-lg font-medium">Stephen Burke</h4>
+                    <p className="text-muted-foreground">Executive & Leadership Coach</p>
                   </div>
-                </div>
-                <div className="flex items-start">
-                  <Badge variant="outline" className="mr-4 mt-1">3</Badge>
-                  <div>
-                    <h4 className="font-medium">Coaching Session (75 mins)</h4>
-                    <p className="text-muted-foreground">Experience the insights, shifts, and outcomes coaching can unlock.</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="mt-6 p-4 bg-background/80 rounded-lg">
-                <p className="text-sm text-muted-foreground">
-                  At the end of intake, we'll decide together whether to proceed. You may choose to stop after the intro and discovery calls if it's not the right fit. I only work with clients who demonstrate a high level of commitment during intake.
-                </p>
-              </div>
-            </div>
-
-            {/* Coach Profile Section */}
-            <div className="bg-primary/5 border border-primary/20 rounded-lg p-6 mt-8">
-              <h3 className="text-xl font-semibold mb-4">Your Coach</h3>
-              <div className="flex items-center gap-4">
-                <div className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
-                  <BlurImage
-                    src="/lovable-uploads/ad669935-8bce-40c6-810e-e417c08e6be3.png"
-                    alt="Stephen Burke"
-                    className="object-cover w-full h-full"
-                  />
-                </div>
-                <div className="flex-1">
-                  <h4 className="text-lg font-medium">Stephen Burke</h4>
-                  <p className="text-muted-foreground">Executive & Leadership Coach</p>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  asChild
-                  className="gap-2"
-                >
-                  <a 
-                    href="https://www.linkedin.com/in/stephenburkehi/" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    asChild
+                    className="gap-2"
                   >
-                    <Linkedin className="h-4 w-4" />
-                    LinkedIn
-                    <ExternalLink className="h-3 w-3" />
-                  </a>
-                </Button>
+                    <a 
+                      href="https://www.linkedin.com/in/stephenburkehi/" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                    >
+                      <Linkedin className="h-4 w-4" />
+                      LinkedIn
+                      <ExternalLink className="h-3 w-3" />
+                    </a>
+                  </Button>
+                </div>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Stephen is a visionary leader and executive coach with a unique blend of global engineering leadership and profound expertise in human potential and organizational systems. He is dedicated to empowering individuals, teams, and entire organizations to "CREATE their best lives, do their best work, make the biggest positive impact and minimize their suffering along the way."
+                </p>
               </div>
             </div>
 
