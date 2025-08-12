@@ -76,20 +76,20 @@ const ExecutiveCoaching = () => {
               <div className="bg-background/50 border border-border/50 rounded-lg p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <FileText className="h-5 w-5 text-primary" />
-                  <h3 className="text-xl font-semibold">Intake Process</h3>
+                  <h3 className="text-xl font-semibold">Intake (Complimentary)</h3>
                 </div>
                 <ul className="space-y-3 text-muted-foreground">
                   <li className="flex items-start">
                     <CheckCircle className="h-4 w-4 text-primary mr-3 mt-1 flex-shrink-0" />
-                    <span>30-minute complimentary intro call to explore fit and answer questions</span>
+                    <span><strong>Intro Call (30 mins)</strong> to get acquainted</span>
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="h-4 w-4 text-primary mr-3 mt-1 flex-shrink-0" />
-                    <span>90-minute intake session to establish context, goals, and coaching approach</span>
+                    <span><strong>Discovery Call (50 mins)</strong> to clarify your objectives</span>
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="h-4 w-4 text-primary mr-3 mt-1 flex-shrink-0" />
-                    <span>Simple assessment tools to understand your strengths and growth edges</span>
+                    <span><strong>Coaching Session (75 mins)</strong> to experience the insights, shifts, and outcomes possible</span>
                   </li>
                 </ul>
               </div>
@@ -129,7 +129,6 @@ const ExecutiveCoaching = () => {
                   rel="noopener noreferrer"
                 >
                   View Stephen's Profile
-                  <ExternalLink className="h-3 w-3" />
                 </a>
               </Button>
             </div>

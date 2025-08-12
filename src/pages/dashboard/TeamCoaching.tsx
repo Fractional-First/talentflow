@@ -80,20 +80,20 @@ const TeamCoaching = () => {
               <div className="bg-background/50 border border-border/50 rounded-lg p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <FileText className="h-5 w-5 text-primary" />
-                  <h3 className="text-xl font-semibold">Intake Process</h3>
+                  <h3 className="text-xl font-semibold">Intake (Complimentary)</h3>
                 </div>
                 <ul className="space-y-3 text-muted-foreground">
                   <li className="flex items-start">
                     <CheckCircle className="h-4 w-4 text-primary mr-3 mt-1 flex-shrink-0" />
-                    <span>30-minute complimentary intro call to explore fit and answer questions</span>
+                    <span><strong>Intro Call (30 mins)</strong> with the leader/sponsor to outline context and desired outcomes</span>
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="h-4 w-4 text-primary mr-3 mt-1 flex-shrink-0" />
-                    <span>Team assessment and individual interviews to understand current dynamics</span>
+                    <span><strong>Discovery Call (50 mins)</strong> to explore possibilities (additional participants may join) — with quick wins often emerging here</span>
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="h-4 w-4 text-primary mr-3 mt-1 flex-shrink-0" />
-                    <span>Custom engagement design based on your team's unique context and goals</span>
+                    <span><strong>A Proposal</strong> tailored to your needs and context</span>
                   </li>
                 </ul>
               </div>
@@ -133,7 +133,6 @@ const TeamCoaching = () => {
                   rel="noopener noreferrer"
                 >
                   View Stephen's Profile
-                  <ExternalLink className="h-3 w-3" />
                 </a>
               </Button>
             </div>
