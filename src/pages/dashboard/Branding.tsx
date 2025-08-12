@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, User, UsersRound } from "lucide-react";
 import { BlurImage } from "@/components/BlurImage";
+
 const Branding = () => {
   const navigate = useNavigate();
   const coachingServices = [{
@@ -41,7 +42,7 @@ const Branding = () => {
               </Badge>
             </div>
             <StepCardDescription className="text-lg mt-3 text-muted-foreground">
-              Whether you're leading solo or as a team, master your leadership journey with greater clarity, alignment, and effectiveness.
+              Whether you're leading solo or as a team, master your leadership journey with greater clarity, alignment, and effectiveness. These coaching offerings are delivered by trusted partners of Fractional First.
             </StepCardDescription>
           </StepCardHeader>
 
@@ -105,4 +106,5 @@ const Branding = () => {
       </div>
     </DashboardLayout>;
 };
+
 export default Branding;
