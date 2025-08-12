@@ -93,7 +93,7 @@ const WorkPreferences = () => {
             {/* Full-time Position Section */}
             <div className="space-y-6">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center hidden md:block">
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                   <Briefcase className="h-4 w-4 text-primary" />
                 </div>
                 <h2 className="text-xl font-semibold text-foreground">Employment Options</h2>
