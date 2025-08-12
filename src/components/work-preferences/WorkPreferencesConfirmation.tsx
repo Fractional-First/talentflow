@@ -1,3 +1,4 @@
+
 import {
   StepCard,
   StepCardContent,
@@ -17,7 +18,7 @@ export const WorkPreferencesConfirmation = ({
 }: WorkPreferencesConfirmationProps) => {
   return (
     <StepCard>
-      <StepCardHeader>
+      <StepCardHeader className="text-center">
         <StepCardTitle>Work Preferences Saved</StepCardTitle>
       </StepCardHeader>
       <StepCardContent>
