@@ -106,7 +106,7 @@ const ExecutiveCoaching = () => {
                     rel="noopener noreferrer"
                   >
                     <Linkedin className="h-4 w-4" />
-                    LinkedIn
+                    View Stephen's Profile
                     <ExternalLink className="h-3 w-3" />
                   </a>
                 </Button>
