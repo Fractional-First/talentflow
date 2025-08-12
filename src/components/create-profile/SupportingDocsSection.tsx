@@ -107,7 +107,7 @@ export const SupportingDocsSection = ({
           variant="outline"
           onClick={() => setShowForm(!showForm)}
           type="button"
-          className="self-start md:self-auto"
+          className="self-center md:self-auto"
         >
           {showForm ? "Hide Form" : "Add Files"}
         </Button>
