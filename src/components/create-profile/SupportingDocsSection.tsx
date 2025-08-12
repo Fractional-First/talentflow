@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -89,7 +88,7 @@ export const SupportingDocsSection = ({
 
   return (
     <div className="border rounded-lg p-6 mt-6">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <div className="flex items-center">
           <div className="bg-primary/10 p-3 rounded-full mr-3">
             <Paperclip className="h-6 w-6 text-primary" />
@@ -108,6 +107,7 @@ export const SupportingDocsSection = ({
           variant="outline"
           onClick={() => setShowForm(!showForm)}
           type="button"
+          className="self-start md:self-auto"
         >
           {showForm ? "Hide Form" : "Add Files"}
         </Button>
