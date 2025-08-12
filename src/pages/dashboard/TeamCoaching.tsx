@@ -10,7 +10,7 @@ import {
   StepCardTitle,
 } from "@/components/StepCard"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, UsersRound, Clock, CheckCircle, Linkedin, ExternalLink } from "lucide-react"
+import { ArrowLeft, UsersRound, Clock, CheckCircle, Linkedin, ExternalLink, User } from "lucide-react"
 import { BlurImage } from "@/components/BlurImage"
 
 const TeamCoaching = () => {
@@ -77,8 +77,11 @@ const TeamCoaching = () => {
               </div>
 
               {/* Coach Profile Section */}
-              <div className="bg-primary/5 border border-primary/20 rounded-lg p-6">
-                <h3 className="text-xl font-semibold mb-4">Your Coach</h3>
+              <div className="bg-background/50 border border-border/50 rounded-lg p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <User className="h-5 w-5 text-primary" />
+                  <h3 className="text-xl font-semibold">Your Coach</h3>
+                </div>
                 <div className="flex items-start gap-4 mb-4">
                   <div className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
                     <BlurImage
@@ -91,26 +94,26 @@ const TeamCoaching = () => {
                     <h4 className="text-lg font-medium">Stephen Burke</h4>
                     <p className="text-muted-foreground">Executive & Leadership Coach</p>
                   </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    asChild
-                    className="gap-2"
-                  >
-                    <a 
-                      href="https://www.linkedin.com/in/stephenburkehi/" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                    >
-                      <Linkedin className="h-4 w-4" />
-                      LinkedIn
-                      <ExternalLink className="h-3 w-3" />
-                    </a>
-                  </Button>
                 </div>
-                <p className="text-sm text-muted-foreground leading-relaxed">
+                <p className="text-muted-foreground leading-relaxed mb-4">
                   Stephen is a visionary leader and executive coach with a unique blend of global engineering leadership and profound expertise in human potential and organizational systems. He is dedicated to empowering individuals, teams, and entire organizations to "CREATE their best lives, do their best work, make the biggest positive impact and minimize their suffering along the way."
                 </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  asChild
+                  className="gap-2"
+                >
+                  <a 
+                    href="https://www.linkedin.com/in/stephenburkehi/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                  >
+                    <Linkedin className="h-4 w-4" />
+                    LinkedIn
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
+                </Button>
               </div>
             </div>
 
