@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom"
 import { DashboardLayout } from "@/components/DashboardLayout"
 import {
@@ -11,7 +10,7 @@ import {
 } from "@/components/StepCard"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, UsersRound, Clock, DollarSign, CheckCircle } from "lucide-react"
+import { ArrowLeft, UsersRound, Clock, DollarSign, CheckCircle, User, Linkedin, ExternalLink } from "lucide-react"
 import { BlurImage } from "@/components/BlurImage"
 
 const TeamCoaching = () => {
@@ -119,6 +118,36 @@ const TeamCoaching = () => {
                 <p className="text-sm text-muted-foreground">
                   I only work with teams that commit to making this work a top priority.
                 </p>
+              </div>
+            </div>
+
+            {/* Coach Profile Section */}
+            <div className="bg-primary/5 border border-primary/20 rounded-lg p-6 mt-8">
+              <h3 className="text-xl font-semibold mb-4">Your Coach</h3>
+              <div className="flex items-center gap-4">
+                <div className="bg-primary/10 p-3 rounded-full">
+                  <User className="h-8 w-8 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-lg font-medium">Stephen Burke</h4>
+                  <p className="text-muted-foreground">Executive & Leadership Coach</p>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  asChild
+                  className="gap-2"
+                >
+                  <a 
+                    href="https://www.linkedin.com/in/stephenburkehi/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                  >
+                    <Linkedin className="h-4 w-4" />
+                    LinkedIn
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
+                </Button>
               </div>
             </div>
 
