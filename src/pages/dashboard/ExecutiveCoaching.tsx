@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom"
 import { DashboardLayout } from "@/components/DashboardLayout"
 import {
@@ -10,7 +9,7 @@ import {
   StepCardTitle,
 } from "@/components/StepCard"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, User, Clock, CheckCircle, ExternalLink, FileText } from "lucide-react"
+import { ArrowLeft, User, Clock, CheckCircle, FileText } from "lucide-react"
 import { BlurImage } from "@/components/BlurImage"
 
 const ExecutiveCoaching = () => {
@@ -138,7 +137,6 @@ const ExecutiveCoaching = () => {
               <Button size="lg" className="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-full text-lg">
                 Schedule Your Intro Call
               </Button>
-              <p className="text-sm text-muted-foreground mt-2">30-minute intro call is complimentary</p>
             </div>
           </StepCardContent>
 
