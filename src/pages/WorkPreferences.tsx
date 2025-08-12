@@ -111,7 +111,7 @@ const WorkPreferences = () => {
                     }`}
                   >
                     <div className="flex flex-col md:flex-row md:items-start gap-4">
-                      <div className={`rounded-lg p-3 transition-colors self-center md:self-start ${
+                      <div className={`rounded-lg p-3 transition-colors self-center md:self-start hidden md:block ${
                         form.fullTime.open_for_work ? "bg-primary/15" : "bg-muted group-hover:bg-primary/10"
                       }`}>
                         <Briefcase className={`h-5 w-5 ${
@@ -169,7 +169,7 @@ const WorkPreferences = () => {
                     }`}
                   >
                     <div className="flex flex-col md:flex-row md:items-start gap-4">
-                      <div className={`rounded-lg p-3 transition-colors self-center md:self-start ${
+                      <div className={`rounded-lg p-3 transition-colors self-center md:self-start hidden md:block ${
                         form.fractional.open_for_work ? "bg-primary/15" : "bg-muted group-hover:bg-primary/10"
                       }`}>
                         <Clock className={`h-5 w-5 ${
