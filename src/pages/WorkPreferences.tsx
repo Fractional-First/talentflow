@@ -110,20 +110,20 @@ const WorkPreferences = () => {
                         : "border-border hover:border-primary/50 hover:bg-muted/20"
                     }`}
                   >
-                    <div className="flex items-start gap-4">
-                      <div className={`rounded-lg p-3 transition-colors ${
+                    <div className="flex flex-col md:flex-row md:items-start gap-4">
+                      <div className={`rounded-lg p-3 transition-colors self-center md:self-start ${
                         form.fullTime.open_for_work ? "bg-primary/15" : "bg-muted group-hover:bg-primary/10"
                       }`}>
                         <Briefcase className={`h-5 w-5 ${
                           form.fullTime.open_for_work ? "text-primary" : "text-muted-foreground"
                         }`} />
                       </div>
-                      <div className="flex-1 text-left">
-                        <div className="flex items-center justify-between mb-2">
+                      <div className="flex-1 text-center md:text-left">
+                        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2 gap-2">
                           <h3 className="text-lg font-semibold">Full-time Position</h3>
                           <Checkbox
                             checked={form.fullTime.open_for_work}
-                            className="h-5 w-5"
+                            className="h-5 w-5 self-center md:self-auto"
                             onCheckedChange={() => toggleType("fullTime")}
                           />
                         </div>
@@ -136,7 +136,7 @@ const WorkPreferences = () => {
 
                   {/* Full-time Preferences */}
                   {form.fullTime.open_for_work && (
-                    <div className="mt-6 ml-4 border-l-2 border-primary/20 pl-6">
+                    <div className="mt-6 ml-0 md:ml-4 border-l-0 md:border-l-2 border-primary/20 pl-0 md:pl-6">
                       <div className="bg-muted/30 rounded-xl p-6">
                         <FullTimePreferences
                           form={form}
@@ -161,20 +161,20 @@ const WorkPreferences = () => {
                         : "border-border hover:border-primary/50 hover:bg-muted/20"
                     }`}
                   >
-                    <div className="flex items-start gap-4">
-                      <div className={`rounded-lg p-3 transition-colors ${
+                    <div className="flex flex-col md:flex-row md:items-start gap-4">
+                      <div className={`rounded-lg p-3 transition-colors self-center md:self-start ${
                         form.fractional.open_for_work ? "bg-primary/15" : "bg-muted group-hover:bg-primary/10"
                       }`}>
                         <Clock className={`h-5 w-5 ${
                           form.fractional.open_for_work ? "text-primary" : "text-muted-foreground"
                         }`} />
                       </div>
-                      <div className="flex-1 text-left">
-                        <div className="flex items-center justify-between mb-2">
+                      <div className="flex-1 text-center md:text-left">
+                        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2 gap-2">
                           <h3 className="text-lg font-semibold">Flexible Position</h3>
                           <Checkbox
                             checked={form.fractional.open_for_work}
-                            className="h-5 w-5"
+                            className="h-5 w-5 self-center md:self-auto"
                             onCheckedChange={() => toggleType("fractional")}
                           />
                         </div>
@@ -187,7 +187,7 @@ const WorkPreferences = () => {
 
                   {/* Flexible Preferences */}
                   {form.fractional.open_for_work && (
-                    <div className="mt-6 ml-4 border-l-2 border-primary/20 pl-6">
+                    <div className="mt-6 ml-0 md:ml-4 border-l-0 md:border-l-2 border-primary/20 pl-0 md:pl-6">
                       <div className="bg-muted/30 rounded-xl p-6">
                         <FlexiblePreferences
                           form={form}
