@@ -36,7 +36,7 @@ const Branding = () => {
       title: "Executive 1:1 Coaching",
       subheadline: "Perform Better. Relate Better. Feel Better.",
       description:
-        "Personalized coaching to accelerate your leadership growth and well-being.",
+        "Personalized coaching designed to accelerate your leadership growth and well-being.",
       bulletPoints: [
         "Tailored to your unique leadership context",
         "3-month engagement with up to 3 sessions per month",
@@ -52,10 +52,10 @@ const Branding = () => {
       title: "Leadership Team Coaching",
       subheadline: "Elevate Team Effectiveness and Outcomes",
       description:
-        "Customized coaching to strengthen your leadership team's relationships, decision-making, and impact.",
+        "Strengthen your leadership team's relationships, decision-making, and impact through customized team coaching aligned to your business context.",
       bulletPoints: [
-        "Designed around your team's meeting cadence",
-        "Balances business priorities with deep relationship work",
+        "Designed around your team's existing meeting cadence",
+        "Balances business tasks with deep relationship work",
         "Free, zero-commitment intro call and proposal"
       ],
       icon: UsersRound,
