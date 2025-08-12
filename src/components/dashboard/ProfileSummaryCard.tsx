@@ -44,33 +44,33 @@ export function ProfileSummaryCard({
               {initials}
             </AvatarFallback>
           </Avatar>
-          <div className="flex-1">
-            <h2 className="text-xl font-semibold text-gray-900">
+          <div className="flex-1 min-w-0">
+            <h2 className="text-xl font-semibold text-gray-900 truncate">
               {profile.name}
             </h2>
-            <p className="text-gray-600">{profile.title}</p>
-            <p className="text-gray-500 text-sm">{profile.company}</p>
-            <p className="text-gray-500 text-sm">{profile.location}</p>
+            <p className="text-gray-600 truncate">{profile.title}</p>
+            <p className="text-gray-500 text-sm truncate">{profile.company}</p>
+            <p className="text-gray-500 text-sm truncate">{profile.location}</p>
           </div>
         </div>
-        <div className="mt-4 flex-1">
+        <div className="mt-4 flex-1 min-h-0">
           <h3 className="text-lg font-medium text-gray-900">About</h3>
-          <p className="mt-2 text-sm text-gray-600">{profile.about}</p>
+          <p className="mt-2 text-sm text-gray-600 line-clamp-3">{profile.about}</p>
         </div>
-        <div className="mt-4">
+        <div className="mt-4 flex-shrink-0">
           <h3 className="text-lg font-medium text-gray-900">Skills</h3>
-          <div className="mt-2 flex flex-wrap gap-2">
+          <div className="mt-2 flex flex-wrap gap-2 max-h-20 overflow-hidden">
             {profile.skills.map((skill, index) => (
               <span
                 key={index}
-                className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
+                className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm whitespace-nowrap"
               >
                 {skill}
               </span>
             ))}
           </div>
         </div>
-        <div className="mt-8 flex flex-col items-center">
+        <div className="mt-6 pt-4 border-t flex-shrink-0">
           <Button 
             onClick={() => navigate("/edit-profile")} 
             className="w-full text-white hover:opacity-90"
