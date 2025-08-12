@@ -42,7 +42,7 @@ const Branding = () => {
               </Badge>
             </div>
             <StepCardDescription className="text-lg mt-3 text-muted-foreground">
-              Whether you're leading solo or as a team, master your leadership journey with greater clarity, alignment, and effectiveness. These coaching offerings are delivered by trusted partners of Fractional First.
+              Whether you're leading solo or as a team, master your leadership journey with greater clarity, alignment, and effectiveness through coaching offerings delivered by trusted partners of Fractional First.
             </StepCardDescription>
           </StepCardHeader>
 
