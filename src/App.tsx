@@ -1,134 +1,121 @@
 
-import { Toaster as Sonner } from "@/components/ui/sonner"
-import { Toaster } from "@/components/ui/toaster"
-import { TooltipProvider } from "@/components/ui/tooltip"
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { BrowserRouter, Route, Routes } from "react-router-dom"
-import { ProtectedRoute } from "./components/auth/ProtectedRoute"
-import CheckEmail from "./pages/CheckEmail"
-import ForgotPassword from "./pages/ForgotPassword"
-import Index from "./pages/Index"
-import Login from "./pages/Login"
-import NotFound from "./pages/NotFound"
-import ResetPassword from "./pages/ResetPassword"
-import SignUp from "./pages/SignUp"
-import Branding from "./pages/dashboard/Branding"
-import Dashboard from "./pages/dashboard/Dashboard"
-import ProfileCreation from "./pages/CreateProfile"
-import ProfileSnapshot from "./pages/EditProfile"
-import WaitingRoom from "./pages/dashboard/WaitingRoom"
-import WorkPreferences from "./pages/WorkPreferences"
-import AuthCallback from "./pages/AuthCallback"
-import Settings from "./pages/Settings"
+import { Suspense, lazy } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from "@/components/ui/toaster";
+import { Spinner } from "@/components/ui/spinner";
 
-const queryClient = new QueryClient()
+// Lazy load pages for better performance
+const Index = lazy(() => import('./pages/Index'));
+const SignUp = lazy(() => import('./pages/SignUp'));
+const Login = lazy(() => import('./pages/Login'));
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword'));
+const CheckEmail = lazy(() => import('./pages/CheckEmail'));
+const CreateProfile = lazy(() => import('./pages/CreateProfile'));
+const EditProfile = lazy(() => import('./pages/EditProfile'));
+const WorkPreferences = lazy(() => import('./pages/WorkPreferences'));
+const Dashboard = lazy(() => import('./pages/dashboard/Dashboard'));
+const Agreement = lazy(() => import('./pages/dashboard/Agreement'));
+const WaitingRoom = lazy(() => import('./pages/dashboard/WaitingRoom'));
+const Branding = lazy(() => import('./pages/dashboard/Branding'));
+const ExecutiveCoaching = lazy(() => import('./pages/dashboard/ExecutiveCoaching'));
+const TeamCoaching = lazy(() => import('./pages/dashboard/TeamCoaching'));
+const Settings = lazy(() => import('./pages/Settings'));
+const AuthCallback = lazy(() => import('./pages/AuthCallback'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          {/* Public routes */}
-          <Route path="/" element={<Index />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/check-email" element={<CheckEmail />} />
-          <Route path="/auth/callback" element={<AuthCallback />} />
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
 
-          {/* Profile creation - for users with EMAIL_CONFIRMED, PROFILE_GENERATED, or PROFILE_CONFIRMED status */}
-          <Route
-            path="/create-profile"
-            element={
-              <ProtectedRoute
-                allowedStatuses={[
-                  "EMAIL_CONFIRMED",
-                  "PROFILE_GENERATED",
-                  "PROFILE_CONFIRMED",
-                  "PREFERENCES_SET",
-                ]}
-              >
-                <ProfileCreation />
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      retry: 1,
+    },
+  },
+});
+
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Router>
+        <Suspense fallback={
+          <div className="min-h-screen flex items-center justify-center">
+            <Spinner size="lg" />
+          </div>
+        }>
+          <Routes>
+            {/* Public routes */}
+            <Route path="/" element={<Index />} />
+            <Route path="/sign-up" element={<SignUp />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/check-email" element={<CheckEmail />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
+            
+            {/* Protected routes */}
+            <Route path="/create-profile" element={
+              <ProtectedRoute>
+                <CreateProfile />
               </ProtectedRoute>
-            }
-          />
-
-          {/* Profile snapshot - for users with PROFILE_GENERATED or PROFILE_CONFIRMED status */}
-          <Route
-            path="/edit-profile"
-            element={
-              <ProtectedRoute
-                allowedStatuses={[
-                  "PROFILE_GENERATED",
-                  "PROFILE_CONFIRMED",
-                  "PREFERENCES_SET",
-                ]}
-              >
-                <ProfileSnapshot />
+            } />
+            <Route path="/edit-profile" element={
+              <ProtectedRoute>
+                <EditProfile />
               </ProtectedRoute>
-            }
-          />
-
-          {/* Dashboard and other routes - for users with PROFILE_CONFIRMED status */}
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute
-                allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
-              >
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/dashboard/branding"
-            element={
-              <ProtectedRoute
-                allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
-              >
-                <Branding />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/work-preferences"
-            element={
-              <ProtectedRoute
-                allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
-              >
+            } />
+            <Route path="/work-preferences" element={
+              <ProtectedRoute>
                 <WorkPreferences />
               </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/dashboard/waiting-room"
-            element={
-              <ProtectedRoute
-                allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
-              >
+            } />
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/agreement" element={
+              <ProtectedRoute>
+                <Agreement />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/waiting-room" element={
+              <ProtectedRoute>
                 <WaitingRoom />
               </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/settings"
-            element={
-              <ProtectedRoute
-                allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
-              >
+            } />
+            <Route path="/dashboard/branding" element={
+              <ProtectedRoute>
+                <Branding />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/branding/executive-coaching" element={
+              <ProtectedRoute>
+                <ExecutiveCoaching />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/branding/team-coaching" element={
+              <ProtectedRoute>
+                <TeamCoaching />
+              </ProtectedRoute>
+            } />
+            <Route path="/settings" element={
+              <ProtectedRoute>
                 <Settings />
               </ProtectedRoute>
-            }
-          />
+            } />
+            
+            {/* Catch all route */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
+        <Toaster />
+      </Router>
+    </QueryClientProvider>
+  );
+}
 
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-)
-
-export default App
+export default App;

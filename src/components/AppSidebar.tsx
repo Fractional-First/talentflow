@@ -23,12 +23,12 @@ const menuItems = [
     icon: Home,
   },
   {
-    title: "Profile Snapshot",
+    title: "My Profile",
     path: "/edit-profile",
     icon: User,
   },
   {
-    title: "Professional Branding",
+    title: "Professional Coaching",
     path: "/dashboard/branding",
     icon: Award,
   },

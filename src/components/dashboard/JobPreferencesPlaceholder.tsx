@@ -1,4 +1,3 @@
-
 import { StepCard } from "@/components/StepCard"
 import { Button } from "@/components/ui/button"
 import { useNavigate } from "react-router-dom"
@@ -10,45 +9,24 @@ import {
   Building,
   Clock,
 } from "lucide-react"
-import { useWorkPreferences } from "@/hooks/useWorkPreferences"
 
 export const JobPreferencesPlaceholder = () => {
   const navigate = useNavigate()
-  const { form, initialized } = useWorkPreferences()
-
-  // Check if user has any preferences set - including open_for_work flags
-  const hasPreferences = initialized && (
-    form.fullTime.open_for_work ||
-    form.fractional.open_for_work ||
-    form.fullTime.min_salary !== null ||
-    form.fullTime.max_salary !== null ||
-    form.fullTime.locations.length > 0 ||
-    form.fullTime.industries.length > 0 ||
-    form.fractional.min_hourly_rate !== null ||
-    form.fractional.max_hourly_rate !== null ||
-    form.fractional.locations.length > 0 ||
-    form.fractional.industries.length > 0 ||
-    form.work_eligibility.length > 0
-  )
-
-  const buttonText = hasPreferences ? "Update Preferences" : "Get Started"
 
   return (
-    <StepCard className="h-[600px] flex flex-col">
-      <div className="p-6 flex-1 flex flex-col">
-        <div className="flex items-start gap-4 mb-6">
-          <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 flex-shrink-0">
+    <StepCard>
+      <div className="p-6">
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
             <Briefcase className="h-8 w-8 text-primary" />
           </div>
-          <div className="flex-1">
-            <h3 className="text-xl font-semibold mb-2">Job Preferences</h3>
-            <p className="text-muted-foreground">
-              Help us understand what you're looking for in your next role
-            </p>
-          </div>
+          <h3 className="text-xl font-semibold mb-2">Job Preferences</h3>
+          <p className="text-muted-foreground">
+            Help us understand what you're looking for in your next role
+          </p>
         </div>
 
-        <div className="space-y-4 mb-6 flex-1">
+        <div className="space-y-4 mb-6">
           <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
             <Briefcase className="h-5 w-5 text-muted-foreground" />
             <span className="text-sm text-muted-foreground">
@@ -88,12 +66,14 @@ export const JobPreferencesPlaceholder = () => {
         <div className="text-center">
           <Button
             onClick={() => navigate("/work-preferences")}
-            className="w-full text-white hover:opacity-90"
-            style={{ backgroundColor: '#449889' }}
+            className="w-full"
           >
-            {buttonText}
+            Get Started
             <ArrowRight className="h-4 w-4 ml-2" />
           </Button>
+          <p className="text-xs text-muted-foreground mt-3">
+            This will help us match you with the right opportunities
+          </p>
         </div>
       </div>
     </StepCard>
