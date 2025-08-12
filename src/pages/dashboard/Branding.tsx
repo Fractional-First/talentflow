@@ -119,9 +119,9 @@ const Branding = () => {
                     <div className="mt-3">
                       <ul className="space-y-1">
                         {service.bulletPoints.map((point, bulletIndex) => (
-                          <li key={bulletIndex} className="flex items-start text-sm text-muted-foreground">
-                            <span className="text-primary mr-2 mt-1">•</span>
-                            <span>{point}</span>
+                          <li key={bulletIndex} className="flex items-center text-sm text-muted-foreground">
+                            <span className="text-primary mr-2 leading-none">•</span>
+                            <span className="leading-relaxed">{point}</span>
                           </li>
                         ))}
                       </ul>
