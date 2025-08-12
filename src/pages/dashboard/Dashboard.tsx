@@ -1,4 +1,5 @@
 
+
 import { AppSidebar } from "@/components/AppSidebar"
 import { JobPreferencesPlaceholder } from "@/components/dashboard/JobPreferencesPlaceholder"
 import { OnboardingBanner } from "@/components/dashboard/OnboardingBanner"
@@ -69,7 +70,6 @@ const Dashboard = () => {
             <SidebarTrigger className="-ml-1" />
             <div className="flex flex-col">
               <h1 className="text-xl font-semibold text-gray-900">Dashboard</h1>
-              <p className="text-sm text-gray-600 hidden sm:block">Welcome back to your Fractional First dashboard</p>
             </div>
           </header>
           <div className="flex-1">
@@ -96,3 +96,4 @@ const Dashboard = () => {
 }
 
 export default Dashboard
+
