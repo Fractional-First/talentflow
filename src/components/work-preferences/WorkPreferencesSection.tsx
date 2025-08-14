@@ -210,8 +210,13 @@ const WorkPreferencesSection = ({
             setIndustryPreferences={setIndustryPreferences}
           />
 
-          <div className="pt-4">
-            <Button className="w-full">Save Preferences</Button>
+          <div className="pt-4 flex justify-center">
+            <Button 
+              className="px-8 py-2 bg-[#449889] hover:bg-[#449889]/90 text-white"
+              style={{ backgroundColor: '#449889' }}
+            >
+              Save Preferences
+            </Button>
           </div>
         </div>
       </StepCardContent>
