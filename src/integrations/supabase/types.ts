@@ -642,6 +642,15 @@ export type Database = {
         Args: { p_user_id: string; p_first_name: string; p_last_name: string }
         Returns: string
       }
+      get_public_profile: {
+        Args: { profile_slug_param: string }
+        Returns: {
+          profile_slug: string
+          profile_data: Json
+          first_name: string
+          last_name: string
+        }[]
+      }
     }
     Enums: {
       document_type: "resume" | "linkedin" | "other"

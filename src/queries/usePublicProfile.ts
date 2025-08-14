@@ -9,21 +9,19 @@ export const usePublicProfile = (slug: string) => {
       if (!slug) throw new Error("No profile slug provided")
 
       const { data, error } = await supabase
-        .from("profiles")
-        .select("profile_data, first_name, last_name")
-        .eq("profile_slug", slug)
-        .maybeSingle()
+        .rpc("get_public_profile", { profile_slug_param: slug })
 
       if (error) {
         console.error("Error fetching public profile:", error)
         throw error
       }
 
-      if (!data) {
+      if (!data || data.length === 0) {
         return null
       }
 
-      return data.profile_data as ProfileData
+      const profileData = data[0]
+      return profileData.profile_data as ProfileData
     },
     enabled: !!slug,
   })
