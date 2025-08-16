@@ -158,7 +158,7 @@ const TeamCoaching = () => {
           {/* CTA Section */}
           <div className="text-center space-y-6">
             <Button size="lg" className="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-full">
-              Schedule Your Discovery Call
+              Schedule Your Intro Call
             </Button>
           </div>
 
