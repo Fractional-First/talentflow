@@ -22,58 +22,41 @@ import { Badge } from "@/components/ui/badge"
 import {
   ArrowLeft,
   Sparkles,
-  Lock,
   Star,
   Users,
   Award,
-  BookOpen,
 } from "lucide-react"
 import { BlurImage } from "@/components/BlurImage"
 
 const Branding = () => {
   const navigate = useNavigate()
 
-  const brandingTools = [
+  const coachingOfferings = [
     {
       id: 1,
-      title: "Personality Assessment",
-      description:
-        "Discover your work style, strengths, and ideal work environment with our comprehensive personality assessment.",
+      title: "Executive 1:1 Coaching",
+      subtitle: "Perform Better. Relate Better. Feel Better.",
+      description: "Personalized coaching to accelerate your leadership growth and well-being.",
+      features: [
+        "Tailored to your unique leadership context",
+        "3-month engagement with up to 3 sessions per month",
+        "Free, zero-commitment intro call to assess fit"
+      ],
       icon: Users,
-      free: true,
-      imageSrc:
-        "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+      imageSrc: "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
     },
     {
       id: 2,
-      title: "Skills Analysis",
-      description:
-        "Get insights on your skills and discover areas for improvement and development.",
+      title: "Leadership Team Coaching",
+      subtitle: "Elevate Team Effectiveness and Outcomes",
+      description: "Customized coaching to strengthen your leadership team's relationships, decision-making, and impact.",
+      features: [
+        "Designed around your team's meeting cadence",
+        "Balances business priorities with deep relationship work",
+        "Free, zero-commitment intro call and proposal"
+      ],
       icon: Award,
-      free: true,
-      imageSrc:
-        "https://images.unsplash.com/photo-1525130413817-d45c1d127c42?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
-    },
-    {
-      id: 3,
-      title: "Career Coaching",
-      description:
-        "Connect with a career coach who will provide personalized guidance and feedback on your professional journey.",
-      icon: Star,
-      free: false,
-      premium: true,
-      imageSrc:
-        "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
-    },
-    {
-      id: 4,
-      title: "Personal Branding Workshop",
-      description:
-        "Learn how to build and communicate your personal brand to stand out in the job market.",
-      icon: BookOpen,
-      free: false,
-      imageSrc:
-        "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1774&q=80",
+      imageSrc: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
     },
   ]
 
@@ -95,50 +78,45 @@ const Branding = () => {
 
           <StepCardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {brandingTools.map((tool, index) => (
+              {coachingOfferings.map((offering, index) => (
                 <Card
-                  key={tool.id}
+                  key={offering.id}
                   className={`overflow-hidden transition-all duration-300 hover:shadow-medium animate-slide-up`}
                   style={{ animationDelay: `${index * 0.15}s` }}
                 >
                   <div className="relative h-40 overflow-hidden">
                     <BlurImage
-                      src={tool.imageSrc}
-                      alt={tool.title}
+                      src={offering.imageSrc}
+                      alt={offering.title}
                       className="object-cover w-full h-full"
                     />
-                    {tool.premium && (
-                      <Badge className="absolute top-2 right-2 bg-primary rounded-full">
-                        Premium
-                      </Badge>
-                    )}
                   </div>
 
                   <CardHeader className="pb-2">
-                    <div className="flex justify-between items-start">
-                      <div className="flex items-center">
-                        <div className="bg-primary/10 p-2 rounded-full mr-3">
-                          <tool.icon className="h-5 w-5 text-primary" />
-                        </div>
-                        <CardTitle className="text-xl font-medium">{tool.title}</CardTitle>
+                    <div className="flex items-start">
+                      <div className="bg-primary/10 p-2 rounded-full mr-3 flex-shrink-0">
+                        <offering.icon className="h-5 w-5 text-primary" />
                       </div>
-                      {!tool.free && (
-                        <div className="flex items-center text-muted-foreground">
-                          <Lock className="h-4 w-4 mr-1" />
-                          <span className="text-xs">Paid</span>
-                        </div>
-                      )}
+                      <div className="flex-1">
+                        <CardTitle className="text-xl font-medium mb-1">{offering.title}</CardTitle>
+                        <p className="text-sm font-medium text-primary mb-2">{offering.subtitle}</p>
+                        <CardDescription className="text-base mb-3">{offering.description}</CardDescription>
+                        
+                        <ul className="space-y-1 text-sm text-muted-foreground">
+                          {offering.features.map((feature, featureIndex) => (
+                            <li key={featureIndex} className="flex items-start">
+                              <span className="text-primary mr-2 flex-shrink-0">•</span>
+                              <span>{feature}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     </div>
-
-                    <CardDescription className="text-base mt-2">{tool.description}</CardDescription>
                   </CardHeader>
 
                   <CardFooter>
-                    <Button
-                      variant={tool.free ? "default" : "outline"}
-                      className="w-full rounded-full"
-                    >
-                      {tool.free ? "Start Now" : "Upgrade to Access"}
+                    <Button variant="default" className="w-full rounded-full">
+                      Learn More
                     </Button>
                   </CardFooter>
                 </Card>
