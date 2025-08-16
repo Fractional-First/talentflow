@@ -73,44 +73,44 @@ export const SuperpowersSection: React.FC<SuperpowersSectionProps> = ({
 
   const sectionContent = (
     <div className={clsx("bg-white rounded-lg border", className)}>
-      <div className="bg-[#449889] text-white rounded-t-lg flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 sm:p-1 sm:pl-4 gap-2 sm:gap-0">
-        <h3 className="text-base sm:text-lg font-semibold text-center sm:text-left">Superpowers</h3>
+      <div className="bg-[#449889] text-white rounded-t-lg flex items-center justify-between p-1 pl-4">
+        <h3 className="text-lg font-semibold">Superpowers</h3>
         {!readOnly && (
           <Button
             variant="ghost"
             size="sm"
             onClick={onEditToggle}
-            className="text-white hover:bg-white/20 self-center sm:self-auto min-h-[48px] min-w-[48px] p-3"
+            className="text-white hover:bg-white/20"
           >
-            <Edit className="h-5 w-5 sm:h-4 sm:w-4" />
+            <Edit className="h-4 w-4" />
           </Button>
         )}
       </div>
       <div className="p-4">
-        <div className="space-y-6 sm:space-y-4">
+        <div className="space-y-4">
           {superpowersWithIcons && superpowersWithIcons.length > 0 ? (
             superpowersWithIcons.map((superpower, index) => {
               const IconComponent = superpower.icon
               return (
-                <div key={index} className="space-y-3 sm:space-y-2">
+                <div key={index} className="space-y-2">
                   {isEditing ? (
-                    <div className="space-y-3 sm:space-y-2">
-                      <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
+                    <div className="space-y-2">
+                      <div className="flex gap-2 items-center">
                         <Input
                           value={superpower.title}
                           onChange={(e) =>
                             handleTitleChange(index, e.target.value)
                           }
-                          className="font-medium flex-1 min-h-[48px]"
+                          className="font-medium"
                           placeholder="Superpower title"
                         />
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => handleRemoveSuperpower(index)}
-                          className="text-red-500 hover:text-red-700 self-center sm:self-auto min-h-[48px] min-w-[48px] p-3"
+                          className="text-red-500 hover:text-red-700"
                         >
-                          <X className="h-5 w-5 sm:h-4 sm:w-4" />
+                          <X className="h-4 w-4" />
                         </Button>
                       </div>
                       <Textarea
@@ -118,24 +118,24 @@ export const SuperpowersSection: React.FC<SuperpowersSectionProps> = ({
                         onChange={(e) =>
                           handleDescriptionChange(index, e.target.value)
                         }
-                        className="text-sm min-h-[100px]"
+                        className="text-sm"
                         placeholder="Superpower description"
-                        rows={4}
+                        rows={3}
                       />
                     </div>
                   ) : (
-                    <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-3">
-                      <div className="flex-shrink-0 w-12 h-12 bg-white rounded-full border-2 border-gray-200 flex items-center justify-center self-center sm:mt-1">
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0 w-12 h-12 bg-white rounded-full border-2 border-gray-200 flex items-center justify-center mt-1">
                         <IconComponent
                           className="w-6 h-6"
                           style={{ color: "#449889" }}
                         />
                       </div>
-                      <div className="flex-1 text-center sm:text-left">
-                        <div className="font-medium text-gray-900 mb-2 text-base">
+                      <div className="flex-1">
+                        <div className="font-medium text-gray-900 mb-1">
                           {superpower.title}
                         </div>
-                        <p className="text-sm text-gray-700 leading-relaxed break-words">
+                        <p className="text-sm text-gray-700">
                           {superpower.description}
                         </p>
                       </div>
@@ -145,7 +145,7 @@ export const SuperpowersSection: React.FC<SuperpowersSectionProps> = ({
               )
             })
           ) : (
-            <div className="text-sm text-gray-700 py-4 text-center sm:text-left">
+            <div className="text-sm text-gray-700">
               Superpowers not available
             </div>
           )}
@@ -155,9 +155,9 @@ export const SuperpowersSection: React.FC<SuperpowersSectionProps> = ({
               variant="outline"
               size="sm"
               onClick={handleAddSuperpower}
-              className="w-full min-h-[48px] mt-4"
+              className="w-full"
             >
-              <Plus className="h-5 w-5 sm:h-4 sm:w-4 mr-2" />
+              <Plus className="h-4 w-4 mr-2" />
               Add Superpower
             </Button>
           )}

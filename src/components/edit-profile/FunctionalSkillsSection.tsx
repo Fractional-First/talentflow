@@ -125,16 +125,16 @@ export const FunctionalSkillsSection: React.FC<
 
   const sectionContent = (
     <div className={clsx("bg-white rounded-lg border", className)}>
-      <div className="bg-[#449889] text-white rounded-t-lg flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 sm:p-1 sm:pl-4 gap-2 sm:gap-0">
-        <h3 className="text-base sm:text-lg font-semibold text-center sm:text-left">Functional Skills</h3>
+      <div className="bg-[#449889] text-white rounded-t-lg flex items-center justify-between p-1 pl-4">
+        <h3 className="text-lg font-semibold">Functional Skills</h3>
         {!readOnly && (
           <Button
             variant="ghost"
             size="sm"
             onClick={onEditToggle}
-            className="text-white hover:bg-white/20 self-center sm:self-auto min-h-[48px] min-w-[48px] p-3"
+            className="text-white hover:bg-white/20"
           >
-            <Edit className="h-5 w-5 sm:h-4 sm:w-4" />
+            <Edit className="h-4 w-4" />
           </Button>
         )}
       </div>
@@ -142,23 +142,23 @@ export const FunctionalSkillsSection: React.FC<
         {Object.keys(localSkills).length > 0 ? (
           <div className="space-y-4">
             {Object.entries(localSkills).map(([category, skills]) => (
-              <div key={category} className="border-b border-gray-200 pb-4">
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center w-full gap-2 sm:gap-0">
+              <div key={category} className="border-b border-gray-200 pb-3">
+                <div className="flex justify-between items-center w-full">
                   {isEditing ? (
                     <Input
                       value={category}
                       onChange={(e) =>
                         handleCategoryTitleChange(category, e.target.value)
                       }
-                      className="font-medium text-gray-900 flex-1 min-h-[48px]"
+                      className="font-medium text-gray-900 w-1/2"
                       placeholder="Category name"
                     />
                   ) : (
-                    <span className="font-medium text-gray-900 text-center sm:text-left">
+                    <span className="font-medium text-gray-900">
                       {category}
                     </span>
                   )}
-                  <div className="flex items-center gap-1 justify-center sm:justify-end">
+                  <div className="flex items-center gap-1">
                     <Button
                       variant="ghost"
                       size="sm"
@@ -167,7 +167,7 @@ export const FunctionalSkillsSection: React.FC<
                           expandedCategory === category ? null : category
                         )
                       }
-                      className="h-10 px-3 text-xs min-h-[48px] min-w-[48px]"
+                      className="h-8 px-2 text-xs"
                     >
                       {expandedCategory === category ? (
                         <Minus className="h-5 w-5 text-gray-400" />
@@ -180,21 +180,21 @@ export const FunctionalSkillsSection: React.FC<
                         variant="ghost"
                         size="sm"
                         onClick={() => handleRemoveCategory(category)}
-                        className="text-red-500 hover:text-red-700 min-h-[48px] min-w-[48px] p-3"
+                        className="text-red-500 hover:text-red-700"
                       >
-                        <X className="h-5 w-5 sm:h-4 sm:w-4" />
+                        <X className="h-4 w-4" />
                       </Button>
                     )}
                   </div>
                 </div>
                 {expandedCategory === category && (
-                  <div className="mt-4 space-y-4 sm:space-y-3">
+                  <div className="mt-3 space-y-3">
                     {skills.length > 0 ? (
                       skills.map((skill, index) => (
-                        <div key={index} className="space-y-3 sm:space-y-2">
+                        <div key={index} className="space-y-2">
                           {isEditing ? (
-                            <div className="space-y-3 sm:space-y-2">
-                              <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
+                            <div className="space-y-2">
+                              <div className="flex gap-2 items-center">
                                 <Input
                                   value={skill.title}
                                   onChange={(e) =>
@@ -204,7 +204,7 @@ export const FunctionalSkillsSection: React.FC<
                                       e.target.value
                                     )
                                   }
-                                  className="font-medium flex-1 min-h-[48px]"
+                                  className="font-medium"
                                   placeholder="Skill title"
                                 />
                                 <Button
@@ -213,9 +213,9 @@ export const FunctionalSkillsSection: React.FC<
                                   onClick={() =>
                                     handleRemoveSkill(category, index)
                                   }
-                                  className="text-red-500 hover:text-red-700 self-center sm:self-auto min-h-[48px] min-w-[48px] p-3"
+                                  className="text-red-500 hover:text-red-700"
                                 >
-                                  <X className="h-5 w-5 sm:h-4 sm:w-4" />
+                                  <X className="h-4 w-4" />
                                 </Button>
                               </div>
                               <Textarea
@@ -227,18 +227,18 @@ export const FunctionalSkillsSection: React.FC<
                                     e.target.value
                                   )
                                 }
-                                className="text-sm min-h-[100px]"
+                                className="text-sm"
                                 placeholder="Skill description"
-                                rows={4}
+                                rows={3}
                               />
                             </div>
                           ) : (
-                            <div className="flex items-start gap-3">
-                              <span className="text-sm text-gray-700 mt-0.5 text-base">
+                            <div className="flex items-start gap-2">
+                              <span className="text-sm text-gray-700 mt-0.5">
                                 •
                               </span>
                               <div className="flex-1">
-                                <div className="text-sm text-gray-700 leading-relaxed break-words">
+                                <div className="text-sm text-gray-700">
                                   <span className="font-medium">
                                     {skill.title}
                                   </span>
@@ -254,7 +254,7 @@ export const FunctionalSkillsSection: React.FC<
                         </div>
                       ))
                     ) : (
-                      <div className="text-sm text-gray-700 py-2 text-center sm:text-left">
+                      <div className="text-sm text-gray-700">
                         No skills in this category
                       </div>
                     )}
@@ -263,9 +263,9 @@ export const FunctionalSkillsSection: React.FC<
                         variant="outline"
                         size="sm"
                         onClick={() => handleAddSkill(category)}
-                        className="w-full mt-3 min-h-[48px]"
+                        className="w-full mt-2"
                       >
-                        <Plus className="h-5 w-5 sm:h-4 sm:w-4 mr-2" />
+                        <Plus className="h-4 w-4 mr-2" />
                         Add Skill
                       </Button>
                     )}
@@ -275,7 +275,7 @@ export const FunctionalSkillsSection: React.FC<
             ))}
           </div>
         ) : (
-          <div className="text-sm text-gray-700 py-4 text-center sm:text-left">
+          <div className="text-sm text-gray-700">
             Functional skills not available
           </div>
         )}
@@ -284,9 +284,9 @@ export const FunctionalSkillsSection: React.FC<
             variant="outline"
             size="sm"
             onClick={handleAddCategory}
-            className="w-full mt-4 min-h-[48px]"
+            className="w-full mt-4"
           >
-            <Plus className="h-5 w-5 sm:h-4 sm:w-4 mr-2" />
+            <Plus className="h-4 w-4 mr-2" />
             Add Category
           </Button>
         )}
