@@ -303,7 +303,7 @@ const EditProfile = () => {
         <div className="flex justify-between items-center pt-6">
           <Button variant="outline" onClick={() => navigate("/create-profile")}>
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Profile
+            Recreate Profile
           </Button>
 
           <Button
