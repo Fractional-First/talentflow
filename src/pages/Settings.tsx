@@ -12,11 +12,13 @@ export default function Settings() {
       <div className="min-h-screen flex w-full">
         <AppSidebar />
         <SidebarInset>
-          <header className="flex h-auto min-h-16 shrink-0 items-start gap-2 border-b px-3 sm:px-4 py-3 sm:py-4">
+          <header className="flex h-auto min-h-16 shrink-0 items-start gap-2 border-b px-2 sm:px-4 py-3 sm:py-4">
             <SidebarTrigger className="-ml-1 mt-1 flex-shrink-0" />
-            <div className="flex flex-col min-w-0 flex-1">
-              <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 leading-tight">Settings</h1>
-              <p className="text-sm sm:text-base text-gray-600 mt-1 leading-relaxed">
+            <div className="flex flex-col min-w-0 flex-1 pr-2">
+              <h1 className="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-900 leading-tight break-words">
+                Settings
+              </h1>
+              <p className="text-xs sm:text-sm lg:text-base text-gray-600 mt-1 leading-relaxed break-words">
                 Manage your account preferences and security settings
               </p>
             </div>
