@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { DashboardLayout } from "@/components/DashboardLayout"
@@ -22,8 +21,6 @@ import {
 import { Badge } from "@/components/ui/badge"
 import {
   ArrowLeft,
-  Sparkles,
-  Star,
   Users,
   Award,
 } from "lucide-react"
@@ -130,54 +127,6 @@ const Branding = () => {
                   </CardFooter>
                 </Card>
               ))}
-            </div>
-          </StepCardContent>
-        </StepCard>
-
-        <StepCard>
-          <StepCardHeader>
-            <StepCardTitle className="text-2xl font-medium">Upgrade to Premium</StepCardTitle>
-            <StepCardDescription className="text-base mt-2">
-              Get access to all branding tools and premium features to maximize
-              your opportunities
-            </StepCardDescription>
-          </StepCardHeader>
-
-          <StepCardContent>
-            <div className="bg-primary/5 border border-primary/20 rounded-lg p-6">
-              <div className="flex items-start mb-4">
-                <div className="bg-primary/10 p-2 rounded-full mr-3">
-                  <Sparkles className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-medium mb-2">Premium Benefits</h3>
-                  <p className="text-base text-muted-foreground mb-4">
-                    Unlock additional features and tools to enhance your
-                    professional journey
-                  </p>
-
-                  <ul className="space-y-3 text-base">
-                    <li className="flex items-center">
-                      <Star className="h-4 w-4 text-primary mr-3 flex-shrink-0" />
-                      <span>Priority job matching and recommendations</span>
-                    </li>
-                    <li className="flex items-center">
-                      <Star className="h-4 w-4 text-primary mr-3 flex-shrink-0" />
-                      <span>Access to exclusive career coaching sessions</span>
-                    </li>
-                    <li className="flex items-center">
-                      <Star className="h-4 w-4 text-primary mr-3 flex-shrink-0" />
-                      <span>Advanced personality and skills assessment tools</span>
-                    </li>
-                    <li className="flex items-center">
-                      <Star className="h-4 w-4 text-primary mr-3 flex-shrink-0" />
-                      <span>Personal branding workshops and resources</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-
-              <Button className="w-full mt-4 rounded-full">Upgrade to Premium</Button>
             </div>
           </StepCardContent>
 
