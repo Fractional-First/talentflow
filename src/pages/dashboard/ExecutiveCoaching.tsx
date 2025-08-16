@@ -79,7 +79,7 @@ const ExecutiveCoaching = () => {
           {/* Process and Intake Sections */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Process Section */}
-            <div className="space-y-6 text-left">
+            <div className="space-y-6 text-left bg-muted/30 rounded-2xl p-6">
               <div className="flex items-center gap-2">
                 <Clock className="h-5 w-5 text-muted-foreground" />
                 <h2 className="text-xl font-medium">Process</h2>
@@ -95,7 +95,7 @@ const ExecutiveCoaching = () => {
             </div>
 
             {/* Intake Section */}
-            <div className="space-y-6 text-left">
+            <div className="space-y-6 text-left bg-muted/30 rounded-2xl p-6">
               <div className="flex items-center gap-2">
                 <CheckCircle className="h-5 w-5 text-muted-foreground" />
                 <h2 className="text-xl font-medium">Intake (Complimentary)</h2>
