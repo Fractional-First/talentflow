@@ -1,3 +1,4 @@
+
 import { initialSteps } from "@/components/dashboard/OnboardingSteps"
 import { DashboardLayout } from "@/components/DashboardLayout"
 import { AutoSaveStatus } from "@/components/edit-profile/AutoSaveStatus"
@@ -61,7 +62,7 @@ const EditProfile = () => {
 
   return (
     <DashboardLayout>
-      <div ref={mainContentRef} className="max-w-6xl mx-auto space-y-6 p-4 sm:p-6 pb-24 sm:pb-8">
+      <div ref={mainContentRef} className="max-w-6xl mx-auto space-y-6 p-4 sm:p-6">
         {/* Header with Auto-save Status */}
         <div className="relative">
           <div className="space-y-2">
@@ -298,28 +299,26 @@ const EditProfile = () => {
           </div>
         </div>
 
-        {/* Action Buttons - Fixed for mobile */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-border p-4 sm:relative sm:bg-transparent sm:border-t-0 sm:p-0 sm:pt-6">
-          <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 max-w-6xl mx-auto">
-            <Button 
-              variant="outline" 
-              onClick={() => navigate("/create-profile")}
-              className="w-full sm:w-auto order-2 sm:order-1"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Profile
-            </Button>
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 pt-6">
+          <Button 
+            variant="outline" 
+            onClick={() => navigate("/create-profile")}
+            className="w-full sm:w-auto"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Profile
+          </Button>
 
-            <Button
-              onClick={handleContinue}
-              disabled={isSubmitting}
-              style={{ backgroundColor: '#449889' }}
-              className="hover:opacity-90 text-white w-full sm:w-auto h-12 sm:h-10 text-base sm:text-sm font-medium order-1 sm:order-2"
-            >
-              {isSubmitting ? "Processing..." : "Complete & Go to Dashboard"}
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
+          <Button
+            onClick={handleContinue}
+            disabled={isSubmitting}
+            style={{ backgroundColor: '#449889' }}
+            className="hover:opacity-90 text-white w-full sm:w-auto"
+          >
+            {isSubmitting ? "Processing..." : "Complete & Go to Dashboard"}
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
         </div>
       </div>
     </DashboardLayout>
