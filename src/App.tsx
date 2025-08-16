@@ -1,4 +1,3 @@
-
 import { Toaster as Sonner } from "@/components/ui/sonner"
 import { Toaster } from "@/components/ui/toaster"
 import { TooltipProvider } from "@/components/ui/tooltip"
@@ -14,6 +13,8 @@ import ResetPassword from "./pages/ResetPassword"
 import SignUp from "./pages/SignUp"
 import Branding from "./pages/dashboard/Branding"
 import Dashboard from "./pages/dashboard/Dashboard"
+import ExecutiveCoaching from "./pages/dashboard/ExecutiveCoaching"
+import TeamCoaching from "./pages/dashboard/TeamCoaching"
 import ProfileCreation from "./pages/CreateProfile"
 import ProfileSnapshot from "./pages/EditProfile"
 import PublicProfile from "./pages/PublicProfile"
@@ -106,6 +107,26 @@ const App = () => (
                 allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
               >
                 <Branding />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard/executive-coaching"
+            element={
+              <ProtectedRoute
+                allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
+              >
+                <ExecutiveCoaching />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard/team-coaching"
+            element={
+              <ProtectedRoute
+                allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
+              >
+                <TeamCoaching />
               </ProtectedRoute>
             }
           />

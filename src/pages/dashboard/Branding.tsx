@@ -1,3 +1,4 @@
+
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { DashboardLayout } from "@/components/DashboardLayout"
@@ -42,6 +43,7 @@ const Branding = () => {
       ],
       icon: Users,
       imageSrc: "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+      path: "/dashboard/executive-coaching"
     },
     {
       id: 2,
@@ -55,6 +57,7 @@ const Branding = () => {
       ],
       icon: Award,
       imageSrc: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+      path: "/dashboard/team-coaching"
     },
   ]
 
@@ -79,7 +82,7 @@ const Branding = () => {
               {coachingOfferings.map((offering, index) => (
                 <Card
                   key={offering.id}
-                  className={`overflow-hidden transition-all duration-300 hover:shadow-medium animate-slide-up bg-white`}
+                  className={`overflow-hidden transition-all duration-300 hover:shadow-medium animate-slide-up bg-white border-0`}
                   style={{ animationDelay: `${index * 0.15}s` }}
                 >
                   <div className="relative h-48 overflow-hidden">
@@ -121,7 +124,11 @@ const Branding = () => {
                   </CardContent>
 
                   <CardFooter>
-                    <Button variant="default" className="w-full rounded-full bg-primary hover:bg-primary/90">
+                    <Button 
+                      variant="default" 
+                      className="w-full rounded-full bg-primary hover:bg-primary/90"
+                      onClick={() => navigate(offering.path)}
+                    >
                       Learn More
                     </Button>
                   </CardFooter>
