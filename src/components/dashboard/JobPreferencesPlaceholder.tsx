@@ -1,4 +1,5 @@
 
+
 import { StepCard } from "@/components/StepCard"
 import { Button } from "@/components/ui/button"
 import { useNavigate } from "react-router-dom"
@@ -11,20 +12,26 @@ import {
   Clock,
 } from "lucide-react"
 
-export const JobPreferencesPlaceholder = () => {
+interface JobPreferencesPlaceholderProps {
+  isCompleted?: boolean
+}
+
+export const JobPreferencesPlaceholder = ({ isCompleted = false }: JobPreferencesPlaceholderProps) => {
   const navigate = useNavigate()
 
   return (
     <StepCard className="h-full flex flex-col">
       <div className="p-6 flex-1 flex flex-col">
-        <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
+        <div className="flex items-start gap-4 mb-6">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 flex-shrink-0">
             <Briefcase className="h-8 w-8 text-primary" />
           </div>
-          <h3 className="text-xl font-semibold mb-2">Job Preferences</h3>
-          <p className="text-muted-foreground">
-            Help us understand what you're looking for in your next role
-          </p>
+          <div className="text-left">
+            <h3 className="text-xl font-semibold mb-2">Job Preferences</h3>
+            <p className="text-muted-foreground">
+              Help us understand what you're looking for in your next role
+            </p>
+          </div>
         </div>
 
         <div className="space-y-4 mb-6 flex-1">
@@ -67,16 +74,14 @@ export const JobPreferencesPlaceholder = () => {
         <div className="text-center mt-auto">
           <Button
             onClick={() => navigate("/work-preferences")}
-            className="w-full"
+            className="w-full bg-[#449889] hover:bg-[#449889]/90 text-white"
           >
-            Get Started
+            {isCompleted ? "Update Preferences" : "Get Started"}
             <ArrowRight className="h-4 w-4 ml-2" />
           </Button>
-          <p className="text-xs text-muted-foreground mt-3">
-            This will help us match you with the right opportunities
-          </p>
         </div>
       </div>
     </StepCard>
   )
 }
+

@@ -1,4 +1,5 @@
 
+
 import { AppSidebar } from "@/components/AppSidebar"
 import { JobPreferencesPlaceholder } from "@/components/dashboard/JobPreferencesPlaceholder"
 import { OnboardingBanner } from "@/components/dashboard/OnboardingBanner"
@@ -14,6 +15,10 @@ const Dashboard = () => {
   const { onboardingStatus, isLoading } = useEditProfile()
   const { data: profile, isLoading: profileLoading, error } = useProfileData()
   const isOnboarding = onboardingStatus === "PROFILE_CONFIRMED"
+
+  // For now, we'll assume job preferences are not completed
+  // This could be enhanced with actual completion status from the backend
+  const jobPreferencesCompleted = false
 
   if (isLoading) {
     return (
@@ -79,7 +84,7 @@ const Dashboard = () => {
               </div>
               {/* Right column - Job preferences placeholder */}
               <div className="h-full">
-                <JobPreferencesPlaceholder />
+                <JobPreferencesPlaceholder isCompleted={jobPreferencesCompleted} />
               </div>
             </div>
           </div>
@@ -90,3 +95,4 @@ const Dashboard = () => {
 }
 
 export default Dashboard
+

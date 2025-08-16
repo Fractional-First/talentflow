@@ -1,4 +1,5 @@
 
+
 import { StepCard } from "@/components/StepCard"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -71,7 +72,10 @@ export function ProfileSummaryCard({
           </div>
         </div>
         <div className="mt-8">
-          <Button onClick={() => navigate("/edit-profile")} className="w-full">
+          <Button 
+            onClick={() => navigate("/edit-profile")} 
+            className="w-full bg-[#449889] hover:bg-[#449889]/90 text-white"
+          >
             Edit Profile
             <ArrowRight className="h-4 w-4 ml-2" />
           </Button>
@@ -80,3 +84,4 @@ export function ProfileSummaryCard({
     </StepCard>
   )
 }
+
