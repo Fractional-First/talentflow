@@ -28,7 +28,7 @@ const menuItems = [
     icon: User,
   },
   {
-    title: "Professional Branding",
+    title: "Professional Coaching",
     path: "/dashboard/branding",
     icon: Award,
   },
