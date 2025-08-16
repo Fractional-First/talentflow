@@ -82,36 +82,36 @@ const WorkPreferences = () => {
     if (currentStep === "placement-type") {
       return (
         <StepCard>
-          <StepCardHeader className="text-center pb-6 md:pb-8">
-            <StepCardTitle className="text-xl md:text-2xl">Job Preferences</StepCardTitle>
-            <StepCardDescription className="text-sm md:text-base mt-2 md:mt-3 max-w-2xl mx-auto leading-relaxed px-2">
+          <StepCardHeader className="text-center pb-8">
+            <StepCardTitle className="text-2xl">Job Preferences</StepCardTitle>
+            <StepCardDescription className="text-base mt-3 max-w-2xl mx-auto leading-relaxed">
               Choose how you'd like to work. You may select one or both options to help us tailor job opportunities and compensation structures to your preferences.
             </StepCardDescription>
           </StepCardHeader>
 
-          <StepCardContent className="space-y-6 md:space-y-8">
-            {/* Employment Options Header */}
-            <div className="space-y-4 md:space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-4">
-                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+          <StepCardContent className="space-y-8">
+            {/* Full-time Position Section */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                   <Briefcase className="h-4 w-4 text-primary" />
                 </div>
-                <h2 className="text-lg md:text-xl font-semibold text-foreground">Employment Options</h2>
+                <h2 className="text-xl font-semibold text-foreground">Employment Options</h2>
               </div>
               
               <div className="space-y-4">
                 {/* Full-time Card */}
                 <div className="group">
                   <div
-                    className={`w-full p-4 md:p-6 rounded-xl border-2 transition-all duration-200 cursor-pointer ${
+                    className={`w-full p-6 rounded-xl border-2 transition-all duration-200 cursor-pointer ${
                       form.fullTime.open_for_work
                         ? "border-primary bg-primary/5 shadow-sm"
                         : "border-border hover:border-primary/50 hover:bg-muted/20"
                     }`}
                     onClick={() => toggleType("fullTime")}
                   >
-                    <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
-                      <div className={`rounded-lg p-3 transition-colors flex-shrink-0 ${
+                    <div className="flex items-start gap-4">
+                      <div className={`rounded-lg p-3 transition-colors ${
                         form.fullTime.open_for_work ? "bg-primary/15" : "bg-muted group-hover:bg-primary/10"
                       }`}>
                         <Briefcase className={`h-5 w-5 ${
@@ -119,7 +119,7 @@ const WorkPreferences = () => {
                         }`} />
                       </div>
                       <div className="flex-1 text-left">
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
+                        <div className="flex items-center justify-between mb-2">
                           <h3 className="text-lg font-semibold">Full-time Position</h3>
                           <div onClick={(e) => e.stopPropagation()}>
                             <Checkbox
@@ -129,7 +129,7 @@ const WorkPreferences = () => {
                             />
                           </div>
                         </div>
-                        <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
+                        <p className="text-body-mobile md:text-body-desktop text-muted-foreground leading-relaxed">
                           40 hours per week, dedicated to one company. Traditional employment with benefits and long-term commitment.
                         </p>
                       </div>
@@ -138,8 +138,8 @@ const WorkPreferences = () => {
 
                   {/* Full-time Preferences */}
                   {form.fullTime.open_for_work && (
-                    <div className="mt-4 md:mt-6">
-                      <div className="bg-muted/30 rounded-xl p-4 md:p-6">
+                    <div className="mt-6 ml-4 border-l-2 border-primary/20 pl-6">
+                      <div className="bg-muted/30 rounded-xl p-6">
                         <FullTimePreferences
                           form={form}
                           setForm={setForm}
@@ -151,20 +151,20 @@ const WorkPreferences = () => {
                   )}
                 </div>
 
-                <Separator className="my-4 md:my-6" />
+                <Separator className="my-6" />
 
                 {/* Flexible Position Card */}
                 <div className="group">
                   <div
-                    className={`w-full p-4 md:p-6 rounded-xl border-2 transition-all duration-200 cursor-pointer ${
+                    className={`w-full p-6 rounded-xl border-2 transition-all duration-200 cursor-pointer ${
                       form.fractional.open_for_work
                         ? "border-primary bg-primary/5 shadow-sm"
                         : "border-border hover:border-primary/50 hover:bg-muted/20"
                     }`}
                     onClick={() => toggleType("fractional")}
                   >
-                    <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
-                      <div className={`rounded-lg p-3 transition-colors flex-shrink-0 ${
+                    <div className="flex items-start gap-4">
+                      <div className={`rounded-lg p-3 transition-colors ${
                         form.fractional.open_for_work ? "bg-primary/15" : "bg-muted group-hover:bg-primary/10"
                       }`}>
                         <Clock className={`h-5 w-5 ${
@@ -172,7 +172,7 @@ const WorkPreferences = () => {
                         }`} />
                       </div>
                       <div className="flex-1 text-left">
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
+                        <div className="flex items-center justify-between mb-2">
                           <h3 className="text-lg font-semibold">Flexible Position</h3>
                           <div onClick={(e) => e.stopPropagation()}>
                             <Checkbox
@@ -182,7 +182,7 @@ const WorkPreferences = () => {
                             />
                           </div>
                         </div>
-                        <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
+                        <p className="text-body-mobile md:text-body-desktop text-muted-foreground leading-relaxed">
                           Part-time commitment with flexible hours. Work with multiple companies simultaneously on project-based engagements.
                         </p>
                       </div>
@@ -191,8 +191,8 @@ const WorkPreferences = () => {
 
                   {/* Flexible Preferences */}
                   {form.fractional.open_for_work && (
-                    <div className="mt-4 md:mt-6">
-                      <div className="bg-muted/30 rounded-xl p-4 md:p-6">
+                    <div className="mt-6 ml-4 border-l-2 border-primary/20 pl-6">
+                      <div className="bg-muted/30 rounded-xl p-6">
                         <FlexiblePreferences
                           form={form}
                           setForm={setForm}
@@ -207,7 +207,7 @@ const WorkPreferences = () => {
             </div>
 
             {/* Action Button */}
-            <div className="pt-6 md:pt-8 border-t">
+            <div className="pt-8 border-t">
               <Button
                 onClick={handleContinue}
                 disabled={!hasSelection || isSaving}
@@ -232,7 +232,7 @@ const WorkPreferences = () => {
 
   return (
     <DashboardLayout>
-      <div className="container max-w-4xl py-6 md:py-8 px-4">{renderStepContent()}</div>
+      <div className="container max-w-4xl py-8 px-4">{renderStepContent()}</div>
     </DashboardLayout>
   )
 }
