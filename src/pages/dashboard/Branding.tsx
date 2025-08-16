@@ -1,3 +1,4 @@
+
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { DashboardLayout } from "@/components/DashboardLayout"
@@ -81,41 +82,49 @@ const Branding = () => {
               {coachingOfferings.map((offering, index) => (
                 <Card
                   key={offering.id}
-                  className={`overflow-hidden transition-all duration-300 hover:shadow-medium animate-slide-up`}
+                  className={`overflow-hidden transition-all duration-300 hover:shadow-medium animate-slide-up bg-white`}
                   style={{ animationDelay: `${index * 0.15}s` }}
                 >
-                  <div className="relative h-40 overflow-hidden">
+                  <div className="relative h-48 overflow-hidden">
                     <BlurImage
                       src={offering.imageSrc}
                       alt={offering.title}
                       className="object-cover w-full h-full"
                     />
+                    <div className="absolute top-4 right-4">
+                      <Badge className="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">
+                        Paid Service
+                      </Badge>
+                    </div>
                   </div>
 
-                  <CardHeader className="pb-2">
+                  <CardHeader className="pb-4">
                     <div className="flex items-start">
                       <div className="bg-primary/10 p-2 rounded-full mr-3 flex-shrink-0">
                         <offering.icon className="h-5 w-5 text-primary" />
                       </div>
                       <div className="flex-1">
                         <CardTitle className="text-xl font-medium mb-1">{offering.title}</CardTitle>
-                        <p className="text-sm font-medium text-primary mb-2">{offering.subtitle}</p>
-                        <CardDescription className="text-base mb-3">{offering.description}</CardDescription>
-                        
-                        <ul className="space-y-1 text-sm text-muted-foreground">
-                          {offering.features.map((feature, featureIndex) => (
-                            <li key={featureIndex} className="flex items-start">
-                              <span className="text-primary mr-2 flex-shrink-0">•</span>
-                              <span>{feature}</span>
-                            </li>
-                          ))}
-                        </ul>
+                        <p className="text-sm font-medium text-primary mb-3">{offering.subtitle}</p>
                       </div>
                     </div>
                   </CardHeader>
 
+                  <CardContent className="pt-0 pb-4">
+                    <CardDescription className="text-base mb-4">{offering.description}</CardDescription>
+                    
+                    <ul className="space-y-2 text-sm text-muted-foreground">
+                      {offering.features.map((feature, featureIndex) => (
+                        <li key={featureIndex} className="flex items-start">
+                          <span className="text-primary mr-2 flex-shrink-0">•</span>
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+
                   <CardFooter>
-                    <Button variant="default" className="w-full rounded-full">
+                    <Button variant="default" className="w-full rounded-full bg-primary hover:bg-primary/90">
                       Learn More
                     </Button>
                   </CardFooter>
