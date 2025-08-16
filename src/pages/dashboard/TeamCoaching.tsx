@@ -10,33 +10,37 @@ const TeamCoaching = () => {
 
   const processSteps = [
     {
-      text: "Designed around your team's meeting cadence and business priorities",
+      text: "Engagement designed with you to fit your team's meeting rhythm and work patterns",
       completed: true
     },
     {
-      text: "Balances strategic business outcomes with deep relationship work",
+      text: "Focus on both business outcomes and relationship quality",
       completed: true
     },
     {
-      text: "Customized approach based on your team's unique dynamics and goals",
+      text: "Practical, in-the-moment work on your most pressing challenges and opportunities",
+      completed: true
+    },
+    {
+      text: "Develop habits of clear communication, genuine alignment, and effective decision-making",
       completed: true
     }
   ]
 
   const intakeSteps = [
     {
-      title: "Discovery Call (60 mins)",
-      description: "to understand your team's context and challenges",
+      title: "Intro Call (30 mins)",
+      description: "with the leader/sponsor to outline context and desired outcomes",
       completed: true
     },
     {
-      title: "Team Assessment",
-      description: "to identify strengths and growth opportunities",
+      title: "Discovery Call (50 mins)",
+      description: "to explore possibilities (additional participants may join) — with quick wins often emerging here",
       completed: true
     },
     {
-      title: "Custom Proposal",
-      description: "tailored to your team's specific needs and timeline",
+      title: "A Proposal",
+      description: "tailored to your needs and context",
       completed: true
     }
   ]
@@ -51,7 +55,7 @@ const TeamCoaching = () => {
               <Users className="h-6 w-6 text-primary" />
               <h1 className="text-3xl font-semibold">Leadership Team Coaching</h1>
             </div>
-            <p className="text-xl text-primary font-medium">Elevate Team Effectiveness and Outcomes</p>
+            <p className="text-xl text-primary font-medium">Improve Team Effectiveness, Fulfilment, and Results.</p>
           </div>
 
           {/* Hero Image */}
@@ -66,14 +70,13 @@ const TeamCoaching = () => {
           {/* Description */}
           <div className="space-y-6 text-left max-w-3xl">
             <p className="text-lg text-muted-foreground leading-relaxed">
-              Leadership teams are the engine of organizational success. When your leadership team operates with 
-              clarity, alignment, and trust, the entire organization benefits. When there's dysfunction, confusion, 
-              or misalignment at the top, it cascades throughout the company.
+              Every leadership team is its own relationship system — with a unique character, strengths, and challenges. 
+              All teams aspire to deliver exceptional results. But truly great teams go further: they create an environment 
+              of deep trust, honest dialogue, commitment, and alignment.
             </p>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              Our Leadership Team Coaching strengthens your team's relationships, decision-making processes, and 
-              collective impact. We work with your existing meeting rhythms and business priorities to create 
-              sustainable change that drives results.
+              This engagement is about achieving both — operational excellence and the most rewarding team experience 
+              you've ever had — all in the flow of your real work together.
             </p>
           </div>
 
@@ -99,7 +102,7 @@ const TeamCoaching = () => {
             <div className="space-y-6 text-left bg-muted/30 rounded-2xl p-6 border border-border">
               <div className="flex items-center gap-2">
                 <CheckCircle className="h-5 w-5 text-muted-foreground" />
-                <h2 className="text-xl font-medium">Getting Started (Complimentary)</h2>
+                <h2 className="text-xl font-medium">Intake (Complimentary)</h2>
               </div>
               <div className="space-y-4">
                 {intakeSteps.map((step, index) => (
