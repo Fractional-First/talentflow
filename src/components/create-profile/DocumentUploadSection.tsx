@@ -1,5 +1,4 @@
 
-
 import { Linkedin, File, HelpCircle } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { DocumentUpload } from "./DocumentUpload"
@@ -26,21 +25,21 @@ export const DocumentUploadSection = ({
   onResumeRemove,
 }: DocumentUploadSectionProps) => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 sm:space-y-8">
       {/* INSTRUCTIONAL HELPER TEXT */}
       <Alert
-        className="mb-4 bg-card"
+        className="mb-4 sm:mb-6 bg-card border-2 sm:border"
         style={{
           borderColor: "#BFE3DD",
         }}
       >
-        <div className="flex gap-2">
-          <div className="mt-0.5">
+        <div className="flex gap-3 sm:gap-2">
+          <div className="mt-0.5 flex-shrink-0">
             <File className="h-5 w-5 text-[#449889]" />
           </div>
-          <div>
+          <div className="flex-1">
             <AlertTitle
-              className="mb-1 font-semibold"
+              className="mb-2 sm:mb-1 font-semibold text-base sm:text-sm"
               style={{
                 color: "#449889",
               }}
@@ -48,15 +47,15 @@ export const DocumentUploadSection = ({
               Profile Information Requirements
             </AlertTitle>
             <AlertDescription
-              className="text-sm"
+              className="text-sm leading-relaxed"
               style={{
                 color: "#1A1A1A",
               }}
             >
-              <p className="mb-1">
+              <p className="mb-3 sm:mb-1">
                 At least <strong>one</strong> of the following is required:
               </p>
-              <ul className="list-disc ml-6 mb-2">
+              <ul className="list-disc ml-6 mb-2 space-y-1">
                 <li>
                   Upload your resume/CV{" "}
                   <span className="font-semibold">(PDF or DOCX)</span>
@@ -72,25 +71,24 @@ export const DocumentUploadSection = ({
       </Alert>
 
       {/* LINKEDIN PDF UPLOAD SECTION */}
-      {/* LINKEDIN PDF UPLOAD */}
       <DocumentUpload
         title="Upload LinkedIn Profile (PDF)"
         description="Download your LinkedIn profile as a PDF, then upload it here to share your professional information in detail."
         icon={<Linkedin className="h-6 w-6 text-[#0A66C2]" />}
         linkedinInstructionsComponent={() => (
           <Alert
-            className="mb-4 bg-card"
+            className="mb-4 bg-card border-2 sm:border"
             style={{
               borderColor: "#BFE3DD",
             }}
           >
-            <div className="flex gap-2">
-              <div className="mt-0.5">
+            <div className="flex gap-3 sm:gap-2">
+              <div className="mt-0.5 flex-shrink-0">
                 <HelpCircle className="h-5 w-5 text-[#449889]" />
               </div>
-              <div>
+              <div className="flex-1">
                 <AlertTitle
-                  className="mb-1 font-semibold"
+                  className="mb-2 sm:mb-1 font-semibold text-base sm:text-sm"
                   style={{
                     color: "#449889",
                   }}
@@ -98,7 +96,7 @@ export const DocumentUploadSection = ({
                   How to Save LinkedIn Profile as PDF (Desktop only):
                 </AlertTitle>
                 <AlertDescription
-                  className="text-sm"
+                  className="text-sm leading-relaxed"
                   style={{
                     color: "#1A1A1A",
                   }}
@@ -128,16 +126,16 @@ export const DocumentUploadSection = ({
 
       {/* SUCCESS MESSAGE WHEN BOTH FILES ARE UPLOADED */}
       {linkedinFile && resumeFile && (
-        <Alert className="mb-4 bg-green-50 border-green-200">
-          <div className="flex gap-2">
-            <div className="mt-0.5">
+        <Alert className="mb-4 sm:mb-6 bg-green-50 border-green-200 border-2 sm:border">
+          <div className="flex gap-3 sm:gap-2">
+            <div className="mt-0.5 flex-shrink-0">
               <File className="h-5 w-5 text-green-600" />
             </div>
-            <div>
-              <AlertTitle className="mb-1 font-semibold text-green-800">
+            <div className="flex-1">
+              <AlertTitle className="mb-2 sm:mb-1 font-semibold text-green-800 text-base sm:text-sm">
                 Both files uploaded successfully
               </AlertTitle>
-              <AlertDescription className="text-sm text-green-900">
+              <AlertDescription className="text-sm text-green-900 leading-relaxed">
                 Great job! You've uploaded both your LinkedIn PDF and resume.
                 This will give us the most complete picture of your professional
                 background.
