@@ -1,9 +1,10 @@
+
 import { AppSidebar } from "@/components/AppSidebar"
 import { JobPreferencesPlaceholder } from "@/components/dashboard/JobPreferencesPlaceholder"
 import { OnboardingBanner } from "@/components/dashboard/OnboardingBanner"
 import { ProfileSummaryCard } from "@/components/dashboard/ProfileSummaryCard"
 import { DashboardLayout } from "@/components/DashboardLayout"
-import { SidebarProvider } from "@/components/ui/sidebar"
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { Spinner } from "@/components/ui/spinner"
 import { useEditProfile } from "@/queries/useEditProfile"
 import { useProfileData } from "@/queries/useProfileData"
@@ -61,43 +62,35 @@ const Dashboard = () => {
 
   return (
     <SidebarProvider>
-      <DashboardLayout sidebar>
-        {/* Sidebar left */}
-        <div className="hidden md:flex flex-col h-full min-h-screen border-r border-border/30 bg-background/90 shadow-md">
-          <AppSidebar isOnboarding={isOnboarding} />
-        </div>
-        {/* Main right content */}
-        <div className="flex-1 flex flex-col">
-          {onboardingStatus === "PROFILE_CONFIRMED" && <OnboardingBanner />}
-          <div className="flex-1 p-8 max-w-7xl mx-auto w-full">
-            {/* {isOnboarding ? ( */}
-            {/* // Onboarding layout - two columns */}
-            <div className="grid lg:grid-cols-2 gap-8">
-              {/* Left column - Read-only profile summary */}
-              <div className="space-y-6">
-                <div>
-                  <ProfileSummaryCard profile={profile} />
+      <div className="min-h-screen flex w-full">
+        <AppSidebar isOnboarding={isOnboarding} />
+        <SidebarInset>
+          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+            <SidebarTrigger className="-ml-1" />
+            <div className="flex flex-col">
+              <h1 className="text-xl font-semibold text-gray-900">Dashboard</h1>
+              <p className="text-sm text-gray-600 hidden sm:block">Welcome back to your dashboard</p>
+            </div>
+          </header>
+          <div className="flex-1">
+            {onboardingStatus === "PROFILE_CONFIRMED" && <OnboardingBanner />}
+            <div className="p-4 sm:p-8 max-w-7xl mx-auto w-full">
+              <div className="grid lg:grid-cols-2 gap-8">
+                {/* Left column - Read-only profile summary */}
+                <div className="space-y-6">
+                  <div>
+                    <ProfileSummaryCard profile={profile} />
+                  </div>
+                </div>
+                {/* Right column - Job preferences placeholder */}
+                <div className="space-y-6">
+                  <JobPreferencesPlaceholder />
                 </div>
               </div>
-              {/* Right column - Job preferences placeholder */}
-              <div className="space-y-6">
-                <JobPreferencesPlaceholder />
-              </div>
             </div>
-            {/* // ) : (
-            //   // Regular dashboard layout
-            //   <div className="flex flex-col gap-8">
-            //     <div className="animate-pulse-soft rounded border-2 border-primary/30 shadow-lg">
-            //       <ProfileSummaryCard profile={profile} />
-            //     </div>
-            //     <div className="animate-pulse-soft rounded border-2 border-secondary/30 shadow-lg">
-            //       <JobPreferencesCard />
-            //     </div>
-            //   </div>
-            // )} */}
           </div>
-        </div>
-      </DashboardLayout>
+        </SidebarInset>
+      </div>
     </SidebarProvider>
   )
 }
