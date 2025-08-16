@@ -1,4 +1,3 @@
-
 import { AppSidebar } from "@/components/AppSidebar"
 import { JobPreferencesPlaceholder } from "@/components/dashboard/JobPreferencesPlaceholder"
 import { OnboardingBanner } from "@/components/dashboard/OnboardingBanner"
@@ -68,8 +67,7 @@ const Dashboard = () => {
           <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
             <SidebarTrigger className="-ml-1" />
             <div className="flex flex-col">
-              <h1 className="text-xl font-semibold text-gray-900">Dashboard</h1>
-              <p className="text-sm text-gray-600 hidden sm:block">Welcome back to your dashboard</p>
+              <h1 className="text-xl font-semibold text-gray-900">Your Dashboard</h1>
             </div>
           </header>
           <div className="flex-1">
