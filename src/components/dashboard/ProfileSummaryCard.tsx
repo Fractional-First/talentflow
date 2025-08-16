@@ -1,4 +1,5 @@
 
+
 import { StepCard } from "@/components/StepCard"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -27,14 +28,14 @@ export function ProfileSummaryCard({
     .toUpperCase()
 
   return (
-    <StepCard className={cn(className)}>
+    <StepCard className={cn("flex flex-col", className)}>
       {readonly && (
         <div className="flex items-center gap-2 p-4 border-b bg-green-50 text-green-800">
           <CheckCircle className="h-4 w-4" />
           <span className="text-sm font-medium">Profile Complete</span>
         </div>
       )}
-      <div className="p-6">
+      <div className="p-6 flex-1 flex flex-col">
         <div className="flex items-start space-x-4">
           <Avatar className="h-16 w-16 border-2 border-primary/10">
             {profile.profilePicture && (
@@ -53,7 +54,7 @@ export function ProfileSummaryCard({
             <p className="text-gray-500 text-sm">{profile.location}</p>
           </div>
         </div>
-        <div className="mt-4">
+        <div className="mt-4 flex-1">
           <h3 className="text-lg font-medium text-gray-900">About</h3>
           <p className="mt-2 text-sm text-gray-600">{profile.about}</p>
         </div>
@@ -70,8 +71,11 @@ export function ProfileSummaryCard({
             ))}
           </div>
         </div>
-        <div className="mt-8 flex flex-col items-center">
-          <Button onClick={() => navigate("/edit-profile")} className="w-full">
+        <div className="mt-8">
+          <Button 
+            onClick={() => navigate("/edit-profile")} 
+            className="w-full bg-[#449889] hover:bg-[#449889]/90 text-white"
+          >
             Edit Profile
             <ArrowRight className="h-4 w-4 ml-2" />
           </Button>
@@ -80,3 +84,4 @@ export function ProfileSummaryCard({
     </StepCard>
   )
 }
+
