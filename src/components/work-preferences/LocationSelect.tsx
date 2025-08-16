@@ -65,15 +65,17 @@ const LocationSelect = ({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-full justify-between text-body-mobile md:text-body-desktop"
+            className="w-full justify-between text-body-mobile md:text-body-desktop pr-2"
           >
-            <div className="flex items-center gap-2">
-              <MapPin className="h-4 w-4" />
-              {selectedLocations.length > 0
-                ? `${selectedLocations.length} locations selected`
-                : placeholder}
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              <MapPin className="h-4 w-4 shrink-0" />
+              <span className="truncate">
+                {selectedLocations.length > 0
+                  ? `${selectedLocations.length} locations selected`
+                  : placeholder}
+              </span>
             </div>
-            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
         <PopoverContent
@@ -120,14 +122,14 @@ const LocationSelect = ({
                       >
                         <Check
                           className={cn(
-                            "mr-2 h-4 w-4",
+                            "mr-2 h-4 w-4 shrink-0",
                             isSelected ? "opacity-100" : "opacity-0"
                           )}
                         />
-                        <div className="flex flex-col">
-                          <span>{location.name}</span>
+                        <div className="flex flex-col min-w-0 flex-1">
+                          <span className="truncate">{location.name}</span>
                           {location.formatted_address && (
-                            <span className="text-xs text-muted-foreground">
+                            <span className="text-xs text-muted-foreground truncate">
                               {location.formatted_address}
                             </span>
                           )}
@@ -149,12 +151,12 @@ const LocationSelect = ({
             <Badge
               key={location.place_id}
               variant="secondary"
-              className="bg-primary/10 text-primary border-primary/20 px-3 py-1 rounded-full hover:bg-primary/15"
+              className="bg-primary/10 text-primary border-primary/20 px-3 py-1 rounded-full hover:bg-primary/15 max-w-full"
             >
-              {location.name}
+              <span className="truncate">{location.name}</span>
               <button
                 onClick={() => removeLocation(location.place_id)}
-                className="ml-2 hover:text-primary/80"
+                className="ml-2 hover:text-primary/80 shrink-0"
                 type="button"
               >
                 ×

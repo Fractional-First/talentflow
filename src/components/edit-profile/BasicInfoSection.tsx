@@ -1,3 +1,4 @@
+
 import React from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -29,25 +30,27 @@ export const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
 }) => {
   const sectionContent = (
     <div className={className}>
-      <div className="flex items-center justify-center mb-2 relative">
-        {isEditing ? (
-          <Input
-            value={name}
-            onChange={(e) => onChange("name", e.target.value)}
-            className="text-2xl font-bold text-center"
-            placeholder="Name"
-          />
-        ) : (
-          <h1 className="text-2xl font-bold w-full text-center">
-            {name || "Name not available"}
-          </h1>
-        )}
+      <div className="flex items-center gap-3 mb-2">
+        <div className="flex-1 min-w-0">
+          {isEditing ? (
+            <Input
+              value={name}
+              onChange={(e) => onChange("name", e.target.value)}
+              className="text-2xl font-bold text-center"
+              placeholder="Name"
+            />
+          ) : (
+            <h1 className="text-2xl font-bold text-center">
+              {name || "Name not available"}
+            </h1>
+          )}
+        </div>
         {!readOnly && (
           <Button
             variant="ghost"
             size="sm"
             onClick={onEditToggle}
-            className="absolute right-0 top-1/2 -translate-y-1/2"
+            className="flex-shrink-0"
           >
             <Edit className="h-4 w-4" />
           </Button>
