@@ -73,37 +73,37 @@ export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
 
   const sectionContent = (
     <div className={clsx("bg-white rounded-lg border", className)}>
-      <div className="rounded-t-lg flex items-center justify-between p-1 pl-4 bg-[#449889] text-white">
-        <h3 className="text-lg font-semibold">{title}</h3>
+      <div className="rounded-t-lg flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 sm:p-1 sm:pl-4 bg-[#449889] text-white gap-2 sm:gap-0">
+        <h3 className="text-base sm:text-lg font-semibold text-center sm:text-left">{title}</h3>
         {!readOnly && (
           <Button
             variant="ghost"
             size="sm"
             onClick={onEditToggle}
-            className="hover:bg-white/20 text-white"
+            className="hover:bg-white/20 text-white self-center sm:self-auto min-h-[48px] min-w-[48px] p-3"
           >
-            <Edit className="h-4 w-4" />
+            <Edit className="h-5 w-5 sm:h-4 sm:w-4" />
           </Button>
         )}
       </div>
       <div className="p-4">
         {isEditing ? (
-          <div className="space-y-2">
+          <div className="space-y-3 sm:space-y-2">
             {localItems.map((item, index) => (
-              <div key={index} className="flex gap-2 items-center">
+              <div key={index} className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
                 <Input
                   value={item}
                   onChange={(e) => handleItemChange(index, e.target.value)}
                   placeholder={placeholder}
-                  className="flex-1"
+                  className="flex-1 min-h-[48px]"
                 />
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => handleRemoveItem(index)}
-                  className="text-red-500 hover:text-red-700"
+                  className="text-red-500 hover:text-red-700 self-center sm:self-auto min-h-[48px] min-w-[48px] p-3"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-5 w-5 sm:h-4 sm:w-4" />
                 </Button>
               </div>
             ))}
@@ -111,21 +111,21 @@ export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
               variant="outline"
               size="sm"
               onClick={handleAddItem}
-              className="w-full"
+              className="w-full min-h-[48px] mt-4"
             >
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="h-5 w-5 sm:h-4 sm:w-4 mr-2" />
               {addLabel}
             </Button>
           </div>
         ) : items && items.length > 0 ? (
           displayType === "bullets" ? (
-            <ul className="space-y-2 text-sm text-gray-700 leading-relaxed">
+            <ul className="space-y-3 sm:space-y-2 text-sm text-gray-700 leading-relaxed">
               {items.map((item, index) => (
                 <li key={index} className="flex items-start">
-                  <span className="text-gray-900 mr-2 mt-0.5 flex-shrink-0">
+                  <span className="text-gray-900 mr-3 mt-0.5 flex-shrink-0 text-base">
                     •
                   </span>
-                  <span>{item}</span>
+                  <span className="break-words flex-1">{item}</span>
                 </li>
               ))}
             </ul>
@@ -134,7 +134,7 @@ export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
               {items.map((item, index) => (
                 <span
                   key={index}
-                  className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
+                  className="px-3 py-2 bg-gray-100 text-gray-700 rounded-full text-sm break-words"
                 >
                   {item}
                 </span>
@@ -142,7 +142,7 @@ export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
             </div>
           )
         ) : (
-          <div className="text-sm text-gray-700">{title} not available</div>
+          <div className="text-sm text-gray-700 py-4 text-center sm:text-left">{title} not available</div>
         )}
       </div>
     </div>

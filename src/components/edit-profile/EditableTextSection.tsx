@@ -41,8 +41,8 @@ export const EditableTextSection: React.FC<EditableTextSectionProps> = ({
 }) => {
   const sectionContent = (
     <div className={clsx("bg-white rounded-lg border", className)}>
-      <div className="flex items-center justify-between p-1 pl-4 rounded-t-lg bg-[#449889] text-white">
-        <h3 className="text-lg font-semibold text-white">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 sm:p-1 sm:pl-4 rounded-t-lg bg-[#449889] text-white gap-2 sm:gap-0">
+        <h3 className="text-base sm:text-lg font-semibold text-white text-center sm:text-left">
           {title}
         </h3>
         {!readOnly && (
@@ -50,26 +50,26 @@ export const EditableTextSection: React.FC<EditableTextSectionProps> = ({
             variant="ghost"
             size="sm"
             onClick={onEditToggle}
-            className="hover:bg-white/20 text-white"
+            className="hover:bg-white/20 text-white self-center sm:self-auto min-h-[48px] min-w-[48px] p-3"
           >
-            <Edit className="h-4 w-4" />
+            <Edit className="h-5 w-5 sm:h-4 sm:w-4" />
           </Button>
         )}
       </div>
-      <div className="p-4 bg-white">
+      <div className="p-4 sm:p-4 bg-white">
         {isEditing ? (
           <Textarea
             value={value}
             onChange={(e) => onChange(e.target.value)}
             className={clsx(
               textAreaClass,
-              "text-sm leading-relaxed bg-white text-gray-700"
+              "text-sm leading-relaxed bg-white text-gray-700 min-h-[120px] sm:min-h-[160px]"
             )}
-            rows={8}
+            rows={6}
             placeholder={placeholder}
           />
         ) : (
-          <div className="text-sm leading-relaxed whitespace-pre-line text-gray-700">
+          <div className="text-sm leading-relaxed whitespace-pre-line text-gray-700 min-h-[80px] py-2">
             {value || placeholder || "Not available"}
           </div>
         )}
