@@ -41,13 +41,13 @@ export const DocumentUpload = ({
 
   return (
     <div className={`border rounded-lg p-4 sm:p-6 ${className}`}>
-      <div className="flex flex-col sm:flex-row sm:items-center mb-4 sm:mb-6">
-        <div className="flex items-center mb-3 sm:mb-0">
-          <div className="bg-primary/10 p-3 rounded-full mr-3 flex-shrink-0">{icon}</div>
-          <div className="flex-1">
-            <h3 className="font-medium text-base sm:text-lg mb-1">{title}</h3>
-            <div className="text-sm text-muted-foreground leading-relaxed">{description}</div>
-          </div>
+      <div className="flex items-start gap-3 mb-4 sm:mb-6">
+        <div className="bg-primary/10 p-2 sm:p-3 rounded-full flex-shrink-0">
+          {icon}
+        </div>
+        <div className="flex-1 min-w-0">
+          <h3 className="font-medium text-base sm:text-lg mb-1">{title}</h3>
+          <div className="text-sm text-muted-foreground leading-relaxed">{description}</div>
         </div>
       </div>
       

@@ -33,11 +33,11 @@ export const DocumentUploadSection = ({
           borderColor: "#BFE3DD",
         }}
       >
-        <div className="flex gap-3 sm:gap-2">
-          <div className="mt-0.5 flex-shrink-0">
+        <div className="flex gap-3 items-start">
+          <div className="flex-shrink-0">
             <File className="h-5 w-5 text-[#449889]" />
           </div>
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <AlertTitle
               className="mb-2 sm:mb-1 font-semibold text-base sm:text-sm"
               style={{
@@ -82,11 +82,11 @@ export const DocumentUploadSection = ({
               borderColor: "#BFE3DD",
             }}
           >
-            <div className="flex gap-3 sm:gap-2">
-              <div className="mt-0.5 flex-shrink-0">
+            <div className="flex gap-3 items-start">
+              <div className="flex-shrink-0">
                 <HelpCircle className="h-5 w-5 text-[#449889]" />
               </div>
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 <AlertTitle
                   className="mb-2 sm:mb-1 font-semibold text-base sm:text-sm"
                   style={{
@@ -127,11 +127,11 @@ export const DocumentUploadSection = ({
       {/* SUCCESS MESSAGE WHEN BOTH FILES ARE UPLOADED */}
       {linkedinFile && resumeFile && (
         <Alert className="mb-4 sm:mb-6 bg-green-50 border-green-200 border-2 sm:border">
-          <div className="flex gap-3 sm:gap-2">
-            <div className="mt-0.5 flex-shrink-0">
+          <div className="flex gap-3 items-start">
+            <div className="flex-shrink-0">
               <File className="h-5 w-5 text-green-600" />
             </div>
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
               <AlertTitle className="mb-2 sm:mb-1 font-semibold text-green-800 text-base sm:text-sm">
                 Both files uploaded successfully
               </AlertTitle>
