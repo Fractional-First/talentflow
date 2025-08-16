@@ -79,7 +79,7 @@ const ExecutiveCoaching = () => {
           {/* Process and Intake Sections */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Process Section */}
-            <div className="space-y-6 text-left bg-muted/30 rounded-2xl p-6">
+            <div className="space-y-6 text-left bg-muted/30 rounded-2xl p-6 border border-border">
               <div className="flex items-center gap-2">
                 <Clock className="h-5 w-5 text-muted-foreground" />
                 <h2 className="text-xl font-medium">Process</h2>
@@ -95,7 +95,7 @@ const ExecutiveCoaching = () => {
             </div>
 
             {/* Intake Section */}
-            <div className="space-y-6 text-left bg-muted/30 rounded-2xl p-6">
+            <div className="space-y-6 text-left bg-muted/30 rounded-2xl p-6 border border-border">
               <div className="flex items-center gap-2">
                 <CheckCircle className="h-5 w-5 text-muted-foreground" />
                 <h2 className="text-xl font-medium">Intake (Complimentary)</h2>
@@ -115,7 +115,7 @@ const ExecutiveCoaching = () => {
           </div>
 
           {/* Coach Section */}
-          <div className="space-y-6 bg-muted/30 rounded-2xl p-8">
+          <div className="space-y-6 bg-muted/30 rounded-2xl p-8 border border-border">
             <div className="flex items-center gap-2">
               <User className="h-5 w-5 text-muted-foreground" />
               <h2 className="text-xl font-medium">Your Coach</h2>
@@ -124,7 +124,7 @@ const ExecutiveCoaching = () => {
             <div className="flex items-start gap-6 text-left">
               <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
                 <BlurImage
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+                  src="/lovable-uploads/ea353678-088b-4c2c-a98b-4d40f6668684.png"
                   alt="Stephen Burke"
                   className="object-cover w-full h-full"
                 />
@@ -134,16 +134,20 @@ const ExecutiveCoaching = () => {
                   <h3 className="font-medium">Stephen Burke</h3>
                   <p className="text-sm text-muted-foreground">Executive & Leadership Coach</p>
                 </div>
-                <p className="text-muted-foreground leading-relaxed">
-                  Stephen is a visionary leader and executive coach with a unique blend of global engineering leadership and 
-                  profound expertise in human potential and organizational systems. He is dedicated to empowering 
-                  individuals, teams, and entire organizations to "CREATE their best lives, do their best work, make the biggest 
-                  positive impact and minimize their suffering along the way."
-                </p>
                 <Button variant="outline" size="sm" className="mt-4">
                   View Stephen's Profile
                 </Button>
               </div>
+            </div>
+            
+            {/* Stephen's Description - moved to new row */}
+            <div className="text-left">
+              <p className="text-muted-foreground leading-relaxed">
+                Stephen is a visionary leader and executive coach with a unique blend of global engineering leadership and 
+                profound expertise in human potential and organizational systems. He is dedicated to empowering 
+                individuals, teams, and entire organizations to "CREATE their best lives, do their best work, make the biggest 
+                positive impact and minimize their suffering along the way."
+              </p>
             </div>
           </div>
 
