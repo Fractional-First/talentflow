@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { DashboardLayout } from "@/components/DashboardLayout"
@@ -80,7 +79,7 @@ const Branding = () => {
               {coachingOfferings.map((offering, index) => (
                 <Card
                   key={offering.id}
-                  className={`overflow-hidden transition-all duration-300 hover:shadow-medium animate-slide-up bg-white border-0 shadow-sm`}
+                  className={`overflow-hidden transition-all duration-300 hover:shadow-medium animate-slide-up bg-white`}
                   style={{ animationDelay: `${index * 0.15}s` }}
                 >
                   <div className="relative h-48 overflow-hidden">
