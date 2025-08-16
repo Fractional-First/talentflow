@@ -138,7 +138,7 @@ const WorkPreferences = () => {
 
                   {/* Full-time Preferences */}
                   {form.fullTime.open_for_work && (
-                    <div className="mt-6 md:ml-4 md:border-l-2 md:border-primary/20 md:pl-6">
+                    <div className="mt-6 ml-4 border-l-2 border-primary/20 pl-6">
                       <div className="bg-muted/30 rounded-xl p-6">
                         <FullTimePreferences
                           form={form}
@@ -191,7 +191,7 @@ const WorkPreferences = () => {
 
                   {/* Flexible Preferences */}
                   {form.fractional.open_for_work && (
-                    <div className="mt-6 md:ml-4 md:border-l-2 md:border-primary/20 md:pl-6">
+                    <div className="mt-6 ml-4 border-l-2 border-primary/20 pl-6">
                       <div className="bg-muted/30 rounded-xl p-6">
                         <FlexiblePreferences
                           form={form}
@@ -220,7 +220,6 @@ const WorkPreferences = () => {
                 <div className="text-red-600 text-sm mt-3 text-center">
                   {saveError.message}
                 </div>
-              </div>
               )}
             </div>
           </StepCardContent>
