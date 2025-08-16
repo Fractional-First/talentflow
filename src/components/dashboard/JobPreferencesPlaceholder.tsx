@@ -1,3 +1,4 @@
+
 import { StepCard } from "@/components/StepCard"
 import { Button } from "@/components/ui/button"
 import { useNavigate } from "react-router-dom"
@@ -14,8 +15,8 @@ export const JobPreferencesPlaceholder = () => {
   const navigate = useNavigate()
 
   return (
-    <StepCard>
-      <div className="p-6">
+    <StepCard className="h-full flex flex-col">
+      <div className="p-6 flex-1 flex flex-col">
         <div className="text-center mb-6">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
             <Briefcase className="h-8 w-8 text-primary" />
@@ -26,7 +27,7 @@ export const JobPreferencesPlaceholder = () => {
           </p>
         </div>
 
-        <div className="space-y-4 mb-6">
+        <div className="space-y-4 mb-6 flex-1">
           <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
             <Briefcase className="h-5 w-5 text-muted-foreground" />
             <span className="text-sm text-muted-foreground">
@@ -63,7 +64,7 @@ export const JobPreferencesPlaceholder = () => {
           </div>
         </div>
 
-        <div className="text-center">
+        <div className="text-center mt-auto">
           <Button
             onClick={() => navigate("/work-preferences")}
             className="w-full"
