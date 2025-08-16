@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { DashboardLayout } from "@/components/DashboardLayout"
@@ -84,14 +83,13 @@ const Branding = () => {
         <StepCard>
           <StepCardHeader>
             <div className="flex items-center gap-3">
-              <StepCardTitle className="text-3xl font-semibold">Enhance Your Professional Brand</StepCardTitle>
+              <StepCardTitle className="text-3xl font-semibold">Professional Coaching With Trusted Partners</StepCardTitle>
               <Badge variant="outline" className="text-sm px-3 py-1 rounded-full">
                 Optional
               </Badge>
             </div>
             <StepCardDescription className="text-lg mt-3 text-muted-foreground">
-              Take advantage of our tools to enhance your professional brand and
-              increase your chances of finding the perfect match
+              Whether you're leading solo or as a team, master your leadership journey with clarity, alignment, and effectiveness through coaching offerings delivered by trusted partners of Fractional First.
             </StepCardDescription>
           </StepCardHeader>
 
