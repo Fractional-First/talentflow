@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -89,12 +88,12 @@ export const SupportingDocsSection = ({
 
   return (
     <div className="border rounded-lg p-6 mt-6">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center">
-          <div className="bg-primary/10 p-3 rounded-full mr-3">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
+        <div className="flex items-start gap-3 mb-4 sm:mb-0">
+          <div className="bg-primary/10 p-3 rounded-full flex-shrink-0">
             <Paperclip className="h-6 w-6 text-primary" />
           </div>
-          <div>
+          <div className="flex-1 min-w-0">
             <h3 className="font-medium">
               Supporting Documents (Optional)
             </h3>
@@ -108,6 +107,7 @@ export const SupportingDocsSection = ({
           variant="outline"
           onClick={() => setShowForm(!showForm)}
           type="button"
+          className="w-full sm:w-auto flex-shrink-0"
         >
           {showForm ? "Hide Form" : "Add Files"}
         </Button>
@@ -150,16 +150,6 @@ export const SupportingDocsSection = ({
                 >
                   <FileText className="h-4 w-4 mr-1" /> Document
                 </Button>
-                {/*
-                <Button
-                  variant={type === "link" ? "secondary" : "outline"}
-                  size="sm"
-                  onClick={() => setType("link")}
-                  type="button"
-                >
-                  <Link className="h-4 w-4 mr-1" /> Link
-                </Button>
-                */}
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -231,7 +221,7 @@ export const SupportingDocsSection = ({
           </CardContent>
         </Card>
       )}
-      {docs.length > 0 /*|| links.length > 0*/ && (
+      {docs.length > 0 && (
         <div className="space-y-3 mt-6">
           <h3 className="font-medium">Added Documents</h3>
           <div className="space-y-3">
@@ -262,35 +252,6 @@ export const SupportingDocsSection = ({
                 </Button>
               </div>
             ))}
-            {/*
-            {links.map((link, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between p-3 rounded-md border border-border/60 bg-background"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-md bg-primary/10">
-                    <Link className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-medium">{link.title}</p>
-                    <p className="text-xs text-primary truncate max-w-[200px] md:max-w-[300px]">
-                      {link.link}
-                    </p>
-                  </div>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => removeLink(index)}
-                  className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                  type="button"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            ))}
-            */}
           </div>
         </div>
       )}
