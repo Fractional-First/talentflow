@@ -103,7 +103,7 @@ const WorkPreferences = () => {
                 {/* Full-time Card */}
                 <div className="group">
                   <div
-                    className={`w-full p-6 rounded-xl border-2 transition-all duration-200 cursor-pointer ${
+                    className={`w-full p-4 sm:p-6 rounded-xl border-2 transition-all duration-200 cursor-pointer ${
                       form.fullTime.open_for_work
                         ? "border-primary bg-primary/5 shadow-sm"
                         : "border-border hover:border-primary/50 hover:bg-muted/20"
@@ -166,7 +166,7 @@ const WorkPreferences = () => {
                   {/* Full-time Preferences */}
                   {form.fullTime.open_for_work && (
                     <div className="mt-6 md:ml-4 md:border-l-2 md:border-primary/20 md:pl-6">
-                      <div className="bg-muted/30 rounded-xl p-6">
+                      <div className="bg-muted/30 rounded-xl p-4 sm:p-6">
                         <FullTimePreferences
                           form={form}
                           setForm={setForm}
@@ -183,7 +183,7 @@ const WorkPreferences = () => {
                 {/* Flexible Position Card */}
                 <div className="group">
                   <div
-                    className={`w-full p-6 rounded-xl border-2 transition-all duration-200 cursor-pointer ${
+                    className={`w-full p-4 sm:p-6 rounded-xl border-2 transition-all duration-200 cursor-pointer ${
                       form.fractional.open_for_work
                         ? "border-primary bg-primary/5 shadow-sm"
                         : "border-border hover:border-primary/50 hover:bg-muted/20"
@@ -246,7 +246,7 @@ const WorkPreferences = () => {
                   {/* Flexible Preferences */}
                   {form.fractional.open_for_work && (
                     <div className="mt-6 md:ml-4 md:border-l-2 md:border-primary/20 md:pl-6">
-                      <div className="bg-muted/30 rounded-xl p-6">
+                      <div className="bg-muted/30 rounded-xl p-4 sm:p-6">
                         <FlexiblePreferences
                           form={form}
                           setForm={setForm}
@@ -286,7 +286,7 @@ const WorkPreferences = () => {
 
   return (
     <DashboardLayout>
-      <div className="container max-w-4xl py-8 px-4">{renderStepContent()}</div>
+      <div className="container max-w-4xl py-8 px-2 sm:px-4">{renderStepContent()}</div>
     </DashboardLayout>
   )
 }
