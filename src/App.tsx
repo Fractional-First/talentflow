@@ -21,6 +21,7 @@ import WaitingRoom from "./pages/dashboard/WaitingRoom"
 import WorkPreferences from "./pages/WorkPreferences"
 import AuthCallback from "./pages/AuthCallback"
 import Settings from "./pages/Settings"
+import PrivacyPolicy from "./pages/PrivacyPolicy"
 
 const queryClient = new QueryClient()
 
@@ -41,6 +42,7 @@ const App = () => (
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/check-email" element={<CheckEmail />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
+          <Route path="/legal/privacy" element={<PrivacyPolicy />} />
           
           {/* Change password route - for users with SET_PASSWORD status */}
           <Route
