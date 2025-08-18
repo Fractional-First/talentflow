@@ -62,7 +62,7 @@ const EditProfile = () => {
 
   return (
     <DashboardLayout>
-      <div ref={mainContentRef} className="max-w-6xl mx-auto space-y-6 p-6">
+      <div ref={mainContentRef} className="max-w-6xl mx-auto space-y-6 p-4 sm:p-6">
         {/* Header with Auto-save Status */}
         <div className="relative">
           <div className="space-y-2">
@@ -84,7 +84,7 @@ const EditProfile = () => {
         </div>
 
         {/* Main Layout - Two Column */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Left Column - Profile Info */}
           <div className="lg:col-span-1 space-y-6">
             {/* Profile Image and Basic Info */}
@@ -300,8 +300,12 @@ const EditProfile = () => {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex justify-between items-center pt-6">
-          <Button variant="outline" onClick={() => navigate("/create-profile")}>
+        <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 pt-6">
+          <Button 
+            variant="outline" 
+            onClick={() => navigate("/create-profile")}
+            className="w-full sm:w-auto"
+          >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Profile
           </Button>
@@ -310,7 +314,7 @@ const EditProfile = () => {
             onClick={handleContinue}
             disabled={isSubmitting}
             style={{ backgroundColor: '#449889' }}
-            className="hover:opacity-90 text-white"
+            className="hover:opacity-90 text-white w-full sm:w-auto"
           >
             {isSubmitting ? "Processing..." : "Complete & Go to Dashboard"}
             <ArrowRight className="ml-2 h-4 w-4" />

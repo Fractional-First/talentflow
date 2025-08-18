@@ -36,12 +36,12 @@ const TimezoneSelector = ({
 
   if (isLoading) {
     return (
-      <Button variant="outline" disabled className="w-full justify-between text-sm">
-        <div className="flex items-center gap-2">
-          <Clock className="h-4 w-4" />
-          Loading timezones...
+      <Button variant="outline" disabled className="w-full justify-between text-sm pr-2">
+        <div className="flex items-center gap-2 min-w-0 flex-1">
+          <Clock className="h-4 w-4 shrink-0" />
+          <span className="truncate">Loading timezones...</span>
         </div>
-        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
       </Button>
     )
   }
@@ -53,13 +53,15 @@ const TimezoneSelector = ({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-full justify-between text-sm"
+          className="w-full justify-between text-sm pr-2"
         >
-          <div className="flex items-center gap-2">
-            <Clock className="h-4 w-4" />
-            {selectedTimezoneData ? selectedTimezoneData.text : placeholder}
+          <div className="flex items-center gap-2 min-w-0 flex-1">
+            <Clock className="h-4 w-4 shrink-0" />
+            <span className="truncate">
+              {selectedTimezoneData ? selectedTimezoneData.text : placeholder}
+            </span>
           </div>
-          <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent
@@ -82,13 +84,13 @@ const TimezoneSelector = ({
                 >
                   <Check
                     className={cn(
-                      "mr-2 h-4 w-4",
+                      "mr-2 h-4 w-4 shrink-0",
                       selectedTimezone === timezone.id
                         ? "opacity-100"
                         : "opacity-0"
                     )}
                   />
-                  <span>{timezone.text}</span>
+                  <span className="truncate">{timezone.text}</span>
                 </CommandItem>
               ))}
             </CommandGroup>

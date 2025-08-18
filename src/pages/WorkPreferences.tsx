@@ -103,14 +103,41 @@ const WorkPreferences = () => {
                 {/* Full-time Card */}
                 <div className="group">
                   <div
-                    className={`w-full p-6 rounded-xl border-2 transition-all duration-200 cursor-pointer ${
+                    className={`w-full p-4 sm:p-6 rounded-xl border-2 transition-all duration-200 cursor-pointer ${
                       form.fullTime.open_for_work
                         ? "border-primary bg-primary/5 shadow-sm"
                         : "border-border hover:border-primary/50 hover:bg-muted/20"
                     }`}
                     onClick={() => toggleType("fullTime")}
                   >
-                    <div className="flex items-start gap-4">
+                    {/* Mobile layout - stacked */}
+                    <div className="flex flex-col gap-4 md:hidden">
+                      <div className="flex items-center justify-center">
+                        <div className={`rounded-lg p-3 transition-colors ${
+                          form.fullTime.open_for_work ? "bg-primary/15" : "bg-muted group-hover:bg-primary/10"
+                        }`}>
+                          <Briefcase className={`h-5 w-5 ${
+                            form.fullTime.open_for_work ? "text-primary" : "text-muted-foreground"
+                          }`} />
+                        </div>
+                      </div>
+                      <div className="text-center">
+                        <h3 className="text-lg font-semibold mb-2">Full-time Position</h3>
+                        <p className="text-body-mobile text-muted-foreground leading-relaxed mb-4">
+                          40 hours per week, dedicated to one company. Traditional employment with benefits and long-term commitment.
+                        </p>
+                        <div className="flex justify-center" onClick={(e) => e.stopPropagation()}>
+                          <Checkbox
+                            checked={form.fullTime.open_for_work}
+                            className="h-5 w-5 cursor-pointer"
+                            onCheckedChange={() => toggleType("fullTime")}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Desktop layout - horizontal */}
+                    <div className="hidden md:flex items-start gap-4">
                       <div className={`rounded-lg p-3 transition-colors ${
                         form.fullTime.open_for_work ? "bg-primary/15" : "bg-muted group-hover:bg-primary/10"
                       }`}>
@@ -129,7 +156,7 @@ const WorkPreferences = () => {
                             />
                           </div>
                         </div>
-                        <p className="text-body-mobile md:text-body-desktop text-muted-foreground leading-relaxed">
+                        <p className="text-body-desktop text-muted-foreground leading-relaxed">
                           40 hours per week, dedicated to one company. Traditional employment with benefits and long-term commitment.
                         </p>
                       </div>
@@ -138,8 +165,8 @@ const WorkPreferences = () => {
 
                   {/* Full-time Preferences */}
                   {form.fullTime.open_for_work && (
-                    <div className="mt-6 ml-4 border-l-2 border-primary/20 pl-6">
-                      <div className="bg-muted/30 rounded-xl p-6">
+                    <div className="mt-6 md:ml-4 md:border-l-2 md:border-primary/20 md:pl-6">
+                      <div className="bg-muted/30 rounded-xl p-4 sm:p-6">
                         <FullTimePreferences
                           form={form}
                           setForm={setForm}
@@ -156,14 +183,41 @@ const WorkPreferences = () => {
                 {/* Flexible Position Card */}
                 <div className="group">
                   <div
-                    className={`w-full p-6 rounded-xl border-2 transition-all duration-200 cursor-pointer ${
+                    className={`w-full p-4 sm:p-6 rounded-xl border-2 transition-all duration-200 cursor-pointer ${
                       form.fractional.open_for_work
                         ? "border-primary bg-primary/5 shadow-sm"
                         : "border-border hover:border-primary/50 hover:bg-muted/20"
                     }`}
                     onClick={() => toggleType("fractional")}
                   >
-                    <div className="flex items-start gap-4">
+                    {/* Mobile layout - stacked */}
+                    <div className="flex flex-col gap-4 md:hidden">
+                      <div className="flex items-center justify-center">
+                        <div className={`rounded-lg p-3 transition-colors ${
+                          form.fractional.open_for_work ? "bg-primary/15" : "bg-muted group-hover:bg-primary/10"
+                        }`}>
+                          <Clock className={`h-5 w-5 ${
+                            form.fractional.open_for_work ? "text-primary" : "text-muted-foreground"
+                          }`} />
+                        </div>
+                      </div>
+                      <div className="text-center">
+                        <h3 className="text-lg font-semibold mb-2">Flexible Position</h3>
+                        <p className="text-body-mobile text-muted-foreground leading-relaxed mb-4">
+                          Part-time commitment with flexible hours. Work with multiple companies simultaneously on project-based engagements.
+                        </p>
+                        <div className="flex justify-center" onClick={(e) => e.stopPropagation()}>
+                          <Checkbox
+                            checked={form.fractional.open_for_work}
+                            className="h-5 w-5 cursor-pointer"
+                            onCheckedChange={() => toggleType("fractional")}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Desktop layout - horizontal */}
+                    <div className="hidden md:flex items-start gap-4">
                       <div className={`rounded-lg p-3 transition-colors ${
                         form.fractional.open_for_work ? "bg-primary/15" : "bg-muted group-hover:bg-primary/10"
                       }`}>
@@ -182,7 +236,7 @@ const WorkPreferences = () => {
                             />
                           </div>
                         </div>
-                        <p className="text-body-mobile md:text-body-desktop text-muted-foreground leading-relaxed">
+                        <p className="text-body-desktop text-muted-foreground leading-relaxed">
                           Part-time commitment with flexible hours. Work with multiple companies simultaneously on project-based engagements.
                         </p>
                       </div>
@@ -191,8 +245,8 @@ const WorkPreferences = () => {
 
                   {/* Flexible Preferences */}
                   {form.fractional.open_for_work && (
-                    <div className="mt-6 ml-4 border-l-2 border-primary/20 pl-6">
-                      <div className="bg-muted/30 rounded-xl p-6">
+                    <div className="mt-6 md:ml-4 md:border-l-2 md:border-primary/20 md:pl-6">
+                      <div className="bg-muted/30 rounded-xl p-4 sm:p-6">
                         <FlexiblePreferences
                           form={form}
                           setForm={setForm}
@@ -232,7 +286,7 @@ const WorkPreferences = () => {
 
   return (
     <DashboardLayout>
-      <div className="container max-w-4xl py-8 px-4">{renderStepContent()}</div>
+      <div className="container max-w-4xl py-8 px-2 sm:px-4">{renderStepContent()}</div>
     </DashboardLayout>
   )
 }

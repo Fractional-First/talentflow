@@ -25,7 +25,7 @@ interface StepCardHeaderProps {
 
 export function StepCardHeader({ children, className }: StepCardHeaderProps) {
   return (
-    <div className={cn("px-6 py-8 border-b border-border", className)}>
+    <div className={cn("px-3 sm:px-6 py-6 sm:py-8 border-b border-border", className)}>
       {children}
     </div>
   );
@@ -38,7 +38,7 @@ interface StepCardContentProps {
 
 export function StepCardContent({ children, className }: StepCardContentProps) {
   return (
-    <div className={cn("px-6 py-8", className)}>
+    <div className={cn("px-3 sm:px-6 py-6 sm:py-8", className)}>
       {children}
     </div>
   );
@@ -54,7 +54,7 @@ export function StepCardTitle({
   className 
 }: StepCardTitleProps) {
   return (
-    <h2 className={cn("text-2xl font-medium tracking-tight", className)}>
+    <h2 className={cn("text-xl sm:text-2xl font-medium tracking-tight", className)}>
       {children}
     </h2>
   );
@@ -70,7 +70,7 @@ export function StepCardDescription({
   className 
 }: StepCardDescriptionProps) {
   return (
-    <p className={cn("text-muted-foreground", className)}>
+    <p className={cn("text-muted-foreground text-sm sm:text-base", className)}>
       {children}
     </p>
   );
@@ -86,7 +86,7 @@ export function StepCardFooter({
   className 
 }: StepCardFooterProps) {
   return (
-    <div className={cn("px-6 py-8 border-t border-border", className)}>
+    <div className={cn("px-3 sm:px-6 py-6 sm:py-8 border-t border-border", className)}>
       {children}
     </div>
   );
