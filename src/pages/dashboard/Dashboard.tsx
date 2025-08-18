@@ -1,3 +1,5 @@
+
+
 import { AppSidebar } from "@/components/AppSidebar"
 import { JobPreferencesPlaceholder } from "@/components/dashboard/JobPreferencesPlaceholder"
 import { OnboardingBanner } from "@/components/dashboard/OnboardingBanner"
@@ -71,7 +73,7 @@ const Dashboard = () => {
             </div>
           </header>
           <div className="flex-1">
-            {onboardingStatus === "PROFILE_CONFIRMED" && <OnboardingBanner />}
+            {isOnboarding && <OnboardingBanner />}
             <div className="p-4 sm:p-8 max-w-7xl mx-auto w-full">
               <div className="grid lg:grid-cols-2 gap-8">
                 {/* Left column - Read-only profile summary */}
@@ -82,7 +84,7 @@ const Dashboard = () => {
                 </div>
                 {/* Right column - Job preferences placeholder */}
                 <div className="space-y-6">
-                  <JobPreferencesPlaceholder />
+                  <JobPreferencesPlaceholder isCompleted={!isOnboarding} />
                 </div>
               </div>
             </div>
@@ -94,3 +96,4 @@ const Dashboard = () => {
 }
 
 export default Dashboard
+
