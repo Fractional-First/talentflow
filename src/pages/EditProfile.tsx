@@ -13,7 +13,7 @@ import ProfilePictureUpload from "@/components/ProfilePictureUpload"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { useEditProfile } from "@/hooks/useEditProfile"
-import { ArrowLeft, ArrowRight, Edit, Eye } from "lucide-react"
+import { ArrowLeft, ArrowRight, Edit } from "lucide-react"
 
 const EditProfile = () => {
   const {
@@ -62,6 +62,21 @@ const EditProfile = () => {
   return (
     <DashboardLayout>
       <div ref={mainContentRef} className="max-w-6xl mx-auto space-y-6 p-4 sm:p-6">
+        {/* Preview Mode Banner on Edit Screen */}
+        {user?.id && (
+          <div className="bg-gradient-to-r from-teal-600 to-teal-500 border-b border-teal-400">
+            <div className="px-4 py-4">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-center sm:text-left">
+                <div className="text-white">
+                  <h3 className="font-semibold text-lg">Your profile is still in preview mode right now. See how it looks here:</h3>
+                </div>
+                <Button asChild className="bg-white text-teal-600 hover:bg-teal-50 font-medium whitespace-nowrap">
+                  <a href={`/profile/preview/${user.id}`} target="_blank" rel="noopener noreferrer">Open Preview</a>
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
         {/* Header with Auto-save Status */}
         <div className="relative">
           <div className="space-y-2">
@@ -72,25 +87,8 @@ const EditProfile = () => {
             </p>
           </div>
 
-          {/* Auto-save Status and Preview Button - Fixed position in top right */}
+          {/* Auto-save Status - Fixed position in top right */}
           <div className="absolute top-0 right-0 flex items-center gap-3">
-            {user?.id && (
-              <Button
-                variant="outline"
-                size="sm"
-                asChild
-                className="flex items-center gap-2"
-              >
-                <a 
-                  href={`/profile/preview/${user.id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Eye className="h-4 w-4" />
-                  Preview
-                </a>
-              </Button>
-            )}
             <AutoSaveStatus
               status={saveStatus.status}
               lastSavedTime={saveStatus.lastSavedTime}
