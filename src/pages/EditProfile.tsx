@@ -77,18 +77,16 @@ const EditProfile = () => {
             </div>
           </div>
         )}
-        {/* Header with Auto-save Status */}
-        <div className="relative">
-          <div className="space-y-2">
-            <p className="text-sm text-gray-600">
-              This summary is curated based on your experience and skills. Feel
-              free to refine it to better reflect your voice by clicking on the
-              edit icon <Edit className="h-4 w-4 inline-block ml-1" />.
-            </p>
-          </div>
-
-          {/* Auto-save Status - Fixed position in top right */}
-          <div className="absolute top-0 right-0 flex items-center gap-3">
+        {/* Header with explanatory text */}
+        <div className="space-y-2">
+          <p className="text-sm text-gray-600">
+            This summary is curated based on your experience and skills. Feel
+            free to refine it to better reflect your voice by clicking on the
+            edit icon <Edit className="h-4 w-4 inline-block ml-1" />.
+          </p>
+          
+          {/* Auto-save Status positioned below */}
+          <div className="flex justify-end">
             <AutoSaveStatus
               status={saveStatus.status}
               lastSavedTime={saveStatus.lastSavedTime}
