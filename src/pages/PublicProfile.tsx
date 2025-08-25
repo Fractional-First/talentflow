@@ -59,11 +59,30 @@ const PublicProfile = () => {
         </div>
       </header>
 
+      {/* Preview Mode Banner */}
+      {isPreviewMode && !showClaimBanner && (
+        <div className="bg-gradient-to-r from-teal-600 to-teal-500 border-b border-teal-400">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="text-white">
+                <h3 className="font-semibold text-lg">Your profile is still in preview mode right now. See how it looks here:</h3>
+              </div>
+              <Button
+                asChild
+                className="bg-white text-teal-600 hover:bg-teal-50 font-medium whitespace-nowrap"
+              >
+                <a href={`/profile/${profileData?.name?.toLowerCase().replace(/\s+/g, '-')}`}>View Public Profile</a>
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Claim Profile Banner */}
       {showClaimBanner && (
         <div className="bg-gradient-to-r from-teal-600 to-teal-500 border-b border-teal-400">
-          <div className="container mx-auto px-4 py-6 text-center">
-            <div className="flex flex-col items-center justify-center gap-4">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="text-white">
                 <h3 className="font-semibold text-lg">Claim your profile here</h3>
                 <p className="text-sm text-teal-50">
@@ -72,7 +91,7 @@ const PublicProfile = () => {
               </div>
               <Button
                 asChild
-                className="bg-white text-teal-600 hover:bg-teal-50 font-medium"
+                className="bg-white text-teal-600 hover:bg-teal-50 font-medium whitespace-nowrap"
               >
                 <a href="/login">Login to Claim</a>
               </Button>
