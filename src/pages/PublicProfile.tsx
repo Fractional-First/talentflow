@@ -1,4 +1,5 @@
-import { useParams } from "react-router-dom"
+
+import { useParams, useSearchParams } from "react-router-dom"
 import { useState } from "react"
 import { ProfileData } from "@/types/profile"
 import { usePublicProfile } from "@/queries/usePublicProfile"
@@ -10,13 +11,24 @@ import { PersonasSection } from "@/components/edit-profile/PersonasSection"
 import { SuperpowersSection } from "@/components/edit-profile/SuperpowersSection"
 import ProfilePictureUpload from "@/components/ProfilePictureUpload"
 import { Spinner } from "@/components/ui/spinner"
+import { Button } from "@/components/ui/button"
 import NotFound from "./NotFound"
 
 const PublicProfile = () => {
-  const { slug } = useParams<{ slug: string }>()
+  const { slug, uuid } = useParams<{ slug?: string; uuid?: string }>()
+  const [searchParams] = useSearchParams()
   const [personasActiveTab, setPersonasActiveTab] = useState("0")
 
-  const { data: profileData, isLoading, error } = usePublicProfile(slug || "")
+  // Determine if this is a preview mode and if we should show the claim banner
+  const isPreviewMode = !!uuid
+  const showClaimBanner = isPreviewMode && searchParams.get("new_profile") === "true"
+
+  // Use the appropriate parameter based on route
+  const queryParams = slug ? { slug, id: undefined as never } : uuid ? { id: uuid, slug: undefined as never } : null
+  
+  const { data: profileData, isLoading, error } = usePublicProfile(
+    queryParams || { slug: "" }
+  )
 
   if (isLoading) {
     return (
@@ -26,7 +38,7 @@ const PublicProfile = () => {
     )
   }
 
-  if (error || !profileData) {
+  if (error || !profileData || !queryParams) {
     return <NotFound />
   }
 
@@ -46,6 +58,28 @@ const PublicProfile = () => {
           </div>
         </div>
       </header>
+
+      {/* Claim Profile Banner */}
+      {showClaimBanner && (
+        <div className="bg-gradient-to-r from-teal-600 to-teal-500 border-b border-teal-400">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="text-white">
+                <h3 className="font-semibold text-lg">Claim your profile</h3>
+                <p className="text-sm text-teal-50">
+                  Login with the temporary password in your welcome email.
+                </p>
+              </div>
+              <Button
+                asChild
+                className="bg-white text-teal-600 hover:bg-teal-50 font-medium whitespace-nowrap"
+              >
+                <a href="/login">Login to Claim</a>
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
       
       <div className="max-w-6xl mx-auto space-y-6 p-6">
         {/* Main Layout - Two Column */}
