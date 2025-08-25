@@ -47,8 +47,8 @@ const LocationInputWithPopover: React.FC<LocationInputWithPopoverProps> = ({
   const {
     placePredictions,
     getPlacePredictions,
+    getPlaceDetails,
     isPlacePredictionsLoading,
-    placesService,
   } = useGooglePlaces()
 
   // Update input value when value prop changes
@@ -66,45 +66,35 @@ const LocationInputWithPopover: React.FC<LocationInputWithPopoverProps> = ({
     const newValue = e.target.value
     setInputValue(newValue)
     if (newValue.trim()) {
-      getPlacePredictions({ input: newValue })
+      getPlacePredictions(newValue)
       setShowPopover(true)
     } else {
       setShowPopover(false)
     }
   }
 
-  const handlePredictionClick = (prediction: any) => {
-    placesService?.getDetails(
-      {
-        placeId: prediction.place_id,
-        fields: [
-          "place_id",
-          "name",
-          "formatted_address",
-          "address_components",
-          "geometry",
-          "types",
-        ],
-      },
-      (placeDetails) => {
-        if (placeDetails) {
-          const locationObj = {
-            place_id: placeDetails.place_id,
-            name: placeDetails.name || prediction.description,
-            formatted_address: placeDetails.formatted_address,
-            city: extractCity(placeDetails.address_components),
-            state_province: extractState(placeDetails.address_components),
-            country_code: extractCountryCode(placeDetails.address_components),
-            latitude: placeDetails.geometry?.location?.lat(),
-            longitude: placeDetails.geometry?.location?.lng(),
-            place_types: placeDetails.types,
-          }
-          onChange(locationObj)
-          setInputValue("") // Clear the input after selection
-        }
-        setShowPopover(false)
+  const handlePredictionClick = async (prediction: any) => {
+    const placeDetails = await getPlaceDetails(
+      prediction.place_id,
+      "place_id,name,formatted_address,address_components,geometry,types"
+    );
+
+    if (placeDetails) {
+      const locationObj = {
+        place_id: placeDetails.place_id,
+        name: placeDetails.name || prediction.description,
+        formatted_address: placeDetails.formatted_address,
+        city: extractCity(placeDetails.address_components),
+        state_province: extractState(placeDetails.address_components),
+        country_code: extractCountryCode(placeDetails.address_components),
+        latitude: placeDetails.geometry?.location?.lat,
+        longitude: placeDetails.geometry?.location?.lng,
+        place_types: placeDetails.types,
       }
-    )
+      onChange(locationObj)
+      setInputValue("") // Clear the input after selection
+    }
+    setShowPopover(false)
   }
 
   return (

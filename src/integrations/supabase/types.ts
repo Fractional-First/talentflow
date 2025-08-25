@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -438,6 +438,7 @@ export type Database = {
           notification_preferences: Json | null
           onboarding_status: Database["public"]["Enums"]["onboarding_status"]
           profile_data: Json
+          profile_data_original: Json | null
           profile_slug: string
           profile_version: string
           updated_at: string
@@ -451,6 +452,7 @@ export type Database = {
           notification_preferences?: Json | null
           onboarding_status?: Database["public"]["Enums"]["onboarding_status"]
           profile_data?: Json
+          profile_data_original?: Json | null
           profile_slug: string
           profile_version?: string
           updated_at?: string
@@ -464,6 +466,7 @@ export type Database = {
           notification_preferences?: Json | null
           onboarding_status?: Database["public"]["Enums"]["onboarding_status"]
           profile_data?: Json
+          profile_data_original?: Json | null
           profile_slug?: string
           profile_version?: string
           updated_at?: string
@@ -639,16 +642,16 @@ export type Database = {
     }
     Functions: {
       generate_unique_profile_slug: {
-        Args: { p_user_id: string; p_first_name: string; p_last_name: string }
+        Args: { p_first_name: string; p_last_name: string; p_user_id: string }
         Returns: string
       }
       get_public_profile: {
         Args: { profile_slug_param: string }
         Returns: {
-          profile_slug: string
-          profile_data: Json
           first_name: string
           last_name: string
+          profile_data: Json
+          profile_slug: string
         }[]
       }
     }
