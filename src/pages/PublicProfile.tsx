@@ -61,18 +61,18 @@ const PublicProfile = () => {
 
       {/* Claim Profile Banner */}
       {showClaimBanner && (
-        <div className="bg-gradient-to-r from-orange-400 to-orange-300 border-b border-orange-200">
-          <div className="container mx-auto px-4 py-4 text-center">
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <div className="bg-gradient-to-r from-teal-600 to-teal-500 border-b border-teal-400">
+          <div className="container mx-auto px-4 py-6 text-center">
+            <div className="flex flex-col items-center justify-center gap-4">
               <div className="text-white">
                 <h3 className="font-semibold text-lg">Claim your profile here</h3>
-                <p className="text-sm text-orange-50">
+                <p className="text-sm text-teal-50">
                   You should login with the temporary password we sent in your welcome email.
                 </p>
               </div>
               <Button
                 asChild
-                className="bg-white text-orange-600 hover:bg-orange-50 font-medium"
+                className="bg-white text-teal-600 hover:bg-teal-50 font-medium"
               >
                 <a href="/login">Login to Claim</a>
               </Button>
