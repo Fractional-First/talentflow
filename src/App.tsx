@@ -26,148 +26,151 @@ import PrivacyPolicy from "./pages/PrivacyPolicy"
 
 const queryClient = new QueryClient()
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          {/* Redirect root to login */}
-          <Route path="/" element={<Navigate to="/login" replace />} />
-          
-          {/* Public routes */}
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/check-email" element={<CheckEmail />} />
-          <Route path="/auth/callback" element={<AuthCallback />} />
-          <Route path="/legal/privacy" element={<PrivacyPolicy />} />
-          
-          {/* Change password route - for users with SET_PASSWORD status */}
-          <Route
-            path="/change-password"
-            element={
-              <ProtectedRoute allowedStatuses={["SET_PASSWORD"]}>
-                <ChangePassword />
-              </ProtectedRoute>
-            }
-          />
-          
-          {/* Public profile route - no auth required */}
-          <Route path="/profile/:slug" element={<PublicProfile />} />
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            {/* Redirect root to login */}
+            <Route path="/" element={<Navigate to="/login" replace />} />
+            
+            {/* Public routes */}
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/check-email" element={<CheckEmail />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
+            <Route path="/legal/privacy" element={<PrivacyPolicy />} />
+            
+            {/* Change password route - for users with SET_PASSWORD status */}
+            <Route
+              path="/change-password"
+              element={
+                <ProtectedRoute allowedStatuses={["SET_PASSWORD"]}>
+                  <ChangePassword />
+                </ProtectedRoute>
+              }
+            />
+            
+            {/* Public profile route - no auth required */}
+            <Route path="/profile/:slug" element={<PublicProfile />} />
+            <Route path="/profile/preview/:uuid" element={<PublicProfile />} />
 
-          {/* Profile creation - for users with EMAIL_CONFIRMED, PROFILE_GENERATED, or PROFILE_CONFIRMED status */}
-          <Route
-            path="/create-profile"
-            element={
-              <ProtectedRoute
-                allowedStatuses={[
-                  "EMAIL_CONFIRMED",
-                  "PROFILE_GENERATED",
-                  "PROFILE_CONFIRMED",
-                  "PREFERENCES_SET",
-                ]}
-              >
-                <ProfileCreation />
-              </ProtectedRoute>
-            }
-          />
+            {/* Profile creation - for users with EMAIL_CONFIRMED, PROFILE_GENERATED, or PROFILE_CONFIRMED status */}
+            <Route
+              path="/create-profile"
+              element={
+                <ProtectedRoute
+                  allowedStatuses={[
+                    "EMAIL_CONFIRMED",
+                    "PROFILE_GENERATED",
+                    "PROFILE_CONFIRMED",
+                    "PREFERENCES_SET",
+                  ]}
+                >
+                  <ProfileCreation />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* Profile snapshot - for users with PROFILE_GENERATED or PROFILE_CONFIRMED status */}
-          <Route
-            path="/edit-profile"
-            element={
-              <ProtectedRoute
-                allowedStatuses={[
-                  "PROFILE_GENERATED",
-                  "PROFILE_CONFIRMED",
-                  "PREFERENCES_SET",
-                ]}
-              >
-                <ProfileSnapshot />
-              </ProtectedRoute>
-            }
-          />
+            {/* Profile snapshot - for users with PROFILE_GENERATED or PROFILE_CONFIRMED status */}
+            <Route
+              path="/edit-profile"
+              element={
+                <ProtectedRoute
+                  allowedStatuses={[
+                    "PROFILE_GENERATED",
+                    "PROFILE_CONFIRMED",
+                    "PREFERENCES_SET",
+                  ]}
+                >
+                  <ProfileSnapshot />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* Dashboard and other routes - for users with PROFILE_CONFIRMED status */}
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute
-                allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
-              >
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/dashboard/branding"
-            element={
-              <ProtectedRoute
-                allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
-              >
-                <Branding />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/dashboard/executive-coaching"
-            element={
-              <ProtectedRoute
-                allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
-              >
-                <ExecutiveCoaching />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/dashboard/team-coaching"
-            element={
-              <ProtectedRoute
-                allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
-              >
-                <TeamCoaching />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/work-preferences"
-            element={
-              <ProtectedRoute
-                allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
-              >
-                <WorkPreferences />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/dashboard/waiting-room"
-            element={
-              <ProtectedRoute
-                allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
-              >
-                <WaitingRoom />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/settings"
-            element={
-              <ProtectedRoute
-                allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
-              >
-                <Settings />
-              </ProtectedRoute>
-            }
-          />
+            {/* Dashboard and other routes - for users with PROFILE_CONFIRMED status */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute
+                  allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
+                >
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/branding"
+              element={
+                <ProtectedRoute
+                  allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
+                >
+                  <Branding />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/executive-coaching"
+              element={
+                <ProtectedRoute
+                  allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
+                >
+                  <ExecutiveCoaching />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/team-coaching"
+              element={
+                <ProtectedRoute
+                  allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
+                >
+                  <TeamCoaching />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/work-preferences"
+              element={
+                <ProtectedRoute
+                  allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
+                >
+                  <WorkPreferences />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/waiting-room"
+              element={
+                <ProtectedRoute
+                  allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
+                >
+                  <WaitingRoom />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute
+                  allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
+                >
+                  <Settings />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-)
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  )
+}
 
 export default App

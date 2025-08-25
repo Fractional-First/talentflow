@@ -1,4 +1,5 @@
-import { useParams } from "react-router-dom"
+
+import { useParams, useSearchParams } from "react-router-dom"
 import { useState } from "react"
 import { ProfileData } from "@/types/profile"
 import { usePublicProfile } from "@/queries/usePublicProfile"
@@ -10,13 +11,24 @@ import { PersonasSection } from "@/components/edit-profile/PersonasSection"
 import { SuperpowersSection } from "@/components/edit-profile/SuperpowersSection"
 import ProfilePictureUpload from "@/components/ProfilePictureUpload"
 import { Spinner } from "@/components/ui/spinner"
+import { Button } from "@/components/ui/button"
 import NotFound from "./NotFound"
 
 const PublicProfile = () => {
-  const { slug } = useParams<{ slug: string }>()
+  const { slug, uuid } = useParams<{ slug?: string; uuid?: string }>()
+  const [searchParams] = useSearchParams()
   const [personasActiveTab, setPersonasActiveTab] = useState("0")
 
-  const { data: profileData, isLoading, error } = usePublicProfile(slug || "")
+  // Determine if this is a preview mode and if we should show the claim banner
+  const isPreviewMode = !!uuid
+  const showClaimBanner = isPreviewMode && searchParams.get("new_profile") === "true"
+
+  // Use the appropriate parameter based on route
+  const queryParams = slug ? { slug } : uuid ? { id: uuid } : null
+  
+  const { data: profileData, isLoading, error } = usePublicProfile(
+    queryParams || { slug: "" }
+  )
 
   if (isLoading) {
     return (
@@ -26,7 +38,7 @@ const PublicProfile = () => {
     )
   }
 
-  if (error || !profileData) {
+  if (error || !profileData || !queryParams) {
     return <NotFound />
   }
 
@@ -46,6 +58,28 @@ const PublicProfile = () => {
           </div>
         </div>
       </header>
+
+      {/* Claim Profile Banner */}
+      {showClaimBanner && (
+        <div className="bg-gradient-to-r from-orange-400 to-orange-300 border-b border-orange-200">
+          <div className="container mx-auto px-4 py-4 text-center">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <div className="text-white">
+                <h3 className="font-semibold text-lg">Claim your profile here</h3>
+                <p className="text-sm text-orange-50">
+                  You should login with the temporary password we sent in your welcome email.
+                </p>
+              </div>
+              <Button
+                asChild
+                className="bg-white text-orange-600 hover:bg-orange-50 font-medium"
+              >
+                <a href="/login">Login to Claim</a>
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
       
       <div className="max-w-6xl mx-auto space-y-6 p-6">
         {/* Main Layout - Two Column */}

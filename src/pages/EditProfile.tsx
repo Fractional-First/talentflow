@@ -1,4 +1,3 @@
-
 import { initialSteps } from "@/components/dashboard/OnboardingSteps"
 import { DashboardLayout } from "@/components/DashboardLayout"
 import { AutoSaveStatus } from "@/components/edit-profile/AutoSaveStatus"
@@ -14,7 +13,7 @@ import ProfilePictureUpload from "@/components/ProfilePictureUpload"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { useEditProfile } from "@/hooks/useEditProfile"
-import { ArrowLeft, ArrowRight, Edit } from "lucide-react"
+import { ArrowLeft, ArrowRight, Edit, Eye } from "lucide-react"
 
 const EditProfile = () => {
   const {
@@ -73,8 +72,25 @@ const EditProfile = () => {
             </p>
           </div>
 
-          {/* Auto-save Status - Fixed position in top right */}
-          <div className="absolute top-0 right-0">
+          {/* Auto-save Status and Preview Button - Fixed position in top right */}
+          <div className="absolute top-0 right-0 flex items-center gap-3">
+            {user?.id && (
+              <Button
+                variant="outline"
+                size="sm"
+                asChild
+                className="flex items-center gap-2"
+              >
+                <a 
+                  href={`/profile/preview/${user.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Eye className="h-4 w-4" />
+                  Preview
+                </a>
+              </Button>
+            )}
             <AutoSaveStatus
               status={saveStatus.status}
               lastSavedTime={saveStatus.lastSavedTime}
