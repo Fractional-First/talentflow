@@ -24,7 +24,7 @@ const PublicProfile = () => {
   const showClaimBanner = isPreviewMode && searchParams.get("new_profile") === "true"
 
   // Use the appropriate parameter based on route
-  const queryParams = slug ? { slug } : uuid ? { id: uuid } : null
+  const queryParams = slug ? { slug, id: undefined as never } : uuid ? { id: uuid, slug: undefined as never } : null
   
   const { data: profileData, isLoading, error } = usePublicProfile(
     queryParams || { slug: "" }
