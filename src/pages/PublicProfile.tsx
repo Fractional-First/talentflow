@@ -84,9 +84,9 @@ const PublicProfile = () => {
           <div className="container mx-auto px-4 py-4">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="text-white">
-                <h3 className="font-semibold text-lg">Claim your profile here</h3>
+                <h3 className="font-semibold text-lg">Claim your profile</h3>
                 <p className="text-sm text-teal-50">
-                  You should login with the temporary password we sent in your welcome email.
+                  Login with the temporary password in your welcome email.
                 </p>
               </div>
               <Button
