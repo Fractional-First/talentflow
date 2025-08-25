@@ -66,7 +66,7 @@ const EditProfile = () => {
         {user?.id && (
           <div className="bg-gradient-to-r from-teal-600 to-teal-500 border-b border-teal-400">
             <div className="px-4 py-4">
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-center sm:text-left">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="text-white">
                   <h3 className="font-semibold text-lg">Your profile is still in preview mode right now. See how it looks here:</h3>
                 </div>
