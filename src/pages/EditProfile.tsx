@@ -67,7 +67,7 @@ const EditProfile = () => {
             <div className="px-4 py-4">
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="text-white">
-                  <h3 className="font-semibold text-lg">Your profile is still in preview mode right now. See how it looks here:</h3>
+                  <h3 className="font-semibold text-lg">Your profile is still in preview mode. See how it will appear on your public page before going live.</h3>
                 </div>
                 <Button asChild className="bg-white text-teal-600 hover:bg-teal-50 font-medium whitespace-nowrap">
                   <a href={`/profile/preview/${user.id}`} target="_blank" rel="noopener noreferrer">Open Preview</a>
