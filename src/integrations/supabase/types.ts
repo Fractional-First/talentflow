@@ -430,31 +430,34 @@ export type Database = {
       }
       profile_embeddings: {
         Row: {
+          content: string | null
           created_at: string
-          derived_text: string | null
-          embedding_vector: string | null
+          embedding: string | null
           id: string
           last_embedded_at: string | null
+          metadata: Json | null
           profile_id: string
           text_hash: string | null
           updated_at: string
         }
         Insert: {
+          content?: string | null
           created_at?: string
-          derived_text?: string | null
-          embedding_vector?: string | null
+          embedding?: string | null
           id?: string
           last_embedded_at?: string | null
+          metadata?: Json | null
           profile_id: string
           text_hash?: string | null
           updated_at?: string
         }
         Update: {
+          content?: string | null
           created_at?: string
-          derived_text?: string | null
-          embedding_vector?: string | null
+          embedding?: string | null
           id?: string
           last_embedded_at?: string | null
+          metadata?: Json | null
           profile_id?: string
           text_hash?: string | null
           updated_at?: string
