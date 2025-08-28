@@ -132,7 +132,7 @@ const EditProfile = () => {
               onEditToggle={() => toggleEdit("description")}
               placeholder="Description not available"
               className="bg-white"
-              headerClassName=""
+              headerClassName="bg-[#449889] text-white"
               labelClassName="text-base font-semibold"
             />
 
@@ -237,10 +237,11 @@ const EditProfile = () => {
               isEditing={editStates.meetIntro}
               onEditToggle={() => toggleEdit("meetIntro")}
               placeholder="Introduction not available"
-              bgColorClass="bg-teal-600"
+              bgColorClass="bg-[#449889]"
               textColorClass="text-white"
-              headerClassName="bg-teal-600 text-white"
+              headerClassName="bg-[#449889] text-white"
               labelClassName="text-lg font-semibold"
+              textAreaClass="text-white bg-[#449889]"
             />
 
             {/* Personas Section */}
@@ -278,7 +279,7 @@ const EditProfile = () => {
               onEditToggle={() => toggleEdit("sweetSpot")}
               placeholder="Sweet spot not available"
               className="bg-white"
-              headerClassName="bg-teal-600 text-white"
+              headerClassName="bg-[#449889] text-white"
               labelClassName="text-lg font-semibold"
             />
 
@@ -305,7 +306,7 @@ const EditProfile = () => {
               onEditToggle={() => toggleEdit("userManual")}
               placeholder="User manual not available"
               className="bg-white"
-              headerClassName="bg-teal-600 text-white"
+              headerClassName="bg-[#449889] text-white"
               labelClassName="text-lg font-semibold"
             />
           </div>
