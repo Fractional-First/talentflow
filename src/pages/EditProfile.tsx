@@ -61,14 +61,13 @@ const EditProfile = () => {
 
   return (
     <DashboardLayout>
-      <div ref={mainContentRef} className="max-w-6xl mx-auto space-y-6 p-4 sm:p-6">
         {/* Preview Mode Banner on Edit Screen */}
         {user?.id && (
           <div className="bg-gradient-to-r from-teal-600 to-teal-500 border-b border-teal-400">
             <div className="px-4 py-4">
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="text-white">
-                  <h3 className="font-semibold text-lg">Your profile is still in preview mode right now. See how it looks here:</h3>
+                  <h3 className="font-semibold text-lg">Your profile is still in preview mode. See how it will appear on your public page before going live.</h3>
                 </div>
                 <Button asChild className="bg-white text-teal-600 hover:bg-teal-50 font-medium whitespace-nowrap">
                   <a href={`/profile/preview/${user.id}`} target="_blank" rel="noopener noreferrer">Open Preview</a>
@@ -77,6 +76,7 @@ const EditProfile = () => {
             </div>
           </div>
         )}
+      <div ref={mainContentRef} className="max-w-6xl mx-auto space-y-6 p-6">
         {/* Header with explanatory text */}
         <div className="space-y-2">
           <p className="text-sm text-gray-600">
@@ -96,7 +96,7 @@ const EditProfile = () => {
         </div>
 
         {/* Main Layout - Two Column */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Profile Info */}
           <div className="lg:col-span-1 space-y-6">
             {/* Profile Image and Basic Info */}
@@ -132,7 +132,7 @@ const EditProfile = () => {
               onEditToggle={() => toggleEdit("description")}
               placeholder="Description not available"
               className="bg-white"
-              headerClassName=""
+              headerClassName="bg-[#449889] text-white"
               labelClassName="text-base font-semibold"
             />
 
@@ -237,10 +237,11 @@ const EditProfile = () => {
               isEditing={editStates.meetIntro}
               onEditToggle={() => toggleEdit("meetIntro")}
               placeholder="Introduction not available"
-              bgColorClass="bg-teal-600"
+              bgColorClass="bg-[#449889]"
               textColorClass="text-white"
-              headerClassName="bg-teal-600 text-white"
+              headerClassName="bg-[#449889] text-white"
               labelClassName="text-lg font-semibold"
+              textAreaClass="text-white bg-[#449889]"
             />
 
             {/* Personas Section */}
@@ -278,7 +279,7 @@ const EditProfile = () => {
               onEditToggle={() => toggleEdit("sweetSpot")}
               placeholder="Sweet spot not available"
               className="bg-white"
-              headerClassName="bg-teal-600 text-white"
+              headerClassName="bg-[#449889] text-white"
               labelClassName="text-lg font-semibold"
             />
 
@@ -305,7 +306,7 @@ const EditProfile = () => {
               onEditToggle={() => toggleEdit("userManual")}
               placeholder="User manual not available"
               className="bg-white"
-              headerClassName="bg-teal-600 text-white"
+              headerClassName="bg-[#449889] text-white"
               labelClassName="text-lg font-semibold"
             />
           </div>

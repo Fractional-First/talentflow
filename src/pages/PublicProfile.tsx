@@ -121,7 +121,7 @@ const PublicProfile = () => {
               onEditToggle={() => {}} // No-op for read-only
               placeholder="Description not available"
               className="bg-white"
-              headerClassName=""
+              headerClassName="bg-[#449889] text-white"
               labelClassName="text-base font-semibold"
               readOnly={true}
             />
@@ -230,9 +230,9 @@ const PublicProfile = () => {
               isEditing={false}
               onEditToggle={() => {}} // No-op for read-only
               placeholder="Introduction not available"
-              bgColorClass="bg-teal-600"
+              bgColorClass="bg-[#449889]"
               textColorClass="text-white"
-              headerClassName="bg-teal-600 text-white"
+              headerClassName="bg-[#449889] text-white"
               labelClassName="text-lg font-semibold"
               readOnly={true}
             />
@@ -272,7 +272,7 @@ const PublicProfile = () => {
               onEditToggle={() => {}} // No-op for read-only
               placeholder="Sweet spot not available"
               className="bg-white"
-              headerClassName="bg-teal-600 text-white"
+              headerClassName="bg-[#449889] text-white"
               labelClassName="text-lg font-semibold"
               readOnly={true}
             />
@@ -299,7 +299,7 @@ const PublicProfile = () => {
               onEditToggle={() => {}} // No-op for read-only
               placeholder="User manual not available"
               className="bg-white"
-              headerClassName="bg-teal-600 text-white"
+              headerClassName="bg-[#449889] text-white"
               labelClassName="text-lg font-semibold"
               readOnly={true}
             />

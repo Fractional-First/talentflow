@@ -40,9 +40,9 @@ export const EditableTextSection: React.FC<EditableTextSectionProps> = ({
   readOnly = false,
 }) => {
   const sectionContent = (
-    <div className={clsx("bg-white rounded-lg border", className)}>
-      <div className="flex items-center justify-between p-1 pl-4 rounded-t-lg bg-[#449889] text-white">
-        <h3 className="text-lg font-semibold text-white">
+    <div className={clsx("rounded-lg border", className)}>
+      <div className={clsx("flex items-center justify-between p-1 pl-4 rounded-t-lg", headerClassName)}>
+        <h3 className={clsx("text-lg font-semibold", labelClassName)}>
           {title}
         </h3>
         {!readOnly && (
@@ -56,20 +56,20 @@ export const EditableTextSection: React.FC<EditableTextSectionProps> = ({
           </Button>
         )}
       </div>
-      <div className="p-4 bg-white">
+      <div className={clsx("p-4", bgColorClass)}>
         {isEditing ? (
           <Textarea
             value={value}
             onChange={(e) => onChange(e.target.value)}
             className={clsx(
-              textAreaClass,
-              "text-sm leading-relaxed bg-white text-gray-700"
+              "text-sm leading-relaxed bg-white text-gray-700",
+              textAreaClass
             )}
             rows={8}
             placeholder={placeholder}
           />
         ) : (
-          <div className="text-sm leading-relaxed whitespace-pre-line text-gray-700">
+          <div className={clsx("text-sm leading-relaxed whitespace-pre-line", textColorClass, bgColorClass)}>
             {value || placeholder || "Not available"}
           </div>
         )}
