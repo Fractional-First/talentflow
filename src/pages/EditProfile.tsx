@@ -61,7 +61,6 @@ const EditProfile = () => {
 
   return (
     <DashboardLayout>
-      <div ref={mainContentRef} className="max-w-6xl mx-auto space-y-6 p-4 sm:p-6">
         {/* Preview Mode Banner on Edit Screen */}
         {user?.id && (
           <div className="bg-gradient-to-r from-teal-600 to-teal-500 border-b border-teal-400">
@@ -77,6 +76,7 @@ const EditProfile = () => {
             </div>
           </div>
         )}
+      <div ref={mainContentRef} className="max-w-6xl mx-auto space-y-6 p-6">
         {/* Header with explanatory text */}
         <div className="space-y-2">
           <p className="text-sm text-gray-600">
@@ -96,7 +96,7 @@ const EditProfile = () => {
         </div>
 
         {/* Main Layout - Two Column */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Profile Info */}
           <div className="lg:col-span-1 space-y-6">
             {/* Profile Image and Basic Info */}

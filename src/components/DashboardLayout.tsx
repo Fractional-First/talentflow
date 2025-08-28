@@ -76,15 +76,10 @@ export function DashboardLayout({
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-6 flex-1">
-        <div className="max-w-4xl mx-auto">
-          {steps && currentStep !== undefined && (
-            <OnboardingProgress steps={steps} currentStep={currentStep} />
-          )}
-          <main className={cn(steps && currentStep !== undefined ? "mt-8" : "", className)}>
+      <div className="flex-1">
+          <main className={cn(className)}>
             {children}
           </main>
-        </div>
       </div>
 
       <footer className="border-t border-border/40 py-6 mt-10">
