@@ -436,7 +436,7 @@ export type Database = {
           id: string
           last_embedded_at: string | null
           metadata: Json | null
-          profile_id: string
+          profile_id: string | null
           text_hash: string | null
           updated_at: string
         }
@@ -447,7 +447,7 @@ export type Database = {
           id?: string
           last_embedded_at?: string | null
           metadata?: Json | null
-          profile_id: string
+          profile_id?: string | null
           text_hash?: string | null
           updated_at?: string
         }
@@ -458,7 +458,7 @@ export type Database = {
           id?: string
           last_embedded_at?: string | null
           metadata?: Json | null
-          profile_id?: string
+          profile_id?: string | null
           text_hash?: string | null
           updated_at?: string
         }
