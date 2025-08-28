@@ -33,9 +33,6 @@ export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
   addLabel = "Add Item",
   displayType = "tags",
   className = "",
-  headerClassName = "",
-  bgColorClass = "bg-[#449889]",
-  textColorClass = "text-white",
   content = "Edit this section to customize your information",
   readOnly = false,
 }) => {
@@ -50,7 +47,7 @@ export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
   useEffect(() => {
     if (!isEditing) return
     const timeout = setTimeout(() => {
-      onChange(localItems.filter((item) => item.trim() !== ""))
+      onChange(localItems)
     }, 300)
     return () => clearTimeout(timeout)
   }, [localItems, isEditing, onChange])
