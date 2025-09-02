@@ -56,7 +56,7 @@ export const EditableTextSection: React.FC<EditableTextSectionProps> = ({
           </Button>
         )}
       </div>
-      <div className={clsx("p-4", bgColorClass)}>
+      <div className={clsx("p-4 rounded-b-lg", bgColorClass)}>
         {isEditing ? (
           <Textarea
             value={value}
