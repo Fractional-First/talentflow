@@ -13,7 +13,11 @@ import ProfilePictureUpload from "@/components/ProfilePictureUpload"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { useEditProfile } from "@/hooks/useEditProfile"
-import { ArrowLeft, ArrowRight, Edit } from "lucide-react"
+import { ArrowLeft, ArrowRight, Edit, Globe, Copy, ExternalLink } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { toast } from "@/hooks/use-toast"
+import { useState, useEffect } from "react"
 
 const EditProfile = () => {
   const {
@@ -40,6 +44,111 @@ const EditProfile = () => {
     navigate,
   } = useEditProfile()
 
+  // Publish state management
+  const [isPublished, setIsPublished] = useState(false)
+  const [hasUnpublishedChanges, setHasUnpublishedChanges] = useState(false)
+  const [publicProfileUrl, setPublicProfileUrl] = useState("")
+  const [isPublishing, setIsPublishing] = useState(false)
+
+  // Track changes to form data to detect unpublished changes
+  useEffect(() => {
+    if (isPublished) {
+      setHasUnpublishedChanges(true)
+    }
+  }, [formData, isPublished])
+
+  // Generate public profile URL
+  useEffect(() => {
+    if (user?.id && isPublished) {
+      setPublicProfileUrl(`${window.location.origin}/profile/${user.id}`)
+    }
+  }, [user?.id, isPublished])
+
+  const handlePublish = async () => {
+    setIsPublishing(true)
+    
+    try {
+      // Simulate publishing (replace with actual API call)
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      setIsPublished(true)
+      setHasUnpublishedChanges(false)
+      
+      toast({
+        title: "Your profile is now live.",
+        description: (
+          <div className="flex items-center gap-2">
+            <span>View your public profile</span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => window.open(publicProfileUrl, '_blank')}
+              className="h-6 px-2"
+            >
+              <ExternalLink className="h-3 w-3" />
+            </Button>
+          </div>
+        ),
+      })
+    } catch (error) {
+      toast({
+        title: "Failed to publish profile",
+        description: "Please try again later.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsPublishing(false)
+    }
+  }
+
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(publicProfileUrl)
+      toast({
+        title: "Link copied to clipboard",
+        description: "You can now share your public profile link.",
+      })
+    } catch (error) {
+      toast({
+        title: "Failed to copy link",
+        description: "Please copy the link manually.",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const getPublishButtonState = () => {
+    if (!isPublished) {
+      return {
+        text: "Publish",
+        disabled: false,
+        variant: "default" as const,
+        tooltip: "Publishing makes your profile live and accessible through a public link.",
+        icon: <Globe className="mr-2 h-4 w-4" />
+      }
+    }
+    
+    if (hasUnpublishedChanges) {
+      return {
+        text: "Update Published Profile",
+        disabled: false,
+        variant: "default" as const,
+        tooltip: "Update your live profile with the latest changes.",
+        icon: <Globe className="mr-2 h-4 w-4" />
+      }
+    }
+    
+    return {
+      text: "Published",
+      disabled: true,
+      variant: "secondary" as const,
+      tooltip: "Your profile is live.",
+      icon: <Globe className="mr-2 h-4 w-4" />
+    }
+  }
+
+  const buttonState = getPublishButtonState()
+
   if (isLoading) {
     return (
       <DashboardLayout>
@@ -60,7 +169,8 @@ const EditProfile = () => {
   }
 
   return (
-    <DashboardLayout>
+    <TooltipProvider>
+      <DashboardLayout>
         {/* Preview Mode Banner on Edit Screen */}
         {user?.id && (
           <div className="bg-gradient-to-r from-teal-600 to-teal-500 border-b border-teal-400">
@@ -312,6 +422,54 @@ const EditProfile = () => {
           </div>
         </div>
 
+        {/* Public Profile Link */}
+        {isPublished && publicProfileUrl && (
+          <div className="bg-muted/50 rounded-lg p-4 border">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="flex-1">
+                <p className="text-sm font-medium text-muted-foreground mb-1">Your public profile:</p>
+                <div className="flex items-center gap-2">
+                  <code className="text-sm bg-background px-2 py-1 rounded border flex-1 break-all">
+                    {publicProfileUrl}
+                  </code>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={copyToClipboard}
+                        className="shrink-0"
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Copy link</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => window.open(publicProfileUrl, '_blank')}
+                        className="shrink-0"
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>View profile</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 pt-6">
           <Button 
@@ -323,18 +481,50 @@ const EditProfile = () => {
             Recreate Profile
           </Button>
 
-          <Button
-            onClick={handleContinue}
-            disabled={isSubmitting}
-            style={{ backgroundColor: '#449889' }}
-            className="hover:opacity-90 text-white w-full sm:w-auto"
-          >
-            {isSubmitting ? "Processing..." : "Save & Go to Dashboard"}
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+            {/* Draft changes indicator */}
+            {isPublished && hasUnpublishedChanges && (
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Badge variant="outline" className="text-xs">
+                  Draft changes
+                </Badge>
+              </div>
+            )}
+            
+            <div className="flex gap-3">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      onClick={handlePublish}
+                      disabled={buttonState.disabled || isPublishing}
+                      variant={buttonState.variant}
+                      style={buttonState.variant === "default" ? { backgroundColor: '#449889' } : undefined}
+                      className={buttonState.variant === "default" ? "hover:opacity-90 text-white" : ""}
+                    >
+                      {buttonState.icon}
+                      {isPublishing ? "Publishing..." : buttonState.text}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>{buttonState.tooltip}</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <Button
+                onClick={handleContinue}
+                disabled={isSubmitting}
+                style={{ backgroundColor: '#449889' }}
+                className="hover:opacity-90 text-white"
+              >
+                {isSubmitting ? "Processing..." : "Save & Go to Dashboard"}
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </DashboardLayout>
+    </TooltipProvider>
   )
 }
 export default EditProfile
