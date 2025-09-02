@@ -19,7 +19,7 @@ const CompensationSection = ({
   showOnly
 }: CompensationSectionProps) => {
   const formatSalary = (value: number) => {
-    return `$${value.toLocaleString()}`;
+    return `$${value.toLocaleString()} USD`;
   };
   const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const min = parseInt(e.target.value.replace(/[^\d]/g, "")) || 0;
@@ -48,7 +48,7 @@ const CompensationSection = ({
       // Annual salary only
       <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <Label className="text-base font-medium">Annual Salary Range</Label>
+              <Label className="text-base font-medium">Annual Salary Range (USD)</Label>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -91,7 +91,7 @@ const CompensationSection = ({
 
             <TabsContent value="hourly" className="space-y-6 mt-6">
               <div className="flex items-center justify-between">
-                <Label className="text-base font-medium">Hourly Rate Range</Label>
+                <Label className="text-base font-medium">Hourly Rate Range (USD)</Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -122,13 +122,13 @@ const CompensationSection = ({
               </div>
               
               <div className="text-xs text-muted-foreground bg-muted/50 p-3 rounded-md">
-                Range: ${rateRange[0]} to ${rateRange[1]} per hour
+                Range: ${rateRange[0]} to ${rateRange[1]} USD per hour
               </div>
             </TabsContent>
 
             <TabsContent value="daily" className="space-y-6 mt-6">
               <div className="flex items-center justify-between">
-                <Label className="text-base font-medium">Daily Rate Range</Label>
+                <Label className="text-base font-medium">Daily Rate Range (USD)</Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -159,7 +159,7 @@ const CompensationSection = ({
               </div>
               
               <div className="text-xs text-muted-foreground bg-muted/50 p-3 rounded-md">
-                Range: ${rateRange[0]} to ${rateRange[1]} per day
+                Range: ${rateRange[0]} to ${rateRange[1]} USD per day
               </div>
             </TabsContent>
           </Tabs> : <Tabs defaultValue="annual" onValueChange={setPaymentType} className="mb-6">
@@ -215,7 +215,7 @@ const CompensationSection = ({
           <TabsContent value="daily" className="pt-4">
             <div className="px-4">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">Daily Rate Range</span>
+                <span className="text-sm font-medium">Daily Rate Range (USD)</span>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -248,7 +248,7 @@ const CompensationSection = ({
                 </div>
               </div>
               <p className="text-xs text-muted-foreground mt-2">
-                Range from ${rateRange[0]} to ${rateRange[1]} per day
+                Range from ${rateRange[0]} to ${rateRange[1]} USD per day
               </p>
             </div>
           </TabsContent>
@@ -256,7 +256,7 @@ const CompensationSection = ({
           <TabsContent value="hourly" className="pt-4">
             <div className="px-4">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">Hourly Rate Range</span>
+                <span className="text-sm font-medium">Hourly Rate Range (USD)</span>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -290,7 +290,7 @@ const CompensationSection = ({
                 </div>
               </div>
               <p className="text-xs text-muted-foreground mt-2">
-                Range from ${rateRange[0]} to ${rateRange[1]} per hour
+                Range from ${rateRange[0]} to ${rateRange[1]} USD per hour
               </p>
             </div>
           </TabsContent>
