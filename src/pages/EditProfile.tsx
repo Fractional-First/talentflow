@@ -53,22 +53,6 @@ const EditProfile = () => {
       // Simulate publish action - replace with actual API call
       await new Promise(resolve => setTimeout(resolve, 1000))
       setIsPublished(true)
-      toast({
-        title: "Your profile is now live",
-        description: (
-          <div className="flex items-center gap-2">
-            <span>Your profile has been published successfully.</span>
-            <Button 
-              variant="link" 
-              className="p-0 h-auto text-primary underline"
-              onClick={() => user?.id && window.open(`/profile/preview/${user.id}`, '_blank')}
-            >
-              View your public profile
-            </Button>
-          </div>
-        ),
-        duration: 5000,
-      })
     } catch (error) {
       toast({
         title: "Publishing failed",
