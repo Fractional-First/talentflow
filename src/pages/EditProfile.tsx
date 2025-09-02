@@ -15,13 +15,14 @@ import { Spinner } from "@/components/ui/spinner"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { useToast } from "@/hooks/use-toast"
 import { useEditProfile } from "@/hooks/useEditProfile"
-import { ArrowLeft, ArrowRight, Edit, Globe, Check } from "lucide-react"
+import { ArrowLeft, ArrowRight, Edit, Globe, Check, Copy, ExternalLink } from "lucide-react"
 import { useState } from "react"
 
 const EditProfile = () => {
   const { toast } = useToast()
   const [isPublished, setIsPublished] = useState(false)
   const [isPublishing, setIsPublishing] = useState(false)
+  const [showUpdated, setShowUpdated] = useState(false)
   
   const {
     user,
@@ -52,7 +53,15 @@ const EditProfile = () => {
     try {
       // Simulate publish action - replace with actual API call
       await new Promise(resolve => setTimeout(resolve, 1000))
-      setIsPublished(true)
+      
+      if (isPublished) {
+        // Show "Updated" briefly for republishing
+        setShowUpdated(true)
+        setTimeout(() => setShowUpdated(false), 2000)
+      } else {
+        setIsPublished(true)
+      }
+      
       toast({
         title: "Your profile is now live",
         description: (
@@ -77,6 +86,26 @@ const EditProfile = () => {
       })
     } finally {
       setIsPublishing(false)
+    }
+  }
+
+  const copyPublicLink = async () => {
+    if (user?.id) {
+      const link = `${window.location.origin}/profile/preview/${user.id}`
+      try {
+        await navigator.clipboard.writeText(link)
+        toast({
+          title: "Link copied",
+          description: "Public profile link copied to clipboard",
+          duration: 2000,
+        })
+      } catch (error) {
+        toast({
+          title: "Copy failed",
+          description: "Please copy the link manually",
+          variant: "destructive",
+        })
+      }
     }
   }
 
@@ -363,49 +392,86 @@ const EditProfile = () => {
             Recreate Profile
           </Button>
 
-          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
+          <div className="space-y-3 w-full sm:w-auto">
+            {/* Public Profile Link Section - Only show if published */}
+            {isPublished && user?.id && (
+              <div className="flex flex-col sm:flex-row items-center gap-2 p-3 bg-green-50 rounded-lg border border-green-200">
+                <span className="text-sm text-green-700 font-medium">Your public profile:</span>
+                <div className="flex gap-2">
                   <Button
-                    onClick={handlePublish}
-                    disabled={isPublishing || isPublished}
-                    variant={isPublished ? "secondary" : "outline"}
-                    className="w-full sm:w-auto"
+                    variant="outline"
+                    size="sm"
+                    onClick={copyPublicLink}
+                    className="text-green-700 border-green-300 hover:bg-green-100"
                   >
-                    {isPublishing ? (
-                      <>
-                        <Spinner size="sm" className="mr-2" />
-                        Publishing...
-                      </>
-                    ) : isPublished ? (
-                      <>
-                        <Check className="mr-2 h-4 w-4" />
-                        Published
-                      </>
-                    ) : (
-                      <>
-                        <Globe className="mr-2 h-4 w-4" />
-                        Publish
-                      </>
-                    )}
+                    <Copy className="h-3 w-3 mr-1" />
+                    Copy link
                   </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Publishing makes your profile live and accessible through a public link.</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => window.open(`/profile/preview/${user.id}`, '_blank')}
+                    className="text-green-700 border-green-300 hover:bg-green-100"
+                  >
+                    <ExternalLink className="h-3 w-3 mr-1" />
+                    View profile
+                  </Button>
+                </div>
+              </div>
+            )}
 
-            <Button
-              onClick={handleContinue}
-              disabled={isSubmitting}
-              style={{ backgroundColor: '#449889' }}
-              className="hover:opacity-90 text-white w-full sm:w-auto"
-            >
-              {isSubmitting ? "Processing..." : "Save & Go to Dashboard"}
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      onClick={handlePublish}
+                      disabled={isPublishing}
+                      variant={isPublished ? "secondary" : "outline"}
+                      className="w-full sm:w-auto"
+                    >
+                      {isPublishing ? (
+                        <>
+                          <Spinner size="sm" className="mr-2" />
+                          Publishing...
+                        </>
+                      ) : showUpdated ? (
+                        <>
+                          <Check className="mr-2 h-4 w-4" />
+                          Updated
+                        </>
+                      ) : isPublished ? (
+                        <>
+                          <Check className="mr-2 h-4 w-4" />
+                          Published
+                        </>
+                      ) : (
+                        <>
+                          <Globe className="mr-2 h-4 w-4" />
+                          Publish
+                        </>
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{isPublished 
+                      ? "Your profile is live. Click to update your public profile."
+                      : "Publishing makes your profile live and accessible through a public link."
+                    }</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <Button
+                onClick={handleContinue}
+                disabled={isSubmitting}
+                style={{ backgroundColor: '#449889' }}
+                className="hover:opacity-90 text-white w-full sm:w-auto"
+              >
+                {isSubmitting ? "Processing..." : "Save & Go to Dashboard"}
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
       </div>
