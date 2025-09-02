@@ -54,11 +54,7 @@ const EditProfile = () => {
       await new Promise(resolve => setTimeout(resolve, 1000))
       setIsPublished(true)
     } catch (error) {
-      toast({
-        title: "Publishing failed",
-        description: "Please try again.",
-        variant: "destructive",
-      })
+      console.error('Publishing failed:', error)
     } finally {
       setIsPublishing(false)
     }
