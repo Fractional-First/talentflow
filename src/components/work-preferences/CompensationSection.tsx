@@ -22,11 +22,13 @@ const CompensationSection = ({
     return `$${value.toLocaleString()} USD`;
   };
   const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const min = parseInt(e.target.value.replace(/[^\d]/g, "")) || 0;
+    const cleanValue = e.target.value.replace(/[^\d]/g, "");
+    const min = cleanValue === "" ? 0 : parseInt(cleanValue);
     setRateRange([min, rateRange[1]]);
   };
   const handleMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const max = parseInt(e.target.value.replace(/[^\d]/g, "")) || 0;
+    const cleanValue = e.target.value.replace(/[^\d]/g, "");
+    const max = cleanValue === "" ? 0 : parseInt(cleanValue);
     setRateRange([rateRange[0], max]);
   };
   return <div>
