@@ -230,7 +230,7 @@ const EditProfile = () => {
                   onChange={(field, value) => handleInputChange(field, value)}
                 />
                 
-                {/* LinkedIn Icon at bottom of profile heading */}
+                {/* LinkedIn Profile Link at bottom of profile heading */}
                 {(() => {
                   console.log('User object:', user);
                   console.log('User metadata:', user?.user_metadata);
@@ -238,22 +238,14 @@ const EditProfile = () => {
                   return user?.user_metadata?.linkedin_url || true; // Always show for now
                 })() && (
                   <div className="flex justify-center mt-3">
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            const linkedinUrl = user?.user_metadata?.linkedin_url || 'https://linkedin.com';
-                            window.open(linkedinUrl, '_blank');
-                          }}
-                          className="w-10 h-10 rounded-full border-2 border-[#449889] bg-white hover:bg-[#449889]/5 text-[#0A66C2] hover:text-[#0A66C2] p-0"
-                        >
-                          <Linkedin className="h-5 w-5" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>View LinkedIn Profile</TooltipContent>
-                    </Tooltip>
+                    <a
+                      href={user?.user_metadata?.linkedin_url || 'https://linkedin.com'}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#449889] hover:text-[#449889]/80 text-sm font-medium underline"
+                    >
+                      LinkedIn Profile
+                    </a>
                   </div>
                 )}
               </div>
