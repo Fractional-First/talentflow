@@ -12,10 +12,17 @@ import { SuperpowersSection } from "@/components/edit-profile/SuperpowersSection
 import ProfilePictureUpload from "@/components/ProfilePictureUpload"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { useToast } from "@/hooks/use-toast"
 import { useEditProfile } from "@/hooks/useEditProfile"
-import { ArrowLeft, ArrowRight, Edit } from "lucide-react"
+import { ArrowLeft, ArrowRight, Edit, Globe, Check } from "lucide-react"
+import { useState } from "react"
 
 const EditProfile = () => {
+  const { toast } = useToast()
+  const [isPublished, setIsPublished] = useState(false)
+  const [isPublishing, setIsPublishing] = useState(false)
+  
   const {
     user,
     profileData,
@@ -39,6 +46,39 @@ const EditProfile = () => {
     handleRemovePersona,
     navigate,
   } = useEditProfile()
+
+  const handlePublish = async () => {
+    setIsPublishing(true)
+    try {
+      // Simulate publish action - replace with actual API call
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      setIsPublished(true)
+      toast({
+        title: "Your profile is now live",
+        description: (
+          <div className="flex items-center gap-2">
+            <span>Your profile has been published successfully.</span>
+            <Button 
+              variant="link" 
+              className="p-0 h-auto text-primary underline"
+              onClick={() => user?.id && window.open(`/profile/preview/${user.id}`, '_blank')}
+            >
+              View your public profile
+            </Button>
+          </div>
+        ),
+        duration: 5000,
+      })
+    } catch (error) {
+      toast({
+        title: "Publishing failed",
+        description: "Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsPublishing(false)
+    }
+  }
 
   if (isLoading) {
     return (
@@ -323,15 +363,50 @@ const EditProfile = () => {
             Recreate Profile
           </Button>
 
-          <Button
-            onClick={handleContinue}
-            disabled={isSubmitting}
-            style={{ backgroundColor: '#449889' }}
-            className="hover:opacity-90 text-white w-full sm:w-auto"
-          >
-            {isSubmitting ? "Processing..." : "Save & Go to Dashboard"}
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={handlePublish}
+                    disabled={isPublishing || isPublished}
+                    variant={isPublished ? "secondary" : "outline"}
+                    className="w-full sm:w-auto"
+                  >
+                    {isPublishing ? (
+                      <>
+                        <Spinner size="sm" className="mr-2" />
+                        Publishing...
+                      </>
+                    ) : isPublished ? (
+                      <>
+                        <Check className="mr-2 h-4 w-4" />
+                        Published
+                      </>
+                    ) : (
+                      <>
+                        <Globe className="mr-2 h-4 w-4" />
+                        Publish
+                      </>
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Publishing makes your profile live and accessible through a public link.</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            <Button
+              onClick={handleContinue}
+              disabled={isSubmitting}
+              style={{ backgroundColor: '#449889' }}
+              className="hover:opacity-90 text-white w-full sm:w-auto"
+            >
+              {isSubmitting ? "Processing..." : "Save & Go to Dashboard"}
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </div>
     </DashboardLayout>
