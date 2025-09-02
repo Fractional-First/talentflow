@@ -220,14 +220,22 @@ const EditProfile = () => {
               </div>
 
               {/* LinkedIn Icon */}
-              {user?.user_metadata?.linkedin_url && (
+              {(() => {
+                console.log('User object:', user);
+                console.log('User metadata:', user?.user_metadata);
+                console.log('LinkedIn URL:', user?.user_metadata?.linkedin_url);
+                return user?.user_metadata?.linkedin_url || true; // Always show for now
+              })() && (
                 <div className="mb-4">
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => window.open(user.user_metadata.linkedin_url, '_blank')}
+                        onClick={() => {
+                          const linkedinUrl = user?.user_metadata?.linkedin_url || 'https://linkedin.com';
+                          window.open(linkedinUrl, '_blank');
+                        }}
                         className="bg-[#0A66C2] hover:bg-[#0A66C2]/90 text-white border-[#0A66C2] hover:border-[#0A66C2]/90"
                       >
                         <Linkedin className="h-4 w-4" />
