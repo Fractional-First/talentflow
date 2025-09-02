@@ -13,7 +13,7 @@ import ProfilePictureUpload from "@/components/ProfilePictureUpload"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { useEditProfile } from "@/hooks/useEditProfile"
-import { ArrowLeft, ArrowRight, Edit, Globe, Copy, ExternalLink } from "lucide-react"
+import { ArrowLeft, ArrowRight, Edit, Globe, Copy, ExternalLink, Linkedin } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { toast } from "@/hooks/use-toast"
@@ -218,6 +218,25 @@ const EditProfile = () => {
                   onImageUpdate={handleProfilePictureUpdate}
                 />
               </div>
+
+              {/* LinkedIn Icon */}
+              {user?.user_metadata?.linkedin_url && (
+                <div className="mb-4">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => window.open(user.user_metadata.linkedin_url, '_blank')}
+                        className="bg-[#0A66C2] hover:bg-[#0A66C2]/90 text-white border-[#0A66C2] hover:border-[#0A66C2]/90"
+                      >
+                        <Linkedin className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>View LinkedIn Profile</TooltipContent>
+                  </Tooltip>
+                </div>
+              )}
 
               <div className="space-y-2">
                 <BasicInfoSection
