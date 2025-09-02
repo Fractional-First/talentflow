@@ -101,21 +101,6 @@ const EditProfile = () => {
 
   return (
     <DashboardLayout>
-        {/* Preview Mode Banner on Edit Screen */}
-        {user?.id && (
-          <div className="bg-gradient-to-r from-teal-600 to-teal-500 border-b border-teal-400">
-            <div className="px-4 py-4">
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="text-white">
-                  <h3 className="font-semibold text-lg">Your profile is still in preview mode. See how it will appear on your public page before going live.</h3>
-                </div>
-                <Button asChild className="bg-white text-teal-600 hover:bg-teal-50 font-medium whitespace-nowrap">
-                  <a href={`/profile/preview/${user.id}`} target="_blank" rel="noopener noreferrer">Open Preview</a>
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
       <div ref={mainContentRef} className="max-w-6xl mx-auto space-y-6 p-6">
         {/* Header with explanatory text */}
         <div className="space-y-2">
