@@ -71,7 +71,7 @@ export function StepCardDescription({
 }: StepCardDescriptionProps) {
   return (
     <p className={cn("text-muted-foreground text-sm sm:text-base", className)}>
-      Choose how you'd like to work. Select one or both options to help us match you with the best job opportunities and optimize your compensation. While all fields on this page are optional, providing this information helps us match you with the most relevant opportunities.
+      {children}
     </p>
   );
 }
