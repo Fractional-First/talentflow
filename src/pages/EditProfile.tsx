@@ -15,13 +15,15 @@ import { Spinner } from "@/components/ui/spinner"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { useToast } from "@/hooks/use-toast"
 import { useEditProfile } from "@/hooks/useEditProfile"
-import { ArrowLeft, ArrowRight, Edit, Globe, Check } from "lucide-react"
-import { useState } from "react"
+import { ArrowLeft, ArrowRight, Edit, Globe, Check, Copy, ExternalLink, Badge } from "lucide-react"
+import { useState, useEffect } from "react"
 
 const EditProfile = () => {
   const { toast } = useToast()
   const [isPublished, setIsPublished] = useState(false)
   const [isPublishing, setIsPublishing] = useState(false)
+  const [hasUnpublishedChanges, setHasUnpublishedChanges] = useState(false)
+  const [publicProfileUrl, setPublicProfileUrl] = useState<string | null>(null)
   
   const {
     user,
@@ -47,16 +49,106 @@ const EditProfile = () => {
     navigate,
   } = useEditProfile()
 
+  // Track changes to detect if profile has unpublished edits
+  useEffect(() => {
+    if (isPublished) {
+      // Mark as having unpublished changes when any edits are made after publishing
+      setHasUnpublishedChanges(true)
+    }
+  }, [formData, isPublished])
+
+  // Initialize public profile URL when user is available
+  useEffect(() => {
+    if (user?.id && isPublished) {
+      setPublicProfileUrl(`${window.location.origin}/profile/preview/${user.id}`)
+    }
+  }, [user?.id, isPublished])
+
   const handlePublish = async () => {
     setIsPublishing(true)
     try {
       // Simulate publish action - replace with actual API call
       await new Promise(resolve => setTimeout(resolve, 1000))
       setIsPublished(true)
+      setHasUnpublishedChanges(false)
+      
+      if (user?.id) {
+        const profileUrl = `${window.location.origin}/profile/preview/${user.id}`
+        setPublicProfileUrl(profileUrl)
+        
+        toast({
+          title: "Your profile is now live",
+          description: (
+            <div className="flex items-center gap-2">
+              <span>Your profile has been published successfully.</span>
+              <Button 
+                variant="link" 
+                className="p-0 h-auto text-primary underline"
+                onClick={() => window.open(profileUrl, '_blank')}
+              >
+                View your public profile
+              </Button>
+            </div>
+          ),
+          duration: 5000,
+        })
+      }
     } catch (error) {
-      console.error('Publishing failed:', error)
+      toast({
+        title: "Publishing failed",
+        description: "Please try again.",
+        variant: "destructive",
+      })
     } finally {
       setIsPublishing(false)
+    }
+  }
+
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      toast({
+        title: "Link copied",
+        description: "Profile link copied to clipboard",
+        duration: 2000,
+      })
+    } catch (error) {
+      toast({
+        title: "Copy failed",
+        description: "Please copy the link manually",
+        variant: "destructive",
+      })
+    }
+  }
+
+  // Determine publish button state
+  const getPublishButtonState = () => {
+    if (!isPublished) {
+      return {
+        disabled: false,
+        variant: "outline" as const,
+        tooltip: "Publishing makes your profile live and accessible through a public link.",
+        icon: Globe,
+        text: "Publish"
+      }
+    }
+    
+    if (hasUnpublishedChanges) {
+      return {
+        disabled: false,
+        variant: "outline" as const,
+        tooltip: "Update your live profile with recent changes.",
+        icon: Globe,
+        text: "Update Live Profile"
+      }
+    }
+    
+    return {
+      disabled: true,
+      variant: "secondary" as const,
+      tooltip: "Your profile is live.",
+      icon: Check,
+      text: "Published"
     }
   }
 
@@ -317,6 +409,47 @@ const EditProfile = () => {
           </div>
         </div>
 
+        {/* Public Profile Link - Show after publishing */}
+        {publicProfileUrl && (
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex-1">
+                <p className="text-sm font-medium text-green-800 mb-1">Your public profile:</p>
+                <p className="text-sm text-green-700 break-all">{publicProfileUrl}</p>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => copyToClipboard(publicProfileUrl)}
+                  className="shrink-0"
+                >
+                  <Copy className="mr-2 h-4 w-4" />
+                  Copy Link
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => window.open(publicProfileUrl, '_blank')}
+                  className="shrink-0"
+                >
+                  <ExternalLink className="mr-2 h-4 w-4" />
+                  View Profile
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Draft Changes Indicator */}
+        {isPublished && hasUnpublishedChanges && (
+          <div className="flex items-center gap-2 text-amber-600 bg-amber-50 border border-amber-200 rounded-lg p-3">
+            <Badge className="h-4 w-4" />
+            <span className="text-sm font-medium">Draft changes</span>
+            <span className="text-sm">Your profile has unpublished updates</span>
+          </div>
+        )}
+
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 pt-6">
           <Button 
@@ -332,32 +465,33 @@ const EditProfile = () => {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button
-                    onClick={handlePublish}
-                    disabled={isPublishing || isPublished}
-                    variant={isPublished ? "secondary" : "outline"}
-                    className="w-full sm:w-auto"
-                  >
-                    {isPublishing ? (
-                      <>
-                        <Spinner size="sm" className="mr-2" />
-                        Publishing...
-                      </>
-                    ) : isPublished ? (
-                      <>
-                        <Check className="mr-2 h-4 w-4" />
-                        Published
-                      </>
-                    ) : (
-                      <>
-                        <Globe className="mr-2 h-4 w-4" />
-                        Publish
-                      </>
-                    )}
-                  </Button>
+                  {(() => {
+                    const buttonState = getPublishButtonState()
+                    const IconComponent = buttonState.icon
+                    return (
+                      <Button
+                        onClick={handlePublish}
+                        disabled={isPublishing || buttonState.disabled}
+                        variant={buttonState.variant}
+                        className="w-full sm:w-auto"
+                      >
+                        {isPublishing ? (
+                          <>
+                            <Spinner size="sm" className="mr-2" />
+                            Publishing...
+                          </>
+                        ) : (
+                          <>
+                            <IconComponent className="mr-2 h-4 w-4" />
+                            {buttonState.text}
+                          </>
+                        )}
+                      </Button>
+                    )
+                  })()}
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Publishing makes your profile live and accessible through a public link.</p>
+                  <p>{getPublishButtonState().tooltip}</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
