@@ -1,6 +1,7 @@
 
 import { File, Upload, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useState } from "react"
 
 interface DocumentUploadProps {
   title: string
@@ -28,14 +29,58 @@ export const DocumentUpload = ({
   className,
 
 }: DocumentUploadProps) => {
+  const [isDragOver, setIsDragOver] = useState(false)
+
+  const validateAndUploadFile = (file: File) => {
+    // Check file type
+    const allowedTypes = accept.split(',').map(type => type.trim())
+    const fileExtension = `.${file.name.split('.').pop()?.toLowerCase()}`
+    
+    if (!allowedTypes.includes(fileExtension)) {
+      return false
+    }
+
+    // Check file size
+    if (file.size > maxSize * 1024 * 1024) {
+      return false
+    }
+
+    onUpload(file)
+    return true
+  }
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0]
-      if (file.size > maxSize * 1024 * 1024) {
-        // Handle file size error
-        return
-      }
-      onUpload(file)
+      validateAndUploadFile(e.target.files[0])
+    }
+  }
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragOver(true)
+  }
+
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragOver(true)
+  }
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragOver(false)
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragOver(false)
+
+    const files = e.dataTransfer.files
+    if (files && files.length > 0) {
+      validateAndUploadFile(files[0])
     }
   }
 
@@ -55,7 +100,17 @@ export const DocumentUpload = ({
         <div className="mb-4 sm:mb-6">{linkedinInstructionsComponent()}</div>
       )}
       
-      <div className="border-2 border-dashed border-muted rounded-lg p-6 sm:p-8 text-center">
+      <div 
+        className={`border-2 border-dashed rounded-lg p-6 sm:p-8 text-center transition-colors ${
+          isDragOver 
+            ? 'border-primary bg-primary/5' 
+            : 'border-muted'
+        }`}
+        onDragOver={handleDragOver}
+        onDragEnter={handleDragEnter}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
         {file ? (
           <div className="flex flex-col items-center space-y-4">
             <div className="bg-primary/10 p-4 rounded-full mb-2">
