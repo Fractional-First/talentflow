@@ -329,7 +329,7 @@ const EditProfile = () => {
             style={{ backgroundColor: '#449889' }}
             className="hover:opacity-90 text-white w-full sm:w-auto"
           >
-            {isSubmitting ? "Processing..." : "Complete & Go to Dashboard"}
+            {isSubmitting ? "Processing..." : "Save & Go to Dashboard"}
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </div>
