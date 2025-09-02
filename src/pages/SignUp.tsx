@@ -26,7 +26,8 @@ const SignUp = () => {
     password: string,
     confirmPassword: string,
     firstName: string,
-    lastName: string
+    lastName: string,
+    linkedinUrl: string
   ) => {
     if (password !== confirmPassword) {
       toast.error("Passwords don't match")
@@ -34,7 +35,7 @@ const SignUp = () => {
     }
 
     try {
-      await signUp(email, password, firstName, lastName)
+      await signUp(email, password, firstName, lastName, linkedinUrl)
       navigate(`/check-email?email=${encodeURIComponent(email)}`)
     } catch (error: any) {
       toast.error(error.message || "Sign up failed")

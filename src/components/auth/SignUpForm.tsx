@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 interface SignUpFormProps {
-  onSubmit: (email: string, password: string, confirmPassword: string, firstName: string, lastName: string) => void;
+  onSubmit: (email: string, password: string, confirmPassword: string, firstName: string, lastName: string, linkedinUrl: string) => void;
   isSubmitting: boolean;
 }
 
@@ -15,10 +15,11 @@ export const SignUpForm = ({ onSubmit, isSubmitting }: SignUpFormProps) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [linkedinUrl, setLinkedinUrl] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(email, password, confirmPassword, firstName, lastName);
+    onSubmit(email, password, confirmPassword, firstName, lastName, linkedinUrl);
   };
 
   return (
@@ -64,6 +65,19 @@ export const SignUpForm = ({ onSubmit, isSubmitting }: SignUpFormProps) => {
           onChange={(e) => setEmail(e.target.value)}
           required
           autoComplete="email"
+        />
+      </div>
+      
+      <div className="space-y-2">
+        <Label htmlFor="linkedinUrl">LinkedIn Profile URL</Label>
+        <Input
+          id="linkedinUrl"
+          name="linkedinUrl"
+          placeholder="https://linkedin.com/in/yourprofile"
+          type="url"
+          value={linkedinUrl}
+          onChange={(e) => setLinkedinUrl(e.target.value)}
+          autoComplete="url"
         />
       </div>
       
