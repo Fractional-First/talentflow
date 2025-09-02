@@ -53,6 +53,10 @@ const EditProfile = () => {
       // Simulate publish action - replace with actual API call
       await new Promise(resolve => setTimeout(resolve, 1000))
       setIsPublished(true)
+      toast({
+        title: "Profile published successfully",
+        description: "Your profile is now live and accessible.",
+      })
     } catch (error) {
       toast({
         title: "Publishing failed",
