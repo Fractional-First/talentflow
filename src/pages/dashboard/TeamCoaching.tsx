@@ -28,7 +28,7 @@ const TeamCoaching = () => {
     }
   ]
 
-  const gettingStartedContent = "Your journey begins with a complimentary 30-minute Intro Call with the leader/sponsor to outline context and desired outcomes. This leads to a Discovery Call (50 minutes) to explore possibilities — with quick wins often emerging here — followed by a tailored proposal designed around your team's needs."
+  const gettingStartedContent = "Your journey begins with a complimentary 25-minute Intro Call with the leader/sponsor to outline context and desired outcomes. This leads to a Discovery Call to explore possibilities — with quick wins often emerging here — followed by a tailored proposal designed around your team's needs."
 
   return (
     <SidebarProvider>
@@ -138,7 +138,11 @@ const TeamCoaching = () => {
 
                 {/* CTA Section */}
                 <div className="text-center space-y-6">
-                  <Button size="lg" className="w-full lg:w-auto">
+                  <Button 
+                    size="lg" 
+                    className="w-full lg:w-auto"
+                    onClick={() => window.open('https://scheduler.zoom.us/stephen-burke-nporpf/25mins_intro_stephen', '_blank')}
+                  >
                     Schedule Your Intro Call
                   </Button>
                 </div>
