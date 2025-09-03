@@ -10,12 +10,15 @@ import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/s
 import { Spinner } from "@/components/ui/spinner"
 import { useEditProfile } from "@/queries/useEditProfile"
 import { useProfileData } from "@/queries/useProfileData"
+import { useWorkPreferences } from "@/queries/useWorkPreferences"
 
 // Dashboard main content with sidebar navigation
 const Dashboard = () => {
   const { onboardingStatus, isLoading } = useEditProfile()
   const { data: profile, isLoading: profileLoading, error } = useProfileData()
+  const { workPreferences } = useWorkPreferences()
   const isOnboarding = onboardingStatus === "PROFILE_CONFIRMED"
+  const hasWorkPreferences = !!workPreferences
 
   if (isLoading) {
     return (
@@ -76,22 +79,6 @@ const Dashboard = () => {
           <div className="flex-1">
             {isOnboarding && <OnboardingBanner />}
             <div className="p-4 sm:p-8 max-w-7xl mx-auto w-full">
-              {/* Show Next Steps card when onboarding is complete */}
-              {!isOnboarding && (
-                <div className="mb-8">
-                  <NextStepsCard 
-                    onShareProfile={() => {
-                      // TODO: Implement share profile functionality
-                      console.log("Share profile clicked")
-                    }}
-                    onGetGuidance={() => {
-                      // TODO: Implement get guidance functionality
-                      console.log("Get guidance clicked")
-                    }}
-                  />
-                </div>
-              )}
-              
               <div className="grid lg:grid-cols-2 gap-8">
                 {/* Left column - Read-only profile summary */}
                 <div className="space-y-6">
@@ -104,6 +91,22 @@ const Dashboard = () => {
                   <JobPreferencesPlaceholder isCompleted={!isOnboarding} />
                 </div>
               </div>
+
+              {/* Show Next Steps card when both profile and job preferences are complete */}
+              {!isOnboarding && hasWorkPreferences && (
+                <div className="mt-8">
+                  <NextStepsCard 
+                    onShareProfile={() => {
+                      // TODO: Implement share profile functionality
+                      console.log("Share profile clicked")
+                    }}
+                    onGetGuidance={() => {
+                      // TODO: Implement get guidance functionality
+                      console.log("Get guidance clicked")
+                    }}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </SidebarInset>
