@@ -51,10 +51,13 @@ const Dashboard = () => {
       }
     }
 
-    toast.success("✅ Profile Ready to Share!", {
-      description: "Your profile link is now ready. Copy it or share it with your network.",
+    toast.success("Your profile link is now ready. Copy it or share it with your network.", {
       duration: 5000,
       position: "top-right",
+      style: {
+        marginTop: "80px",
+        marginRight: "20px",
+      },
       action: {
         label: "Copy Link",
         onClick: copyToClipboard,
