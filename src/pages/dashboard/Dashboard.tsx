@@ -37,9 +37,9 @@ const Dashboard = () => {
           duration: 3000,
           position: "top-left",
           style: {
-            marginTop: "280px",
-            marginLeft: "16px",
-            maxWidth: "400px",
+            marginTop: "320px",
+            marginLeft: "32px",
+            maxWidth: "300px",
           },
         })
       } catch (err) {
@@ -55,9 +55,9 @@ const Dashboard = () => {
           duration: 3000,
           position: "top-left",
           style: {
-            marginTop: "280px",
-            marginLeft: "16px",
-            maxWidth: "400px",
+            marginTop: "320px",
+            marginLeft: "32px",
+            maxWidth: "300px",
           },
         })
       }
@@ -67,9 +67,9 @@ const Dashboard = () => {
       duration: 5000,
       position: "top-left",
       style: {
-        marginTop: "280px",
-        marginLeft: "16px",
-        maxWidth: "400px",
+        marginTop: "320px",
+        marginLeft: "32px",
+        maxWidth: "300px",
       },
       action: {
         label: "Copy Link",
