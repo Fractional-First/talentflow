@@ -37,7 +37,7 @@ const Dashboard = () => {
           duration: 3000,
           position: "top-center",
           style: {
-            marginTop: "120px",
+            marginTop: "180px",
             marginLeft: "auto",
             marginRight: "auto",
             maxWidth: "400px",
@@ -56,7 +56,7 @@ const Dashboard = () => {
           duration: 3000,
           position: "top-center",
           style: {
-            marginTop: "120px",
+            marginTop: "180px",
             marginLeft: "auto",
             marginRight: "auto",
             maxWidth: "400px",
@@ -69,7 +69,7 @@ const Dashboard = () => {
       duration: 5000,
       position: "top-center",
       style: {
-        marginTop: "120px",
+        marginTop: "180px",
         marginLeft: "auto",
         marginRight: "auto",
         maxWidth: "400px",
