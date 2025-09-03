@@ -11,14 +11,56 @@ import { Spinner } from "@/components/ui/spinner"
 import { useEditProfile } from "@/queries/useEditProfile"
 import { useProfileData } from "@/queries/useProfileData"
 import { useWorkPreferences } from "@/queries/useWorkPreferences"
+import { useGetUser } from "@/queries/auth/useGetUser"
+import { toast } from "sonner"
+import { Check, Copy } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 // Dashboard main content with sidebar navigation
 const Dashboard = () => {
   const { onboardingStatus, isLoading } = useEditProfile()
   const { data: profile, isLoading: profileLoading, error } = useProfileData()
   const { workPreferences, isLoading: workPrefsLoading } = useWorkPreferences()
+  const { data: user } = useGetUser()
   const isOnboarding = onboardingStatus === "PROFILE_CONFIRMED"
   const hasJobPreferences = workPreferences && Object.keys(workPreferences).length > 0
+
+  const handleShareProfile = () => {
+    // Generate public profile URL using the user's ID for preview
+    const profileUrl = `${window.location.origin}/profile/preview/${user?.id}`
+
+    const copyToClipboard = async () => {
+      try {
+        await navigator.clipboard.writeText(profileUrl)
+        toast.success("Profile link copied!", {
+          description: "Share it with your network to increase visibility.",
+          duration: 3000,
+        })
+      } catch (err) {
+        // Fallback for browsers that don't support clipboard API
+        const textArea = document.createElement('textarea')
+        textArea.value = profileUrl
+        document.body.appendChild(textArea)
+        textArea.select()
+        document.execCommand('copy')
+        document.body.removeChild(textArea)
+        toast.success("Profile link copied!", {
+          description: "Share it with your network to increase visibility.",
+          duration: 3000,
+        })
+      }
+    }
+
+    toast.success("✅ Profile Ready to Share!", {
+      description: "Your profile link is now ready. Copy it or share it with your network.",
+      duration: 5000,
+      position: "top-right",
+      action: {
+        label: "Copy Link",
+        onClick: copyToClipboard,
+      },
+    })
+  }
 
   if (isLoading) {
     return (
@@ -83,10 +125,7 @@ const Dashboard = () => {
               {!isOnboarding && hasJobPreferences && (
                 <div className="mb-8">
                   <NextStepsCard 
-                    onShareProfile={() => {
-                      // TODO: Implement share profile functionality
-                      console.log("Share profile clicked")
-                    }}
+                    onShareProfile={handleShareProfile}
                     onGetGuidance={() => {
                       // TODO: Implement get guidance functionality
                       console.log("Get guidance clicked")
