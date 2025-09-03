@@ -77,7 +77,7 @@ const Branding = () => {
                     </Badge>
                   </div>
                   <p className="text-lg text-muted-foreground max-w-4xl">
-                    Whether you're leading solo or as a team, master your leadership journey with clarity, alignment, and effectiveness through coaching offerings delivered by trusted partners of Fractional First.
+                    Whether you're charting your path as a fractional leader or guiding a client team through change, coaching with trusted Fractional First partners helps you sharpen your leadership, sustain impact across multiple engagements, and navigate your journey with clarity, alignment, and effectiveness.
                   </p>
                 </div>
 
