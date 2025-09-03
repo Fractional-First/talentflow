@@ -11,7 +11,11 @@ const ExecutiveCoaching = () => {
 
   const processSteps = [
     {
-      text: "3-month engagement, with up to 3 sessions per month (90 minutes each via phone or Zoom/Teams/Google Meet)",
+      text: "3-month engagement — $8,000 package",
+      completed: true
+    },
+    {
+      text: "Up to 3 sessions per month (90 minutes each via phone or Zoom/Teams/Google Meet)",
       completed: true
     },
     {
@@ -24,23 +28,7 @@ const ExecutiveCoaching = () => {
     }
   ]
 
-  const intakeSteps = [
-    {
-      title: "Intro Call (30 mins)",
-      description: "to get acquainted",
-      completed: true
-    },
-    {
-      title: "Discovery Call (90 mins)",
-      description: "to clarify your objectives",
-      completed: true
-    },
-    {
-      title: "Coaching Session (75 mins)",
-      description: "to experience the insights, shifts, and outcomes possible",
-      completed: true
-    }
-  ]
+  const gettingStartedContent = "Your journey begins with a complimentary 25-minute Intro Call — a chance to get acquainted and explore your goals. This call may lead to a more in-depth Discovery Call and even a Coaching Session to experience the kinds of insights and outcomes possible."
 
   return (
     <SidebarProvider>
@@ -99,22 +87,14 @@ const ExecutiveCoaching = () => {
                     </div>
                   </div>
 
-                  {/* Intake Section */}
+                  {/* Getting Started Section */}
                   <div className="space-y-6 bg-white rounded-2xl p-6 border border-gray-200">
                     <div className="flex items-center gap-2">
                       <CheckCircle className="h-5 w-5 text-muted-foreground" />
-                      <h2 className="text-xl font-medium">Intake (Complimentary)</h2>
+                      <h2 className="text-xl font-medium">Getting Started</h2>
                     </div>
-                    <div className="space-y-4">
-                      {intakeSteps.map((step, index) => (
-                        <div key={index} className="flex items-start gap-3">
-                          <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                          <div>
-                            <p className="font-medium text-base">{step.title}</p>
-                            <p className="text-sm text-muted-foreground">{step.description}</p>
-                          </div>
-                        </div>
-                      ))}
+                    <div>
+                      <p className="text-base text-muted-foreground leading-relaxed">{gettingStartedContent}</p>
                     </div>
                   </div>
                 </div>
