@@ -35,6 +35,11 @@ const Dashboard = () => {
         toast.success("Profile link copied!", {
           description: "Share it with your network to increase visibility.",
           duration: 3000,
+          position: "top-right",
+          style: {
+            marginTop: "80px",
+            marginRight: "20px",
+          },
         })
       } catch (err) {
         // Fallback for browsers that don't support clipboard API
@@ -47,6 +52,11 @@ const Dashboard = () => {
         toast.success("Profile link copied!", {
           description: "Share it with your network to increase visibility.",
           duration: 3000,
+          position: "top-right",
+          style: {
+            marginTop: "80px",
+            marginRight: "20px",
+          },
         })
       }
     }
