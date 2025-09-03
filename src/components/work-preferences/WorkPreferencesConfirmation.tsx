@@ -33,7 +33,7 @@ export const WorkPreferencesConfirmation = ({
               className="text-primary underline underline-offset-2 hover:text-primary/80"
               onClick={() => navigate("/dashboard/branding")}
             >
-              explore personal branding options
+              explore professional coaching options
             </button>{" "}
             to help you stand out?
           </p>
