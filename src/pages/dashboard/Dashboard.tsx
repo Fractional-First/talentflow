@@ -35,11 +35,12 @@ const Dashboard = () => {
         toast.success("Profile link copied!", {
           description: "Share it with your network to increase visibility.",
           duration: 3000,
-          position: "top-left",
+          position: "top-center",
           style: {
-            marginTop: "280px",
-            marginLeft: "calc(50% - 600px + 120px)",
-            maxWidth: "300px",
+            marginTop: "200px",
+            marginLeft: "auto",
+            marginRight: "auto",
+            maxWidth: "400px",
           },
         })
       } catch (err) {
@@ -53,11 +54,12 @@ const Dashboard = () => {
         toast.success("Profile link copied!", {
           description: "Share it with your network to increase visibility.",
           duration: 3000,
-          position: "top-left",
+          position: "top-center",
           style: {
-            marginTop: "280px",
-            marginLeft: "calc(50% - 600px + 120px)",
-            maxWidth: "300px",
+            marginTop: "200px",
+            marginLeft: "auto",
+            marginRight: "auto",
+            maxWidth: "400px",
           },
         })
       }
@@ -65,11 +67,12 @@ const Dashboard = () => {
 
     toast.success("Your profile link is now ready. Copy it or share it with your network.", {
       duration: 5000,
-      position: "top-left",
+      position: "top-center",
       style: {
-        marginTop: "280px",
-        marginLeft: "calc(50% - 600px + 120px)",
-        maxWidth: "300px",
+        marginTop: "200px",
+        marginLeft: "auto",
+        marginRight: "auto",
+        maxWidth: "400px",
       },
       action: {
         label: "Copy Link",
