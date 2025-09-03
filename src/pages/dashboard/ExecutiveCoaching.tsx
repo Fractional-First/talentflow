@@ -138,8 +138,18 @@ const ExecutiveCoaching = () => {
 
                 {/* CTA Section */}
                 <div className="text-center space-y-6">
-                  <Button size="lg" className="w-full lg:w-auto">
-                    Schedule Your Intro Call
+                  <Button 
+                    size="lg" 
+                    className="w-full lg:w-auto" 
+                    asChild
+                  >
+                    <a 
+                      href="https://scheduler.zoom.us/stephen-burke-nporpf/25mins_intro_stephen" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                    >
+                      Schedule Your Intro Call
+                    </a>
                   </Button>
                 </div>
 
