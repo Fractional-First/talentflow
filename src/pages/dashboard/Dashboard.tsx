@@ -76,22 +76,9 @@ const Dashboard = () => {
           <div className="flex-1">
             {isOnboarding && <OnboardingBanner />}
             <div className="p-4 sm:p-8 max-w-7xl mx-auto w-full">
-              <div className="grid lg:grid-cols-2 gap-8">
-                {/* Left column - Read-only profile summary */}
-                <div className="space-y-6">
-                  <div>
-                    <ProfileSummaryCard profile={profile} />
-                  </div>
-                </div>
-                {/* Right column - Job preferences placeholder */}
-                <div className="space-y-6">
-                  <JobPreferencesPlaceholder isCompleted={!isOnboarding} />
-                </div>
-              </div>
-              
-              {/* Show Next Steps card at the bottom when onboarding is complete */}
+              {/* Show Next Steps card when onboarding is complete */}
               {!isOnboarding && (
-                <div className="mt-8">
+                <div className="mb-8">
                   <NextStepsCard 
                     onShareProfile={() => {
                       // TODO: Implement share profile functionality
@@ -104,6 +91,19 @@ const Dashboard = () => {
                   />
                 </div>
               )}
+              
+              <div className="grid lg:grid-cols-2 gap-8">
+                {/* Left column - Read-only profile summary */}
+                <div className="space-y-6">
+                  <div>
+                    <ProfileSummaryCard profile={profile} />
+                  </div>
+                </div>
+                {/* Right column - Job preferences placeholder */}
+                <div className="space-y-6">
+                  <JobPreferencesPlaceholder isCompleted={!isOnboarding} />
+                </div>
+              </div>
             </div>
           </div>
         </SidebarInset>
