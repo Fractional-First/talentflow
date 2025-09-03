@@ -35,13 +35,7 @@ const Dashboard = () => {
         toast.success("Profile link copied!", {
           description: "Share it with your network to increase visibility.",
           duration: 3000,
-          position: "top-center",
-          style: {
-            marginTop: "180px",
-            marginLeft: "auto",
-            marginRight: "auto",
-            maxWidth: "400px",
-          },
+          position: "bottom-left",
         })
       } catch (err) {
         // Fallback for browsers that don't support clipboard API
@@ -54,26 +48,14 @@ const Dashboard = () => {
         toast.success("Profile link copied!", {
           description: "Share it with your network to increase visibility.",
           duration: 3000,
-          position: "top-center",
-          style: {
-            marginTop: "180px",
-            marginLeft: "auto",
-            marginRight: "auto",
-            maxWidth: "400px",
-          },
+          position: "bottom-left",
         })
       }
     }
 
     toast.success("Your profile link is now ready. Copy it or share it with your network.", {
       duration: 5000,
-      position: "top-center",
-      style: {
-        marginTop: "180px",
-        marginLeft: "auto",
-        marginRight: "auto",
-        maxWidth: "400px",
-      },
+      position: "bottom-left",
       action: {
         label: "Copy Link",
         onClick: copyToClipboard,
