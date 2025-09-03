@@ -2,6 +2,7 @@
 
 import { AppSidebar } from "@/components/AppSidebar"
 import { JobPreferencesPlaceholder } from "@/components/dashboard/JobPreferencesPlaceholder"
+import { NextStepsCard } from "@/components/dashboard/NextStepsCard"
 import { OnboardingBanner } from "@/components/dashboard/OnboardingBanner"
 import { ProfileSummaryCard } from "@/components/dashboard/ProfileSummaryCard"
 import { DashboardLayout } from "@/components/DashboardLayout"
@@ -75,6 +76,22 @@ const Dashboard = () => {
           <div className="flex-1">
             {isOnboarding && <OnboardingBanner />}
             <div className="p-4 sm:p-8 max-w-7xl mx-auto w-full">
+              {/* Show Next Steps card when onboarding is complete */}
+              {!isOnboarding && (
+                <div className="mb-8">
+                  <NextStepsCard 
+                    onShareProfile={() => {
+                      // TODO: Implement share profile functionality
+                      console.log("Share profile clicked")
+                    }}
+                    onGetGuidance={() => {
+                      // TODO: Implement get guidance functionality
+                      console.log("Get guidance clicked")
+                    }}
+                  />
+                </div>
+              )}
+              
               <div className="grid lg:grid-cols-2 gap-8">
                 {/* Left column - Read-only profile summary */}
                 <div className="space-y-6">
