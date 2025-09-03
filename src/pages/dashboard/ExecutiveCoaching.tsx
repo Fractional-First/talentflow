@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Clock, CheckCircle, User } from "lucide-react"
 import { BlurImage } from "@/components/BlurImage"
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/AppSidebar"
 
 const ExecutiveCoaching = () => {
@@ -46,76 +46,70 @@ const ExecutiveCoaching = () => {
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
         <AppSidebar />
-        <SidebarInset className="flex-1">
-          <div className="flex flex-col min-h-screen">
-            {/* Header */}
-            <header className="border-b border-border/40 bg-background/80 backdrop-blur-sm">
-              <div className="container mx-auto px-4 lg:px-8 py-6">
-                <div className="flex items-center gap-3">
-                  <User className="h-8 w-8 text-primary" />
-                  <div>
-                    <h1 className="text-h1 font-bold tracking-tight">Executive 1:1 Coaching</h1>
-                    <p className="text-body text-primary font-medium">Perform Better. Relate Better. Feel Better.</p>
-                  </div>
+        <SidebarInset>
+          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+            <SidebarTrigger className="-ml-1" />
+            <div className="flex flex-col">
+              <h1 className="text-xl font-semibold text-gray-900">Executive 1:1 Coaching</h1>
+              <p className="text-sm text-primary font-medium">Perform Better. Relate Better. Feel Better.</p>
+            </div>
+          </header>
+          <div className="flex-1 bg-white">
+            <div className="p-4 sm:p-8 max-w-7xl mx-auto w-full">
+              <div className="space-y-8">
+                {/* Hero Image */}
+                <div className="relative h-80 rounded-2xl overflow-hidden">
+                  <BlurImage
+                    src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80"
+                    alt="Executive Coaching"
+                    className="object-cover w-full h-full"
+                  />
                 </div>
-              </div>
-            </header>
-
-            {/* Main Content */}
-            <main className="flex-1 container mx-auto px-4 lg:px-8 py-8">
-              <div className="max-w-4xl mx-auto space-y-8">{/* Hero Image */}
-          <div className="relative h-80 rounded-2xl overflow-hidden">
-            <BlurImage
-              src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80"
-              alt="Executive Coaching"
-              className="object-cover w-full h-full"
-            />
-          </div>
 
                 {/* Description */}
-                <div className="space-y-6 text-left max-w-3xl">
-                  <p className="text-body text-muted-foreground leading-relaxed">
+                <div className="space-y-4">
+                  <p className="text-lg text-muted-foreground leading-relaxed">
                     Every leader operates in a unique context — shaped by your life experiences, skills, interests, challenges, 
                     and triggers. You are unlike anyone else. And yet, you share the universal drive of all leaders: to perform 
                     better, relate better, and feel better in both work and life.
                   </p>
-                  <p className="text-body text-muted-foreground leading-relaxed">
+                  <p className="text-lg text-muted-foreground leading-relaxed">
                     In 1:1 Coaching, we focus entirely on you and your access to these outcomes. We work quickly and 
                     directly, so you start seeing meaningful change fast.
                   </p>
                 </div>
 
                 {/* Process and Intake Sections */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   {/* Process Section */}
-                  <div className="space-y-6 text-left bg-muted/30 rounded-2xl p-6 border border-border">
+                  <div className="space-y-6 bg-white rounded-2xl p-6 border border-gray-200">
                     <div className="flex items-center gap-2">
                       <Clock className="h-5 w-5 text-muted-foreground" />
-                      <h2 className="text-h3 font-medium">Process</h2>
+                      <h2 className="text-xl font-medium">Process</h2>
                     </div>
                     <div className="space-y-4">
                       {processSteps.map((step, index) => (
                         <div key={index} className="flex items-start gap-3">
                           <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                          <p className="text-muted-foreground">{step.text}</p>
+                          <p className="text-base text-muted-foreground">{step.text}</p>
                         </div>
                       ))}
                     </div>
                   </div>
 
                   {/* Intake Section */}
-                  <div className="space-y-6 text-left bg-muted/30 rounded-2xl p-6 border border-border">
+                  <div className="space-y-6 bg-white rounded-2xl p-6 border border-gray-200">
                     <div className="flex items-center gap-2">
                       <CheckCircle className="h-5 w-5 text-muted-foreground" />
-                      <h2 className="text-h3 font-medium">Intake (Complimentary)</h2>
+                      <h2 className="text-xl font-medium">Intake (Complimentary)</h2>
                     </div>
                     <div className="space-y-4">
                       {intakeSteps.map((step, index) => (
                         <div key={index} className="flex items-start gap-3">
                           <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                           <div>
-                            <p className="font-medium">{step.title}</p>
-                            <p className="text-caption text-muted-foreground">{step.description}</p>
+                            <p className="font-medium text-base">{step.title}</p>
+                            <p className="text-sm text-muted-foreground">{step.description}</p>
                           </div>
                         </div>
                       ))}
@@ -124,13 +118,13 @@ const ExecutiveCoaching = () => {
                 </div>
 
                 {/* Coach Section */}
-                <div className="space-y-6 bg-muted/30 rounded-2xl p-8 border border-border">
+                <div className="space-y-6 bg-white rounded-2xl p-8 border border-gray-200">
                   <div className="flex items-center gap-2">
                     <User className="h-5 w-5 text-muted-foreground" />
-                    <h2 className="text-h3 font-medium">Your Coach</h2>
+                    <h2 className="text-xl font-medium">Your Coach</h2>
                   </div>
                   
-                  <div className="flex items-start gap-6 text-left">
+                  <div className="flex items-start gap-6">
                     <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
                       <BlurImage
                         src="/lovable-uploads/ea353678-088b-4c2c-a98b-4d40f6668684.png"
@@ -140,8 +134,8 @@ const ExecutiveCoaching = () => {
                     </div>
                     <div className="space-y-2">
                       <div>
-                        <h3 className="font-medium">Stephen Burke</h3>
-                        <p className="text-caption text-muted-foreground">Executive & Leadership Coach</p>
+                        <h3 className="font-medium text-base">Stephen Burke</h3>
+                        <p className="text-sm text-muted-foreground">Executive & Leadership Coach</p>
                       </div>
                       <Button variant="outline" size="sm" className="mt-4">
                         View Stephen's Profile
@@ -149,9 +143,9 @@ const ExecutiveCoaching = () => {
                     </div>
                   </div>
                   
-                  {/* Stephen's Description - moved to new row */}
-                  <div className="text-left">
-                    <p className="text-muted-foreground leading-relaxed">
+                  {/* Stephen's Description */}
+                  <div>
+                    <p className="text-base text-muted-foreground leading-relaxed">
                       Stephen is a visionary leader and executive coach with a unique blend of global engineering leadership and 
                       profound expertise in human potential and organizational systems. He is dedicated to empowering 
                       individuals, teams, and entire organizations to "CREATE their best lives, do their best work, make the biggest 
@@ -162,13 +156,13 @@ const ExecutiveCoaching = () => {
 
                 {/* CTA Section */}
                 <div className="text-center space-y-6">
-                  <Button size="lg" className="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-full">
+                  <Button size="lg" className="w-full lg:w-auto">
                     Schedule Your Intro Call
                   </Button>
                 </div>
 
                 {/* Back Button */}
-                <div className="flex justify-start">
+                <div className="flex justify-start pt-4">
                   <Button
                     variant="ghost"
                     onClick={() => navigate("/dashboard/branding")}
@@ -179,7 +173,7 @@ const ExecutiveCoaching = () => {
                   </Button>
                 </div>
               </div>
-            </main>
+            </div>
           </div>
         </SidebarInset>
       </div>
