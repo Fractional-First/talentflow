@@ -49,14 +49,16 @@ const ExecutiveCoaching = () => {
         <SidebarInset>
           <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
             <SidebarTrigger className="-ml-1" />
-            <div className="flex flex-col">
-              <h1 className="text-xl font-semibold text-gray-900">Executive 1:1 Coaching</h1>
-              <p className="text-sm text-primary font-medium">Perform Better. Relate Better. Feel Better.</p>
-            </div>
           </header>
           <div className="flex-1 bg-white">
             <div className="p-4 sm:p-8 max-w-7xl mx-auto w-full">
               <div className="space-y-8">
+                {/* Header Section */}
+                <div className="space-y-4">
+                  <h1 className="text-3xl font-semibold">Executive 1:1 Coaching</h1>
+                  <p className="text-lg text-primary font-medium">Perform Better. Relate Better. Feel Better.</p>
+                </div>
+
                 {/* Hero Image */}
                 <div className="relative h-80 rounded-2xl overflow-hidden">
                   <BlurImage
