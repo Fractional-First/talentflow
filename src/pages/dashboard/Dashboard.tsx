@@ -10,12 +10,15 @@ import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/s
 import { Spinner } from "@/components/ui/spinner"
 import { useEditProfile } from "@/queries/useEditProfile"
 import { useProfileData } from "@/queries/useProfileData"
+import { useWorkPreferences } from "@/queries/useWorkPreferences"
 
 // Dashboard main content with sidebar navigation
 const Dashboard = () => {
   const { onboardingStatus, isLoading } = useEditProfile()
   const { data: profile, isLoading: profileLoading, error } = useProfileData()
+  const { workPreferences, isLoading: workPrefsLoading } = useWorkPreferences()
   const isOnboarding = onboardingStatus === "PROFILE_CONFIRMED"
+  const hasJobPreferences = workPreferences && Object.keys(workPreferences).length > 0
 
   if (isLoading) {
     return (
@@ -76,8 +79,8 @@ const Dashboard = () => {
           <div className="flex-1">
             {isOnboarding && <OnboardingBanner />}
             <div className="p-4 sm:p-8 max-w-7xl mx-auto w-full">
-              {/* Show Next Steps card when onboarding is complete */}
-              {!isOnboarding && (
+              {/* Show Next Steps card when onboarding is complete AND job preferences are submitted */}
+              {!isOnboarding && hasJobPreferences && (
                 <div className="mb-8">
                   <NextStepsCard 
                     onShareProfile={() => {
