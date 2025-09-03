@@ -143,8 +143,8 @@ const Dashboard = () => {
                   <NextStepsCard 
                     onShareProfile={handleShareProfile}
                     onGetGuidance={() => {
-                      // TODO: Implement get guidance functionality
-                      console.log("Get guidance clicked")
+                      // Navigate to executive coaching page
+                      window.location.href = "/dashboard/executive-coaching"
                     }}
                   />
                 </div>
