@@ -47,15 +47,6 @@ const TeamCoaching = () => {
                   <p className="text-lg text-primary font-medium">Improve Team Effectiveness, Fulfilment, and Results.</p>
                 </div>
 
-                {/* Hero Image */}
-                <div className="relative h-80 rounded-2xl overflow-hidden">
-                  <BlurImage
-                    src="https://images.unsplash.com/photo-1527525443983-6e60c75fff46?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80"
-                    alt="Team Coaching"
-                    className="object-cover w-full h-full"
-                  />
-                </div>
-
                 {/* Description */}
                 <div className="space-y-4">
                   <p className="text-lg text-muted-foreground leading-relaxed">
@@ -67,6 +58,43 @@ const TeamCoaching = () => {
                     This engagement is about achieving both — operational excellence and the most rewarding team experience 
                     you've ever had — all in the flow of your real work together.
                   </p>
+                </div>
+
+                {/* Coach Section */}
+                <div className="space-y-6 bg-white rounded-2xl p-8 border border-gray-200">
+                  <div className="flex items-center gap-2">
+                    <User className="h-5 w-5 text-muted-foreground" />
+                    <h2 className="text-xl font-medium">Your Coach</h2>
+                  </div>
+                  
+                  <div className="flex items-start gap-6">
+                    <div className="w-24 h-24 rounded-full overflow-hidden flex-shrink-0">
+                      <BlurImage
+                        src="/lovable-uploads/ea353678-088b-4c2c-a98b-4d40f6668684.png"
+                        alt="Stephen Burke"
+                        className="object-cover w-full h-full"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <div>
+                        <h3 className="font-medium text-base">Stephen Burke</h3>
+                        <p className="text-sm text-muted-foreground">Executive & Leadership Coach</p>
+                      </div>
+                      <Button variant="outline" size="sm" className="mt-4">
+                        View Stephen's Profile
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  {/* Stephen's Description */}
+                  <div>
+                    <p className="text-base text-muted-foreground leading-relaxed">
+                      Stephen brings deep experience in organizational systems and team dynamics. His background in 
+                      global engineering leadership combined with expertise in human potential makes him uniquely 
+                      qualified to help leadership teams navigate complex challenges while building stronger relationships 
+                      and achieving better outcomes.
+                    </p>
+                  </div>
                 </div>
 
                 {/* Process and Getting Started Sections */}
@@ -99,42 +127,6 @@ const TeamCoaching = () => {
                   </div>
                 </div>
 
-                {/* Coach Section */}
-                <div className="space-y-6 bg-white rounded-2xl p-8 border border-gray-200">
-                  <div className="flex items-center gap-2">
-                    <User className="h-5 w-5 text-muted-foreground" />
-                    <h2 className="text-xl font-medium">Your Coach</h2>
-                  </div>
-                  
-                  <div className="flex items-start gap-6">
-                    <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
-                      <BlurImage
-                        src="/lovable-uploads/ea353678-088b-4c2c-a98b-4d40f6668684.png"
-                        alt="Stephen Burke"
-                        className="object-cover w-full h-full"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <div>
-                        <h3 className="font-medium text-base">Stephen Burke</h3>
-                        <p className="text-sm text-muted-foreground">Executive & Leadership Coach</p>
-                      </div>
-                      <Button variant="outline" size="sm" className="mt-4">
-                        View Stephen's Profile
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  {/* Stephen's Description */}
-                  <div>
-                    <p className="text-base text-muted-foreground leading-relaxed">
-                      Stephen brings deep experience in organizational systems and team dynamics. His background in 
-                      global engineering leadership combined with expertise in human potential makes him uniquely 
-                      qualified to help leadership teams navigate complex challenges while building stronger relationships 
-                      and achieving better outcomes.
-                    </p>
-                  </div>
-                </div>
 
                 {/* CTA Section */}
                 <div className="text-center space-y-6">
