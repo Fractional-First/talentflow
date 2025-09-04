@@ -242,9 +242,10 @@ const EditProfile = () => {
                       href={user?.user_metadata?.linkedin_url || 'https://linkedin.com'}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[#449889] hover:text-[#449889]/80 text-sm font-medium underline"
+                      className="text-[#0A66C2] hover:text-[#0A66C2]/80 transition-colors"
+                      aria-label="View LinkedIn Profile"
                     >
-                      LinkedIn Profile
+                      <Linkedin className="h-6 w-6" />
                     </a>
                   </div>
                 )}
