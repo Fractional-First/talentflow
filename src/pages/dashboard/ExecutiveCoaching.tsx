@@ -47,15 +47,6 @@ const ExecutiveCoaching = () => {
                   <p className="text-lg text-primary font-medium">Perform Better. Relate Better. Feel Better.</p>
                 </div>
 
-                {/* Hero Image */}
-                <div className="relative h-80 rounded-2xl overflow-hidden">
-                  <BlurImage
-                    src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80"
-                    alt="Executive Coaching"
-                    className="object-cover w-full h-full"
-                  />
-                </div>
-
                 {/* Description */}
                 <div className="space-y-4">
                   <p className="text-lg text-muted-foreground leading-relaxed">
@@ -67,36 +58,6 @@ const ExecutiveCoaching = () => {
                     In 1:1 Coaching, we focus entirely on you and your access to these outcomes. We work quickly and 
                     directly, so you start seeing meaningful change fast.
                   </p>
-                </div>
-
-                {/* Process and Intake Sections */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {/* Process Section */}
-                  <div className="space-y-6 bg-white rounded-2xl p-6 border border-gray-200">
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-5 w-5 text-muted-foreground" />
-                      <h2 className="text-xl font-medium">Process</h2>
-                    </div>
-                    <div className="space-y-4">
-                      {processSteps.map((step, index) => (
-                        <div key={index} className="flex items-start gap-3">
-                          <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                          <p className="text-base text-muted-foreground">{step.text}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Getting Started Section */}
-                  <div className="space-y-6 bg-white rounded-2xl p-6 border border-gray-200">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle className="h-5 w-5 text-muted-foreground" />
-                      <h2 className="text-xl font-medium">Getting Started</h2>
-                    </div>
-                    <div>
-                      <p className="text-base text-muted-foreground leading-relaxed">{gettingStartedContent}</p>
-                    </div>
-                  </div>
                 </div>
 
                 {/* Coach Section */}
@@ -135,6 +96,37 @@ const ExecutiveCoaching = () => {
                     </p>
                   </div>
                 </div>
+
+                {/* Process and Intake Sections */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {/* Process Section */}
+                  <div className="space-y-6 bg-white rounded-2xl p-6 border border-gray-200">
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-5 w-5 text-muted-foreground" />
+                      <h2 className="text-xl font-medium">Process</h2>
+                    </div>
+                    <div className="space-y-4">
+                      {processSteps.map((step, index) => (
+                        <div key={index} className="flex items-start gap-3">
+                          <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                          <p className="text-base text-muted-foreground">{step.text}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Getting Started Section */}
+                  <div className="space-y-6 bg-white rounded-2xl p-6 border border-gray-200">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="h-5 w-5 text-muted-foreground" />
+                      <h2 className="text-xl font-medium">Getting Started</h2>
+                    </div>
+                    <div>
+                      <p className="text-base text-muted-foreground leading-relaxed">{gettingStartedContent}</p>
+                    </div>
+                  </div>
+                </div>
+
 
                 {/* CTA Section */}
                 <div className="text-center space-y-6">
