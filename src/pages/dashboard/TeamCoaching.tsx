@@ -79,6 +79,7 @@ const TeamCoaching = () => {
                       <div>
                         <h3 className="font-medium text-base">Stephen Burke</h3>
                         <p className="text-sm text-muted-foreground">Executive & Leadership Coach</p>
+                        <p className="text-sm text-muted-foreground">Timezone: Pacific Time (PT)</p>
                       </div>
                       <Button variant="outline" size="sm" className="mt-4">
                         View Stephen's Profile
