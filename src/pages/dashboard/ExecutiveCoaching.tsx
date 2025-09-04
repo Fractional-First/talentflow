@@ -11,7 +11,7 @@ const ExecutiveCoaching = () => {
 
   const processSteps = [
     {
-      text: "3-month engagement — $8,000 package",
+      text: "3-month engagement — US$8,000 package",
       completed: true
     },
     {
