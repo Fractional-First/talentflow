@@ -230,30 +230,7 @@ const EditProfile = () => {
                   onChange={(field, value) => handleInputChange(field, value)}
                 />
                 
-                {/* LinkedIn Profile Link at bottom of profile heading */}
-                <br />
-                {(() => {
-                  console.log('User object:', user);
-                  console.log('User metadata:', user?.user_metadata);
-                  console.log('LinkedIn URL:', user?.user_metadata?.linkedin_url);
-                  return user?.user_metadata?.linkedin_url || true; // Always show for now
-                })() && (
-                  <div className="flex justify-center mt-3">
-                    <a
-                      href={user?.user_metadata?.linkedin_url || 'https://linkedin.com'}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="transition-opacity hover:opacity-80"
-                      aria-label="View LinkedIn Profile"
-                    >
-                      <img 
-                        src="/lovable-uploads/45472ce5-91ca-4c50-b569-2d23f6ebc846.png" 
-                        alt="LinkedIn" 
-                        className="h-6 w-6"
-                      />
-                    </a>
-                  </div>
-                )}
+                
               </div>
             </div>
 
@@ -270,6 +247,30 @@ const EditProfile = () => {
               headerClassName="bg-[#449889] text-white"
               labelClassName="text-base font-semibold"
             />
+
+            {/* LinkedIn Profile Link */}
+            {(() => {
+              console.log('User object:', user);
+              console.log('User metadata:', user?.user_metadata);
+              console.log('LinkedIn URL:', user?.user_metadata?.linkedin_url);
+              return user?.user_metadata?.linkedin_url || true; // Always show for now
+            })() && (
+              <div className="flex justify-center mt-3">
+                <a
+                  href={user?.user_metadata?.linkedin_url || 'https://linkedin.com'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-opacity hover:opacity-80"
+                  aria-label="View LinkedIn Profile"
+                >
+                  <img 
+                    src="/lovable-uploads/45472ce5-91ca-4c50-b569-2d23f6ebc846.png" 
+                    alt="LinkedIn" 
+                    className="h-6 w-6"
+                  />
+                </a>
+              </div>
+            )}
 
             {/* Key Roles */}
             <EditableArraySection
