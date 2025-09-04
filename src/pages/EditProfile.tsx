@@ -231,6 +231,7 @@ const EditProfile = () => {
                 />
                 
                 {/* LinkedIn Profile Link at bottom of profile heading */}
+                <br />
                 {(() => {
                   console.log('User object:', user);
                   console.log('User metadata:', user?.user_metadata);
