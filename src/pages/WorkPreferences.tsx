@@ -85,7 +85,7 @@ const WorkPreferences = () => {
           <StepCardHeader className="text-center pb-8">
             <StepCardTitle className="text-2xl">Job Preferences</StepCardTitle>
             <StepCardDescription className="text-base mt-3 max-w-2xl mx-auto leading-relaxed">
-              Choose how you'd like to work. Select one or both options to help us tailor opportunities and compensation. While all fields are optional, completing them helps us match you with the most relevant roles.
+              Select one or both options to help us tailor opportunities and compensation. <span className="font-semibold">While all fields are optional, completing them helps us match you with the most relevant roles.</span>
             </StepCardDescription>
           </StepCardHeader>
 
