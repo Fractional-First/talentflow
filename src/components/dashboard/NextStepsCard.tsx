@@ -33,7 +33,7 @@ export const NextStepsCard = ({ onShareProfile, onGetGuidance }: NextStepsCardPr
               <Share2 className="h-6 w-6 text-primary" />
             </div>
             <div className="space-y-2 flex-1">
-              <h3 className="font-semibold text-foreground">Share Your Profile & Be Discoverable</h3>
+              <h3 className="font-semibold text-foreground">Share Your Profile</h3>
               <p className="text-sm text-muted-foreground">
                 Showcase your expertise to your network and allow companies and recruiters to find you directly through our platform.
               </p>
