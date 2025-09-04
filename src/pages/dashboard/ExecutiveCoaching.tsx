@@ -68,7 +68,7 @@ const ExecutiveCoaching = () => {
                   </div>
                   
                   <div className="flex items-start gap-6">
-                    <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+                    <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
                       <BlurImage
                         src="/lovable-uploads/ea353678-088b-4c2c-a98b-4d40f6668684.png"
                         alt="Stephen Burke"
