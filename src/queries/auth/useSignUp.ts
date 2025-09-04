@@ -8,8 +8,7 @@ export function useSignUp() {
     email: string,
     password: string,
     firstName?: string,
-    lastName?: string,
-    linkedinUrl?: string
+    lastName?: string
   ) => {
     setLoading(true)
     try {
@@ -18,7 +17,7 @@ export function useSignUp() {
         password,
         options: {
           emailRedirectTo: `${window.location.origin}/auth/callback`,
-          data: { first_name: firstName, last_name: lastName, linkedin_url: linkedinUrl },
+          data: { first_name: firstName, last_name: lastName },
         },
       })
       if (error) throw error
