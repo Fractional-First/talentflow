@@ -2,13 +2,19 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Share2, Users, Search, PartyPopper, RefreshCw } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
 interface NextStepsCardProps {
   onShareProfile?: () => void
-  onGetGuidance?: () => void
 }
 
-export const NextStepsCard = ({ onShareProfile, onGetGuidance }: NextStepsCardProps) => {
+export const NextStepsCard = ({ onShareProfile }: NextStepsCardProps) => {
+  const navigate = useNavigate()
+
+  const handleGetGuidance = () => {
+    navigate('/dashboard/branding')
+  }
+
   return (
     <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10">
       <CardHeader className="text-center space-y-3 pb-4">
@@ -62,7 +68,7 @@ export const NextStepsCard = ({ onShareProfile, onGetGuidance }: NextStepsCardPr
             </div>
             <div className="mt-auto">
               <Button 
-                onClick={onGetGuidance}
+                onClick={handleGetGuidance}
                 className="w-full"
                 size="sm"
               >

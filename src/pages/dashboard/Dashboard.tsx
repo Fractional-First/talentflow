@@ -142,10 +142,6 @@ const Dashboard = () => {
                 <div className="mb-8">
                   <NextStepsCard 
                     onShareProfile={handleShareProfile}
-                    onGetGuidance={() => {
-                      // Navigate to executive coaching page
-                      window.location.href = "/dashboard/executive-coaching"
-                    }}
                   />
                 </div>
               )}
