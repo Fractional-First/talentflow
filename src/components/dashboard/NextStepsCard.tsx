@@ -26,7 +26,7 @@ export const NextStepsCard = ({ onShareProfile, onGetGuidance }: NextStepsCardPr
       
       <CardContent className="space-y-6 pt-0">
         {/* Actions Grid */}
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-5 md:grid-cols-3">
           {/* Share Profile Action */}
           <div className="space-y-3 text-center flex flex-col">
             <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
