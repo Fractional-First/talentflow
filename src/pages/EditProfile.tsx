@@ -248,7 +248,7 @@ const EditProfile = () => {
                       <img 
                         src="/lovable-uploads/45472ce5-91ca-4c50-b569-2d23f6ebc846.png" 
                         alt="LinkedIn" 
-                        className="h-6 w-6"
+                        className="h-6 w-6 mt-[3px]"
                       />
                     </a>
                   </div>
