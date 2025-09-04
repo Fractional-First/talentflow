@@ -68,7 +68,7 @@ const TeamCoaching = () => {
                   </div>
                   
                   <div className="flex items-start gap-6">
-                    <div className="w-30 h-30 rounded-full overflow-hidden flex-shrink-0">
+                    <div className="w-15 h-15 rounded-full overflow-hidden flex-shrink-0">
                       <BlurImage
                         src="/lovable-uploads/ea353678-088b-4c2c-a98b-4d40f6668684.png"
                         alt="Stephen Burke"
