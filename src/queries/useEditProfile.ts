@@ -105,7 +105,24 @@ export const useEditProfile = () => {
     },
   })
 
-  // You can add more mutations for specific actions (e.g., updateProfilePicture)
+  // Mutation for updating LinkedIn URL
+  const updateLinkedInUrlMutation = useMutation({
+    mutationFn: async (linkedinUrl: string) => {
+      if (!user?.id) throw new Error("No user ID")
+      const { error } = await supabase
+        .from("profiles")
+        .update({ linkedinurl: linkedinUrl })
+        .eq("id", user.id)
+      if (error) throw error
+      return linkedinUrl
+    },
+    onSuccess: () => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries({
+        queryKey: ["profile-snapshot", user?.id],
+      })
+    },
+  })
 
   return {
     profileData: profileResult?.profile_data as ProfileData,
@@ -120,6 +137,7 @@ export const useEditProfile = () => {
     saveProfileStatus: saveProfileMutation.status,
     updatePublishStatus: updatePublishStatusMutation.mutateAsync,
     isUpdatingPublishStatus: updatePublishStatusMutation.isPending,
-    // ...other mutations and helpers
+    updateLinkedInUrl: updateLinkedInUrlMutation.mutateAsync,
+    isUpdatingLinkedInUrl: updateLinkedInUrlMutation.isPending,
   }
 }

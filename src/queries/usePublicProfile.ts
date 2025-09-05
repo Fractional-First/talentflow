@@ -50,7 +50,8 @@ export const usePublicProfile = (params: PublicProfileParams) => {
         const profileData = data[0]
         return {
           ...profileData.profile_data as ProfileData,
-          profile_version: (profileData as any).profile_version
+          profile_version: (profileData as any).profile_version,
+          linkedinurl: (profileData as any).linkedinurl
         } as ProfileData
       } else if (params.id) {
         const { data, error } = await supabase.rpc("get_public_profile_by_id", {
@@ -69,7 +70,8 @@ export const usePublicProfile = (params: PublicProfileParams) => {
         const profileData = data[0]
         return {
           ...profileData.profile_data as ProfileData,
-          profile_version: (profileData as any).profile_version
+          profile_version: (profileData as any).profile_version,
+          linkedinurl: (profileData as any).linkedinurl
         } as ProfileData
       } else {
         throw new Error("Either slug or id must be provided")

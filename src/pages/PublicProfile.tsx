@@ -174,6 +174,25 @@ const PublicProfile = () => {
                   onChange={() => {}} // No-op for read-only
                   readOnly={true}
                 />
+                
+                {/* LinkedIn Link */}
+                {profileData?.linkedinurl && (
+                  <div className="flex justify-center mt-4">
+                    <a
+                      href={profileData.linkedinurl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="transition-opacity hover:opacity-80"
+                      aria-label="View LinkedIn Profile"
+                    >
+                      <img 
+                        src="/lovable-uploads/2c01f7e9-f692-45b8-8183-ab3763bd33d1.png" 
+                        alt="LinkedIn" 
+                        className="h-6 w-6" 
+                      />
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
 
