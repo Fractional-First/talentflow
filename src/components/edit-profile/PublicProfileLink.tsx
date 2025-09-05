@@ -6,7 +6,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { Copy, ExternalLink, Globe } from "lucide-react"
+import { Share2, ExternalLink, Globe } from "lucide-react"
 import { toast } from "sonner"
 
 interface PublicProfileLinkProps {
@@ -60,8 +60,8 @@ export const PublicProfileLink = ({
                   onClick={copyToClipboard}
                   className="flex-1 max-w-32"
                 >
-                  <Copy className="mr-2 h-4 w-4" />
-                  Copy Link
+                  <Share2 className="mr-2 h-4 w-4" />
+                  Share Profile
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Copy link to clipboard</TooltipContent>
