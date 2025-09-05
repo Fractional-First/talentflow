@@ -470,7 +470,9 @@ export type Database = {
           email: string
           first_name: string | null
           id: string
+          ispublished: boolean | null
           last_name: string | null
+          linkedinurl: string | null
           notification_preferences: Json | null
           onboarding_status: Database["public"]["Enums"]["onboarding_status"]
           profile_data: Json
@@ -484,7 +486,9 @@ export type Database = {
           email: string
           first_name?: string | null
           id: string
+          ispublished?: boolean | null
           last_name?: string | null
+          linkedinurl?: string | null
           notification_preferences?: Json | null
           onboarding_status?: Database["public"]["Enums"]["onboarding_status"]
           profile_data?: Json
@@ -498,7 +502,9 @@ export type Database = {
           email?: string
           first_name?: string | null
           id?: string
+          ispublished?: boolean | null
           last_name?: string | null
+          linkedinurl?: string | null
           notification_preferences?: Json | null
           onboarding_status?: Database["public"]["Enums"]["onboarding_status"]
           profile_data?: Json
