@@ -62,7 +62,7 @@ export const InlineLinkedInField: React.FC<InlineLinkedInFieldProps> = ({
 
   if (isEditing) {
     return (
-      <div ref={containerRef} className="flex items-center gap-2 mt-3">
+      <div ref={containerRef} className="flex items-center justify-center gap-2 mt-3">
         <img src="/lovable-uploads/2c01f7e9-f692-45b8-8183-ab3763bd33d1.png" alt="LinkedIn" className="h-6 w-6 flex-shrink-0" />
         <Input
           ref={inputRef}
@@ -87,38 +87,39 @@ export const InlineLinkedInField: React.FC<InlineLinkedInFieldProps> = ({
   return (
     <div className="flex items-center justify-center gap-2 mt-3">
       {value ? (
-        <a
-          href={value}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="transition-opacity hover:opacity-80"
-          aria-label="View LinkedIn Profile"
-        >
-          <img src="/lovable-uploads/2c01f7e9-f692-45b8-8183-ab3763bd33d1.png" alt="LinkedIn" className="h-6 w-6" />
-        </a>
+        <div className="flex items-center gap-2">
+          <a
+            href={value}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="transition-opacity hover:opacity-80"
+            aria-label="View LinkedIn Profile"
+          >
+            <img src="/lovable-uploads/2c01f7e9-f692-45b8-8183-ab3763bd33d1.png" alt="LinkedIn" className="h-6 w-6" />
+          </a>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleEdit}
+            className="p-1 h-8 w-8 text-gray-500 hover:text-gray-700"
+          >
+            <Edit className="h-3 w-3" />
+          </Button>
+        </div>
       ) : (
-        <img src="/lovable-uploads/2c01f7e9-f692-45b8-8183-ab3763bd33d1.png" alt="LinkedIn" className="h-6 w-6 opacity-40" />
-      )}
-      {value ? (
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleEdit}
-          className="p-1 h-8 w-8 text-gray-500 hover:text-gray-700"
-        >
-          <Edit className="h-3 w-3" />
-        </Button>
-      ) : (
-        <div ref={containerRef} className="flex items-center gap-1">
-          <Input
-            ref={inputRef}
-            value={tempValue}
-            onChange={(e) => setTempValue(e.target.value)}
-            onKeyDown={handleKeyDown}
-            onBlur={handleSave}
-            placeholder="Add LinkedIn profile URL"
-            className="text-sm w-64"
-          />
+        <div className="flex items-center gap-2">
+          <img src="/lovable-uploads/2c01f7e9-f692-45b8-8183-ab3763bd33d1.png" alt="LinkedIn" className="h-6 w-6 opacity-40" />
+          <div ref={containerRef} className="flex items-center gap-1">
+            <Input
+              ref={inputRef}
+              value={tempValue}
+              onChange={(e) => setTempValue(e.target.value)}
+              onKeyDown={handleKeyDown}
+              onBlur={handleSave}
+              placeholder="Add LinkedIn profile URL"
+              className="text-sm w-64"
+            />
+          </div>
         </div>
       )}
     </div>
