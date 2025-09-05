@@ -46,7 +46,7 @@ export function ProfileSummaryCard({
             </AvatarFallback>
           </Avatar>
           <div className="flex-1">
-            <h2 className="text-xl font-semibold text-gray-900 text-center">
+            <h2 className="text-xl font-semibold text-gray-900">
               {profile.name}
             </h2>
             <p className="text-gray-600">{profile.title}</p>
