@@ -19,15 +19,24 @@ const CompensationSection = ({
   showOnly
 }: CompensationSectionProps) => {
   const formatSalary = (value: number) => {
-    return `$${value.toLocaleString()}`;
+    return `$${value.toLocaleString()} USD`;
   };
   const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const min = parseInt(e.target.value.replace(/[^\d]/g, "")) || 0;
-    setRateRange([min, rateRange[1]]);
+    const value = e.target.value;
+    // Allow empty value or numeric values only
+    if (value === "" || /^\d+$/.test(value)) {
+      const min = value === "" ? 0 : parseInt(value);
+      setRateRange([min, rateRange[1]]);
+    }
   };
+
   const handleMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const max = parseInt(e.target.value.replace(/[^\d]/g, "")) || 0;
-    setRateRange([rateRange[0], max]);
+    const value = e.target.value;
+    // Allow empty value or numeric values only
+    if (value === "" || /^\d+$/.test(value)) {
+      const max = value === "" ? 0 : parseInt(value);
+      setRateRange([rateRange[0], max]);
+    }
   };
   return <div>
       {/* Section Header */}
@@ -48,7 +57,7 @@ const CompensationSection = ({
       // Annual salary only
       <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <Label className="text-base font-medium">Annual Salary Range</Label>
+              <Label className="text-base font-medium">Annual Salary Range (USD)</Label>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -68,13 +77,13 @@ const CompensationSection = ({
                 <Label htmlFor="min-salary" className="text-sm font-medium">
                   Minimum
                 </Label>
-                <Input id="min-salary" type="number" min={0} value={rateRange[0]} onChange={handleMinChange} placeholder="Min salary" className="h-11" />
+                <Input id="min-salary" type="text" value={rateRange[0] || ""} onChange={handleMinChange} placeholder="Min salary" className="h-11" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="max-salary" className="text-sm font-medium">
                   Maximum
                 </Label>
-                <Input id="max-salary" type="number" min={0} value={rateRange[1]} onChange={handleMaxChange} placeholder="Max salary" className="h-11" />
+                <Input id="max-salary" type="text" value={rateRange[1] || ""} onChange={handleMaxChange} placeholder="Max salary" className="h-11" />
               </div>
             </div>
             
@@ -91,7 +100,7 @@ const CompensationSection = ({
 
             <TabsContent value="hourly" className="space-y-6 mt-6">
               <div className="flex items-center justify-between">
-                <Label className="text-base font-medium">Hourly Rate Range</Label>
+                <Label className="text-base font-medium">Hourly Rate Range (USD)</Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -111,24 +120,24 @@ const CompensationSection = ({
                   <Label htmlFor="min-hourly" className="text-sm font-medium">
                     Minimum
                   </Label>
-                  <Input id="min-hourly" type="number" min={0} value={rateRange[0]} onChange={handleMinChange} placeholder="Min hourly" className="h-11" />
+                  <Input id="min-hourly" type="text" value={rateRange[0] || ""} onChange={handleMinChange} placeholder="Min hourly" className="h-11" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="max-hourly" className="text-sm font-medium">
                     Maximum
                   </Label>
-                  <Input id="max-hourly" type="number" min={0} value={rateRange[1]} onChange={handleMaxChange} placeholder="Max hourly" className="h-11" />
+                  <Input id="max-hourly" type="text" value={rateRange[1] || ""} onChange={handleMaxChange} placeholder="Max hourly" className="h-11" />
                 </div>
               </div>
               
               <div className="text-xs text-muted-foreground bg-muted/50 p-3 rounded-md">
-                Range: ${rateRange[0]} to ${rateRange[1]} per hour
+                Range: ${rateRange[0]} to ${rateRange[1]} USD per hour
               </div>
             </TabsContent>
 
             <TabsContent value="daily" className="space-y-6 mt-6">
               <div className="flex items-center justify-between">
-                <Label className="text-base font-medium">Daily Rate Range</Label>
+                <Label className="text-base font-medium">Daily Rate Range (USD)</Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -148,18 +157,18 @@ const CompensationSection = ({
                   <Label htmlFor="min-daily" className="text-sm font-medium">
                     Minimum
                   </Label>
-                  <Input id="min-daily" type="number" min={0} value={rateRange[0]} onChange={handleMinChange} placeholder="Min daily" className="h-11" />
+                  <Input id="min-daily" type="text" value={rateRange[0] || ""} onChange={handleMinChange} placeholder="Min daily" className="h-11" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="max-daily" className="text-sm font-medium">
                     Maximum
                   </Label>
-                  <Input id="max-daily" type="number" min={0} value={rateRange[1]} onChange={handleMaxChange} placeholder="Max daily" className="h-11" />
+                  <Input id="max-daily" type="text" value={rateRange[1] || ""} onChange={handleMaxChange} placeholder="Max daily" className="h-11" />
                 </div>
               </div>
               
               <div className="text-xs text-muted-foreground bg-muted/50 p-3 rounded-md">
-                Range: ${rateRange[0]} to ${rateRange[1]} per day
+                Range: ${rateRange[0]} to ${rateRange[1]} USD per day
               </div>
             </TabsContent>
           </Tabs> : <Tabs defaultValue="annual" onValueChange={setPaymentType} className="mb-6">
@@ -195,13 +204,13 @@ const CompensationSection = ({
                   <label className="text-sm mb-1" htmlFor="min-rate">
                     Minimum
                   </label>
-                  <Input id="min-rate" type="number" min={0} value={rateRange[0]} onChange={handleMinChange} className="w-full" placeholder="Min" inputMode="numeric" />
+                  <Input id="min-rate" type="text" value={rateRange[0] || ""} onChange={handleMinChange} className="w-full" placeholder="Min" />
                 </div>
                 <div className="flex flex-col w-full mt-2">
                   <label className="text-sm mb-1" htmlFor="max-rate">
                     Maximum
                   </label>
-                  <Input id="max-rate" type="number" min={0} value={rateRange[1]} onChange={handleMaxChange} className="w-full" placeholder="Max" inputMode="numeric" />
+                  <Input id="max-rate" type="text" value={rateRange[1] || ""} onChange={handleMaxChange} className="w-full" placeholder="Max" />
                 </div>
               </div>
               <div className="flex justify-between mt-2"></div>
@@ -215,7 +224,7 @@ const CompensationSection = ({
           <TabsContent value="daily" className="pt-4">
             <div className="px-4">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">Daily Rate Range</span>
+                <span className="text-sm font-medium">Daily Rate Range (USD)</span>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -238,17 +247,17 @@ const CompensationSection = ({
                   <label className="text-sm mb-1" htmlFor="min-rate">
                     Minimum
                   </label>
-                  <Input id="min-rate" type="number" min={0} value={rateRange[0]} onChange={handleMinChange} className="w-full" placeholder="Min" inputMode="numeric" />
+                  <Input id="min-rate" type="text" value={rateRange[0] || ""} onChange={handleMinChange} className="w-full" placeholder="Min" />
                 </div>
                 <div className="flex flex-col w-full mt-2">
                   <label className="text-sm mb-1" htmlFor="max-rate">
                     Maximum
                   </label>
-                  <Input id="max-rate" type="number" min={0} value={rateRange[1]} onChange={handleMaxChange} className="w-full" placeholder="Max" inputMode="numeric" />
+                  <Input id="max-rate" type="text" value={rateRange[1] || ""} onChange={handleMaxChange} className="w-full" placeholder="Max" />
                 </div>
               </div>
               <p className="text-xs text-muted-foreground mt-2">
-                Range from ${rateRange[0]} to ${rateRange[1]} per day
+                Range from ${rateRange[0]} to ${rateRange[1]} USD per day
               </p>
             </div>
           </TabsContent>
@@ -256,7 +265,7 @@ const CompensationSection = ({
           <TabsContent value="hourly" className="pt-4">
             <div className="px-4">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">Hourly Rate Range</span>
+                <span className="text-sm font-medium">Hourly Rate Range (USD)</span>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -280,17 +289,17 @@ const CompensationSection = ({
                   <label className="text-sm mb-1" htmlFor="min-rate">
                     Minimum
                   </label>
-                  <Input id="min-rate" type="number" min={0} value={rateRange[0]} onChange={handleMinChange} className="w-full" placeholder="Min" inputMode="numeric" />
+                  <Input id="min-rate" type="text" value={rateRange[0] || ""} onChange={handleMinChange} className="w-full" placeholder="Min" />
                 </div>
                 <div className="flex flex-col w-full mt-2">
                   <label className="text-sm mb-1" htmlFor="max-rate">
                     Maximum
                   </label>
-                  <Input id="max-rate" type="number" min={0} value={rateRange[1]} onChange={handleMaxChange} className="w-full" placeholder="Max" inputMode="numeric" />
+                  <Input id="max-rate" type="text" value={rateRange[1] || ""} onChange={handleMaxChange} className="w-full" placeholder="Max" />
                 </div>
               </div>
               <p className="text-xs text-muted-foreground mt-2">
-                Range from ${rateRange[0]} to ${rateRange[1]} per hour
+                Range from ${rateRange[0]} to ${rateRange[1]} USD per hour
               </p>
             </div>
           </TabsContent>
