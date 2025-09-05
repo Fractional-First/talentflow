@@ -10,6 +10,8 @@ import { SuperpowersSection } from "@/components/edit-profile/SuperpowersSection
 import ProfilePictureUpload from "@/components/ProfilePictureUpload"
 import { Spinner } from "@/components/ui/spinner"
 import { Button } from "@/components/ui/button"
+import { Copy } from "lucide-react"
+import { toast } from "sonner"
 import NotFound from "./NotFound"
 
 const PublicProfile = () => {
@@ -34,6 +36,25 @@ const PublicProfile = () => {
     isLoading,
     error,
   } = usePublicProfile(queryParams || { slug: "" })
+
+  const handleShareProfile = async () => {
+    const profileUrl = window.location.href
+
+    try {
+      await navigator.clipboard.writeText(profileUrl)
+      toast.success("Profile link copied!", {
+        description: "Share it with your network to increase visibility.",
+        duration: 3000,
+        position: "top-center",
+      })
+    } catch (error) {
+      toast.error("Failed to copy link", {
+        description: "Please copy the link manually.",
+        duration: 3000,
+        position: "top-center",
+      })
+    }
+  }
 
   if (isLoading) {
     return (
@@ -86,18 +107,15 @@ const PublicProfile = () => {
               </a>
             </div>
             <div className="flex items-center space-x-4">
-              <a
-                href="https://fractionalfirst.com"
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              <Button
+                onClick={handleShareProfile}
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-2"
               >
-                About
-              </a>
-              <a
-                href="https://fractionalfirst.com"
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Contact
-              </a>
+                <Copy className="h-4 w-4" />
+                Share Profile
+              </Button>
             </div>
           </div>
         </div>
