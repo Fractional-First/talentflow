@@ -53,6 +53,7 @@ export interface ProfileData {
   profilePicture?: string
   engagement_options?: string[]
   profile_version?: string
+  linkedinurl?: string
 }
 
 export interface EditStates {
