@@ -47,7 +47,7 @@ export const NextStepsCard = ({
           <PartyPopper className="h-6 w-6 text-primary" />
         </div>
         <p className="text-lg text-muted-foreground font-medium">
-          Here's how to put it to work.
+          Here's how to put them to work.
         </p>
       </CardHeader>
 
