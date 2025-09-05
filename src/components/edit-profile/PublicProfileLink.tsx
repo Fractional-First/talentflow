@@ -58,10 +58,10 @@ export const PublicProfileLink = ({
                   variant="outline"
                   size="sm"
                   onClick={copyToClipboard}
-                  className="flex-1 max-w-32"
+                  className="flex-1 max-w-32 px-4 py-2 flex items-center justify-center gap-2"
                 >
-                  <Share2 className="mr-2 h-4 w-4" />
-                  Share Profile
+                  <Share2 className="h-4 w-4" />
+                  <span>Share Profile</span>
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Copy link to clipboard</TooltipContent>
@@ -75,10 +75,10 @@ export const PublicProfileLink = ({
                   variant="outline"
                   size="sm"
                   onClick={() => window.open(publicProfileUrl, "_blank")}
-                  className="flex-1 max-w-32"
+                  className="flex-1 max-w-32 px-4 py-2 flex items-center justify-center gap-2"
                 >
-                  <ExternalLink className="mr-2 h-4 w-4" />
-                  View Profile
+                  <ExternalLink className="h-4 w-4" />
+                  <span>View Profile</span>
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Open profile in new tab</TooltipContent>
