@@ -22,6 +22,7 @@ const EditProfile = () => {
   const {
     user,
     profileData,
+    profileVersion,
     formData,
     isLoading,
     error,
@@ -333,6 +334,7 @@ const EditProfile = () => {
               <FunctionalSkillsSection
                 content="Organize your skills by category and provide details about your expertise level"
                 functionalSkills={formData.functional_skills || {}}
+                profileVersion={profileVersion}
                 isEditing={editStates.functionalSkills}
                 onEditToggle={() => toggleEdit("functionalSkills")}
                 onFunctionalSkillsChange={(skills) =>

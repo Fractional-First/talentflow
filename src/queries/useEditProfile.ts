@@ -109,6 +109,7 @@ export const useEditProfile = () => {
 
   return {
     profileData: profileResult?.profile_data as ProfileData,
+    profileVersion: profileResult?.profile_version,
     onboardingStatus: profileResult?.onboarding_status,
     profileSlug: profileResult?.profile_slug,
     isPublished: profileResult?.ispublished,

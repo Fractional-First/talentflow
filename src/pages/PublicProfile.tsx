@@ -350,6 +350,7 @@ const PublicProfile = () => {
             <FunctionalSkillsSection
               content=""
               functionalSkills={profileData.functional_skills || {}}
+              profileVersion={profileData.profile_version}
               isEditing={false}
               onEditToggle={() => {}} // No-op for read-only
               onFunctionalSkillsChange={() => {}} // No-op for read-only
