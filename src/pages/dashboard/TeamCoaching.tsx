@@ -1,9 +1,10 @@
 
 import { useNavigate } from "react-router-dom"
-import { DashboardLayout } from "@/components/DashboardLayout"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, Clock, CheckCircle, Users } from "lucide-react"
+import { ArrowLeft, Clock, CheckCircle, User } from "lucide-react"
 import { BlurImage } from "@/components/BlurImage"
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
+import { AppSidebar } from "@/components/AppSidebar"
 
 const TeamCoaching = () => {
   const navigate = useNavigate()
@@ -27,155 +28,135 @@ const TeamCoaching = () => {
     }
   ]
 
-  const intakeSteps = [
-    {
-      title: "Intro Call (30 mins)",
-      description: "with the leader/sponsor to outline context and desired outcomes",
-      completed: true
-    },
-    {
-      title: "Discovery Call (50 mins)",
-      description: "to explore possibilities (additional participants may join) — with quick wins often emerging here",
-      completed: true
-    },
-    {
-      title: "A Proposal",
-      description: "tailored to your needs and context",
-      completed: true
-    }
-  ]
+  const gettingStartedContent = "Your journey begins with a complimentary 25-minute Intro Call with the leader/sponsor to outline context and desired outcomes. This leads to a Discovery Call to explore possibilities — with quick wins often emerging here — followed by a tailored proposal designed around your team's needs."
 
   return (
-    <DashboardLayout>
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-2xl shadow-sm border border-border p-8 space-y-8">
-          {/* Header Section */}
-          <div className="text-left space-y-4">
-            <div className="flex items-center gap-2">
-              <Users className="h-6 w-6 text-primary" />
-              <h1 className="text-3xl font-semibold">Leadership Team Coaching</h1>
-            </div>
-            <p className="text-xl text-primary font-medium">Improve Team Effectiveness, Fulfilment, and Results.</p>
-          </div>
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full">
+        <AppSidebar />
+        <SidebarInset>
+          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+            <SidebarTrigger className="-ml-1" />
+          </header>
+          <div className="flex-1 bg-white">
+            <div className="p-4 sm:p-8 max-w-7xl mx-auto w-full">
+              <div className="space-y-8">
+                {/* Header Section */}
+                <div className="space-y-4">
+                  <h1 className="text-3xl font-semibold">Leadership Team Coaching</h1>
+                  <p className="text-lg text-primary font-medium">Improve Team Effectiveness, Fulfilment, and Results.</p>
+                </div>
 
-          {/* Hero Image */}
-          <div className="relative h-80 rounded-2xl overflow-hidden">
-            <BlurImage
-              src="https://images.unsplash.com/photo-1527525443983-6e60c75fff46?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80"
-              alt="Team Coaching"
-              className="object-cover w-full h-full"
-            />
-          </div>
+                {/* Description */}
+                <div className="space-y-4">
+                  <p className="text-lg text-muted-foreground leading-relaxed">
+                    Every leadership team is its own relationship system — with a unique character, strengths, and challenges. 
+                    All teams aspire to deliver exceptional results. But truly great teams go further: they create an environment 
+                    of deep trust, honest dialogue, commitment, and alignment.
+                  </p>
+                  <p className="text-lg text-muted-foreground leading-relaxed">
+                    This engagement is about achieving both — operational excellence and the most rewarding team experience 
+                    you've ever had — all in the flow of your real work together.
+                  </p>
+                </div>
 
-          {/* Description */}
-          <div className="space-y-6 text-left max-w-3xl">
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              Every leadership team is its own relationship system — with a unique character, strengths, and challenges. 
-              All teams aspire to deliver exceptional results. But truly great teams go further: they create an environment 
-              of deep trust, honest dialogue, commitment, and alignment.
-            </p>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              This engagement is about achieving both — operational excellence and the most rewarding team experience 
-              you've ever had — all in the flow of your real work together.
-            </p>
-          </div>
-
-          {/* Process and Intake Sections */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Process Section */}
-            <div className="space-y-6 text-left bg-muted/30 rounded-2xl p-6 border border-border">
-              <div className="flex items-center gap-2">
-                <Clock className="h-5 w-5 text-muted-foreground" />
-                <h2 className="text-xl font-medium">Process</h2>
-              </div>
-              <div className="space-y-4">
-                {processSteps.map((step, index) => (
-                  <div key={index} className="flex items-start gap-3">
-                    <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                    <p className="text-muted-foreground">{step.text}</p>
+                {/* Coach Section */}
+                <div className="space-y-6 bg-white rounded-2xl p-8 border border-gray-200">
+                  <div className="flex items-center gap-2">
+                    <User className="h-5 w-5 text-muted-foreground" />
+                    <h2 className="text-xl font-medium">Your Coach</h2>
                   </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Intake Section */}
-            <div className="space-y-6 text-left bg-muted/30 rounded-2xl p-6 border border-border">
-              <div className="flex items-center gap-2">
-                <CheckCircle className="h-5 w-5 text-muted-foreground" />
-                <h2 className="text-xl font-medium">Intake (Complimentary)</h2>
-              </div>
-              <div className="space-y-4">
-                {intakeSteps.map((step, index) => (
-                  <div key={index} className="flex items-start gap-3">
-                    <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                    <div>
-                      <p className="font-medium">{step.title}</p>
-                      <p className="text-sm text-muted-foreground">{step.description}</p>
+                  
+                  <div className="flex items-start gap-6">
+                    <div className="w-32 h-32 rounded-full overflow-hidden flex-shrink-0">
+                      <BlurImage
+                        src="/lovable-uploads/ea353678-088b-4c2c-a98b-4d40f6668684.png"
+                        alt="Stephen Burke"
+                        className="object-cover w-full h-full"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <div>
+                        <h3 className="font-medium text-base">Stephen Burke</h3>
+                        <p className="text-sm text-muted-foreground">Executive & Leadership Coach</p>
+                        <p className="text-sm text-muted-foreground">Timezone: Pacific Time (PT)</p>
+                      </div>
+                      <Button variant="outline" size="sm" className="mt-4">
+                        View Stephen's Profile
+                      </Button>
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Coach Section */}
-          <div className="space-y-6 bg-muted/30 rounded-2xl p-8 border border-border">
-            <div className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-muted-foreground" />
-              <h2 className="text-xl font-medium">Your Coach</h2>
-            </div>
-            
-            <div className="flex items-start gap-6 text-left">
-              <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
-                <BlurImage
-                  src="/lovable-uploads/ea353678-088b-4c2c-a98b-4d40f6668684.png"
-                  alt="Stephen Burke"
-                  className="object-cover w-full h-full"
-                />
-              </div>
-              <div className="space-y-2">
-                <div>
-                  <h3 className="font-medium">Stephen Burke</h3>
-                  <p className="text-sm text-muted-foreground">Executive & Leadership Coach</p>
+                  
+                  {/* Stephen's Description */}
+                  <div>
+                    <p className="text-base text-muted-foreground leading-relaxed">
+                      Stephen brings deep experience in organizational systems and team dynamics. His background in 
+                      global engineering leadership combined with expertise in human potential makes him uniquely 
+                      qualified to help leadership teams navigate complex challenges while building stronger relationships 
+                      and achieving better outcomes.
+                    </p>
+                  </div>
                 </div>
-                <Button variant="outline" size="sm" className="mt-4">
-                  View Stephen's Profile
-                </Button>
+
+                {/* Process and Getting Started Sections */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {/* Process Section */}
+                  <div className="space-y-6 bg-white rounded-2xl p-6 border border-gray-200">
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-5 w-5 text-muted-foreground" />
+                      <h2 className="text-xl font-medium">Process</h2>
+                    </div>
+                    <div className="space-y-4">
+                      {processSteps.map((step, index) => (
+                        <div key={index} className="flex items-start gap-3">
+                          <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                          <p className="text-base text-muted-foreground">{step.text}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Getting Started Section */}
+                  <div className="space-y-6 bg-white rounded-2xl p-6 border border-gray-200">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="h-5 w-5 text-muted-foreground" />
+                      <h2 className="text-xl font-medium">Getting Started</h2>
+                    </div>
+                    <div>
+                      <p className="text-base text-muted-foreground leading-relaxed">{gettingStartedContent}</p>
+                    </div>
+                  </div>
+                </div>
+
+
+                {/* CTA Section */}
+                <div className="text-center space-y-6">
+                  <Button 
+                    size="lg" 
+                    className="w-full lg:w-auto"
+                    onClick={() => window.open('https://scheduler.zoom.us/stephen-burke-nporpf/25mins_intro_stephen', '_blank')}
+                  >
+                    Schedule Your Intro Call
+                  </Button>
+                </div>
+
+                {/* Back Button */}
+                <div className="flex justify-start pt-4">
+                  <Button
+                    variant="ghost"
+                    onClick={() => navigate("/dashboard/branding")}
+                    className="gap-2"
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                    Back to Coaching Options
+                  </Button>
+                </div>
               </div>
             </div>
-            
-            {/* Stephen's Description - moved to new row */}
-            <div className="text-left">
-              <p className="text-muted-foreground leading-relaxed">
-                Stephen brings deep experience in organizational systems and team dynamics. His background in 
-                global engineering leadership combined with expertise in human potential makes him uniquely 
-                qualified to help leadership teams navigate complex challenges while building stronger relationships 
-                and achieving better outcomes.
-              </p>
-            </div>
           </div>
-
-          {/* CTA Section */}
-          <div className="text-center space-y-6">
-            <Button size="lg" className="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-full">
-              Schedule Your Intro Call
-            </Button>
-          </div>
-
-          {/* Back Button */}
-          <div className="flex justify-start">
-            <Button
-              variant="ghost"
-              onClick={() => navigate("/dashboard/branding")}
-              className="gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back to Coaching Options
-            </Button>
-          </div>
-        </div>
+        </SidebarInset>
       </div>
-    </DashboardLayout>
+    </SidebarProvider>
   )
 }
 
