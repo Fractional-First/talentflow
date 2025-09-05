@@ -9,16 +9,7 @@ export function useRedirectBasedOnStatus() {
           .select("onboarding_status")
           .eq("id", user.id)
           .single()
-        let updatedStatus = profile?.onboarding_status
-        if (profile?.onboarding_status === "SIGNED_UP") {
-          await supabase
-            .from("profiles")
-            .update({ onboarding_status: "EMAIL_CONFIRMED" })
-            .eq("id", user.id)
-          updatedStatus = "EMAIL_CONFIRMED"
-          queryClient.invalidateQueries({ queryKey: ["profile", user.id] })
-        }
-        const currentStatus = updatedStatus
+        const currentStatus = profile?.onboarding_status
         switch (currentStatus) {
           case "EMAIL_CONFIRMED":
             navigate("/create-profile")
