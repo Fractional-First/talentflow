@@ -99,14 +99,28 @@ export const InlineLinkedInField: React.FC<InlineLinkedInFieldProps> = ({
       ) : (
         <Linkedin className="h-6 w-6 text-gray-400" />
       )}
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={handleEdit}
-        className="p-1 h-8 w-8 text-gray-500 hover:text-gray-700"
-      >
-        <Edit className="h-3 w-3" />
-      </Button>
+      {value ? (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleEdit}
+          className="p-1 h-8 w-8 text-gray-500 hover:text-gray-700"
+        >
+          <Edit className="h-3 w-3" />
+        </Button>
+      ) : (
+        <div ref={containerRef} className="flex items-center gap-1">
+          <Input
+            ref={inputRef}
+            value={tempValue}
+            onChange={(e) => setTempValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+            onBlur={handleSave}
+            placeholder="Add LinkedIn profile URL"
+            className="text-sm w-64"
+          />
+        </div>
+      )}
     </div>
   )
 }
