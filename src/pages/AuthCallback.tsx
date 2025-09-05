@@ -23,6 +23,10 @@ const AuthCallback = () => {
               refresh_token,
             })
 
+            await supabase
+              .from("profiles")
+              .update({ onboarding_status: "EMAIL_CONFIRMED" })
+              .eq("id", profile.user.id)
             queryClient.invalidateQueries({
               queryKey: ["user", profile.user.id],
             })
