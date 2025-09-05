@@ -21,6 +21,7 @@ export const useEditProfile = () => {
     profileData,
     isLoading,
     error,
+    onboardingStatus,
     profileSlug,
     isPublished,
     linkedinUrl,
@@ -206,6 +207,7 @@ export const useEditProfile = () => {
     personaEditStates,
     saveStatus,
     mainContentRef,
+    onboardingStatus,
 
     // Publishing
     profileSlug,
