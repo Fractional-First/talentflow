@@ -19,6 +19,7 @@ export const useEditProfile = () => {
   // Fetch profile data using the query hook
   const {
     profileData,
+    profileVersion,
     isLoading,
     error,
     onboardingStatus,
@@ -196,6 +197,7 @@ export const useEditProfile = () => {
     // Data
     user,
     profileData,
+    profileVersion,
     formData,
     isLoading,
     error,

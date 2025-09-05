@@ -20,6 +20,14 @@ export interface FunctionalSkills {
   [category: string]: FunctionalSkill[]
 }
 
+// New structure for functional skills (v0.2+)
+export interface FunctionalSkillGroup {
+  name: string
+  value: FunctionalSkill[]
+}
+
+export type FunctionalSkillsData = FunctionalSkills | FunctionalSkillGroup[]
+
 export interface ProfileData {
   name?: string
   role?: string
@@ -39,11 +47,12 @@ export interface ProfileData {
     title: string
     description: string
   }
-  functional_skills?: FunctionalSkills
+  functional_skills?: FunctionalSkillsData
   personal_interests?: string[]
   geographical_coverage?: string[]
   profilePicture?: string
   engagement_options?: string[]
+  profile_version?: string
 }
 
 export interface EditStates {

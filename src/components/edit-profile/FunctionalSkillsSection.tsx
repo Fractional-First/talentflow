@@ -5,14 +5,15 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Edit, Plus, X, Minus } from "lucide-react"
 import clsx from "clsx"
-import type { FunctionalSkill, FunctionalSkills } from "@/types/profile"
+import type { FunctionalSkill, FunctionalSkills, FunctionalSkillGroup, FunctionalSkillsData } from "@/types/profile"
 import { EditableSection } from "@/components/EditableSection"
 
 interface FunctionalSkillsSectionProps {
-  functionalSkills: FunctionalSkills
+  functionalSkills: FunctionalSkillsData
+  profileVersion?: string
   isEditing: boolean
   onEditToggle: () => void
-  onFunctionalSkillsChange: (skills: FunctionalSkills) => void
+  onFunctionalSkillsChange: (skills: FunctionalSkillsData) => void
   className?: string
   content?: string
   readOnly?: boolean
@@ -22,6 +23,7 @@ export const FunctionalSkillsSection: React.FC<
   FunctionalSkillsSectionProps
 > = ({
   functionalSkills,
+  profileVersion = "0.1",
   isEditing,
   onEditToggle,
   onFunctionalSkillsChange,
@@ -29,22 +31,50 @@ export const FunctionalSkillsSection: React.FC<
   content = "Organize your skills by category and provide details about your expertise level",
   readOnly = false,
 }) => {
-  const [localSkills, setLocalSkills] = useState<FunctionalSkills>({})
+  // Determine if we're using the new structure (v0.2+)
+  const isNewStructure = profileVersion >= "0.2"
+  
+  // Convert data to a consistent format for internal use
+  const normalizeToOldStructure = (data: FunctionalSkillsData): FunctionalSkills => {
+    if (isNewStructure && Array.isArray(data)) {
+      // Convert new structure to old structure
+      const result: FunctionalSkills = {}
+      data.forEach((group: FunctionalSkillGroup) => {
+        result[group.name] = group.value
+      })
+      return result
+    }
+    return data as FunctionalSkills
+  }
+  
+  const [localSkills, setLocalSkills] = useState<FunctionalSkills>(normalizeToOldStructure(functionalSkills || {}))
   const [collapsedCategories, setCollapsedCategories] = useState<Set<string>>(new Set())
 
   // Sync local state with props
   useEffect(() => {
-    setLocalSkills(functionalSkills || {})
-  }, [functionalSkills])
+    setLocalSkills(normalizeToOldStructure(functionalSkills || {}))
+  }, [functionalSkills, isNewStructure])
+
+  // Convert back to the appropriate format when saving
+  const convertToOutputFormat = (skills: FunctionalSkills): FunctionalSkillsData => {
+    if (isNewStructure) {
+      // Convert old structure to new structure
+      return Object.entries(skills).map(([name, value]) => ({
+        name,
+        value
+      }))
+    }
+    return skills
+  }
 
   // Debounce changes
   useEffect(() => {
     if (!isEditing) return
     const timeout = setTimeout(() => {
-      onFunctionalSkillsChange(localSkills)
+      onFunctionalSkillsChange(convertToOutputFormat(localSkills))
     }, 300)
     return () => clearTimeout(timeout)
-  }, [localSkills, isEditing, onFunctionalSkillsChange])
+  }, [localSkills, isEditing, onFunctionalSkillsChange, isNewStructure])
 
   const handleCategoryTitleChange = (
     oldCategory: string,
