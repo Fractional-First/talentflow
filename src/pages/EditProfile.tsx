@@ -11,6 +11,7 @@ import { PersonasSection } from "@/components/edit-profile/PersonasSection"
 import { SuperpowersSection } from "@/components/edit-profile/SuperpowersSection"
 import { PublicProfileLink } from "@/components/edit-profile/PublicProfileLink"
 import { PublishButton } from "@/components/edit-profile/PublishButton"
+import { InlineLinkedInField } from "@/components/edit-profile/InlineLinkedInField"
 import ProfilePictureUpload from "@/components/ProfilePictureUpload"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
@@ -144,24 +145,11 @@ const EditProfile = () => {
                     onChange={(field, value) => handleInputChange(field, value)}
                   />
 
-                  {/* LinkedIn Profile Link at bottom of profile heading */}
-                  {linkedinUrl && (
-                    <div className="flex justify-center mt-3">
-                      <a
-                        href={linkedinUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="transition-opacity hover:opacity-80"
-                        aria-label="View LinkedIn Profile"
-                      >
-                        <img
-                          src="/lovable-uploads/45472ce5-91ca-4c50-b569-2d23f6ebc846.png"
-                          alt="LinkedIn"
-                          className="h-6 w-6 mt-[5px]"
-                        />
-                      </a>
-                    </div>
-                  )}
+                  {/* LinkedIn Profile Field */}
+                  <InlineLinkedInField
+                    value={linkedinUrl || ""}
+                    onChange={(value) => handleInputChange("linkedinUrl", value)}
+                  />
                 </div>
               </div>
 
