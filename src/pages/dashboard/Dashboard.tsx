@@ -1,81 +1,91 @@
-
-
 import { AppSidebar } from "@/components/AppSidebar"
 import { JobPreferencesPlaceholder } from "@/components/dashboard/JobPreferencesPlaceholder"
 import { NextStepsCard } from "@/components/dashboard/NextStepsCard"
 import { OnboardingBanner } from "@/components/dashboard/OnboardingBanner"
 import { ProfileSummaryCard } from "@/components/dashboard/ProfileSummaryCard"
-import { DashboardLayout } from "@/components/DashboardLayout"
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
+import {
+  SidebarProvider,
+  SidebarInset,
+  SidebarTrigger,
+} from "@/components/ui/sidebar"
 import { Spinner } from "@/components/ui/spinner"
-import { useEditProfile } from "@/queries/useEditProfile"
+import { useEditProfile } from "@/hooks/useEditProfile"
 import { useProfileData } from "@/queries/useProfileData"
 import { useWorkPreferences } from "@/queries/useWorkPreferences"
 import { useGetUser } from "@/queries/auth/useGetUser"
 import { toast } from "sonner"
-import { Check, Copy } from "lucide-react"
-import { Button } from "@/components/ui/button"
 
 // Dashboard main content with sidebar navigation
 const Dashboard = () => {
-  const { onboardingStatus, isLoading } = useEditProfile()
+  const {
+    onboardingStatus,
+    isLoading,
+    profileSlug,
+    isPublished,
+    updatePublishStatus,
+    isUpdatingPublishStatus,
+  } = useEditProfile()
   const { data: profile, isLoading: profileLoading, error } = useProfileData()
   const { workPreferences, isLoading: workPrefsLoading } = useWorkPreferences()
-  const { data: user } = useGetUser()
   const isOnboarding = onboardingStatus === "PROFILE_CONFIRMED"
-  const hasJobPreferences = workPreferences && Object.keys(workPreferences).length > 0
+  const hasJobPreferences =
+    workPreferences && Object.keys(workPreferences).length > 0
 
-  const handleShareProfile = () => {
-    // Generate public profile URL using the user's ID for preview
-    const profileUrl = `${window.location.origin}/profile/preview/${user?.id}`
+  const handleShareProfile = async () => {
+    // Generate public profile URL using the profile slug
+    const profileUrl = `${window.location.origin}/profile/${profileSlug}`
 
-    const copyToClipboard = async () => {
-      try {
-        await navigator.clipboard.writeText(profileUrl)
-        toast.success("Profile link copied!", {
-          description: "Share it with your network to increase visibility.",
-          duration: 3000,
-          position: "top-left",
-          style: {
-            marginTop: "320px",
-            marginLeft: "32px",
-            maxWidth: "300px",
-          },
-        })
-      } catch (err) {
-        // Fallback for browsers that don't support clipboard API
-        const textArea = document.createElement('textarea')
-        textArea.value = profileUrl
-        document.body.appendChild(textArea)
-        textArea.select()
-        document.execCommand('copy')
-        document.body.removeChild(textArea)
-        toast.success("Profile link copied!", {
-          description: "Share it with your network to increase visibility.",
-          duration: 3000,
-          position: "top-left",
-          style: {
-            marginTop: "320px",
-            marginLeft: "32px",
-            maxWidth: "300px",
-          },
-        })
-      }
+    try {
+      await navigator.clipboard.writeText(profileUrl)
+      toast.success("Profile link copied!", {
+        description: "Share it with your network to increase visibility.",
+        duration: 3000,
+        position: "top-left",
+        style: {
+          marginTop: "320px",
+          marginLeft: "32px",
+          maxWidth: "300px",
+        },
+      })
+    } catch (error) {
+      toast.error("Failed to copy link", {
+        description: "Please copy the link manually.",
+        duration: 3000,
+        position: "top-left",
+        style: {
+          marginTop: "320px",
+          marginLeft: "32px",
+          maxWidth: "300px",
+        },
+      })
     }
+  }
 
-    toast.success("Your profile link is now ready. Copy it or share it with your network.", {
-      duration: 5000,
-      position: "top-left",
-      style: {
-        marginTop: "320px",
-        marginLeft: "32px",
-        maxWidth: "300px",
-      },
-      action: {
-        label: "Copy Link",
-        onClick: copyToClipboard,
-      },
-    })
+  const handlePublishProfile = async () => {
+    try {
+      await updatePublishStatus(true)
+      toast.success("Profile published!", {
+        description: "Your profile is now live and publicly accessible.",
+        duration: 3000,
+        position: "top-left",
+        style: {
+          marginTop: "320px",
+          marginLeft: "32px",
+          maxWidth: "300px",
+        },
+      })
+    } catch (error) {
+      toast.error("Failed to publish profile", {
+        description: "Please try again later.",
+        duration: 3000,
+        position: "top-left",
+        style: {
+          marginTop: "320px",
+          marginLeft: "32px",
+          maxWidth: "300px",
+        },
+      })
+    }
   }
 
   if (isLoading) {
@@ -131,7 +141,9 @@ const Dashboard = () => {
           <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
             <SidebarTrigger className="-ml-1" />
             <div className="flex flex-col">
-              <h1 className="text-xl font-semibold text-gray-900">Your Dashboard</h1>
+              <h1 className="text-xl font-semibold text-gray-900">
+                Your Dashboard
+              </h1>
             </div>
           </header>
           <div className="flex-1">
@@ -140,12 +152,15 @@ const Dashboard = () => {
               {/* Show Next Steps card when onboarding is complete AND job preferences are submitted */}
               {!isOnboarding && hasJobPreferences && (
                 <div className="mb-8">
-                  <NextStepsCard 
+                  <NextStepsCard
                     onShareProfile={handleShareProfile}
+                    onPublishProfile={handlePublishProfile}
+                    isPublished={isPublished}
+                    isUpdatingPublishStatus={isUpdatingPublishStatus}
                   />
                 </div>
               )}
-              
+
               <div className="grid lg:grid-cols-2 gap-8">
                 {/* Left column - Read-only profile summary */}
                 <div className="space-y-6">
@@ -167,4 +182,3 @@ const Dashboard = () => {
 }
 
 export default Dashboard
-

@@ -17,7 +17,17 @@ export const useEditProfile = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   // Fetch profile data using the query hook
-  const { profileData, isLoading, error } = useEditProfileQuery()
+  const {
+    profileData,
+    isLoading,
+    error,
+    onboardingStatus,
+    profileSlug,
+    isPublished,
+    linkedinUrl,
+    updatePublishStatus,
+    isUpdatingPublishStatus,
+  } = useEditProfileQuery()
 
   // Initialize formData state
   const [formData, setFormData] = useProfileForm({
@@ -154,6 +164,34 @@ export const useEditProfile = () => {
     handleInputChange("profilePicture", imageUrl)
   }
 
+  // Generate public profile URL
+  const publicProfileUrl = profileSlug
+    ? `${window.location.origin}/profile/${profileSlug}`
+    : ""
+
+  // Handle publish toggle
+  const handlePublishToggle = async () => {
+    try {
+      const newPublishStatus = !isPublished
+      await updatePublishStatus(newPublishStatus)
+
+      toast({
+        title: newPublishStatus
+          ? "Your profile is now live."
+          : "Your profile is now private.",
+        description: newPublishStatus
+          ? "View your public profile at: " + publicProfileUrl
+          : "Your profile is no longer publicly accessible.",
+      })
+    } catch (error) {
+      toast({
+        title: "Failed to update profile status",
+        description: "Please try again later.",
+        variant: "destructive",
+      })
+    }
+  }
+
   return {
     // Data
     user,
@@ -169,6 +207,16 @@ export const useEditProfile = () => {
     personaEditStates,
     saveStatus,
     mainContentRef,
+    onboardingStatus,
+
+    // Publishing
+    profileSlug,
+    isPublished,
+    linkedinUrl,
+    publicProfileUrl,
+    updatePublishStatus,
+    isUpdatingPublishStatus,
+    handlePublishToggle,
 
     // Handlers
     setFormData,

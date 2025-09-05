@@ -30,8 +30,18 @@ export const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
 }) => {
   const sectionContent = (
     <div className={className}>
-      <div className="flex items-center gap-3 mb-2">
-        <div className="flex-1 min-w-0">
+      <div className="relative mb-2">
+        {!readOnly && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onEditToggle}
+            className="absolute top-0 right-0 z-10"
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
+        )}
+        <div className="w-full">
           {isEditing ? (
             <Input
               value={name}
@@ -45,16 +55,6 @@ export const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
             </h1>
           )}
         </div>
-        {!readOnly && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onEditToggle}
-            className="flex-shrink-0"
-          >
-            <Edit className="h-4 w-4" />
-          </Button>
-        )}
       </div>
       <div className="space-y-2 text-center">
         {isEditing ? (
