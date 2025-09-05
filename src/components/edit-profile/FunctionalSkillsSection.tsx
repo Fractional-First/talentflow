@@ -30,7 +30,7 @@ export const FunctionalSkillsSection: React.FC<
   readOnly = false,
 }) => {
   const [localSkills, setLocalSkills] = useState<FunctionalSkills>({})
-  const [expandedCategory, setExpandedCategory] = useState<string | null>(null)
+  const [collapsedCategories, setCollapsedCategories] = useState<Set<string>>(new Set())
 
   // Sync local state with props
   useEffect(() => {
@@ -57,7 +57,14 @@ export const FunctionalSkillsSection: React.FC<
       updated[newCategory] = skills
       return updated
     })
-    if (expandedCategory === oldCategory) setExpandedCategory(newCategory)
+    setCollapsedCategories(prev => {
+      const updated = new Set(prev)
+      if (updated.has(oldCategory)) {
+        updated.delete(oldCategory)
+        updated.add(newCategory)
+      }
+      return updated
+    })
   }
 
   const handleSkillTitleChange = (
@@ -96,7 +103,7 @@ export const FunctionalSkillsSection: React.FC<
       newCategory = `New Category ${i++}`
     }
     setLocalSkills((prev) => ({ ...prev, [newCategory]: [] }))
-    setExpandedCategory(newCategory)
+    // New categories are expanded by default, so no need to modify collapsedCategories
   }
 
   const handleRemoveCategory = (category: string) => {
@@ -105,7 +112,11 @@ export const FunctionalSkillsSection: React.FC<
       delete updated[category]
       return updated
     })
-    if (expandedCategory === category) setExpandedCategory(null)
+    setCollapsedCategories(prev => {
+      const updated = new Set(prev)
+      updated.delete(category)
+      return updated
+    })
   }
 
   const handleAddSkill = (category: string) => {
@@ -163,13 +174,19 @@ export const FunctionalSkillsSection: React.FC<
                       variant="ghost"
                       size="sm"
                       onClick={() =>
-                        setExpandedCategory(
-                          expandedCategory === category ? null : category
-                        )
+                        setCollapsedCategories(prev => {
+                          const updated = new Set(prev)
+                          if (updated.has(category)) {
+                            updated.delete(category)
+                          } else {
+                            updated.add(category)
+                          }
+                          return updated
+                        })
                       }
                       className="h-8 px-2 text-xs"
                     >
-                      {expandedCategory === category ? (
+                      {!collapsedCategories.has(category) ? (
                         <Minus className="h-5 w-5 text-gray-400" />
                       ) : (
                         <Plus className="h-5 w-5 text-gray-400" />
@@ -187,7 +204,7 @@ export const FunctionalSkillsSection: React.FC<
                     )}
                   </div>
                 </div>
-                {expandedCategory === category && (
+                {!collapsedCategories.has(category) && (
                   <div className="mt-3 space-y-3">
                     {skills.length > 0 ? (
                       skills.map((skill, index) => (

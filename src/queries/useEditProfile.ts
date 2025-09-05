@@ -56,7 +56,9 @@ export const useEditProfile = () => {
       if (!user?.id) return null
       const { data, error } = await supabase
         .from("profiles")
-        .select("profile_data, onboarding_status")
+        .select(
+          "profile_data, onboarding_status, profile_slug, profile_version, ispublished, linkedinurl"
+        )
         .eq("id", user.id)
         .single()
       if (error) throw error
@@ -84,15 +86,39 @@ export const useEditProfile = () => {
     },
   })
 
+  // Mutation for updating publish status
+  const updatePublishStatusMutation = useMutation({
+    mutationFn: async (isPublished: boolean) => {
+      if (!user?.id) throw new Error("No user ID")
+      const { error } = await supabase
+        .from("profiles")
+        .update({ ispublished: isPublished })
+        .eq("id", user.id)
+      if (error) throw error
+      return isPublished
+    },
+    onSuccess: () => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries({
+        queryKey: ["profile-snapshot", user?.id],
+      })
+    },
+  })
+
   // You can add more mutations for specific actions (e.g., updateProfilePicture)
 
   return {
     profileData: profileResult?.profile_data as ProfileData,
     onboardingStatus: profileResult?.onboarding_status,
+    profileSlug: profileResult?.profile_slug,
+    isPublished: profileResult?.ispublished,
+    linkedinUrl: profileResult?.linkedinurl,
     isLoading,
     error,
     saveProfile: saveProfileMutation.mutateAsync,
     saveProfileStatus: saveProfileMutation.status,
+    updatePublishStatus: updatePublishStatusMutation.mutateAsync,
+    isUpdatingPublishStatus: updatePublishStatusMutation.isPending,
     // ...other mutations and helpers
   }
 }
