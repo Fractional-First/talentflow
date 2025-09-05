@@ -1,7 +1,5 @@
-
 import { useParams, useSearchParams } from "react-router-dom"
 import { useState } from "react"
-import { ProfileData } from "@/types/profile"
 import { usePublicProfile } from "@/queries/usePublicProfile"
 import { BasicInfoSection } from "@/components/edit-profile/BasicInfoSection"
 import { EditableArraySection } from "@/components/edit-profile/EditableArraySection"
@@ -21,14 +19,21 @@ const PublicProfile = () => {
 
   // Determine if this is a preview mode and if we should show the claim banner
   const isPreviewMode = !!uuid
-  const showClaimBanner = isPreviewMode && searchParams.get("new_profile") === "true"
+  const showClaimBanner =
+    isPreviewMode && searchParams.get("new_profile") === "true"
 
   // Use the appropriate parameter based on route
-  const queryParams = slug ? { slug, id: undefined as never } : uuid ? { id: uuid, slug: undefined as never } : null
-  
-  const { data: profileData, isLoading, error } = usePublicProfile(
-    queryParams || { slug: "" }
-  )
+  const queryParams = slug
+    ? { slug, id: undefined as never }
+    : uuid
+    ? { id: uuid, slug: undefined as never }
+    : null
+
+  const {
+    data: profileData,
+    isLoading,
+    error,
+  } = usePublicProfile(queryParams || { slug: "" })
 
   if (isLoading) {
     return (
@@ -39,6 +44,29 @@ const PublicProfile = () => {
   }
 
   if (error || !profileData || !queryParams) {
+    // Check if it's specifically a "profile not published" error
+    if (error?.message === "PROFILE_NOT_PUBLISHED") {
+      return (
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">
+              Profile Not Available
+            </h1>
+            <p className="text-gray-600 mb-6">
+              This profile is currently private and not publicly accessible.
+            </p>
+            <Button
+              onClick={() =>
+                (window.location.href = "https://fractionalfirst.com")
+              }
+            >
+              Visit Fractional First
+            </Button>
+          </div>
+        </div>
+      )
+    }
+
     return <NotFound />
   }
 
@@ -46,41 +74,61 @@ const PublicProfile = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header matching site style */}
       <header className="border-b border-border/40 bg-background/80 backdrop-blur-md sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <a href="https://fractionalfirst.com">
-              <img 
-                src="/lovable-uploads/daefe55a-8953-4582-8fc8-12a66755ac2a.png" 
-                alt="Fractional First" 
-                className="h-12 w-auto cursor-pointer"
-              />
-            </a>
+        <div className="max-w-6xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <a href="https://fractionalfirst.com">
+                <img
+                  src="/lovable-uploads/daefe55a-8953-4582-8fc8-12a66755ac2a.png"
+                  alt="Fractional First"
+                  className="h-12 w-auto cursor-pointer"
+                />
+              </a>
+            </div>
+            <div className="flex items-center space-x-4">
+              <a
+                href="https://fractionalfirst.com"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              >
+                About
+              </a>
+              <a
+                href="https://fractionalfirst.com"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Contact
+              </a>
+            </div>
           </div>
         </div>
       </header>
 
-      {/* Claim Profile Banner */}
+      {/* Claim banner for new profiles */}
       {showClaimBanner && (
         <div className="bg-gradient-to-r from-teal-600 to-teal-500 border-b border-teal-400">
-          <div className="container mx-auto px-4 py-4">
+          <div className="max-w-6xl mx-auto px-4 py-4">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="text-white">
-                <h3 className="font-semibold text-lg">Claim your profile</h3>
-                <p className="text-sm text-teal-50">
-                  Login with the temporary password in your welcome email.
+                <h3 className="font-semibold text-lg">
+                  🎉 Your profile has been generated! Claim it now to make it
+                  yours.
+                </h3>
+                <p className="text-sm opacity-90 mt-1">
+                  Sign up to edit, customize, and publish your professional
+                  profile.
                 </p>
               </div>
               <Button
                 asChild
                 className="bg-white text-teal-600 hover:bg-teal-50 font-medium whitespace-nowrap"
               >
-                <a href="/login">Login to Claim</a>
+                <a href="/signup">Claim Your Profile</a>
               </Button>
             </div>
           </div>
         </div>
       )}
-      
+
       <div className="max-w-6xl mx-auto space-y-6 p-6">
         {/* Main Layout - Two Column */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -224,7 +272,9 @@ const PublicProfile = () => {
             {/* Meet Section */}
             <EditableTextSection
               content=""
-              title={`Meet ${profileData?.name?.split(" ")[0] || "Professional"}`}
+              title={`Meet ${
+                profileData?.name?.split(" ")[0] || "Professional"
+              }`}
               value={profileData?.meet_them || ""}
               onChange={() => {}} // No-op for read-only
               isEditing={false}
@@ -234,6 +284,7 @@ const PublicProfile = () => {
               textColorClass="text-white"
               headerClassName="bg-[#449889] text-white"
               labelClassName="text-lg font-semibold"
+              textAreaClass="text-white bg-[#449889]"
               readOnly={true}
             />
 
