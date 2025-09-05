@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Edit, X, Linkedin } from "lucide-react"
+import { Edit, X } from "lucide-react"
 import { useClickOutside } from "@/hooks/useClickOutside"
 
 interface InlineLinkedInFieldProps {
@@ -63,7 +63,7 @@ export const InlineLinkedInField: React.FC<InlineLinkedInFieldProps> = ({
   if (isEditing) {
     return (
       <div ref={containerRef} className="flex items-center gap-2 mt-3">
-        <Linkedin className="h-6 w-6 text-[#0077b5] flex-shrink-0" />
+        <img src="/lovable-uploads/2c01f7e9-f692-45b8-8183-ab3763bd33d1.png" alt="LinkedIn" className="h-6 w-6 flex-shrink-0" />
         <Input
           ref={inputRef}
           value={tempValue}
@@ -94,10 +94,10 @@ export const InlineLinkedInField: React.FC<InlineLinkedInFieldProps> = ({
           className="transition-opacity hover:opacity-80"
           aria-label="View LinkedIn Profile"
         >
-          <Linkedin className="h-6 w-6 text-[#0077b5]" />
+          <img src="/lovable-uploads/2c01f7e9-f692-45b8-8183-ab3763bd33d1.png" alt="LinkedIn" className="h-6 w-6" />
         </a>
       ) : (
-        <Linkedin className="h-6 w-6 text-gray-400" />
+        <img src="/lovable-uploads/2c01f7e9-f692-45b8-8183-ab3763bd33d1.png" alt="LinkedIn" className="h-6 w-6 opacity-40" />
       )}
       {value ? (
         <Button
