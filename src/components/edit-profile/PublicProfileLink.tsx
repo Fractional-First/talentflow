@@ -35,7 +35,7 @@ export const PublicProfileLink = ({
         <div className="flex items-center justify-center gap-2">
           <Globe className="h-5 w-5 text-primary" />
           <h3 className="text-lg font-semibold text-foreground">
-            Your Public Profile
+            Your profile is now live!
           </h3>
         </div>
         <p className="text-sm text-muted-foreground">
