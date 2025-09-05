@@ -42,7 +42,7 @@ export const NextStepsCard = ({
         <div className="flex items-center justify-center gap-2">
           <PartyPopper className="h-6 w-6 text-primary" />
           <h2 className="text-2xl font-semibold text-foreground">
-            Your profile is now complete!
+            Your profile and job preferences are now complete!
           </h2>
           <PartyPopper className="h-6 w-6 text-primary" />
         </div>
