@@ -16,11 +16,10 @@ export const OnboardingBanner = () => {
             </div>
             <div>
               <h2 className="text-xl font-semibold text-foreground">
-                Welcome! Let's complete your profile
+                Welcome to your dashboard!
               </h2>
               <p className="text-muted-foreground mt-1">
-                Tell us what you're looking for so we can prepare future
-                opportunities for you.
+                Complete your job preferences to unlock more functionality.
               </p>
             </div>
           </div>
