@@ -80,7 +80,7 @@ export const NextStepsCard = ({
                 className="w-full"
                 size="sm"
               >
-                {isPublished && <Copy className="mr-2 h-4 w-4" />}
+                {isPublished && <Share2 className="mr-2 h-4 w-4" />}
                 {isUpdatingPublishStatus
                   ? "Publishing..."
                   : isPublished

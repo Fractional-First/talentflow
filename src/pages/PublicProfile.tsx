@@ -10,7 +10,7 @@ import { SuperpowersSection } from "@/components/edit-profile/SuperpowersSection
 import ProfilePictureUpload from "@/components/ProfilePictureUpload"
 import { Spinner } from "@/components/ui/spinner"
 import { Button } from "@/components/ui/button"
-import { Copy } from "lucide-react"
+import { Share2 } from "lucide-react"
 import { toast } from "sonner"
 import NotFound from "./NotFound"
 
@@ -113,7 +113,7 @@ const PublicProfile = () => {
                 size="sm"
                 className="flex items-center gap-2"
               >
-                <Copy className="h-4 w-4" />
+                <Share2 className="h-4 w-4" />
                 Share Profile
               </Button>
             </div>
