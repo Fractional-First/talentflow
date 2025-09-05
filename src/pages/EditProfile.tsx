@@ -11,6 +11,7 @@ import { PersonasSection } from "@/components/edit-profile/PersonasSection"
 import { SuperpowersSection } from "@/components/edit-profile/SuperpowersSection"
 import { PublicProfileLink } from "@/components/edit-profile/PublicProfileLink"
 import { PublishButton } from "@/components/edit-profile/PublishButton"
+import { LinkedInSection } from "@/components/edit-profile/LinkedInSection"
 import ProfilePictureUpload from "@/components/ProfilePictureUpload"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
@@ -164,6 +165,13 @@ const EditProfile = () => {
                   )}
                 </div>
               </div>
+
+              {/* LinkedIn Profile */}
+              <LinkedInSection
+                value={linkedinUrl || ""}
+                onChange={(value) => handleInputChange("linkedinUrl", value)}
+                className="bg-white"
+              />
 
               {/* Description */}
               <EditableTextSection

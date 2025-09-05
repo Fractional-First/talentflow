@@ -28,6 +28,7 @@ export const useEditProfile = () => {
     linkedinUrl,
     updatePublishStatus,
     isUpdatingPublishStatus,
+    updateLinkedInUrl: updateLinkedInUrlMutation,
   } = useEditProfileQuery()
 
   // Initialize formData state
@@ -153,11 +154,30 @@ export const useEditProfile = () => {
   }
 
   // Handle input changes for form fields
-  const handleInputChange = (field: keyof ProfileData, value: any) => {
+  const handleInputChange = (field: keyof ProfileData | "linkedinUrl", value: any) => {
+    if (field === "linkedinUrl") {
+      handleLinkedInUrlUpdate(value)
+      return
+    }
+    
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }))
+  }
+
+  // Handle LinkedIn URL update
+  const handleLinkedInUrlUpdate = async (url: string) => {
+    try {
+      await updateLinkedInUrlMutation(url)
+    } catch (error) {
+      console.error("Error updating LinkedIn URL:", error)
+      toast({
+        title: "Error updating LinkedIn URL",
+        description: "Please try again later.",
+        variant: "destructive",
+      })
+    }
   }
 
   // Handle profile picture update
