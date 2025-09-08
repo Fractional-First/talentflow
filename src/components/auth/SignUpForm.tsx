@@ -95,7 +95,7 @@ export const SignUpForm = ({ onSubmit, isSubmitting }: SignUpFormProps) => {
       
       <div className="text-xs text-muted-foreground text-center">
         By creating an account, you agree to our{' '}
-        <a href="/legal/privacy" target="_blank" rel="noopener" className="underline hover:text-primary">Privacy Policy</a>.
+        <a href="https://www.fractionalfirst.com/terms-of-service" target="_blank" rel="noopener" className="underline hover:text-primary">Terms of Service</a>.
       </div>
       
       <Button 
