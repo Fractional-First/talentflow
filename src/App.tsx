@@ -23,6 +23,9 @@ import WorkPreferences from "./pages/WorkPreferences"
 import AuthCallback from "./pages/AuthCallback"
 import Settings from "./pages/Settings"
 import PrivacyPolicy from "./pages/PrivacyPolicy"
+import ProfileGenerator from "./pages/ProfileGenerator"
+import ProfileGeneratorCreate from "./pages/ProfileGeneratorCreate"
+import ProfileGeneratorPreview from "./pages/ProfileGeneratorPreview"
 
 const queryClient = new QueryClient()
 
@@ -36,7 +39,7 @@ function App() {
           <Routes>
             {/* Redirect root to login */}
             <Route path="/" element={<Navigate to="/login" replace />} />
-            
+
             {/* Public routes */}
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Login />} />
@@ -45,7 +48,7 @@ function App() {
             <Route path="/check-email" element={<CheckEmail />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="/legal/privacy" element={<PrivacyPolicy />} />
-            
+
             {/* Change password route - for users with SET_PASSWORD status */}
             <Route
               path="/change-password"
@@ -55,10 +58,21 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            
+
             {/* Public profile route - no auth required */}
             <Route path="/profile/:slug" element={<PublicProfile />} />
             <Route path="/profile/preview/:uuid" element={<PublicProfile />} />
+
+            {/* Profile Generator routes - no auth required */}
+            <Route path="/profile-generator" element={<ProfileGenerator />} />
+            <Route
+              path="/profile-generator/create"
+              element={<ProfileGeneratorCreate />}
+            />
+            <Route
+              path="/profile-generator/preview"
+              element={<ProfileGeneratorPreview />}
+            />
 
             {/* Profile creation - for users with EMAIL_CONFIRMED, PROFILE_GENERATED, or PROFILE_CONFIRMED status */}
             <Route

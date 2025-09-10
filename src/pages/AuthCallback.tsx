@@ -2,8 +2,9 @@ import { Spinner } from "@/components/ui/spinner"
 import { supabase } from "@/integrations/supabase/client"
 import { useQueryClient } from "@tanstack/react-query"
 import { useEffect } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useSearchParams } from "react-router-dom"
 import { toast } from "sonner"
+import { profileStorage } from "@/utils/profileStorage"
 
 const AuthCallback = () => {
   const navigate = useNavigate()
@@ -23,13 +24,96 @@ const AuthCallback = () => {
               refresh_token,
             })
 
-            await supabase
+            // Check if user has profile data (generated profile)
+            const { data: profileData } = await supabase
               .from("profiles")
-              .update({ onboarding_status: "EMAIL_CONFIRMED" })
+              .select("onboarding_status, profile_data")
               .eq("id", profile.user.id)
-            queryClient.invalidateQueries({
-              queryKey: ["user", profile.user.id],
-            })
+              .single()
+
+            // If profile_data exists and is not empty, set status to PROFILE_GENERATED
+            if (
+              profileData?.profile_data &&
+              Object.keys(profileData.profile_data).length > 0
+            ) {
+              console.log(
+                "User has generated profile data, setting status to PROFILE_GENERATED"
+              )
+              await supabase
+                .from("profiles")
+                .update({ onboarding_status: "PROFILE_GENERATED" })
+                .eq("id", profile.user.id)
+
+              queryClient.invalidateQueries({
+                queryKey: ["user", profile.user.id],
+              })
+
+              toast.success("Welcome back! Your profile is ready.")
+              navigate("/edit-profile")
+              return
+            } else {
+              // No profile data, set to EMAIL_CONFIRMED as normal
+              await supabase
+                .from("profiles")
+                .update({ onboarding_status: "EMAIL_CONFIRMED" })
+                .eq("id", profile.user.id)
+
+              queryClient.invalidateQueries({
+                queryKey: ["user", profile.user.id],
+              })
+            }
+
+            // Check if this is a LinkedIn signup with generated profile data
+            const generatedProfile = profileStorage.get()
+            if (generatedProfile) {
+              try {
+                // Submit the generated profile data using the N8N workflow
+                const response = await fetch(
+                  "https://webhook-processor-production-1757.up.railway.app/webhook/submit-profile",
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                      uuid: profile.user.id, // User's UUID
+                      profile: generatedProfile, // Entire generated profile data
+                    }),
+                  }
+                )
+
+                if (response.ok) {
+                  // Update onboarding status to PROFILE_GENERATED
+                  await supabase
+                    .from("profiles")
+                    .update({ onboarding_status: "PROFILE_GENERATED" })
+                    .eq("id", profile.user.id)
+
+                  // Clear localStorage after successful submission
+                  profileStorage.remove()
+                  toast.success(
+                    "Profile created successfully from your generated data!"
+                  )
+                  navigate("/edit-profile")
+                  return
+                } else {
+                  const errorText = await response.text()
+                  console.error(
+                    "Profile submission failed:",
+                    response.status,
+                    errorText
+                  )
+                  toast.error(
+                    "Failed to save generated profile. Please try again."
+                  )
+                }
+              } catch (error) {
+                console.error("Error submitting generated profile:", error)
+                toast.error(
+                  "Profile generated but couldn't be saved. Please try creating your profile again."
+                )
+              }
+            }
 
             navigate("/create-profile")
           } catch (error) {
