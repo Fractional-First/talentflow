@@ -1,11 +1,15 @@
-
 import React, { useState, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Edit, Plus, X, Minus } from "lucide-react"
 import clsx from "clsx"
-import type { FunctionalSkill, FunctionalSkills, FunctionalSkillGroup, FunctionalSkillsData } from "@/types/profile"
+import type {
+  FunctionalSkill,
+  FunctionalSkills,
+  FunctionalSkillGroup,
+  FunctionalSkillsData,
+} from "@/types/profile"
 import { EditableSection } from "@/components/EditableSection"
 
 interface FunctionalSkillsSectionProps {
@@ -33,9 +37,11 @@ export const FunctionalSkillsSection: React.FC<
 }) => {
   // Determine if we're using the new structure (v0.2+)
   const isNewStructure = profileVersion >= "0.2"
-  
+
   // Convert data to a consistent format for internal use
-  const normalizeToOldStructure = (data: FunctionalSkillsData): FunctionalSkills => {
+  const normalizeToOldStructure = (
+    data: FunctionalSkillsData
+  ): FunctionalSkills => {
     if (isNewStructure && Array.isArray(data)) {
       // Convert new structure to old structure
       const result: FunctionalSkills = {}
@@ -46,9 +52,13 @@ export const FunctionalSkillsSection: React.FC<
     }
     return data as FunctionalSkills
   }
-  
-  const [localSkills, setLocalSkills] = useState<FunctionalSkills>(normalizeToOldStructure(functionalSkills || {}))
-  const [collapsedCategories, setCollapsedCategories] = useState<Set<string>>(new Set())
+
+  const [localSkills, setLocalSkills] = useState<FunctionalSkills>(
+    normalizeToOldStructure(functionalSkills || {})
+  )
+  const [collapsedCategories, setCollapsedCategories] = useState<Set<string>>(
+    new Set()
+  )
 
   // Sync local state with props
   useEffect(() => {
@@ -56,12 +66,14 @@ export const FunctionalSkillsSection: React.FC<
   }, [functionalSkills, isNewStructure])
 
   // Convert back to the appropriate format when saving
-  const convertToOutputFormat = (skills: FunctionalSkills): FunctionalSkillsData => {
+  const convertToOutputFormat = (
+    skills: FunctionalSkills
+  ): FunctionalSkillsData => {
     if (isNewStructure) {
       // Convert old structure to new structure
       return Object.entries(skills).map(([name, value]) => ({
         name,
-        value
+        value,
       }))
     }
     return skills
@@ -87,7 +99,7 @@ export const FunctionalSkillsSection: React.FC<
       updated[newCategory] = skills
       return updated
     })
-    setCollapsedCategories(prev => {
+    setCollapsedCategories((prev) => {
       const updated = new Set(prev)
       if (updated.has(oldCategory)) {
         updated.delete(oldCategory)
@@ -142,7 +154,7 @@ export const FunctionalSkillsSection: React.FC<
       delete updated[category]
       return updated
     })
-    setCollapsedCategories(prev => {
+    setCollapsedCategories((prev) => {
       const updated = new Set(prev)
       updated.delete(category)
       return updated
@@ -204,7 +216,7 @@ export const FunctionalSkillsSection: React.FC<
                       variant="ghost"
                       size="sm"
                       onClick={() =>
-                        setCollapsedCategories(prev => {
+                        setCollapsedCategories((prev) => {
                           const updated = new Set(prev)
                           if (updated.has(category)) {
                             updated.delete(category)

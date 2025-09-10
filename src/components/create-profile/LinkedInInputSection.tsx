@@ -9,12 +9,14 @@ interface LinkedInInputSectionProps {
   onLinkedInSubmit: (linkedinUrl: string) => void
   onResumeFallback: () => void
   isSubmitting?: boolean
+  hideResumeFallback?: boolean
 }
 
 export const LinkedInInputSection = ({
   onLinkedInSubmit,
   onResumeFallback,
   isSubmitting = false,
+  hideResumeFallback = false,
 }: LinkedInInputSectionProps) => {
   const [linkedinUrl, setLinkedinUrl] = useState("")
   const [validationError, setValidationError] = useState("")
@@ -148,22 +150,24 @@ export const LinkedInInputSection = ({
       </div>
 
       {/* FALLBACK OPTION */}
-      <div className="border-t pt-6">
-        <div className="text-center space-y-4">
-          <div className="text-sm text-muted-foreground">
-            Prefer to upload your resume instead?
+      {!hideResumeFallback && (
+        <div className="border-t pt-6">
+          <div className="text-center space-y-4">
+            <div className="text-sm text-muted-foreground">
+              Prefer to upload your resume instead?
+            </div>
+            <Button
+              variant="outline"
+              onClick={onResumeFallback}
+              disabled={isSubmitting}
+              className="font-urbanist min-h-[48px] gap-2"
+            >
+              <FileText className="h-4 w-4" />
+              Sign up using Resume
+            </Button>
           </div>
-          <Button
-            variant="outline"
-            onClick={onResumeFallback}
-            disabled={isSubmitting}
-            className="font-urbanist min-h-[48px] gap-2"
-          >
-            <FileText className="h-4 w-4" />
-            Sign up using Resume
-          </Button>
         </div>
-      </div>
+      )}
     </div>
   )
 }

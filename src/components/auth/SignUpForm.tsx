@@ -1,25 +1,43 @@
-
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { useState, useEffect } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 
 interface SignUpFormProps {
-  onSubmit: (email: string, password: string, confirmPassword: string, firstName: string, lastName: string) => void;
-  isSubmitting: boolean;
+  onSubmit: (
+    email: string,
+    password: string,
+    confirmPassword: string,
+    firstName: string,
+    lastName: string
+  ) => void
+  isSubmitting: boolean
+  initialFirstName?: string
+  initialLastName?: string
 }
 
-export const SignUpForm = ({ onSubmit, isSubmitting }: SignUpFormProps) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+export const SignUpForm = ({
+  onSubmit,
+  isSubmitting,
+  initialFirstName = "",
+  initialLastName = "",
+}: SignUpFormProps) => {
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [firstName, setFirstName] = useState(initialFirstName)
+  const [lastName, setLastName] = useState(initialLastName)
+
+  // Update form state when initial values change
+  useEffect(() => {
+    setFirstName(initialFirstName)
+    setLastName(initialLastName)
+  }, [initialFirstName, initialLastName])
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit(email, password, confirmPassword, firstName, lastName);
-  };
+    e.preventDefault()
+    onSubmit(email, password, confirmPassword, firstName, lastName)
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -37,7 +55,7 @@ export const SignUpForm = ({ onSubmit, isSubmitting }: SignUpFormProps) => {
             autoComplete="given-name"
           />
         </div>
-        
+
         <div className="space-y-2">
           <Label htmlFor="lastName">Last Name</Label>
           <Input
@@ -52,7 +70,7 @@ export const SignUpForm = ({ onSubmit, isSubmitting }: SignUpFormProps) => {
           />
         </div>
       </div>
-      
+
       <div className="space-y-2">
         <Label htmlFor="email">Personal Email</Label>
         <Input
@@ -66,7 +84,7 @@ export const SignUpForm = ({ onSubmit, isSubmitting }: SignUpFormProps) => {
           autoComplete="email"
         />
       </div>
-      
+
       <div className="space-y-2">
         <Label htmlFor="password">Password</Label>
         <Input
@@ -79,7 +97,7 @@ export const SignUpForm = ({ onSubmit, isSubmitting }: SignUpFormProps) => {
           autoComplete="new-password"
         />
       </div>
-      
+
       <div className="space-y-2">
         <Label htmlFor="confirmPassword">Confirm Password</Label>
         <Input
@@ -92,19 +110,23 @@ export const SignUpForm = ({ onSubmit, isSubmitting }: SignUpFormProps) => {
           autoComplete="new-password"
         />
       </div>
-      
+
       <div className="text-xs text-muted-foreground text-center">
-        By creating an account, you agree to our{' '}
-        <a href="https://www.fractionalfirst.com/terms-of-service" target="_blank" rel="noopener" className="underline hover:text-primary">Terms of Service</a>.
+        By creating an account, you agree to our{" "}
+        <a
+          href="https://www.fractionalfirst.com/terms-of-service"
+          target="_blank"
+          rel="noopener"
+          className="underline hover:text-primary"
+        >
+          Terms of Service
+        </a>
+        .
       </div>
-      
-      <Button 
-        type="submit" 
-        className="w-full"
-        disabled={isSubmitting}
-      >
-        {isSubmitting ? 'Creating account...' : 'Create account'}
+
+      <Button type="submit" className="w-full" disabled={isSubmitting}>
+        {isSubmitting ? "Creating account..." : "Create account"}
       </Button>
     </form>
-  );
-};
+  )
+}
