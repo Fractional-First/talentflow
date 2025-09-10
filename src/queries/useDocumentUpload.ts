@@ -24,6 +24,14 @@ export const useDocumentUpload = () => {
     })
   }
 
+  const handleLinkedInUrlSubmit = (linkedinUrl: string) => {
+    setProfile((prev) => ({ ...prev, linkedinUrl }))
+    toast({
+      title: "LinkedIn URL added",
+      description: "Your LinkedIn profile URL has been added.",
+    })
+  }
+
   const removeProfileDocument = (type: "linkedin" | "resume") => {
     setProfile((prev) => {
       const newProfile = { ...prev }
@@ -38,7 +46,11 @@ export const useDocumentUpload = () => {
   }
 
   // Supporting docs/links handlers
-  const addSupportingDocument = (title: string, file: File, description: string) => {
+  const addSupportingDocument = (
+    title: string,
+    file: File,
+    description: string
+  ) => {
     setProfile((prev) => ({
       ...prev,
       docs: [...prev.docs, { title, file, description }],
@@ -74,12 +86,14 @@ export const useDocumentUpload = () => {
     })
   }
 
-  const hasRequiredDocuments = profile.linkedin || profile.resume
+  const hasRequiredDocuments =
+    profile.linkedin || profile.linkedinUrl || profile.resume
 
   return {
     profile,
     handleLinkedInUpload,
     handleResumeUpload,
+    handleLinkedInUrlSubmit,
     removeProfileDocument,
     hasRequiredDocuments,
     addSupportingDocument,

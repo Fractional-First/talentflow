@@ -1,5 +1,6 @@
 export type ProfileData = {
   linkedin?: File
+  linkedinUrl?: string
   resume?: File
   docs: Array<{ title: string; file: File; description: string }>
   links: Array<{ title: string; link: string }>
@@ -44,3 +45,5 @@ export const LINKEDIN_PDF_GUIDE_URL =
   "https://www.linkedin.com/help/linkedin/answer/a521735/how-to-save-a-profile-as-a-pdf?lang=en"
 export const N8N_DOCUMENTS_WEBHOOK =
   "https://webhook-processor-production-1757.up.railway.app/webhook/generate-profile"
+export const N8N_LINKEDIN_WEBHOOK =
+  "https://webhook-processor-production-1757.up.railway.app/webhook/generate-profile-linkedin"
