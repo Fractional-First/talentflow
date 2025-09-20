@@ -43,7 +43,7 @@ const PublicProfile = () => {
     try {
       await navigator.clipboard.writeText(profileUrl)
       toast.success("Profile link copied!", {
-        description: "Ready to share.",
+        description: "Share it with your network to increase visibility.",
         duration: 3000,
         position: "top-center",
       })
