@@ -225,83 +225,95 @@ const PublicProfile = () => {
               readOnly={true}
             />
 
-            {/* Focus Areas */}
-            <EditableArraySection
-              content=""
-              title="Focus Areas"
-              items={profileData.focus_areas || []}
-              isEditing={false}
-              onEditToggle={() => {}} // No-op for read-only
-              onChange={() => {}} // No-op for read-only
-              placeholder="Focus area"
-              addLabel="Add Area"
-              readOnly={true}
-            />
+            {/* Focus Areas - Desktop only */}
+            <div className="hidden lg:block">
+              <EditableArraySection
+                content=""
+                title="Focus Areas"
+                items={profileData.focus_areas || []}
+                isEditing={false}
+                onEditToggle={() => {}} // No-op for read-only
+                onChange={() => {}} // No-op for read-only
+                placeholder="Focus area"
+                addLabel="Add Area"
+                readOnly={true}
+              />
+            </div>
 
-            {/* Industries */}
-            <EditableArraySection
-              content=""
-              title="Industries"
-              items={profileData.industries || []}
-              isEditing={false}
-              onEditToggle={() => {}} // No-op for read-only
-              onChange={() => {}} // No-op for read-only
-              placeholder="Industry"
-              addLabel="Add Industry"
-              readOnly={true}
-            />
+            {/* Industries - Desktop only */}
+            <div className="hidden lg:block">
+              <EditableArraySection
+                content=""
+                title="Industries"
+                items={profileData.industries || []}
+                isEditing={false}
+                onEditToggle={() => {}} // No-op for read-only
+                onChange={() => {}} // No-op for read-only
+                placeholder="Industry"
+                addLabel="Add Industry"
+                readOnly={true}
+              />
+            </div>
 
-            {/* Geographical Coverage */}
-            <EditableArraySection
-              content=""
-              title="Geographical Coverage"
-              items={profileData.geographical_coverage || []}
-              isEditing={false}
-              onEditToggle={() => {}} // No-op for read-only
-              onChange={() => {}} // No-op for read-only
-              placeholder="Region"
-              addLabel="Add Region"
-              readOnly={true}
-            />
+            {/* Geographical Coverage - Desktop only */}
+            <div className="hidden lg:block">
+              <EditableArraySection
+                content=""
+                title="Geographical Coverage"
+                items={profileData.geographical_coverage || []}
+                isEditing={false}
+                onEditToggle={() => {}} // No-op for read-only
+                onChange={() => {}} // No-op for read-only
+                placeholder="Region"
+                addLabel="Add Region"
+                readOnly={true}
+              />
+            </div>
 
-            {/* Stage */}
-            <EditableArraySection
-              content=""
-              title="Stage"
-              items={profileData.stage_focus || []}
-              isEditing={false}
-              onEditToggle={() => {}} // No-op for read-only
-              onChange={() => {}} // No-op for read-only
-              placeholder="Stage"
-              addLabel="Add Stage"
-              readOnly={true}
-            />
+            {/* Stage - Desktop only */}
+            <div className="hidden lg:block">
+              <EditableArraySection
+                content=""
+                title="Stage"
+                items={profileData.stage_focus || []}
+                isEditing={false}
+                onEditToggle={() => {}} // No-op for read-only
+                onChange={() => {}} // No-op for read-only
+                placeholder="Stage"
+                addLabel="Add Stage"
+                readOnly={true}
+              />
+            </div>
 
-            {/* Personal Interests */}
-            <EditableArraySection
-              content=""
-              title="Personal Interests"
-              items={profileData.personal_interests || []}
-              isEditing={false}
-              onEditToggle={() => {}} // No-op for read-only
-              onChange={() => {}} // No-op for read-only
-              placeholder="Interest"
-              addLabel="Add Interest"
-              readOnly={true}
-            />
+            {/* Personal Interests - Desktop only */}
+            <div className="hidden lg:block">
+              <EditableArraySection
+                content=""
+                title="Personal Interests"
+                items={profileData.personal_interests || []}
+                isEditing={false}
+                onEditToggle={() => {}} // No-op for read-only
+                onChange={() => {}} // No-op for read-only
+                placeholder="Interest"
+                addLabel="Add Interest"
+                readOnly={true}
+              />
+            </div>
 
-            {/* Certifications */}
-            <EditableArraySection
-              content=""
-              title="Certifications"
-              items={profileData.certifications || []}
-              isEditing={false}
-              onEditToggle={() => {}} // No-op for read-only
-              onChange={() => {}} // No-op for read-only
-              placeholder="Certification"
-              addLabel="Add Certification"
-              readOnly={true}
-            />
+            {/* Certifications - Desktop only */}
+            <div className="hidden lg:block">
+              <EditableArraySection
+                content=""
+                title="Certifications"
+                items={profileData.certifications || []}
+                isEditing={false}
+                onEditToggle={() => {}} // No-op for read-only
+                onChange={() => {}} // No-op for read-only
+                placeholder="Certification"
+                addLabel="Add Certification"
+                readOnly={true}
+              />
+            </div>
           </div>
 
           {/* Right Column - Main Content */}
@@ -390,6 +402,87 @@ const PublicProfile = () => {
               className="bg-white"
               headerClassName="bg-[#449889] text-white"
               labelClassName="text-lg font-semibold"
+              readOnly={true}
+            />
+          </div>
+
+          {/* Mobile/Tablet sections moved below User Manual */}
+          <div className="lg:hidden space-y-6">
+            {/* Focus Areas - Mobile/Tablet only */}
+            <EditableArraySection
+              content=""
+              title="Focus Areas"
+              items={profileData.focus_areas || []}
+              isEditing={false}
+              onEditToggle={() => {}} // No-op for read-only
+              onChange={() => {}} // No-op for read-only
+              placeholder="Focus area"
+              addLabel="Add Area"
+              readOnly={true}
+            />
+
+            {/* Industries - Mobile/Tablet only */}
+            <EditableArraySection
+              content=""
+              title="Industries"
+              items={profileData.industries || []}
+              isEditing={false}
+              onEditToggle={() => {}} // No-op for read-only
+              onChange={() => {}} // No-op for read-only
+              placeholder="Industry"
+              addLabel="Add Industry"
+              readOnly={true}
+            />
+
+            {/* Geographical Coverage - Mobile/Tablet only */}
+            <EditableArraySection
+              content=""
+              title="Geographical Coverage"
+              items={profileData.geographical_coverage || []}
+              isEditing={false}
+              onEditToggle={() => {}} // No-op for read-only
+              onChange={() => {}} // No-op for read-only
+              placeholder="Region"
+              addLabel="Add Region"
+              readOnly={true}
+            />
+
+            {/* Stage - Mobile/Tablet only */}
+            <EditableArraySection
+              content=""
+              title="Stage"
+              items={profileData.stage_focus || []}
+              isEditing={false}
+              onEditToggle={() => {}} // No-op for read-only
+              onChange={() => {}} // No-op for read-only
+              placeholder="Stage"
+              addLabel="Add Stage"
+              readOnly={true}
+            />
+
+            {/* Personal Interests - Mobile/Tablet only */}
+            <EditableArraySection
+              content=""
+              title="Personal Interests"
+              items={profileData.personal_interests || []}
+              isEditing={false}
+              onEditToggle={() => {}} // No-op for read-only
+              onChange={() => {}} // No-op for read-only
+              placeholder="Interest"
+              addLabel="Add Interest"
+              readOnly={true}
+            />
+
+            {/* Certifications - Mobile/Tablet only */}
+            <EditableArraySection
+              content=""
+              title="Certifications"
+              items={profileData.certifications || []}
+              isEditing={false}
+              onEditToggle={() => {}} // No-op for read-only
+              onChange={() => {}} // No-op for read-only
+              placeholder="Certification"
+              addLabel="Add Certification"
               readOnly={true}
             />
           </div>
