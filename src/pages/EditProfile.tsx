@@ -180,83 +180,95 @@ const EditProfile = () => {
                 displayType="bullets"
               />
 
-              {/* Focus Areas */}
-              <EditableArraySection
-                content="Add the areas where you focus your professional expertise"
-                title="Focus Areas"
-                items={formData.focus_areas || []}
-                isEditing={editStates.focusAreas}
-                onEditToggle={() => toggleEdit("focusAreas")}
-                onChange={(newArr) => handleInputChange("focus_areas", newArr)}
-                placeholder="Focus area"
-                addLabel="Add Area"
-              />
+              {/* Focus Areas - Desktop only */}
+              <div className="hidden lg:block">
+                <EditableArraySection
+                  content="Add the areas where you focus your professional expertise"
+                  title="Focus Areas"
+                  items={formData.focus_areas || []}
+                  isEditing={editStates.focusAreas}
+                  onEditToggle={() => toggleEdit("focusAreas")}
+                  onChange={(newArr) => handleInputChange("focus_areas", newArr)}
+                  placeholder="Focus area"
+                  addLabel="Add Area"
+                />
+              </div>
 
-              {/* Industries */}
-              <EditableArraySection
-                content="List the industries where you have experience or interest"
-                title="Industries"
-                items={formData.industries || []}
-                isEditing={editStates.industries}
-                onEditToggle={() => toggleEdit("industries")}
-                onChange={(newArr) => handleInputChange("industries", newArr)}
-                placeholder="Industry"
-                addLabel="Add Industry"
-              />
+              {/* Industries - Desktop only */}
+              <div className="hidden lg:block">
+                <EditableArraySection
+                  content="List the industries where you have experience or interest"
+                  title="Industries"
+                  items={formData.industries || []}
+                  isEditing={editStates.industries}
+                  onEditToggle={() => toggleEdit("industries")}
+                  onChange={(newArr) => handleInputChange("industries", newArr)}
+                  placeholder="Industry"
+                  addLabel="Add Industry"
+                />
+              </div>
 
-              {/* Geographical Coverage */}
-              <EditableArraySection
-                content="Specify the regions or locations where you can work or have experience"
-                title="Geographical Coverage"
-                items={formData.geographical_coverage || []}
-                isEditing={editStates.geographicalCoverage}
-                onEditToggle={() => toggleEdit("geographicalCoverage")}
-                onChange={(newArr) =>
-                  handleInputChange("geographical_coverage", newArr)
-                }
-                placeholder="Region"
-                addLabel="Add Region"
-              />
+              {/* Geographical Coverage - Desktop only */}
+              <div className="hidden lg:block">
+                <EditableArraySection
+                  content="Specify the regions or locations where you can work or have experience"
+                  title="Geographical Coverage"
+                  items={formData.geographical_coverage || []}
+                  isEditing={editStates.geographicalCoverage}
+                  onEditToggle={() => toggleEdit("geographicalCoverage")}
+                  onChange={(newArr) =>
+                    handleInputChange("geographical_coverage", newArr)
+                  }
+                  placeholder="Region"
+                  addLabel="Add Region"
+                />
+              </div>
 
-              {/* Stage */}
-              <EditableArraySection
-                content="Add the company stages you prefer to work with (startup, growth, enterprise, etc.)"
-                title="Stage"
-                items={formData.stage_focus || []}
-                isEditing={editStates.stages}
-                onEditToggle={() => toggleEdit("stages")}
-                onChange={(newArr) => handleInputChange("stage_focus", newArr)}
-                placeholder="Stage"
-                addLabel="Add Stage"
-              />
+              {/* Stage - Desktop only */}
+              <div className="hidden lg:block">
+                <EditableArraySection
+                  content="Add the company stages you prefer to work with (startup, growth, enterprise, etc.)"
+                  title="Stage"
+                  items={formData.stage_focus || []}
+                  isEditing={editStates.stages}
+                  onEditToggle={() => toggleEdit("stages")}
+                  onChange={(newArr) => handleInputChange("stage_focus", newArr)}
+                  placeholder="Stage"
+                  addLabel="Add Stage"
+                />
+              </div>
 
-              {/* Personal Interests */}
-              <EditableArraySection
-                content="Share your personal interests to help others connect with you on a human level"
-                title="Personal Interests"
-                items={formData.personal_interests || []}
-                isEditing={editStates.personalInterests}
-                onEditToggle={() => toggleEdit("personalInterests")}
-                onChange={(newArr) =>
-                  handleInputChange("personal_interests", newArr)
-                }
-                placeholder="Interest"
-                addLabel="Add Interest"
-              />
+              {/* Personal Interests - Desktop only */}
+              <div className="hidden lg:block">
+                <EditableArraySection
+                  content="Share your personal interests to help others connect with you on a human level"
+                  title="Personal Interests"
+                  items={formData.personal_interests || []}
+                  isEditing={editStates.personalInterests}
+                  onEditToggle={() => toggleEdit("personalInterests")}
+                  onChange={(newArr) =>
+                    handleInputChange("personal_interests", newArr)
+                  }
+                  placeholder="Interest"
+                  addLabel="Add Interest"
+                />
+              </div>
 
-              {/* Certifications */}
-              <EditableArraySection
-                content="List your relevant certifications and professional credentials"
-                title="Certifications"
-                items={formData.certifications || []}
-                isEditing={editStates.certifications}
-                onEditToggle={() => toggleEdit("certifications")}
-                onChange={(newArr) =>
-                  handleInputChange("certifications", newArr)
-                }
-                placeholder="Certification"
-                addLabel="Add Certification"
-              />
+              {/* Certifications - Desktop only */}
+              <div className="hidden lg:block">
+                <EditableArraySection
+                  content="List your relevant certifications and professional credentials"
+                  title="Certifications"
+                  items={formData.certifications || []}
+                  isEditing={editStates.certifications}
+                  onEditToggle={() => toggleEdit("certifications")}
+                  onChange={(newArr) =>
+                    handleInputChange("certifications", newArr)
+                  }
+                  placeholder="Certification"
+                  addLabel="Add Certification"
+                />
+              </div>
             </div>
 
             {/* Right Column - Main Content */}
@@ -345,6 +357,87 @@ const EditProfile = () => {
                 headerClassName="bg-[#449889] text-white"
                 labelClassName="text-lg font-semibold"
               />
+
+              {/* Mobile/Tablet sections moved below User Manual */}
+              <div className="lg:hidden space-y-6">
+                {/* Focus Areas - Mobile/Tablet only */}
+                <EditableArraySection
+                  content="Add the areas where you focus your professional expertise"
+                  title="Focus Areas"
+                  items={formData.focus_areas || []}
+                  isEditing={editStates.focusAreas}
+                  onEditToggle={() => toggleEdit("focusAreas")}
+                  onChange={(newArr) => handleInputChange("focus_areas", newArr)}
+                  placeholder="Focus area"
+                  addLabel="Add Area"
+                />
+
+                {/* Industries - Mobile/Tablet only */}
+                <EditableArraySection
+                  content="List the industries where you have experience or interest"
+                  title="Industries"
+                  items={formData.industries || []}
+                  isEditing={editStates.industries}
+                  onEditToggle={() => toggleEdit("industries")}
+                  onChange={(newArr) => handleInputChange("industries", newArr)}
+                  placeholder="Industry"
+                  addLabel="Add Industry"
+                />
+
+                {/* Geographical Coverage - Mobile/Tablet only */}
+                <EditableArraySection
+                  content="Specify the regions or locations where you can work or have experience"
+                  title="Geographical Coverage"
+                  items={formData.geographical_coverage || []}
+                  isEditing={editStates.geographicalCoverage}
+                  onEditToggle={() => toggleEdit("geographicalCoverage")}
+                  onChange={(newArr) =>
+                    handleInputChange("geographical_coverage", newArr)
+                  }
+                  placeholder="Region"
+                  addLabel="Add Region"
+                />
+
+                {/* Stage - Mobile/Tablet only */}
+                <EditableArraySection
+                  content="Add the company stages you prefer to work with (startup, growth, enterprise, etc.)"
+                  title="Stage"
+                  items={formData.stage_focus || []}
+                  isEditing={editStates.stages}
+                  onEditToggle={() => toggleEdit("stages")}
+                  onChange={(newArr) => handleInputChange("stage_focus", newArr)}
+                  placeholder="Stage"
+                  addLabel="Add Stage"
+                />
+
+                {/* Personal Interests - Mobile/Tablet only */}
+                <EditableArraySection
+                  content="Share your personal interests to help others connect with you on a human level"
+                  title="Personal Interests"
+                  items={formData.personal_interests || []}
+                  isEditing={editStates.personalInterests}
+                  onEditToggle={() => toggleEdit("personalInterests")}
+                  onChange={(newArr) =>
+                    handleInputChange("personal_interests", newArr)
+                  }
+                  placeholder="Interest"
+                  addLabel="Add Interest"
+                />
+
+                {/* Certifications - Mobile/Tablet only */}
+                <EditableArraySection
+                  content="List your relevant certifications and professional credentials"
+                  title="Certifications"
+                  items={formData.certifications || []}
+                  isEditing={editStates.certifications}
+                  onEditToggle={() => toggleEdit("certifications")}
+                  onChange={(newArr) =>
+                    handleInputChange("certifications", newArr)
+                  }
+                  placeholder="Certification"
+                  addLabel="Add Certification"
+                />
+              </div>
             </div>
           </div>
 
