@@ -42,8 +42,19 @@ export const InlineLinkedInField: React.FC<InlineLinkedInFieldProps> = ({
     setIsEditing(true)
   }
 
+  const normalizeUrl = (url: string): string => {
+    if (!url.trim()) return url
+    const trimmedUrl = url.trim()
+    if (trimmedUrl.startsWith('http://') || trimmedUrl.startsWith('https://')) {
+      return trimmedUrl
+    }
+    return `https://${trimmedUrl}`
+  }
+
   const handleSave = () => {
-    onChange(tempValue)
+    const normalizedUrl = normalizeUrl(tempValue)
+    onChange(normalizedUrl)
+    setTempValue(normalizedUrl)
     setIsEditing(false)
   }
 
