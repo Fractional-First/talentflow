@@ -39,28 +39,28 @@ const ProfileGenerator = () => {
 
   const features = [
     {
-      icon: <Zap className="h-6 w-6" />,
-      title: "Lightning Fast",
-      description:
-        "Generate your professional profile in under 1 minute using your LinkedIn",
-    },
-    {
-      icon: <Target className="h-6 w-6" />,
-      title: "AI-Powered Matching",
-      description:
-        "Get matched with fractional opportunities that align with your expertise",
-    },
-    {
-      icon: <Users className="h-6 w-6" />,
-      title: "Exclusive Network",
-      description:
-        "Join a curated community of top-tier fractional executives and consultants",
-    },
-    {
       icon: <Shield className="h-6 w-6" />,
       title: "Privacy First",
       description:
-        "Your profile is only shared with verified opportunities in our network",
+        "Leaders deserve an effective platform to showcase their superpowers in a concise, easy-to-use manner. Generate your Leadership Profile, make it yours, and share it with the world.",
+    },
+    {
+      icon: <Zap className="h-6 w-6" />,
+      title: "Lightning Fast",
+      description:
+        "Generate your professional Leadership Profile in under 1 minute using your LinkedIn profile link.",
+    },
+    {
+      icon: <Target className="h-6 w-6" />,
+      title: "AI-Powered Services",
+      description:
+        "If you're open to new opportunities, get matched with fractional opportunities that align with your purpose and expertise. If you're not, simply keep and maintain your profile. It's yours!",
+    },
+    {
+      icon: <Users className="h-6 w-6" />,
+      title: "Leadership Network",
+      description:
+        "Join a community of top-tier fractional leaders, operators, and advisors and benefit from Fractional First and partner programs as soon as they become available.",
     },
   ]
 
@@ -108,12 +108,10 @@ const ProfileGenerator = () => {
             </Badge>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-urbanist mb-6">
               Generate Your
-              <span className="text-primary block">Professional Profile</span>
+              <span className="text-primary block">Leadership Profile</span>
             </h1>
             <p className="text-xl sm:text-2xl text-muted-foreground max-w-3xl mx-auto mb-8 leading-relaxed">
-              See how your LinkedIn profile transforms into a powerful
-              fractional executive profile. No signup required - experience the
-              value first.
+              Create and share your Fractional First Leadership Profile in less than a minute. No signup required. No gimmicks. Experience the value of a well articulated, personalized Leadership Profile.
             </p>
             <Button
               size="lg"
@@ -171,22 +169,22 @@ const ProfileGenerator = () => {
                 What You'll Get
               </h3>
               <ul className="space-y-3 text-sm text-muted-foreground">
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                  <span>Professional summary extracted from your LinkedIn</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                  <span>Skills and expertise automatically categorized</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                  <span>Industry and role preferences identified</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                  <span>Preview of your fractional executive profile</span>
-                </li>
+                 <li className="flex items-start gap-2">
+                   <CheckCircle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                   <span>A Leadership Profile extracted from your LinkedIn</span>
+                 </li>
+                 <li className="flex items-start gap-2">
+                   <CheckCircle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                   <span>Skills and expertise automatically categorized</span>
+                 </li>
+                 <li className="flex items-start gap-2">
+                   <CheckCircle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                   <span>Industry and role preferences identified</span>
+                 </li>
+                 <li className="flex items-start gap-2">
+                   <CheckCircle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                   <span>Preview of your experience and superpowers</span>
+                 </li>
               </ul>
             </div>
           </div>
@@ -197,9 +195,7 @@ const ProfileGenerator = () => {
               Ready to See Your Profile?
             </h2>
             <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-              It takes less than a minute to generate your professional profile.
-              No commitment required - just enter your LinkedIn and see the
-              magic happen.
+              It takes less than a minute to generate your professional profile. No commitment required — just enter your LinkedIn URL and watch the magic happen.
             </p>
             <Button
               size="lg"
