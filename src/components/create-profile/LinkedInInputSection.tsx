@@ -10,6 +10,8 @@ interface LinkedInInputSectionProps {
   onResumeFallback: () => void
   isSubmitting?: boolean
   hideResumeFallback?: boolean
+  showSubmitButton?: boolean
+  onLinkedInUrlChange?: (url: string) => void
 }
 
 export const LinkedInInputSection = ({
@@ -17,6 +19,8 @@ export const LinkedInInputSection = ({
   onResumeFallback,
   isSubmitting = false,
   hideResumeFallback = false,
+  showSubmitButton = true,
+  onLinkedInUrlChange,
 }: LinkedInInputSectionProps) => {
   const [linkedinUrl, setLinkedinUrl] = useState("")
   const [validationError, setValidationError] = useState("")
@@ -127,6 +131,7 @@ export const LinkedInInputSection = ({
               onChange={(e) => {
                 setLinkedinUrl(e.target.value)
                 if (validationError) setValidationError("")
+                onLinkedInUrlChange?.(e.target.value)
               }}
               className="min-h-[48px]"
               disabled={isSubmitting}
@@ -136,16 +141,18 @@ export const LinkedInInputSection = ({
             )}
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 pt-4">
-            <Button
-              type="submit"
-              disabled={isSubmitting || !linkedinUrl.trim()}
-              className="font-urbanist min-h-[48px] flex-1 sm:flex-none sm:w-auto"
-            >
-              {isSubmitting ? "Creating Profile..." : "Create Profile"}
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
+          {showSubmitButton && (
+            <div className="flex flex-col sm:flex-row gap-3 pt-4">
+              <Button
+                type="submit"
+                disabled={isSubmitting || !linkedinUrl.trim()}
+                className="font-urbanist min-h-[48px] flex-1 sm:flex-none sm:w-auto"
+              >
+                {isSubmitting ? "Creating Profile..." : "Create Profile"}
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
+          )}
         </form>
       </div>
 

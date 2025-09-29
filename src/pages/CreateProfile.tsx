@@ -14,7 +14,6 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { useDocumentUpload } from "@/queries/useDocumentUpload"
 import { toast } from "@/hooks/use-toast"
-import { useSubmitProfile } from "@/queries/useSubmitProfile"
 import { useSubmitLinkedInProfile } from "@/queries/useSubmitLinkedInProfile"
 import { AlertCircle, ArrowLeft, ArrowRight, Clock, Home } from "lucide-react"
 import { useState } from "react"
@@ -36,19 +35,16 @@ const ProfileCreation = () => {
     removeSupportingLink,
   } = useDocumentUpload()
 
-  const submitProfileMutation = useSubmitProfile()
   const submitLinkedInMutation = useSubmitLinkedInProfile()
 
   const [validationErrors, setValidationErrors] = useState<string[]>([])
   const [serverError, setServerError] = useState("")
-  const [useResumeFlow, setUseResumeFlow] = useState(false)
+  const [currentLinkedInUrl, setCurrentLinkedInUrl] = useState("")
 
   const validateProfile = (): string[] => {
     const errors: string[] = []
-    if (!profile.linkedin && !profile.linkedinUrl && !profile.resume) {
-      errors.push(
-        "At least one of the following is required: LinkedIn URL, LinkedIn PDF, or Resume"
-      )
+    if (!profile.linkedinUrl) {
+      errors.push("LinkedIn URL is required")
     }
     return errors
   }
@@ -59,7 +55,7 @@ const ProfileCreation = () => {
     handleLinkedInUrlSubmit(linkedinUrl)
 
     submitLinkedInMutation.mutate(
-      { linkedinUrl },
+      { linkedinUrl, profile },
       {
         onSuccess: () => {
           toast({
@@ -86,56 +82,6 @@ const ProfileCreation = () => {
           setServerError(errorMessage)
           toast({
             title: "Error creating profile",
-            description: errorMessage,
-            variant: "destructive",
-          })
-        },
-      }
-    )
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    const errors = validateProfile()
-    if (errors.length > 0) {
-      setValidationErrors(errors)
-      toast({
-        title: "Validation Error",
-        description: errors[0],
-        variant: "destructive",
-      })
-      return
-    }
-    setValidationErrors([])
-    setServerError("")
-    submitProfileMutation.mutate(
-      { profile },
-      {
-        onSuccess: () => {
-          toast({
-            title: "Profile saved successfully",
-            description:
-              "Your profile information has been submitted and processed.",
-          })
-          navigate("/edit-profile")
-        },
-        onError: (error) => {
-          let errorMessage =
-            "There was a problem submitting your profile. Please try again."
-          if (error instanceof Error) {
-            if (error.message.includes("Failed to fetch")) {
-              errorMessage =
-                "Unable to connect to the server. Please check your internet connection and try submitting again."
-            } else if (error.message.includes("Server error")) {
-              errorMessage =
-                "The server encountered an error processing your profile. Please try submitting again."
-            } else {
-              errorMessage = error.message
-            }
-          }
-          setServerError(errorMessage)
-          toast({
-            title: "Error saving profile",
             description: errorMessage,
             variant: "destructive",
           })
@@ -181,11 +127,10 @@ const ProfileCreation = () => {
         </div>
       </header>
 
-      <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-6 flex-1">
+      <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-6 flex-1 pb-20">
         <div className="max-w-4xl mx-auto">
           <main>
-            {submitProfileMutation.isPending ||
-            submitLinkedInMutation.isPending ? (
+            {submitLinkedInMutation.isPending ? (
               <ProfileLoadingUI />
             ) : (
               <div className="space-y-6 sm:space-y-8">
@@ -201,10 +146,7 @@ const ProfileCreation = () => {
                     <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start mt-4 bg-muted/40 px-4 py-3 rounded-md">
                       <Clock className="h-4 w-4 text-muted-foreground mb-1 sm:mb-0 sm:mr-2" />
                       <span className="text-caption text-muted-foreground font-urbanist text-center sm:text-left">
-                        Estimated completion time:{" "}
-                        <strong>
-                          {!useResumeFlow ? "~1 minute" : "5-7 minutes"}
-                        </strong>
+                        Estimated completion time: <strong>~1 minute</strong>
                       </span>
                     </div>
                   </StepCardHeader>
@@ -249,69 +191,72 @@ const ProfileCreation = () => {
                     )}
 
                     <div className="space-y-6 sm:space-y-8">
-                      {!useResumeFlow ? (
-                        <LinkedInInputSection
-                          onLinkedInSubmit={handleLinkedInSubmit}
-                          onResumeFallback={() => setUseResumeFlow(true)}
-                          isSubmitting={submitLinkedInMutation.isPending}
+                      <LinkedInInputSection
+                        onLinkedInSubmit={handleLinkedInSubmit}
+                        onResumeFallback={() => {}} // Disabled - no resume flow
+                        isSubmitting={submitLinkedInMutation.isPending}
+                        hideResumeFallback={true}
+                        showSubmitButton={false} // Hide the submit button since we'll use the sticky footer
+                        onLinkedInUrlChange={setCurrentLinkedInUrl}
+                      />
+
+                      {/* OPTIONAL DOCUMENT UPLOAD SECTIONS */}
+                      <div className="border-t pt-6">
+                        <DocumentUploadSection
+                          linkedinFile={profile.linkedin}
+                          resumeFile={profile.resume}
+                          onLinkedInUpload={handleLinkedInUpload}
+                          onResumeUpload={handleResumeUpload}
+                          onLinkedInRemove={() =>
+                            removeProfileDocument("linkedin")
+                          }
+                          onResumeRemove={() => removeProfileDocument("resume")}
                         />
-                      ) : (
-                        <form onSubmit={handleSubmit}>
-                          <DocumentUploadSection
-                            linkedinFile={profile.linkedin}
-                            resumeFile={profile.resume}
-                            onLinkedInUpload={handleLinkedInUpload}
-                            onResumeUpload={handleResumeUpload}
-                            onLinkedInRemove={() =>
-                              removeProfileDocument("linkedin")
-                            }
-                            onResumeRemove={() =>
-                              removeProfileDocument("resume")
-                            }
-                          />
-                          <SupportingDocsSection
-                            docs={profile.docs}
-                            links={profile.links}
-                            addDocument={addSupportingDocument}
-                            addLink={addSupportingLink}
-                            removeDoc={removeSupportingDoc}
-                            removeLink={removeSupportingLink}
-                          />
-
-                          {/* FOOTER: NAV BUTTONS - Only show for resume flow */}
-                          <StepCardFooter className="flex flex-col sm:flex-row justify-between gap-4 pt-6 px-4 sm:px-6">
-                            <Button
-                              variant="outline"
-                              onClick={() => navigate("/dashboard")}
-                              type="button"
-                              className="font-urbanist min-h-[48px] w-full sm:w-auto order-2 sm:order-1"
-                            >
-                              <ArrowLeft className="mr-2 h-4 w-4" />
-                              Back to Dashboard
-                            </Button>
-
-                            <Button
-                              type="submit"
-                              disabled={
-                                submitProfileMutation.isPending ||
-                                !hasRequiredDocuments
-                              }
-                              className="font-urbanist min-h-[48px] w-full sm:w-auto order-1 sm:order-2"
-                            >
-                              {submitProfileMutation.isPending
-                                ? "Saving..."
-                                : "Continue"}
-                              <ArrowRight className="ml-2 h-4 w-4" />
-                            </Button>
-                          </StepCardFooter>
-                        </form>
-                      )}
+                        <SupportingDocsSection
+                          docs={profile.docs}
+                          links={profile.links}
+                          addDocument={addSupportingDocument}
+                          addLink={addSupportingLink}
+                          removeDoc={removeSupportingDoc}
+                          removeLink={removeSupportingLink}
+                        />
+                      </div>
                     </div>
                   </StepCardContent>
                 </StepCard>
               </div>
             )}
           </main>
+        </div>
+      </div>
+
+      {/* FIXED FOOTER WITH CREATE PROFILE BUTTON */}
+      <div className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-md border-t border-border/40 py-4 px-4 sm:px-6 z-50">
+        <div className="container mx-auto max-w-4xl">
+          <div className="flex justify-end">
+            <Button
+              onClick={() => {
+                if (currentLinkedInUrl.trim()) {
+                  handleLinkedInSubmit(currentLinkedInUrl.trim())
+                } else {
+                  toast({
+                    title: "LinkedIn URL required",
+                    description: "Please enter your LinkedIn URL to continue.",
+                    variant: "destructive",
+                  })
+                }
+              }}
+              disabled={
+                submitLinkedInMutation.isPending || !currentLinkedInUrl.trim()
+              }
+              className="font-urbanist min-h-[48px] px-8"
+            >
+              {submitLinkedInMutation.isPending
+                ? "Creating Profile..."
+                : "Create Profile"}
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </div>
 

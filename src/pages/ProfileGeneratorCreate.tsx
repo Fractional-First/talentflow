@@ -13,62 +13,12 @@ import {
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { useDocumentUpload } from "@/queries/useDocumentUpload"
+import { useSubmitLinkedInProfile } from "@/queries/useSubmitLinkedInProfile"
 import { toast } from "@/hooks/use-toast"
 import { AlertCircle, ArrowLeft, ArrowRight, Clock, Home } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { profileStorage, GeneratedProfile } from "@/utils/profileStorage"
-
-// Anonymous profile submission hook using production N8N workflow
-const useSubmitAnonymousLinkedInProfile = () => {
-  const [isPending, setIsPending] = useState(false)
-
-  const mutate = async ({
-    linkedinUrl,
-    onSuccess,
-    onError,
-  }: {
-    linkedinUrl: string
-    onSuccess?: (data: any) => void
-    onError?: (error: Error) => void
-  }) => {
-    setIsPending(true)
-    try {
-      const response = await fetch(
-        "https://webhook-processor-production-1757.up.railway.app/webhook/generate-profile-guest",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            linkedinUrl: linkedinUrl,
-          }),
-        }
-      )
-
-      if (!response.ok) {
-        const errorText = await response.text()
-        throw new Error(
-          `Failed to generate profile: ${response.status} ${errorText}`
-        )
-      }
-
-      const profileData = await response.json()
-
-      // Store in sessionStorage
-      profileStorage.set(profileData)
-
-      onSuccess?.(profileData)
-    } catch (error) {
-      onError?.(error as Error)
-    } finally {
-      setIsPending(false)
-    }
-  }
-
-  return { mutate, isPending }
-}
 
 const ProfileGeneratorCreate = () => {
   const navigate = useNavigate()
@@ -86,10 +36,11 @@ const ProfileGeneratorCreate = () => {
     removeSupportingLink,
   } = useDocumentUpload()
 
-  const submitAnonymousLinkedInMutation = useSubmitAnonymousLinkedInProfile()
+  const submitLinkedInMutation = useSubmitLinkedInProfile()
 
   const [validationErrors, setValidationErrors] = useState<string[]>([])
   const [serverError, setServerError] = useState("")
+  const [currentLinkedInUrl, setCurrentLinkedInUrl] = useState("")
   // const [useResumeFlow, setUseResumeFlow] = useState(false) // Commented out - only LinkedIn flow for unauthenticated users
 
   // Redirect authenticated users
@@ -124,39 +75,50 @@ const ProfileGeneratorCreate = () => {
   const handleLinkedInSubmit = async (linkedinUrl: string) => {
     setValidationErrors([])
     setServerError("")
-    // handleLinkedInUrlSubmit(linkedinUrl) // Commented out - not needed for anonymous flow
+    handleLinkedInUrlSubmit(linkedinUrl)
 
-    submitAnonymousLinkedInMutation.mutate({
-      linkedinUrl,
-      onSuccess: () => {
-        toast({
-          title: "Profile generated successfully",
-          description:
-            "Your profile has been created from your LinkedIn information.",
-        })
-        navigate("/profile-generator/preview")
+    submitLinkedInMutation.mutate(
+      {
+        linkedinUrl,
+        profile,
+        webhookUrl:
+          "https://webhook-processor-production-1757.up.railway.app/webhook/generate-profile-guest",
       },
-      onError: (error) => {
-        let errorMessage =
-          "There was a problem generating your profile from LinkedIn. Please try again."
-        if (error instanceof Error) {
-          if (error.message.includes("Failed to fetch")) {
-            errorMessage =
-              "Unable to connect to the server. Please check your internet connection and try again."
-          } else if (error.message.includes("Failed to generate profile")) {
-            errorMessage = error.message
-          } else {
-            errorMessage = error.message
+      {
+        onSuccess: (data) => {
+          // Store in sessionStorage for anonymous flow
+          profileStorage.set(data)
+
+          toast({
+            title: "Profile generated successfully",
+            description:
+              "Your profile has been created from your LinkedIn information.",
+          })
+          navigate("/profile-generator/preview")
+        },
+        onError: (error) => {
+          let errorMessage =
+            "There was a problem generating your profile from LinkedIn. Please try again."
+          if (error instanceof Error) {
+            if (error.message.includes("Failed to fetch")) {
+              errorMessage =
+                "Unable to connect to the server. Please check your internet connection and try again."
+            } else if (error.message.includes("Server error")) {
+              errorMessage =
+                "The server encountered an error processing your LinkedIn profile. Please try again."
+            } else {
+              errorMessage = error.message
+            }
           }
-        }
-        setServerError(errorMessage)
-        toast({
-          title: "Error generating profile",
-          description: errorMessage,
-          variant: "destructive",
-        })
-      },
-    })
+          setServerError(errorMessage)
+          toast({
+            title: "Error generating profile",
+            description: errorMessage,
+            variant: "destructive",
+          })
+        },
+      }
+    )
   }
 
   // const handleSubmit = async (e: React.FormEvent) => {
@@ -200,10 +162,10 @@ const ProfileGeneratorCreate = () => {
         </div>
       </header>
 
-      <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-6 flex-1">
+      <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-6 flex-1 pb-20">
         <div className="max-w-4xl mx-auto">
           <main>
-            {submitAnonymousLinkedInMutation.isPending ? (
+            {submitLinkedInMutation.isPending ? (
               <ProfileLoadingUI />
             ) : (
               <div className="space-y-6 sm:space-y-8">
@@ -267,15 +229,69 @@ const ProfileGeneratorCreate = () => {
                       <LinkedInInputSection
                         onLinkedInSubmit={handleLinkedInSubmit}
                         onResumeFallback={() => {}} // No-op since resume flow is disabled
-                        isSubmitting={submitAnonymousLinkedInMutation.isPending}
+                        isSubmitting={submitLinkedInMutation.isPending}
                         hideResumeFallback={true}
+                        showSubmitButton={false} // Hide the submit button since we'll use the sticky footer
+                        onLinkedInUrlChange={setCurrentLinkedInUrl}
                       />
+
+                      {/* OPTIONAL DOCUMENT UPLOAD SECTIONS */}
+                      <div className="border-t pt-6">
+                        <DocumentUploadSection
+                          linkedinFile={profile.linkedin}
+                          resumeFile={profile.resume}
+                          onLinkedInUpload={handleLinkedInUpload}
+                          onResumeUpload={handleResumeUpload}
+                          onLinkedInRemove={() =>
+                            removeProfileDocument("linkedin")
+                          }
+                          onResumeRemove={() => removeProfileDocument("resume")}
+                        />
+                        <SupportingDocsSection
+                          docs={profile.docs}
+                          links={profile.links}
+                          addDocument={addSupportingDocument}
+                          addLink={addSupportingLink}
+                          removeDoc={removeSupportingDoc}
+                          removeLink={removeSupportingLink}
+                        />
+                      </div>
                     </div>
                   </StepCardContent>
                 </StepCard>
               </div>
             )}
           </main>
+        </div>
+      </div>
+
+      {/* FIXED FOOTER WITH GENERATE PROFILE BUTTON */}
+      <div className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-md border-t border-border/40 py-4 px-4 sm:px-6 z-50">
+        <div className="container mx-auto max-w-4xl">
+          <div className="flex justify-end">
+            <Button
+              onClick={() => {
+                if (currentLinkedInUrl.trim()) {
+                  handleLinkedInSubmit(currentLinkedInUrl.trim())
+                } else {
+                  toast({
+                    title: "LinkedIn URL required",
+                    description: "Please enter your LinkedIn URL to continue.",
+                    variant: "destructive",
+                  })
+                }
+              }}
+              disabled={
+                submitLinkedInMutation.isPending || !currentLinkedInUrl.trim()
+              }
+              className="font-urbanist min-h-[48px] px-8"
+            >
+              {submitLinkedInMutation.isPending
+                ? "Generating Profile..."
+                : "Generate Profile"}
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </div>
 
