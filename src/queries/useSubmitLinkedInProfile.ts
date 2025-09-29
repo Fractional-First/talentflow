@@ -1,35 +1,40 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
-import { N8N_DOCUMENTS_WEBHOOK } from "@/components/create-profile/types"
+import { N8N_LINKEDIN_WEBHOOK } from "@/components/create-profile/types"
 import { ProfileData } from "@/components/create-profile/types"
 
-interface SubmitProfileArgs {
+interface SubmitLinkedInProfileArgs {
+  linkedinUrl: string
   profile: ProfileData
+  webhookUrl?: string
   onSuccess?: () => void
   onError?: (error: string) => void
 }
 
-export function useSubmitProfile() {
+export function useSubmitLinkedInProfile() {
   const queryClient = useQueryClient()
 
   const mutation = useMutation({
-    mutationFn: async ({ profile }: SubmitProfileArgs) => {
-      // Get the current user
+    mutationFn: async ({
+      linkedinUrl,
+      profile,
+      webhookUrl,
+    }: SubmitLinkedInProfileArgs) => {
+      const formDataToSubmit = new FormData()
+
+      // Get the current user (only for authenticated flows)
       const {
         data: { user },
         error: userError,
       } = await supabase.auth.getUser()
-      if (userError || !user) {
-        throw new Error("User not authenticated")
+
+      if (user) {
+        formDataToSubmit.append("userId", user.id)
       }
 
-      const formDataToSubmit = new FormData()
-      formDataToSubmit.append("userId", user.id)
+      formDataToSubmit.append("linkedinUrl", linkedinUrl)
 
-      // Add linkedin and resume files if present
-      if (profile.linkedin) {
-        formDataToSubmit.append("linkedin", profile.linkedin)
-      }
+      // Add resume file if present
       if (profile.resume) {
         formDataToSubmit.append("resume", profile.resume)
       }
@@ -40,18 +45,19 @@ export function useSubmitProfile() {
         profile.docs.forEach((doc, index) => {
           formDataToSubmit.append(`docs[${index}][file]`, doc.file)
           formDataToSubmit.append(`docs[${index}][title]`, doc.title)
-          // Also add the title as JSON metadata for the processing node
           formDataToSubmit.append(
-            `docs[${index}][_meta]`,
-            JSON.stringify({
-              source: "docs",
-              title: doc.title,
-            })
+            `docs[${index}][description]`,
+            doc.description
           )
         })
       }
 
-      const response = await fetch(N8N_DOCUMENTS_WEBHOOK, {
+      // Add supporting links
+      if (profile.links && profile.links.length > 0) {
+        formDataToSubmit.append("links", JSON.stringify(profile.links))
+      }
+
+      const response = await fetch(webhookUrl || N8N_LINKEDIN_WEBHOOK, {
         method: "POST",
         body: formDataToSubmit,
       })
@@ -67,12 +73,14 @@ export function useSubmitProfile() {
       if (responseData.error || responseData.status === "error") {
         throw new Error(
           responseData.message ||
-            "Server reported an error processing your profile"
+            "Server reported an error processing your LinkedIn profile"
         )
       }
 
-      // Invalidate React Query cache for profile data to ensure fresh data
-      await queryClient.invalidateQueries({ queryKey: ["profile", user.id] })
+      // Invalidate React Query cache for profile data to ensure fresh data (only for authenticated users)
+      if (user) {
+        await queryClient.invalidateQueries({ queryKey: ["profile", user.id] })
+      }
       return responseData
     },
   })

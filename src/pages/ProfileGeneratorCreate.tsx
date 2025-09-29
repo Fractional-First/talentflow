@@ -13,13 +13,14 @@ import {
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { useDocumentUpload } from "@/queries/useDocumentUpload"
-import { toast } from "@/hooks/use-toast"
 import { useSubmitLinkedInProfile } from "@/queries/useSubmitLinkedInProfile"
+import { toast } from "@/hooks/use-toast"
 import { AlertCircle, ArrowLeft, ArrowRight, Clock, Home } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
+import { profileStorage, GeneratedProfile } from "@/utils/profileStorage"
 
-const ProfileCreation = () => {
+const ProfileGeneratorCreate = () => {
   const navigate = useNavigate()
 
   const {
@@ -40,14 +41,36 @@ const ProfileCreation = () => {
   const [validationErrors, setValidationErrors] = useState<string[]>([])
   const [serverError, setServerError] = useState("")
   const [currentLinkedInUrl, setCurrentLinkedInUrl] = useState("")
+  // const [useResumeFlow, setUseResumeFlow] = useState(false) // Commented out - only LinkedIn flow for unauthenticated users
 
-  const validateProfile = (): string[] => {
-    const errors: string[] = []
-    if (!profile.linkedinUrl) {
-      errors.push("LinkedIn URL is required")
+  // Redirect authenticated users
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const {
+          data: { user },
+        } = await import("@/integrations/supabase/client").then((m) =>
+          m.supabase.auth.getUser()
+        )
+        if (user) {
+          navigate("/create-profile", { replace: true })
+        }
+      } catch (error) {
+        // User is not authenticated, continue with anonymous flow
+      }
     }
-    return errors
-  }
+    checkAuth()
+  }, [navigate])
+
+  // const validateProfile = (): string[] => {
+  //   const errors: string[] = []
+  //   if (!profile.linkedin && !profile.linkedinUrl && !profile.resume) {
+  //     errors.push(
+  //       "At least one of the following is required: LinkedIn URL, LinkedIn PDF, or Resume"
+  //     )
+  //   }
+  //   return errors
+  // } // Commented out - only LinkedIn flow for unauthenticated users
 
   const handleLinkedInSubmit = async (linkedinUrl: string) => {
     setValidationErrors([])
@@ -55,19 +78,27 @@ const ProfileCreation = () => {
     handleLinkedInUrlSubmit(linkedinUrl)
 
     submitLinkedInMutation.mutate(
-      { linkedinUrl, profile },
       {
-        onSuccess: () => {
+        linkedinUrl,
+        profile,
+        webhookUrl:
+          "https://webhook-processor-production-1757.up.railway.app/webhook/generate-profile-guest",
+      },
+      {
+        onSuccess: (data) => {
+          // Store in sessionStorage for anonymous flow
+          profileStorage.set(data)
+
           toast({
-            title: "Profile created successfully",
+            title: "Profile generated successfully",
             description:
               "Your profile has been created from your LinkedIn information.",
           })
-          navigate("/edit-profile")
+          navigate("/profile-generator/preview")
         },
         onError: (error) => {
           let errorMessage =
-            "There was a problem creating your profile from LinkedIn. Please try again."
+            "There was a problem generating your profile from LinkedIn. Please try again."
           if (error instanceof Error) {
             if (error.message.includes("Failed to fetch")) {
               errorMessage =
@@ -81,7 +112,7 @@ const ProfileCreation = () => {
           }
           setServerError(errorMessage)
           toast({
-            title: "Error creating profile",
+            title: "Error generating profile",
             description: errorMessage,
             variant: "destructive",
           })
@@ -89,6 +120,11 @@ const ProfileCreation = () => {
       }
     )
   }
+
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   // Commented out - only LinkedIn flow for unauthenticated users
+  //   // Resume/PDF upload flow removed for simplicity
+  // }
 
   const backgroundEffect = (
     <div className="fixed inset-0 -z-10 overflow-hidden">
@@ -108,7 +144,7 @@ const ProfileCreation = () => {
               src="/lovable-uploads/daefe55a-8953-4582-8fc8-12a66755ac2a.png"
               alt="Fractional First"
               className="h-10 sm:h-12 w-auto cursor-pointer"
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/profile-generator")}
             />
           </div>
 
@@ -116,12 +152,11 @@ const ProfileCreation = () => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate("/profile-generator")}
               className="gap-1 sm:gap-2 text-xs sm:text-sm min-h-[44px] px-3 sm:px-4"
             >
-              <Home className="h-3 w-3 sm:h-4 sm:w-4" />
-              <span className="hidden sm:inline">Back to Dashboard</span>
-              <span className="sm:hidden">Dashboard</span>
+              <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span>Back</span>
             </Button>
           </div>
         </div>
@@ -137,11 +172,11 @@ const ProfileCreation = () => {
                 <StepCard>
                   <StepCardHeader className="px-4 sm:px-6 py-6 sm:py-8">
                     <StepCardTitle className="text-h2 font-urbanist text-center sm:text-left">
-                      Create Your Profile
+                      Generate Your Profile
                     </StepCardTitle>
                     <StepCardDescription className="text-body font-urbanist text-center sm:text-left mt-2">
-                      Tell us about your professional background and career
-                      goals
+                      Create your professional profile to see how it looks
+                      before signing up
                     </StepCardDescription>
                     <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start mt-4 bg-muted/40 px-4 py-3 rounded-md">
                       <Clock className="h-4 w-4 text-muted-foreground mb-1 sm:mb-0 sm:mr-2" />
@@ -193,7 +228,7 @@ const ProfileCreation = () => {
                     <div className="space-y-6 sm:space-y-8">
                       <LinkedInInputSection
                         onLinkedInSubmit={handleLinkedInSubmit}
-                        onResumeFallback={() => {}} // Disabled - no resume flow
+                        onResumeFallback={() => {}} // No-op since resume flow is disabled
                         isSubmitting={submitLinkedInMutation.isPending}
                         hideResumeFallback={true}
                         showSubmitButton={false} // Hide the submit button since we'll use the sticky footer
@@ -230,7 +265,7 @@ const ProfileCreation = () => {
         </div>
       </div>
 
-      {/* FIXED FOOTER WITH CREATE PROFILE BUTTON */}
+      {/* FIXED FOOTER WITH GENERATE PROFILE BUTTON */}
       <div className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-md border-t border-border/40 py-4 px-4 sm:px-6 z-50">
         <div className="container mx-auto max-w-4xl">
           <div className="flex justify-end">
@@ -252,8 +287,8 @@ const ProfileCreation = () => {
               className="font-urbanist min-h-[48px] px-8"
             >
               {submitLinkedInMutation.isPending
-                ? "Creating Profile..."
-                : "Create Profile"}
+                ? "Generating Profile..."
+                : "Generate Profile"}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
@@ -269,4 +304,4 @@ const ProfileCreation = () => {
   )
 }
 
-export default ProfileCreation
+export default ProfileGeneratorCreate
