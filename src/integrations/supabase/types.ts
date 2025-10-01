@@ -466,6 +466,8 @@ export type Database = {
       }
       profiles: {
         Row: {
+          anon_profile_data: Json | null
+          anon_slug: string | null
           created_at: string
           email: string
           first_name: string | null
@@ -482,6 +484,8 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          anon_profile_data?: Json | null
+          anon_slug?: string | null
           created_at?: string
           email: string
           first_name?: string | null
@@ -498,6 +502,8 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          anon_profile_data?: Json | null
+          anon_slug?: string | null
           created_at?: string
           email?: string
           first_name?: string | null
@@ -696,8 +702,10 @@ export type Database = {
         Returns: {
           first_name: string
           last_name: string
+          linkedinurl: string
           profile_data: Json
           profile_slug: string
+          profile_version: string
         }[]
       }
       get_public_profile_by_id: {
@@ -705,8 +713,10 @@ export type Database = {
         Returns: {
           first_name: string
           last_name: string
+          linkedinurl: string
           profile_data: Json
           profile_slug: string
+          profile_version: string
         }[]
       }
       halfvec_avg: {
