@@ -693,6 +693,10 @@ export type Database = {
         Args: { "": string } | { "": unknown }
         Returns: unknown
       }
+      generate_unique_anon_slug: {
+        Args: { p_anon_data: Json; p_user_id: string }
+        Returns: string
+      }
       generate_unique_profile_slug: {
         Args: { p_first_name: string; p_last_name: string; p_user_id: string }
         Returns: string
