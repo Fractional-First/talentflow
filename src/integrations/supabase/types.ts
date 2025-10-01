@@ -701,6 +701,14 @@ export type Database = {
         Args: { p_first_name: string; p_last_name: string; p_user_id: string }
         Returns: string
       }
+      get_anon_profile: {
+        Args: { anon_slug_param: string }
+        Returns: {
+          anon_profile_data: Json
+          anon_slug: string
+          profile_version: string
+        }[]
+      }
       get_public_profile: {
         Args: { profile_slug_param: string }
         Returns: {
