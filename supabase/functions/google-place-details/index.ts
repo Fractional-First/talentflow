@@ -55,7 +55,7 @@ serve(async (req) => {
     console.error('Error in google-place-details function:', error);
     return new Response(
       JSON.stringify({ 
-        error: error.message,
+        error: error instanceof Error ? error.message : 'An unknown error occurred',
         status: 'REQUEST_DENIED'
       }), 
       {
