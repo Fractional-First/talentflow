@@ -39,28 +39,32 @@ const ProfileGenerator = () => {
 
   const features = [
     {
-      icon: <Shield className="h-6 w-6" />,
-      title: "Elevated Profile",
-      description:
-        "Leaders deserve an effective platform to showcase their superpowers in a concise, easy-to-use manner. Generate your Leadership Profile, make it yours, and share it with the world.",
-    },
-    {
       icon: <Zap className="h-6 w-6" />,
       title: "Lightning Fast",
       description:
         "Generate your professional Leadership Profile in under 1 minute using your LinkedIn profile link.",
+      benefit: "Save time with instant profile creation"
+    },
+    {
+      icon: <Shield className="h-6 w-6" />,
+      title: "Elevated Profile",
+      description:
+        "Leaders deserve an effective platform to showcase their superpowers in a concise, easy-to-use manner. Generate your Leadership Profile, make it yours, and share it with the world.",
+      benefit: "Stand out with a professional presence"
     },
     {
       icon: <Target className="h-6 w-6" />,
       title: "AI-Powered Services",
       description:
         "If you're open to new opportunities, get matched with fractional opportunities that align with your purpose and expertise. If you're not, simply keep and maintain your profile. It's yours!",
+      benefit: "Get matched with relevant opportunities"
     },
     {
       icon: <Users className="h-6 w-6" />,
       title: "Leadership Network",
       description:
         "Join a community of top-tier fractional leaders, operators, and advisors and benefit from Fractional First and partner programs as soon as they become available.",
+      benefit: "Connect with 500+ executive leaders"
     },
   ]
 
@@ -102,21 +106,21 @@ const ProfileGenerator = () => {
       <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 flex-1">
         <div className="max-w-6xl mx-auto">
           {/* Hero Section */}
-          <div className="text-center mb-12 sm:mb-16">
-            <Badge variant="secondary" className="mb-4 text-sm">
+          <div className="text-center mb-16 sm:mb-20">
+            <Badge variant="secondary" className="mb-5 text-sm font-semibold bg-primary/10 text-primary border-primary/20 hover:bg-primary/15">
               Try Before You Sign Up
             </Badge>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-urbanist mb-6">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-urbanist mb-6 leading-tight">
               Generate Your
-              <span className="text-primary block">Leadership Profile</span>
+              <span className="text-primary block mt-2">Leadership Profile</span>
             </h1>
-            <p className="text-xl sm:text-2xl text-muted-foreground max-w-3xl mx-auto mb-8 leading-relaxed">
+            <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto mb-10 leading-relaxed">
               Create and share your Fractional First Leadership Profile in less than a minute. No signup required. No gimmicks. Experience the value of a well articulated, personalized Leadership Profile.
             </p>
             <Button
               size="lg"
               onClick={() => navigate("/profile-generator/create")}
-              className="min-h-[56px] px-8 text-lg font-urbanist"
+              className="min-h-[60px] px-10 text-lg font-urbanist shadow-soft hover:shadow-medium transition-all duration-300 hover:scale-105"
             >
               Generate My Profile
               <ArrowRight className="ml-2 h-5 w-5" />
@@ -124,19 +128,22 @@ const ProfileGenerator = () => {
           </div>
 
           {/* Features Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12 sm:mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16 sm:mb-20">
             {features.map((feature, index) => (
               <Card
                 key={index}
-                className="text-center border-2 hover:border-primary/20 transition-colors"
+                className={`text-center border hover:border-primary/30 transition-all duration-300 hover:shadow-soft ${
+                  index % 2 === 0 ? 'bg-muted/30' : 'bg-card'
+                }`}
               >
-                <CardHeader className="pb-4">
-                  <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary mb-3">
+                <CardHeader className="pb-3">
+                  <div className="mx-auto w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center text-primary mb-4 transition-transform duration-300 hover:scale-110">
                     {feature.icon}
                   </div>
-                  <CardTitle className="text-lg font-urbanist">
+                  <CardTitle className="text-lg font-urbanist mb-2">
                     {feature.title}
                   </CardTitle>
+                  <p className="text-xs font-medium text-primary">{feature.benefit}</p>
                 </CardHeader>
                 <CardContent>
                   <CardDescription className="text-sm leading-relaxed">
@@ -148,59 +155,61 @@ const ProfileGenerator = () => {
           </div>
 
           {/* Benefits Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-center mb-12 sm:mb-16">
-            <div>
-              <h2 className="text-3xl sm:text-4xl font-bold font-urbanist mb-6">
-                Why Generate Your Profile First?
-              </h2>
-              <div className="space-y-4">
-                {benefits.map((benefit, index) => (
-                  <div key={index} className="flex items-start gap-3">
-                    <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                    <p className="text-muted-foreground leading-relaxed">
-                      {benefit}
-                    </p>
-                  </div>
-                ))}
+          <div className="bg-muted/20 rounded-2xl p-8 sm:p-10 mb-16 sm:mb-20 border border-border/50">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-12 items-start">
+              <div>
+                <h2 className="text-3xl sm:text-4xl font-bold font-urbanist mb-8">
+                  Why Generate Your Profile First?
+                </h2>
+                <div className="space-y-5">
+                  {benefits.map((benefit, index) => (
+                    <div key={index} className="flex items-start gap-4">
+                      <CheckCircle className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
+                      <p className="text-foreground/80 leading-relaxed">
+                        {benefit}
+                      </p>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-            <div className="bg-muted/40 rounded-2xl p-6 sm:p-8">
-              <h3 className="text-xl font-semibold font-urbanist mb-4">
-                What You'll Get
-              </h3>
-              <ul className="space-y-3 text-sm text-muted-foreground">
-                 <li className="flex items-start gap-2">
-                   <CheckCircle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                   <span>A Leadership Profile extracted from your LinkedIn</span>
-                 </li>
-                 <li className="flex items-start gap-2">
-                   <CheckCircle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                   <span>Skills and expertise automatically categorized</span>
-                 </li>
-                 <li className="flex items-start gap-2">
-                   <CheckCircle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                   <span>Industry and role preferences identified</span>
-                 </li>
-                 <li className="flex items-start gap-2">
-                   <CheckCircle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                   <span>Preview of your experience and superpowers</span>
-                 </li>
-              </ul>
+              <div className="bg-card rounded-xl p-6 sm:p-8 shadow-soft border border-border/50">
+                <h3 className="text-xl font-semibold font-urbanist mb-6">
+                  What You'll Get
+                </h3>
+                <ul className="space-y-4 text-sm text-muted-foreground">
+                   <li className="flex items-start gap-3">
+                     <CheckCircle className="h-4 w-4 text-primary mt-1 flex-shrink-0" />
+                     <span>A Leadership Profile extracted from your LinkedIn</span>
+                   </li>
+                   <li className="flex items-start gap-3">
+                     <CheckCircle className="h-4 w-4 text-primary mt-1 flex-shrink-0" />
+                     <span>Skills and expertise automatically categorized</span>
+                   </li>
+                   <li className="flex items-start gap-3">
+                     <CheckCircle className="h-4 w-4 text-primary mt-1 flex-shrink-0" />
+                     <span>Industry and role preferences identified</span>
+                   </li>
+                   <li className="flex items-start gap-3">
+                     <CheckCircle className="h-4 w-4 text-primary mt-1 flex-shrink-0" />
+                     <span>Preview of your experience and superpowers</span>
+                   </li>
+                </ul>
+              </div>
             </div>
           </div>
 
           {/* CTA Section */}
-          <div className="text-center bg-gradient-to-r from-primary/5 to-primary/10 rounded-2xl p-8 sm:p-12">
-            <h2 className="text-2xl sm:text-3xl font-bold font-urbanist mb-4">
+          <div className="text-center bg-gradient-to-br from-primary/8 via-primary/5 to-primary/10 rounded-2xl p-10 sm:p-14 shadow-soft border border-primary/10">
+            <h2 className="text-3xl sm:text-4xl font-bold font-urbanist mb-5">
               Ready to See Your Profile?
             </h2>
-            <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
+            <p className="text-muted-foreground mb-8 max-w-2xl mx-auto text-lg leading-relaxed">
               It takes less than a minute to generate your professional profile. No commitment required — just enter your LinkedIn URL and watch the magic happen.
             </p>
             <Button
               size="lg"
               onClick={() => navigate("/profile-generator/create")}
-              className="min-h-[56px] px-8 text-lg font-urbanist"
+              className="min-h-[60px] px-10 text-lg font-urbanist shadow-soft hover:shadow-medium transition-all duration-300 hover:scale-105"
             >
               Start Generating
               <ArrowRight className="ml-2 h-5 w-5" />
