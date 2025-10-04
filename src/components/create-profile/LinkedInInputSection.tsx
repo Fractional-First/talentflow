@@ -74,7 +74,9 @@ export const LinkedInInputSection = ({
               LinkedIn Profile
             </h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Enter your LinkedIn username or URL to automatically generate your profile. This is the fastest way to get started — no uploads required!
+              Enter your LinkedIn username or URL to automatically generate your profile.
+              <br />
+              This is the fastest way to get started — no uploads required!
             </p>
           </div>
         </div>
