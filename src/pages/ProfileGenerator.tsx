@@ -138,10 +138,9 @@ const ProfileGenerator = () => {
                   <div className="mx-auto w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center text-primary mb-4 transition-transform duration-300 hover:scale-110">
                     {feature.icon}
                   </div>
-                  <CardTitle className="text-lg font-urbanist mb-2">
+                  <CardTitle className="text-lg font-urbanist">
                     {feature.title}
                   </CardTitle>
-                  <p className="text-xs font-medium text-primary">{feature.benefit}</p>
                 </CardHeader>
                 <CardContent>
                   <CardDescription className="text-sm leading-relaxed">
