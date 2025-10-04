@@ -9,11 +9,17 @@ import {
 import { Badge } from "@/components/ui/badge"
 import {
   ArrowRight,
-  CheckCircle,
   Users,
   Zap,
   Target,
   Shield,
+  Eye,
+  Sparkles,
+  Network,
+  Award,
+  Layers,
+  Compass,
+  Star,
 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { useEffect } from "react"
@@ -68,11 +74,42 @@ const ProfileGenerator = () => {
     },
   ]
 
-  const benefits = [
-    "No signup required to see your profile",
-    "Preview your Leadership Profile before committing to publish it or signing up",
-    "Instant access to our opportunity-matching algorithm",
-    "Join 500+ fractional executives already on the platform",
+  const advantages = [
+    {
+      icon: <Shield className="h-6 w-6" />,
+      text: "No signup required to see your profile"
+    },
+    {
+      icon: <Eye className="h-6 w-6" />,
+      text: "Preview your Leadership Profile before committing to publish it or signing up"
+    },
+    {
+      icon: <Sparkles className="h-6 w-6" />,
+      text: "Instant access to our opportunity-matching algorithm"
+    },
+    {
+      icon: <Network className="h-6 w-6" />,
+      text: "Join 500+ fractional executives already on the platform"
+    },
+  ]
+
+  const whatYouGet = [
+    {
+      icon: <Award className="h-6 w-6" />,
+      text: "A Leadership Profile extracted from your LinkedIn"
+    },
+    {
+      icon: <Layers className="h-6 w-6" />,
+      text: "Skills and expertise automatically categorized"
+    },
+    {
+      icon: <Compass className="h-6 w-6" />,
+      text: "Industry and role preferences identified"
+    },
+    {
+      icon: <Star className="h-6 w-6" />,
+      text: "Preview of your experience and superpowers"
+    },
   ]
 
   return (
@@ -152,43 +189,47 @@ const ProfileGenerator = () => {
           </div>
 
           {/* Benefits Section */}
-          <div className="bg-muted/20 rounded-2xl p-8 sm:p-10 lg:p-12 mb-16 sm:mb-20 border border-border/50">
-            <h2 className="text-3xl sm:text-4xl lg:text-[2.5rem] font-bold font-urbanist mb-10 lg:mb-12 whitespace-nowrap lg:whitespace-normal text-center lg:text-left">
+          <div className="bg-gradient-to-br from-muted/30 via-background to-muted/20 rounded-3xl p-10 sm:p-12 lg:p-16 mb-16 sm:mb-20 border border-border/40 shadow-soft">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-urbanist mb-12 lg:mb-16 text-center">
               Why Generate Your Profile First?
             </h2>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-              <div className="space-y-5">
-                {benefits.map((benefit, index) => (
-                  <div key={index} className="flex items-start gap-4 bg-background/40 rounded-lg p-4 border border-border/30">
-                    <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                    <p className="text-foreground/90 leading-relaxed font-medium">
-                      {benefit}
-                    </p>
-                  </div>
-                ))}
-              </div>
-              <div className="bg-card rounded-xl p-6 sm:p-8 shadow-soft border border-primary/20">
-                <h3 className="text-xl sm:text-2xl font-semibold font-urbanist mb-6 text-primary">
-                  What You'll Get
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
+              {/* Your Advantages */}
+              <div>
+                <h3 className="text-2xl sm:text-3xl font-semibold font-urbanist mb-8 text-foreground">
+                  Your Advantages
                 </h3>
-                <ul className="space-y-4">
-                   <li className="flex items-start gap-3 pb-4 border-b border-border/50 last:border-0 last:pb-0">
-                     <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                     <span className="text-foreground/80 leading-relaxed">A Leadership Profile extracted from your LinkedIn</span>
-                   </li>
-                   <li className="flex items-start gap-3 pb-4 border-b border-border/50 last:border-0 last:pb-0">
-                     <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                     <span className="text-foreground/80 leading-relaxed">Skills and expertise automatically categorized</span>
-                   </li>
-                   <li className="flex items-start gap-3 pb-4 border-b border-border/50 last:border-0 last:pb-0">
-                     <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                     <span className="text-foreground/80 leading-relaxed">Industry and role preferences identified</span>
-                   </li>
-                   <li className="flex items-start gap-3 pb-4 border-b border-border/50 last:border-0 last:pb-0">
-                     <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                     <span className="text-foreground/80 leading-relaxed">Preview of your experience and superpowers</span>
-                   </li>
-                </ul>
+                <div className="space-y-6">
+                  {advantages.map((advantage, index) => (
+                    <div key={index} className="flex items-start gap-5 group">
+                      <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0 transition-all duration-300 group-hover:bg-primary/20 group-hover:scale-110">
+                        {advantage.icon}
+                      </div>
+                      <p className="text-foreground/85 leading-relaxed pt-2 text-lg">
+                        {advantage.text}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* What You Get */}
+              <div>
+                <h3 className="text-2xl sm:text-3xl font-semibold font-urbanist mb-8 text-foreground">
+                  What You Get
+                </h3>
+                <div className="space-y-6">
+                  {whatYouGet.map((item, index) => (
+                    <div key={index} className="flex items-start gap-5 group">
+                      <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0 transition-all duration-300 group-hover:bg-primary/20 group-hover:scale-110">
+                        {item.icon}
+                      </div>
+                      <p className="text-foreground/85 leading-relaxed pt-2 text-lg">
+                        {item.text}
+                      </p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
