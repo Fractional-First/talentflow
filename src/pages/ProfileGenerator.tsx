@@ -14,6 +14,13 @@ import {
   Zap,
   Target,
   Shield,
+  Eye,
+  Sparkles,
+  TrendingUp,
+  Award,
+  Layers,
+  Compass,
+  Star,
 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { useEffect } from "react"
@@ -69,17 +76,41 @@ const ProfileGenerator = () => {
   ]
 
   const advantages = [
-    "No signup required to see your profile",
-    "Preview your Leadership Profile before committing to publish it or signing up",
-    "Instant access to our opportunity-matching algorithm",
-    "Join 500+ fractional executives already on the platform",
+    {
+      icon: <Shield className="h-5 w-5" />,
+      text: "No signup required to see your profile"
+    },
+    {
+      icon: <Eye className="h-5 w-5" />,
+      text: "Preview your Leadership Profile before committing to publish it or signing up"
+    },
+    {
+      icon: <Zap className="h-5 w-5" />,
+      text: "Instant access to our opportunity-matching algorithm"
+    },
+    {
+      icon: <Users className="h-5 w-5" />,
+      text: "Join 500+ fractional executives already on the platform"
+    },
   ]
 
   const whatYouGet = [
-    "A Leadership Profile extracted from your LinkedIn",
-    "Skills and expertise automatically categorized",
-    "Industry and role preferences identified",
-    "Preview of your experience and superpowers",
+    {
+      icon: <Award className="h-5 w-5" />,
+      text: "A Leadership Profile extracted from your LinkedIn"
+    },
+    {
+      icon: <Layers className="h-5 w-5" />,
+      text: "Skills and expertise automatically categorized"
+    },
+    {
+      icon: <Compass className="h-5 w-5" />,
+      text: "Industry and role preferences identified"
+    },
+    {
+      icon: <Star className="h-5 w-5" />,
+      text: "Preview of your experience and superpowers"
+    },
   ]
 
   return (
@@ -171,8 +202,10 @@ const ProfileGenerator = () => {
                 <ul className="space-y-4">
                   {advantages.map((advantage, index) => (
                     <li key={index} className="flex items-start gap-3 pb-4 border-b border-border/50 last:border-0 last:pb-0">
-                      <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                      <span className="text-foreground/80 leading-relaxed">{advantage}</span>
+                      <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+                        {advantage.icon}
+                      </div>
+                      <span className="text-foreground/80 leading-relaxed pt-1.5">{advantage.text}</span>
                     </li>
                   ))}
                 </ul>
@@ -184,8 +217,10 @@ const ProfileGenerator = () => {
                 <ul className="space-y-4">
                   {whatYouGet.map((item, index) => (
                     <li key={index} className="flex items-start gap-3 pb-4 border-b border-border/50 last:border-0 last:pb-0">
-                      <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                      <span className="text-foreground/80 leading-relaxed">{item}</span>
+                      <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+                        {item.icon}
+                      </div>
+                      <span className="text-foreground/80 leading-relaxed pt-1.5">{item.text}</span>
                     </li>
                   ))}
                 </ul>
