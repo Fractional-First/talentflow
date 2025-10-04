@@ -76,22 +76,10 @@ const ProfileGenerator = () => {
   ]
 
   const advantages = [
-    {
-      icon: <Shield className="h-5 w-5" />,
-      text: "No signup required to see your profile"
-    },
-    {
-      icon: <Eye className="h-5 w-5" />,
-      text: "Preview your Leadership Profile before committing to publish it or signing up"
-    },
-    {
-      icon: <Zap className="h-5 w-5" />,
-      text: "Instant access to our opportunity-matching algorithm"
-    },
-    {
-      icon: <Users className="h-5 w-5" />,
-      text: "Join 500+ fractional executives already on the platform"
-    },
+    "No signup required to see your profile",
+    "Preview your Leadership Profile before committing to publish it or signing up",
+    "Instant access to our opportunity-matching algorithm",
+    "Join 500+ fractional executives already on the platform",
   ]
 
   const whatYouGet = [
@@ -202,10 +190,8 @@ const ProfileGenerator = () => {
                 <ul className="space-y-4">
                   {advantages.map((advantage, index) => (
                     <li key={index} className="flex items-start gap-3 pb-4 border-b border-border/50 last:border-0 last:pb-0">
-                      <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
-                        {advantage.icon}
-                      </div>
-                      <span className="text-foreground/80 leading-relaxed pt-1.5">{advantage.text}</span>
+                      <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                      <span className="text-foreground/80 leading-relaxed">{advantage}</span>
                     </li>
                   ))}
                 </ul>
