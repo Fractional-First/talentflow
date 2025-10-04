@@ -63,48 +63,9 @@ export const LinkedInInputSection = ({
 
   return (
     <div className="space-y-6 sm:space-y-8">
-      {/* INSTRUCTIONAL HELPER TEXT */}
-      <Alert
-        className="mb-4 sm:mb-6 bg-card border-2 sm:border"
-        style={{
-          borderColor: "#BFE3DD",
-        }}
-      >
-        <div className="flex gap-3 items-start">
-          <div className="flex-shrink-0">
-            <Linkedin className="h-5 w-5 text-[#0A66C2]" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <AlertTitle
-              className="mb-2 sm:mb-1 font-semibold text-base sm:text-sm"
-              style={{
-                color: "#449889",
-              }}
-            >
-              Create Profile from LinkedIn
-            </AlertTitle>
-            <AlertDescription
-              className="text-sm leading-relaxed"
-              style={{
-                color: "#1A1A1A",
-              }}
-            >
-              <p className="mb-3 sm:mb-1">
-                Enter your LinkedIn username or URL and we'll automatically
-                extract your professional information to create your profile.
-              </p>
-              <p className="text-xs text-muted-foreground">
-                This is the fastest way to get started - no file uploads
-                required!
-              </p>
-            </AlertDescription>
-          </div>
-        </div>
-      </Alert>
-
-      {/* LINKEDIN INPUT FORM */}
+      {/* UNIFIED LINKEDIN MODULE */}
       <div className="border rounded-lg p-4 sm:p-6">
-        <div className="flex items-start gap-3 mb-4 sm:mb-6">
+        <div className="flex items-start gap-3 mb-4">
           <div className="bg-primary/10 p-2 sm:p-3 rounded-full flex-shrink-0">
             <Linkedin className="h-6 w-6 text-[#0A66C2]" />
           </div>
@@ -112,9 +73,9 @@ export const LinkedInInputSection = ({
             <h3 className="font-medium text-base sm:text-lg mb-1">
               LinkedIn Profile
             </h3>
-            <div className="text-sm text-muted-foreground leading-relaxed">
-              Enter your LinkedIn username or full URL
-            </div>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Enter your LinkedIn username or URL to automatically generate your profile
+            </p>
           </div>
         </div>
 
