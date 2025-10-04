@@ -132,9 +132,7 @@ const ProfileGenerator = () => {
             {features.map((feature, index) => (
               <Card
                 key={index}
-                className={`text-center border hover:border-primary/30 transition-all duration-300 hover:shadow-soft ${
-                  index % 2 === 0 ? 'bg-muted/30' : 'bg-card'
-                }`}
+                className="text-center border hover:border-primary/30 transition-all duration-300 hover:shadow-soft bg-muted/30"
               >
                 <CardHeader className="pb-3">
                   <div className="mx-auto w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center text-primary mb-4 transition-transform duration-300 hover:scale-110">
