@@ -68,11 +68,18 @@ const ProfileGenerator = () => {
     },
   ]
 
-  const benefits = [
+  const advantages = [
     "No signup required to see your profile",
     "Preview your Leadership Profile before committing to publish it or signing up",
     "Instant access to our opportunity-matching algorithm",
     "Join 500+ fractional executives already on the platform",
+  ]
+
+  const whatYouGet = [
+    "A Leadership Profile extracted from your LinkedIn",
+    "Skills and expertise automatically categorized",
+    "Industry and role preferences identified",
+    "Preview of your experience and superpowers",
   ]
 
   return (
@@ -153,41 +160,34 @@ const ProfileGenerator = () => {
 
           {/* Benefits Section */}
           <div className="bg-muted/20 rounded-2xl p-8 sm:p-10 lg:p-12 mb-16 sm:mb-20 border border-border/50">
-            <h2 className="text-3xl sm:text-4xl lg:text-[2.5rem] font-bold font-urbanist mb-10 lg:mb-12 whitespace-nowrap lg:whitespace-normal text-center lg:text-left">
+            <h2 className="text-3xl sm:text-4xl lg:text-[2.5rem] font-bold font-urbanist mb-10 lg:mb-12 text-center">
               Why Generate Your Profile First?
             </h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-              <div className="space-y-5">
-                {benefits.map((benefit, index) => (
-                  <div key={index} className="flex items-start gap-4 bg-background/40 rounded-lg p-4 border border-border/30">
-                    <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                    <p className="text-foreground/90 leading-relaxed font-medium">
-                      {benefit}
-                    </p>
-                  </div>
-                ))}
+              <div className="bg-card rounded-xl p-6 sm:p-8 shadow-soft border border-primary/20">
+                <h3 className="text-xl sm:text-2xl font-semibold font-urbanist mb-6 text-primary">
+                  Advantages
+                </h3>
+                <ul className="space-y-4">
+                  {advantages.map((advantage, index) => (
+                    <li key={index} className="flex items-start gap-3 pb-4 border-b border-border/50 last:border-0 last:pb-0">
+                      <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                      <span className="text-foreground/80 leading-relaxed">{advantage}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
               <div className="bg-card rounded-xl p-6 sm:p-8 shadow-soft border border-primary/20">
                 <h3 className="text-xl sm:text-2xl font-semibold font-urbanist mb-6 text-primary">
                   What You'll Get
                 </h3>
                 <ul className="space-y-4">
-                   <li className="flex items-start gap-3 pb-4 border-b border-border/50 last:border-0 last:pb-0">
-                     <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                     <span className="text-foreground/80 leading-relaxed">A Leadership Profile extracted from your LinkedIn</span>
-                   </li>
-                   <li className="flex items-start gap-3 pb-4 border-b border-border/50 last:border-0 last:pb-0">
-                     <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                     <span className="text-foreground/80 leading-relaxed">Skills and expertise automatically categorized</span>
-                   </li>
-                   <li className="flex items-start gap-3 pb-4 border-b border-border/50 last:border-0 last:pb-0">
-                     <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                     <span className="text-foreground/80 leading-relaxed">Industry and role preferences identified</span>
-                   </li>
-                   <li className="flex items-start gap-3 pb-4 border-b border-border/50 last:border-0 last:pb-0">
-                     <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                     <span className="text-foreground/80 leading-relaxed">Preview of your experience and superpowers</span>
-                   </li>
+                  {whatYouGet.map((item, index) => (
+                    <li key={index} className="flex items-start gap-3 pb-4 border-b border-border/50 last:border-0 last:pb-0">
+                      <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                      <span className="text-foreground/80 leading-relaxed">{item}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
