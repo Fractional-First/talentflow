@@ -107,9 +107,9 @@ const ProfileGenerator = () => {
         <div className="max-w-6xl mx-auto">
           {/* Hero Section */}
           <div className="text-center mb-16 sm:mb-20">
-            <Badge variant="secondary" className="mb-5 text-sm font-semibold bg-primary/10 text-primary border-primary/20 hover:bg-primary/15">
+            <p className="mb-5 text-sm font-semibold text-primary tracking-wide uppercase">
               Try Before You Sign Up
-            </Badge>
+            </p>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-urbanist mb-6 leading-tight">
               Generate Your
               <span className="text-primary block mt-2">Leadership Profile</span>
