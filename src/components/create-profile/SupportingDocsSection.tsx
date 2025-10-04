@@ -165,7 +165,7 @@ export const SupportingDocsSection = ({
               {type === "document" ? (
                 <div>
                   <Label htmlFor="doc-upload">Upload File*</Label>
-                  <div className="mt-1 flex items-center">
+                  <div className="flex items-center">
                     <Button
                       variant="outline"
                       onClick={() =>
