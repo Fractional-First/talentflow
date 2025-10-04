@@ -122,7 +122,7 @@ const ProfileGenerator = () => {
               onClick={() => navigate("/profile-generator/create")}
               className="min-h-[60px] px-10 text-lg font-urbanist shadow-soft hover:shadow-medium transition-all duration-300 hover:scale-105"
             >
-              Generate My Profile
+              Generate Your Profile
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
