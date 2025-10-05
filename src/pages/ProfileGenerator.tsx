@@ -58,7 +58,7 @@ const ProfileGenerator = () => {
       description: (
         <>
           Leaders deserve an effective platform to showcase their superpowers in a concise, easy-to-use manner.
-          <br />
+          <br /><br />
           Generate your Leadership Profile, make it yours, and share it with the world.
         </>
       ),
