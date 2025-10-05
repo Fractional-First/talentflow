@@ -62,8 +62,13 @@ const ProfileGenerator = () => {
     {
       icon: <Target className="h-6 w-6" />,
       title: "AI-Powered Services",
-      description:
-        "If you're open to new opportunities, get matched with fractional opportunities that align with your purpose and expertise. If you're not, simply keep and maintain your profile. It's yours!",
+      description: (
+        <>
+          If you're open to new opportunities, get matched with fractional opportunities that align with your purpose and expertise.
+          <br /><br />
+          If you're not, simply keep and maintain your profile. It's yours!
+        </>
+      ),
       benefit: "Get matched with relevant opportunities"
     },
     {
