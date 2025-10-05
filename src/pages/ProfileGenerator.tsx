@@ -141,7 +141,7 @@ const ProfileGenerator = () => {
               <span className="text-primary block mt-2">Leadership Profile</span>
             </h1>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto mb-10 leading-relaxed">
-              Create and share your Fractional First Leadership Profile in less than a minute. No signup required. No gimmicks. Experience the value of a well articulated, personalized Leadership Profile.
+              Create and share your Fractional First Leadership Profile in less than a minute — no signup, no gimmicks. Simply enter your LinkedIn URL to generate a personalized, well-articulated Leadership Profile. Preview your profile before committing to publish or sign up.
             </p>
             <Button
               size="lg"
