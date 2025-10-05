@@ -55,8 +55,13 @@ const ProfileGenerator = () => {
     {
       icon: <Shield className="h-6 w-6" />,
       title: "Elevated Profile",
-      description:
-        "Leaders deserve an effective platform to showcase their superpowers in a concise, easy-to-use manner. Generate your Leadership Profile, make it yours, and share it with the world.",
+      description: (
+        <>
+          Leaders deserve an effective platform to showcase their superpowers in a concise, easy-to-use manner.
+          <br />
+          Generate your Leadership Profile, make it yours, and share it with the world.
+        </>
+      ),
       benefit: "Stand out with a professional presence"
     },
     {
