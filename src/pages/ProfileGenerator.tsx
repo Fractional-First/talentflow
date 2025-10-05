@@ -65,7 +65,7 @@ const ProfileGenerator = () => {
       description: (
         <>
           If you're open to new opportunities, get matched with fractional opportunities that align with your purpose and expertise.
-          <br />
+          <br /><br />
           If you're not, simply keep and maintain your profile. It's yours!
         </>
       ),
