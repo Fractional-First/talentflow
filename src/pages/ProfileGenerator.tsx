@@ -95,7 +95,7 @@ const ProfileGenerator = () => {
   const whatYouGet = [
     {
       icon: <Award className="h-5 w-5" />,
-      text: "A Leadership Profile extracted from your LinkedIn"
+      text: "A Leadership Profile generated from your LinkedIn URL"
     },
     {
       icon: <Layers className="h-5 w-5" />,
