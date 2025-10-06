@@ -87,7 +87,7 @@ const ProfileGenerator = () => {
 
   const advantages = [
     "No signup required to see your profile",
-    "Preview your Leadership Profile before committing to publish it or signing up",
+    "Preview your Leadership Profile before committing to publishing or signing up",
     "Instant access to our opportunity-matching algorithm",
     "Join 500+ fractional executives already on the platform",
   ]
