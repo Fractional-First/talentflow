@@ -94,7 +94,7 @@ export const SupportingDocsSection = ({
             <Paperclip className="h-6 w-6 text-primary" />
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="font-medium">
+            <h3 className="font-medium text-base sm:text-lg mb-1">
               Supporting Documents (Optional)
             </h3>
             <p className="text-sm text-muted-foreground">
@@ -165,7 +165,7 @@ export const SupportingDocsSection = ({
               {type === "document" ? (
                 <div>
                   <Label htmlFor="doc-upload">Upload File*</Label>
-                  <div className="mt-1 flex items-center">
+                  <div className="flex items-center">
                     <Button
                       variant="outline"
                       onClick={() =>

@@ -1,4 +1,3 @@
-
 import {
   StepCard,
   StepCardContent,
@@ -13,13 +12,42 @@ import { LinkedInSignUp } from "@/components/auth/LinkedInSignUp"
 import { SignUpForm } from "@/components/auth/SignUpForm"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useSignUp } from "@/queries/auth/useSignUp"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
+import { profileStorage } from "@/utils/profileStorage"
+import { useEffect, useState } from "react"
 
 const SignUp = () => {
   const navigate = useNavigate()
   const { signUp, loading } = useSignUp()
+  const [profileData, setProfileData] = useState<any>(null)
+
+  useEffect(() => {
+    // Check if we have generated profile data
+    const generatedProfile = profileStorage.get()
+    setProfileData(generatedProfile)
+  }, [])
+
+  // Extract name from profile data
+  const getInitialName = (fullName: string) => {
+    if (!fullName) return ""
+    const nameParts = fullName.trim().split(" ")
+    return nameParts[0] || ""
+  }
+
+  const getInitialLastName = (fullName: string) => {
+    if (!fullName) return ""
+    const nameParts = fullName.trim().split(" ")
+    return nameParts.slice(1).join(" ") || ""
+  }
+
+  // Debug the extracted names
+  const initialFirstName = profileData ? getInitialName(profileData.name) : ""
+  const initialLastName = profileData
+    ? getInitialLastName(profileData.name)
+    : ""
 
   const handleSignUp = async (
     email: string,
@@ -58,6 +86,17 @@ const SignUp = () => {
           </StepCardHeader>
 
           <StepCardContent>
+            {profileData && (
+              <Alert className="mb-6 border-green-200 bg-green-50">
+                <AlertDescription className="text-green-800">
+                  <strong>Great! Your profile is ready.</strong> Once you sign
+                  up, you'll be able to edit your profile, set your work
+                  preferences, and be eligible to be connected to opportunities
+                  for work.
+                </AlertDescription>
+              </Alert>
+            )}
+
             <LinkedInSignUp isSubmitting={loading} />
 
             <div className="relative my-4">
@@ -67,7 +106,12 @@ const SignUp = () => {
               </span>
             </div>
 
-            <SignUpForm onSubmit={handleSignUp} isSubmitting={loading} />
+            <SignUpForm
+              onSubmit={handleSignUp}
+              isSubmitting={loading}
+              initialFirstName={initialFirstName}
+              initialLastName={initialLastName}
+            />
           </StepCardContent>
 
           <StepCardFooter className="justify-center">
