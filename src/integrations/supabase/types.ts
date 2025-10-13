@@ -469,7 +469,7 @@ export type Database = {
           anon_profile_data: Json | null
           anon_slug: string | null
           created_at: string
-          email: string
+          email: string | null
           first_name: string | null
           id: string
           ispublished: boolean | null
@@ -480,6 +480,7 @@ export type Database = {
           profile_data: Json
           profile_data_original: Json | null
           profile_slug: string
+          profile_type: Database["public"]["Enums"]["profile_type"]
           profile_version: string
           updated_at: string
         }
@@ -487,7 +488,7 @@ export type Database = {
           anon_profile_data?: Json | null
           anon_slug?: string | null
           created_at?: string
-          email: string
+          email?: string | null
           first_name?: string | null
           id: string
           ispublished?: boolean | null
@@ -498,6 +499,7 @@ export type Database = {
           profile_data?: Json
           profile_data_original?: Json | null
           profile_slug: string
+          profile_type?: Database["public"]["Enums"]["profile_type"]
           profile_version?: string
           updated_at?: string
         }
@@ -505,7 +507,7 @@ export type Database = {
           anon_profile_data?: Json | null
           anon_slug?: string | null
           created_at?: string
-          email?: string
+          email?: string | null
           first_name?: string | null
           id?: string
           ispublished?: boolean | null
@@ -516,6 +518,7 @@ export type Database = {
           profile_data?: Json
           profile_data_original?: Json | null
           profile_slug?: string
+          profile_type?: Database["public"]["Enums"]["profile_type"]
           profile_version?: string
           updated_at?: string
         }
@@ -838,6 +841,7 @@ export type Database = {
         | "PROFILE_CONFIRMED"
         | "PREFERENCES_SET"
         | "SET_PASSWORD"
+      profile_type: "authenticated" | "guest"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -974,6 +978,7 @@ export const Constants = {
         "PREFERENCES_SET",
         "SET_PASSWORD",
       ],
+      profile_type: ["authenticated", "guest"],
     },
   },
 } as const
