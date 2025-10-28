@@ -268,6 +268,26 @@ const EditProfile = () => {
                   placeholder="Certification"
                   addLabel="Add Certification"
                 />
+
+                {/* Education - Desktop only - MOCK DATA */}
+                <EditableArraySection
+                  content="List your educational background including degrees, institutions, and graduation years"
+                  title="Education"
+                  items={[
+                    "MBA, Harvard Business School, 2015",
+                    "B.S. Computer Science, Stanford University, 2010-2014",
+                    "Certified Scrum Master (CSM), Scrum Alliance, 2018"
+                  ]}
+                  isEditing={false}
+                  onEditToggle={() => {
+                    console.log("Education edit - not yet implemented")
+                  }}
+                  onChange={(newArr) => {
+                    console.log("Education changed:", newArr)
+                  }}
+                  placeholder="Degree, Institution, Year"
+                  addLabel="Add Education"
+                />
               </div>
             </div>
 
@@ -436,6 +456,26 @@ const EditProfile = () => {
                   }
                   placeholder="Certification"
                   addLabel="Add Certification"
+                />
+
+                {/* Education - Mobile/Tablet only - MOCK DATA */}
+                <EditableArraySection
+                  content="List your educational background including degrees, institutions, and graduation years"
+                  title="Education"
+                  items={[
+                    "MBA, Harvard Business School, 2015",
+                    "B.S. Computer Science, Stanford University, 2010-2014",
+                    "Certified Scrum Master (CSM), Scrum Alliance, 2018"
+                  ]}
+                  isEditing={false}
+                  onEditToggle={() => {
+                    console.log("Education edit - not yet implemented")
+                  }}
+                  onChange={(newArr) => {
+                    console.log("Education changed:", newArr)
+                  }}
+                  placeholder="Degree, Institution, Year"
+                  addLabel="Add Education"
                 />
               </div>
             </div>
