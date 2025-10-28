@@ -180,6 +180,29 @@ const EditProfile = () => {
                 displayType="bullets"
               />
 
+              {/* Education & Certifications */}
+              <EditableArraySection
+                content="List your educational background and professional certifications"
+                title="Education & Certifications"
+                items={[
+                  "MBA, Harvard Business School, 2015",
+                  "B.S. Computer Science, Stanford University, 2010-2014",
+                  "Certified Scrum Master (CSM), Scrum Alliance, 2018",
+                  "PMP Certification, Project Management Institute, 2019",
+                  ...(formData.certifications || [])
+                ]}
+                isEditing={false}
+                onEditToggle={() => {
+                  console.log("Education & Certifications edit - not yet implemented")
+                }}
+                onChange={(newArr) => {
+                  console.log("Education & Certifications changed:", newArr)
+                }}
+                placeholder="Degree/Certification, Institution, Year"
+                addLabel="Add Entry"
+                displayType="bullets"
+              />
+
               {/* Focus Areas - Desktop only */}
               <div className="hidden lg:block">
                 <EditableArraySection
@@ -254,41 +277,6 @@ const EditProfile = () => {
                 />
               </div>
 
-              {/* Certifications - Desktop only */}
-              <div className="hidden lg:block">
-                <EditableArraySection
-                  content="List your relevant certifications and professional credentials"
-                  title="Certifications"
-                  items={formData.certifications || []}
-                  isEditing={editStates.certifications}
-                  onEditToggle={() => toggleEdit("certifications")}
-                  onChange={(newArr) =>
-                    handleInputChange("certifications", newArr)
-                  }
-                  placeholder="Certification"
-                  addLabel="Add Certification"
-                />
-
-                {/* Education - Desktop only - MOCK DATA */}
-                <EditableArraySection
-                  content="List your educational background including degrees, institutions, and graduation years"
-                  title="Education"
-                  items={[
-                    "MBA, Harvard Business School, 2015",
-                    "B.S. Computer Science, Stanford University, 2010-2014",
-                    "Certified Scrum Master (CSM), Scrum Alliance, 2018"
-                  ]}
-                  isEditing={false}
-                  onEditToggle={() => {
-                    console.log("Education edit - not yet implemented")
-                  }}
-                  onChange={(newArr) => {
-                    console.log("Education changed:", newArr)
-                  }}
-                  placeholder="Degree, Institution, Year"
-                  addLabel="Add Education"
-                />
-              </div>
             </div>
 
             {/* Right Column - Main Content */}
@@ -444,39 +432,6 @@ const EditProfile = () => {
                   addLabel="Add Interest"
                 />
 
-                {/* Certifications - Mobile/Tablet only */}
-                <EditableArraySection
-                  content="List your relevant certifications and professional credentials"
-                  title="Certifications"
-                  items={formData.certifications || []}
-                  isEditing={editStates.certifications}
-                  onEditToggle={() => toggleEdit("certifications")}
-                  onChange={(newArr) =>
-                    handleInputChange("certifications", newArr)
-                  }
-                  placeholder="Certification"
-                  addLabel="Add Certification"
-                />
-
-                {/* Education - Mobile/Tablet only - MOCK DATA */}
-                <EditableArraySection
-                  content="List your educational background including degrees, institutions, and graduation years"
-                  title="Education"
-                  items={[
-                    "MBA, Harvard Business School, 2015",
-                    "B.S. Computer Science, Stanford University, 2010-2014",
-                    "Certified Scrum Master (CSM), Scrum Alliance, 2018"
-                  ]}
-                  isEditing={false}
-                  onEditToggle={() => {
-                    console.log("Education edit - not yet implemented")
-                  }}
-                  onChange={(newArr) => {
-                    console.log("Education changed:", newArr)
-                  }}
-                  placeholder="Degree, Institution, Year"
-                  addLabel="Add Education"
-                />
               </div>
             </div>
           </div>
