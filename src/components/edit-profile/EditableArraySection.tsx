@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Edit, Plus, X } from "lucide-react"
@@ -43,7 +43,7 @@ export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
     setLocalItems(items || [])
   }, [items])
 
-  // Debounce changes
+  // Debounce changes while editing
   useEffect(() => {
     if (!isEditing) return
     const timeout = setTimeout(() => {
@@ -51,6 +51,26 @@ export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
     }, 300)
     return () => clearTimeout(timeout)
   }, [localItems, isEditing, onChange])
+
+  // Flush pending changes when leaving edit mode
+  const prevIsEditingRef = useRef(isEditing)
+  useEffect(() => {
+    const wasEditing = prevIsEditingRef.current
+    if (wasEditing && !isEditing) {
+      onChange(localItems)
+    }
+    prevIsEditingRef.current = isEditing
+  }, [isEditing, localItems, onChange])
+
+  // Flush on unmount if still editing
+  useEffect(() => {
+    return () => {
+      if (prevIsEditingRef.current) {
+        onChange(localItems)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleItemChange = (index: number, value: string) => {
     setLocalItems((prev) => {
@@ -68,6 +88,13 @@ export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
     setLocalItems((prev) => prev.filter((_, i) => i !== index))
   }
 
+  const handleEditButtonClick = () => {
+    if (isEditing) {
+      onChange(localItems)
+    }
+    onEditToggle()
+  }
+
   const sectionContent = (
     <div className={clsx("bg-white rounded-lg border", className)}>
       <div className="rounded-t-lg flex items-center justify-between p-1 pl-4 bg-[#449889] text-white">
@@ -76,7 +103,7 @@ export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
           <Button
             variant="ghost"
             size="sm"
-            onClick={onEditToggle}
+            onClick={handleEditButtonClick}
             className="hover:bg-white/20 text-white"
           >
             <Edit className="h-4 w-4" />
