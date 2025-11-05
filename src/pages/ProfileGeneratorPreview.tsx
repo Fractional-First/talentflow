@@ -175,6 +175,22 @@ const ProfileGeneratorPreview = () => {
               readOnly={true}
             />
 
+            {/* Education (0.3+) */}
+            {(!profile.profile_version || profile.profile_version >= "0.3") && (
+              <EditableArraySection
+                content=""
+                title="Education"
+                items={profile.education || []}
+                isEditing={false}
+                onEditToggle={() => {}} // No-op for read-only
+                onChange={() => {}} // No-op for read-only
+                placeholder="Education"
+                addLabel="Add Education"
+                displayType="bullets"
+                readOnly={true}
+              />
+            )}
+
             {/* Focus Areas */}
             <EditableArraySection
               content=""
@@ -241,17 +257,19 @@ const ProfileGeneratorPreview = () => {
             />
 
             {/* Certifications */}
-            <EditableArraySection
-              content=""
-              title="Certifications"
-              items={profile.certifications || []}
-              isEditing={false}
-              onEditToggle={() => {}} // No-op for read-only
-              onChange={() => {}} // No-op for read-only
-              placeholder="Certification"
-              addLabel="Add Certification"
-              readOnly={true}
-            />
+            {profile.certifications && profile.certifications.length > 0 && (
+              <EditableArraySection
+                content=""
+                title="Certifications"
+                items={profile.certifications || []}
+                isEditing={false}
+                onEditToggle={() => {}} // No-op for read-only
+                onChange={() => {}} // No-op for read-only
+                placeholder="Certification"
+                addLabel="Add Certification"
+                readOnly={true}
+              />
+            )}
           </div>
 
           {/* Right Column - Main Content */}

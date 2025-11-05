@@ -26,6 +26,7 @@ export interface ProfileData {
   }>
   user_manual?: string
   certifications?: string[]
+  education?: string[]
   non_obvious_role?: {
     title: string
     description: string

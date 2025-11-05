@@ -225,6 +225,24 @@ const PublicProfile = () => {
               readOnly={true}
             />
 
+            {/* Education - Desktop only (0.3+) */}
+            {(!profileData.profile_version || profileData.profile_version >= "0.3") && (
+              <div className="hidden lg:block">
+                <EditableArraySection
+                  content=""
+                  title="Education"
+                  items={profileData.education || []}
+                  isEditing={false}
+                  onEditToggle={() => {}} // No-op for read-only
+                  onChange={() => {}} // No-op for read-only
+                  placeholder="Education"
+                  addLabel="Add Education"
+                  displayType="bullets"
+                  readOnly={true}
+                />
+              </div>
+            )}
+
             {/* Focus Areas - Desktop only */}
             <div className="hidden lg:block">
               <EditableArraySection
@@ -301,19 +319,21 @@ const PublicProfile = () => {
             </div>
 
             {/* Certifications - Desktop only */}
-            <div className="hidden lg:block">
-              <EditableArraySection
-                content=""
-                title="Certifications"
-                items={profileData.certifications || []}
-                isEditing={false}
-                onEditToggle={() => {}} // No-op for read-only
-                onChange={() => {}} // No-op for read-only
-                placeholder="Certification"
-                addLabel="Add Certification"
-                readOnly={true}
-              />
-            </div>
+            {(profileData.certifications && profileData.certifications.length > 0) && (
+              <div className="hidden lg:block">
+                <EditableArraySection
+                  content=""
+                  title="Certifications"
+                  items={profileData.certifications || []}
+                  isEditing={false}
+                  onEditToggle={() => {}} // No-op for read-only
+                  onChange={() => {}} // No-op for read-only
+                  placeholder="Certification"
+                  addLabel="Add Certification"
+                  readOnly={true}
+                />
+              </div>
+            )}
           </div>
 
           {/* Right Column - Main Content */}
@@ -407,6 +427,22 @@ const PublicProfile = () => {
 
             {/* Mobile/Tablet sections moved below User Manual */}
             <div className="lg:hidden space-y-6 mt-6">
+              {/* Education - Mobile/Tablet only (0.3+) */}
+              {(!profileData.profile_version || profileData.profile_version >= "0.3") && (
+                <EditableArraySection
+                  content=""
+                  title="Education"
+                  items={profileData.education || []}
+                  isEditing={false}
+                  onEditToggle={() => {}} // No-op for read-only
+                  onChange={() => {}} // No-op for read-only
+                  placeholder="Education"
+                  addLabel="Add Education"
+                  displayType="bullets"
+                  readOnly={true}
+                />
+              )}
+
               {/* Focus Areas - Mobile/Tablet only */}
               <EditableArraySection
                 content=""
@@ -473,17 +509,19 @@ const PublicProfile = () => {
               />
 
               {/* Certifications - Mobile/Tablet only */}
-              <EditableArraySection
-                content=""
-                title="Certifications"
-                items={profileData.certifications || []}
-                isEditing={false}
-                onEditToggle={() => {}} // No-op for read-only
-                onChange={() => {}} // No-op for read-only
-                placeholder="Certification"
-                addLabel="Add Certification"
-                readOnly={true}
-              />
+              {(profileData.certifications && profileData.certifications.length > 0) && (
+                <EditableArraySection
+                  content=""
+                  title="Certifications"
+                  items={profileData.certifications || []}
+                  isEditing={false}
+                  onEditToggle={() => {}} // No-op for read-only
+                  onChange={() => {}} // No-op for read-only
+                  placeholder="Certification"
+                  addLabel="Add Certification"
+                  readOnly={true}
+                />
+              )}
             </div>
           </div>
         </div>

@@ -1,4 +1,3 @@
-
 // Profile-related shared types
 
 export interface Persona {
@@ -43,6 +42,7 @@ export interface ProfileData {
   superpowers?: Superpower[]
   user_manual?: string
   certifications?: string[]
+  education?: string[]
   non_obvious_role?: {
     title: string
     description: string
@@ -66,6 +66,7 @@ export interface EditStates {
   stages: boolean
   personalInterests: boolean
   certifications: boolean
+  education: boolean
   meetIntro: boolean
   personas: boolean
   superpowers: boolean
