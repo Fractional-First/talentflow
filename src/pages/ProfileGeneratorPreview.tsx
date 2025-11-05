@@ -241,17 +241,19 @@ const ProfileGeneratorPreview = () => {
             />
 
             {/* Certifications */}
-            <EditableArraySection
-              content=""
-              title="Certifications"
-              items={profile.certifications || []}
-              isEditing={false}
-              onEditToggle={() => {}} // No-op for read-only
-              onChange={() => {}} // No-op for read-only
-              placeholder="Certification"
-              addLabel="Add Certification"
-              readOnly={true}
-            />
+            {profile.certifications && profile.certifications.length > 0 && (
+              <EditableArraySection
+                content=""
+                title="Certifications"
+                items={profile.certifications || []}
+                isEditing={false}
+                onEditToggle={() => {}} // No-op for read-only
+                onChange={() => {}} // No-op for read-only
+                placeholder="Certification"
+                addLabel="Add Certification"
+                readOnly={true}
+              />
+            )}
           </div>
 
           {/* Right Column - Main Content */}

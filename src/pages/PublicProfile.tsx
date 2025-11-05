@@ -301,19 +301,21 @@ const PublicProfile = () => {
             </div>
 
             {/* Certifications - Desktop only */}
-            <div className="hidden lg:block">
-              <EditableArraySection
-                content=""
-                title="Certifications"
-                items={profileData.certifications || []}
-                isEditing={false}
-                onEditToggle={() => {}} // No-op for read-only
-                onChange={() => {}} // No-op for read-only
-                placeholder="Certification"
-                addLabel="Add Certification"
-                readOnly={true}
-              />
-            </div>
+            {(profileData.certifications && profileData.certifications.length > 0) && (
+              <div className="hidden lg:block">
+                <EditableArraySection
+                  content=""
+                  title="Certifications"
+                  items={profileData.certifications || []}
+                  isEditing={false}
+                  onEditToggle={() => {}} // No-op for read-only
+                  onChange={() => {}} // No-op for read-only
+                  placeholder="Certification"
+                  addLabel="Add Certification"
+                  readOnly={true}
+                />
+              </div>
+            )}
           </div>
 
           {/* Right Column - Main Content */}
@@ -473,17 +475,19 @@ const PublicProfile = () => {
               />
 
               {/* Certifications - Mobile/Tablet only */}
-              <EditableArraySection
-                content=""
-                title="Certifications"
-                items={profileData.certifications || []}
-                isEditing={false}
-                onEditToggle={() => {}} // No-op for read-only
-                onChange={() => {}} // No-op for read-only
-                placeholder="Certification"
-                addLabel="Add Certification"
-                readOnly={true}
-              />
+              {(profileData.certifications && profileData.certifications.length > 0) && (
+                <EditableArraySection
+                  content=""
+                  title="Certifications"
+                  items={profileData.certifications || []}
+                  isEditing={false}
+                  onEditToggle={() => {}} // No-op for read-only
+                  onChange={() => {}} // No-op for read-only
+                  placeholder="Certification"
+                  addLabel="Add Certification"
+                  readOnly={true}
+                />
+              )}
             </div>
           </div>
         </div>

@@ -52,7 +52,7 @@ const EditProfile = () => {
     handleRemovePersona,
     navigate,
   } = useEditProfile()
-  
+
   const isMobile = useIsMobile()
 
   if (isLoading) {
@@ -151,7 +151,9 @@ const EditProfile = () => {
                   {/* LinkedIn Profile Field */}
                   <InlineLinkedInField
                     value={linkedinUrl || ""}
-                    onChange={(value) => handleInputChange("linkedinUrl", value)}
+                    onChange={(value) =>
+                      handleInputChange("linkedinUrl", value)
+                    }
                   />
                 </div>
               </div>
@@ -191,7 +193,9 @@ const EditProfile = () => {
                   items={formData.focus_areas || []}
                   isEditing={editStates.focusAreas}
                   onEditToggle={() => toggleEdit("focusAreas")}
-                  onChange={(newArr) => handleInputChange("focus_areas", newArr)}
+                  onChange={(newArr) =>
+                    handleInputChange("focus_areas", newArr)
+                  }
                   placeholder="Focus area"
                   addLabel="Add Area"
                 />
@@ -235,7 +239,9 @@ const EditProfile = () => {
                   items={formData.stage_focus || []}
                   isEditing={editStates.stages}
                   onEditToggle={() => toggleEdit("stages")}
-                  onChange={(newArr) => handleInputChange("stage_focus", newArr)}
+                  onChange={(newArr) =>
+                    handleInputChange("stage_focus", newArr)
+                  }
                   placeholder="Stage"
                   addLabel="Add Stage"
                 />
@@ -258,20 +264,23 @@ const EditProfile = () => {
               )}
 
               {/* Certifications - Desktop only */}
-              {!isMobile && (
-                <EditableArraySection
-                  content="List your relevant certifications and professional credentials"
-                  title="Certifications"
-                  items={formData.certifications || []}
-                  isEditing={editStates.certifications}
-                  onEditToggle={() => toggleEdit("certifications")}
-                  onChange={(newArr) =>
-                    handleInputChange("certifications", newArr)
-                  }
-                  placeholder="Certification"
-                  addLabel="Add Certification"
-                />
-              )}
+              {formData.certifications &&
+                formData.certifications.length > 0 && (
+                  <div className="hidden lg:block">
+                    <EditableArraySection
+                      content="List your relevant certifications and professional credentials"
+                      title="Certifications"
+                      items={formData.certifications || []}
+                      isEditing={editStates.certifications}
+                      onEditToggle={() => toggleEdit("certifications")}
+                      onChange={(newArr) =>
+                        handleInputChange("certifications", newArr)
+                      }
+                      placeholder="Certification"
+                      addLabel="Add Certification"
+                    />
+                  </div>
+                )}
             </div>
 
             {/* Right Column - Main Content */}
@@ -371,7 +380,9 @@ const EditProfile = () => {
                     items={formData.focus_areas || []}
                     isEditing={editStates.focusAreas}
                     onEditToggle={() => toggleEdit("focusAreas")}
-                    onChange={(newArr) => handleInputChange("focus_areas", newArr)}
+                    onChange={(newArr) =>
+                      handleInputChange("focus_areas", newArr)
+                    }
                     placeholder="Focus area"
                     addLabel="Add Area"
                   />
@@ -383,7 +394,9 @@ const EditProfile = () => {
                     items={formData.industries || []}
                     isEditing={editStates.industries}
                     onEditToggle={() => toggleEdit("industries")}
-                    onChange={(newArr) => handleInputChange("industries", newArr)}
+                    onChange={(newArr) =>
+                      handleInputChange("industries", newArr)
+                    }
                     placeholder="Industry"
                     addLabel="Add Industry"
                   />
@@ -409,7 +422,9 @@ const EditProfile = () => {
                     items={formData.stage_focus || []}
                     isEditing={editStates.stages}
                     onEditToggle={() => toggleEdit("stages")}
-                    onChange={(newArr) => handleInputChange("stage_focus", newArr)}
+                    onChange={(newArr) =>
+                      handleInputChange("stage_focus", newArr)
+                    }
                     placeholder="Stage"
                     addLabel="Add Stage"
                   />
@@ -429,18 +444,21 @@ const EditProfile = () => {
                   />
 
                   {/* Certifications - Mobile/Tablet only */}
-                  <EditableArraySection
-                    content="List your relevant certifications and professional credentials"
-                    title="Certifications"
-                    items={formData.certifications || []}
-                    isEditing={editStates.certifications}
-                    onEditToggle={() => toggleEdit("certifications")}
-                    onChange={(newArr) =>
-                      handleInputChange("certifications", newArr)
-                    }
-                    placeholder="Certification"
-                    addLabel="Add Certification"
-                  />
+                  {formData.certifications &&
+                    formData.certifications.length > 0 && (
+                      <EditableArraySection
+                        content="List your relevant certifications and professional credentials"
+                        title="Certifications"
+                        items={formData.certifications || []}
+                        isEditing={editStates.certifications}
+                        onEditToggle={() => toggleEdit("certifications")}
+                        onChange={(newArr) =>
+                          handleInputChange("certifications", newArr)
+                        }
+                        placeholder="Certification"
+                        addLabel="Add Certification"
+                      />
+                    )}
                 </div>
               )}
             </div>
