@@ -82,6 +82,7 @@ export const useEditProfile = () => {
     stages: false,
     personalInterests: false,
     certifications: false,
+    education: false,
     meetIntro: false,
     personas: false,
     superpowers: false,
