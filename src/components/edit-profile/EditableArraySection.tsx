@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -37,6 +36,18 @@ export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
   readOnly = false,
 }) => {
   const [localItems, setLocalItems] = useState<string[]>([])
+  const prevIsEditingRef = useRef(isEditing)
+  const localItemsRef = useRef(localItems)
+  const onChangeRef = useRef(onChange)
+
+  // Keep refs in sync with latest values
+  useEffect(() => {
+    localItemsRef.current = localItems
+  }, [localItems])
+
+  useEffect(() => {
+    onChangeRef.current = onChange
+  }, [onChange])
 
   // Sync local state with props
   useEffect(() => {
@@ -47,29 +58,27 @@ export const EditableArraySection: React.FC<EditableArraySectionProps> = ({
   useEffect(() => {
     if (!isEditing) return
     const timeout = setTimeout(() => {
-      onChange(localItems)
+      onChangeRef.current(localItemsRef.current)
     }, 300)
     return () => clearTimeout(timeout)
-  }, [localItems, isEditing, onChange])
+  }, [localItems, isEditing])
 
   // Flush pending changes when leaving edit mode
-  const prevIsEditingRef = useRef(isEditing)
   useEffect(() => {
     const wasEditing = prevIsEditingRef.current
     if (wasEditing && !isEditing) {
-      onChange(localItems)
+      onChangeRef.current(localItemsRef.current)
     }
     prevIsEditingRef.current = isEditing
-  }, [isEditing, localItems, onChange])
+  }, [isEditing])
 
   // Flush on unmount if still editing
   useEffect(() => {
     return () => {
       if (prevIsEditingRef.current) {
-        onChange(localItems)
+        onChangeRef.current(localItemsRef.current)
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleItemChange = (index: number, value: string) => {
