@@ -154,7 +154,7 @@ export const SupportingDocsSection = ({
           </div>
           <div className="flex-1 min-w-0">
             <h3 className="font-medium text-base sm:text-lg mb-1">
-              Supporting Documents (Optional)
+              Supporting Documents (Optional.)
             </h3>
             <p className="text-sm text-muted-foreground">
               Add publications, news articles, portfolios, or other resources
