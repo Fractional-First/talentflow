@@ -2,6 +2,7 @@
 import { File, Upload, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
+import { toast } from "@/hooks/use-toast"
 
 interface DocumentUploadProps {
   title: string
@@ -37,11 +38,21 @@ export const DocumentUpload = ({
     const fileExtension = `.${file.name.split('.').pop()?.toLowerCase()}`
     
     if (!allowedTypes.includes(fileExtension)) {
+      toast({
+        title: "Invalid file type",
+        description: `Please upload a ${accept.replace(/\./g, "").toUpperCase()} file.`,
+        variant: "destructive",
+      })
       return false
     }
 
     // Check file size
     if (file.size > maxSize * 1024 * 1024) {
+      toast({
+        title: "File too large",
+        description: `File size must be less than ${maxSize}MB.`,
+        variant: "destructive",
+      })
       return false
     }
 
