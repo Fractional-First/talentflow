@@ -1,0 +1,173 @@
+
+import { useNavigate } from "react-router-dom"
+import { Button } from "@/components/ui/button"
+import { ArrowLeft, Clock, CheckCircle, User } from "lucide-react"
+import { BlurImage } from "@/components/BlurImage"
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
+import { AppSidebar } from "@/components/AppSidebar"
+
+const LeadershipImpactCoaching = () => {
+  const navigate = useNavigate()
+
+  const coaches = [
+    {
+      name: "Margot Thomas",
+      title: "Co-Founder, Ikigai Leading",
+      timezone: "Australia",
+      bio: "Margot Thomas helps leaders and teams become more conscious, purposeful, and connected through leadership programs, team effectiveness journeys, and executive coaching. With decades of corporate leadership experience across South America, Europe, and Australia, she brings a systemic approach grounded in adult development theory. She blends strategic clarity with warmth, helping leaders and teams see patterns more clearly, act with courage, and step into sustainable ways of leading.",
+      imageSrc: "/lovable-uploads/placeholder-coach-1.png"
+    },
+    {
+      name: "Monique Longhurst",
+      title: "Co-Founder, Ikigai Leading",
+      timezone: "Australia",
+      bio: "Monique Longhurst supports leaders and teams to gain clarity, connection, and purpose through leadership programs, team effectiveness journeys, and executive coaching. Her systemic and developmental approach blends corporate, consulting, and entrepreneurial experience with her own leadership journey. She helps leaders step into conscious, values-aligned, and regenerative ways of working, creating sustainable impact across organisations and communities.",
+      imageSrc: "/lovable-uploads/placeholder-coach-2.png"
+    },
+    {
+      name: "Candice Smith",
+      title: "Founder, The Thinking Field",
+      timezone: "Australia",
+      bio: "Candice Smith is a facilitator, coach, and thinking partner with over 20 years guiding individuals, teams, and organisations to think expansively, collaborate inclusively, and navigate complexity with clarity. She creates generative spaces where every voice matters, helping leaders and organisations reimagine connection, collaboration, and leadership.",
+      imageSrc: "/lovable-uploads/placeholder-coach-3.png"
+    }
+  ]
+
+  const processSteps = [
+    "Complimentary 1-hour alignment meeting to understand your context, coaching needs, and fit",
+    "Complete the Leadership Circle Profile® (LCP) Self-Assessment",
+    "Tailored 1:1 coaching series: four 1.5-hour sessions held fortnightly",
+    "Delivery: fully virtual",
+    "Investment: AUD $3,200"
+  ]
+
+  const gettingStartedContent = "The process begins with a complimentary 1-hour alignment meeting to understand your context, coaching needs, and fit. You then complete the Leadership Circle Profile® (LCP) Self-Assessment, followed by a tailored 1:1 coaching series consisting of four 1.5-hour sessions held fortnightly. Delivery is fully virtual, and the investment is AUD $3,200."
+
+  return (
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full">
+        <AppSidebar />
+        <SidebarInset>
+          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+            <SidebarTrigger className="-ml-1" />
+          </header>
+          <div className="flex-1 bg-white">
+            <div className="p-4 sm:p-8 max-w-7xl mx-auto w-full">
+              <div className="space-y-8">
+                {/* Header Section */}
+                <div className="space-y-4">
+                  <h1 className="text-3xl font-semibold">Leadership Impact Coaching</h1>
+                  <p className="text-lg text-primary font-medium">Show Up With Clarity, Confidence, and Purpose</p>
+                </div>
+
+                {/* Description */}
+                <div className="space-y-4">
+                  <p className="text-lg text-muted-foreground leading-relaxed">
+                    Leadership Impact Coaching is a pre-placement coaching series designed to equip Fractional leaders for their next opportunity. It uses the Leadership Circle Profile® (LCP) Self-Assessment to connect behaviours with underlying patterns. Through focused coaching sessions, you'll unpack your purpose, build deeper self-awareness, and define the impact you want to create.
+                  </p>
+                  <p className="text-lg text-muted-foreground leading-relaxed">
+                    The value of this coaching lies in helping you gain clarity of purpose, strengthen self-awareness, and build the confidence to articulate your authentic leadership impact, positioning you for opportunities that align with your strengths and intentions.
+                  </p>
+                  <p className="text-lg text-muted-foreground leading-relaxed">
+                    This coaching is suitable if you are preparing for your next opportunity and want clarity on how to show up with impact, if you want to connect your leadership to a deeper sense of purpose and direction, or if you want the confidence to position yourself authentically and stand out in a competitive pool.
+                  </p>
+                </div>
+
+                {/* Your Coaches Section */}
+                <div className="space-y-6 bg-white rounded-2xl p-8 border border-gray-200">
+                  <div className="flex items-center gap-2">
+                    <User className="h-5 w-5 text-muted-foreground" />
+                    <h2 className="text-xl font-medium">Your Coaches</h2>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {coaches.map((coach, index) => (
+                      <div key={index} className="space-y-4">
+                        <div className="w-32 h-32 rounded-full overflow-hidden mx-auto lg:mx-0">
+                          <BlurImage
+                            src={coach.imageSrc}
+                            alt={coach.name}
+                            className="object-cover w-full h-full"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <h3 className="font-medium text-base">{coach.name}</h3>
+                          <p className="text-sm text-muted-foreground">{coach.title}</p>
+                          <p className="text-sm text-muted-foreground">Timezone: {coach.timezone}</p>
+                          <p className="text-sm text-muted-foreground leading-relaxed">
+                            {coach.bio}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Process and Getting Started Sections */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {/* Process Section */}
+                  <div className="space-y-6 bg-white rounded-2xl p-6 border border-gray-200">
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-5 w-5 text-muted-foreground" />
+                      <h2 className="text-xl font-medium">The Process</h2>
+                    </div>
+                    <div className="space-y-4">
+                      {processSteps.map((step, index) => (
+                        <div key={index} className="flex items-start gap-3">
+                          <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                          <p className="text-base text-muted-foreground">{step}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Getting Started Section */}
+                  <div className="space-y-6 bg-white rounded-2xl p-6 border border-gray-200">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="h-5 w-5 text-muted-foreground" />
+                      <h2 className="text-xl font-medium">Getting Started</h2>
+                    </div>
+                    <div>
+                      <p className="text-base text-muted-foreground leading-relaxed">{gettingStartedContent}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* CTA Section */}
+                <div className="text-center space-y-6">
+                  <Button 
+                    size="lg" 
+                    className="w-full lg:w-auto" 
+                    asChild
+                  >
+                    <a 
+                      href="#" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                    >
+                      Schedule Your Alignment Call
+                    </a>
+                  </Button>
+                </div>
+
+                {/* Back Button */}
+                <div className="flex justify-start pt-4">
+                  <Button
+                    variant="ghost"
+                    onClick={() => navigate("/dashboard/branding")}
+                    className="gap-2"
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                    Back to Coaching Options
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
+  )
+}
+
+export default LeadershipImpactCoaching

@@ -15,6 +15,8 @@ import Branding from "./pages/dashboard/Branding"
 import Dashboard from "./pages/dashboard/Dashboard"
 import ExecutiveCoaching from "./pages/dashboard/ExecutiveCoaching"
 import TeamCoaching from "./pages/dashboard/TeamCoaching"
+import LeadershipImpactCoaching from "./pages/dashboard/LeadershipImpactCoaching"
+import PlacementImpactCoaching from "./pages/dashboard/PlacementImpactCoaching"
 import ProfileCreation from "./pages/CreateProfile"
 import ProfileSnapshot from "./pages/EditProfile"
 import PublicProfile from "./pages/PublicProfile"
@@ -145,6 +147,26 @@ function App() {
                   allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
                 >
                   <TeamCoaching />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/leadership-impact-coaching"
+              element={
+                <ProtectedRoute
+                  allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
+                >
+                  <LeadershipImpactCoaching />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/placement-impact-coaching"
+              element={
+                <ProtectedRoute
+                  allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
+                >
+                  <PlacementImpactCoaching />
                 </ProtectedRoute>
               }
             />
