@@ -64,9 +64,9 @@ const Branding = () => {
       coach: "Ikigai Leading, The Thinking Field",
       features: [
         "Grounded in the Leadership Circle Profile® (LCP) Self-Assessment",
-        "Builds clarity of purpose and authentic leadership positioning",
-        "4-session 1:1 coaching series designed around your leadership context",
-        "Free, zero-commitment intro call to assess fit"
+        "Builds clarity of purpose and strengthens authentic leadership positioning",
+        "4-session 1:1 coaching series tailored to your leadership context",
+        "Free, zero-commitment intro call to assess fit and align on goals"
       ],
       icon: Target,
       imageSrc: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
@@ -79,10 +79,10 @@ const Branding = () => {
       description: "Post-placement coaching to help you navigate a new role with clarity, confidence, and agility.",
       coach: "Ikigai Leading, The Thinking Field",
       features: [
-        "Uses the Leadership Circle Profile® (LCP) Self-Assessment to surface strengths and blind spots",
-        "Sharpens alignment with role expectations, team dynamics, and organisational context",
+        "Uses the Leadership Circle Profile® (LCP) Self-Assessment",
+        "Sharpens alignment with role expectations and team dynamics",
         "5-session 1:1 coaching series supporting early-stage success",
-        "Free, zero-commitment intro call to align on goals"
+        "Free, zero-commitment intro call to assess fit and align on goals"
       ],
       icon: Rocket,
       imageSrc: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
