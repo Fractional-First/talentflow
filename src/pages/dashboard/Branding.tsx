@@ -29,6 +29,7 @@ const Branding = () => {
       title: "Executive 1:1 Coaching",
       subtitle: "Perform Better. Relate Better. Feel Better.",
       description: "Personalized coaching to accelerate your leadership growth and well-being.",
+      coach: "Stephen Burke",
       features: [
         "Tailored to your unique leadership context",
         "3-month engagement with up to 3 sessions per month",
@@ -43,6 +44,7 @@ const Branding = () => {
       title: "Leadership Team Coaching",
       subtitle: "Elevate Team Effectiveness and Outcomes",
       description: "Customized coaching to strengthen your leadership team's relationships, decision-making, and impact.",
+      coach: "Stephen Burke",
       features: [
         "Designed around your team's meeting cadence",
         "Balances business priorities with deep relationship work",
@@ -116,7 +118,7 @@ const Branding = () => {
                       <CardContent className="pt-0 pb-4">
                         <CardDescription className="text-base mb-4">{offering.description}</CardDescription>
                         
-                        <ul className="space-y-2 text-sm text-muted-foreground">
+                        <ul className="space-y-2 text-sm text-muted-foreground mb-4">
                           {offering.features.map((feature, featureIndex) => (
                             <li key={featureIndex} className="flex items-start">
                               <span className="text-primary mr-2 flex-shrink-0">•</span>
@@ -124,6 +126,12 @@ const Branding = () => {
                             </li>
                           ))}
                         </ul>
+                        
+                        <div className="pt-3 border-t border-border">
+                          <p className="text-sm text-muted-foreground">
+                            <span className="font-medium text-foreground">Coaching by:</span> {offering.coach}
+                          </p>
+                        </div>
                       </CardContent>
 
                       <CardFooter>
