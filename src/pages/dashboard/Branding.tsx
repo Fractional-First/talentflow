@@ -81,6 +81,14 @@ const Branding = () => {
                   </p>
                 </div>
 
+                {/* Coaching By Section */}
+                <div className="space-y-3">
+                  <h3 className="text-xl font-semibold">Coaching by:</h3>
+                  <p className="text-base text-muted-foreground">
+                    Our trusted coaching partners bring decades of leadership experience and proven methodologies to support your growth.
+                  </p>
+                </div>
+
                 {/* Coaching Cards Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   {coachingOfferings.map((offering, index) => (
