@@ -15,14 +15,14 @@ const PlacementImpactCoaching = () => {
       title: "Co-Founder, Ikigai Leading",
       timezone: "Australia",
       bio: "Margot Thomas helps leaders and teams become more conscious, purposeful, and connected through leadership programs, team effectiveness journeys, and executive coaching. With decades of corporate leadership experience across South America, Europe, and Australia, she brings a systemic approach grounded in adult development theory. She blends strategic clarity with warmth, helping leaders and teams see patterns more clearly, act with courage, and step into sustainable ways of leading.",
-      imageSrc: "/lovable-uploads/margot-thomas.png"
+      imageSrc: "/lovable-uploads/margot-thomas.png?v=2"
     },
     {
       name: "Monique Longhurst",
       title: "Co-Founder, Ikigai Leading",
       timezone: "Australia",
       bio: "Monique Longhurst supports leaders and teams to gain clarity, connection, and purpose through leadership programs, team effectiveness journeys, and executive coaching. Her systemic and developmental approach blends corporate, consulting, and entrepreneurial experience with her own leadership journey. She helps leaders step into conscious, values-aligned, and regenerative ways of working, creating sustainable impact across organisations and communities.",
-      imageSrc: "/lovable-uploads/monique-longhurst.png"
+      imageSrc: "/lovable-uploads/monique-longhurst.png?v=2"
     },
     {
       name: "Candice Smith",
