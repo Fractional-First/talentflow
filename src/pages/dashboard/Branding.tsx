@@ -130,11 +130,6 @@ const Branding = () => {
                           alt={offering.title}
                           className="object-cover w-full h-full"
                         />
-                        <div className="absolute top-4 right-4">
-                          <Badge className="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">
-                            Paid Service
-                          </Badge>
-                        </div>
                       </div>
 
                       <CardHeader className="pb-4">
