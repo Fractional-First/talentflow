@@ -38,7 +38,7 @@ const Branding = () => {
         "Free, zero-commitment intro call to assess fit"
       ],
       icon: Users,
-      imageSrc: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+      imageSrc: "/lovable-uploads/executive1to1coaching.png",
       path: "/dashboard/executive-coaching"
     },
     {
@@ -53,7 +53,7 @@ const Branding = () => {
         "Free, zero-commitment intro call and proposal"
       ],
       icon: Award,
-      imageSrc: "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+      imageSrc: "/lovable-uploads/leadershipteamcoaching.png",
       path: "/dashboard/team-coaching"
     },
     {
@@ -69,7 +69,7 @@ const Branding = () => {
         "Free, zero-commitment intro call to assess fit and align on goals"
       ],
       icon: Target,
-      imageSrc: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+      imageSrc: "/lovable-uploads/leadershipimpact.png",
       path: "/dashboard/leadership-impact-coaching"
     },
     {
@@ -85,7 +85,7 @@ const Branding = () => {
         "Free, zero-commitment intro call to assess fit and align on goals"
       ],
       icon: Rocket,
-      imageSrc: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+      imageSrc: "/lovable-uploads/placementimpact.png",
       path: "/dashboard/placement-impact-coaching"
     },
   ]
