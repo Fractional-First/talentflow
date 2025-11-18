@@ -69,7 +69,7 @@ const Branding = () => {
         "Free, zero-commitment intro call to assess fit and align on goals"
       ],
       icon: Target,
-      imageSrc: "/lovable-uploads/leadershipimpact.png",
+      imageSrc: "/lovable-uploads/leadershipimpact1.png",
       path: "/dashboard/leadership-impact-coaching"
     },
     {
@@ -85,7 +85,7 @@ const Branding = () => {
         "Free, zero-commitment intro call to assess fit and align on goals"
       ],
       icon: Rocket,
-      imageSrc: "/lovable-uploads/placementimpact.png",
+      imageSrc: "/lovable-uploads/placementimpact-2.png",
       path: "/dashboard/placement-impact-coaching"
     },
   ]
