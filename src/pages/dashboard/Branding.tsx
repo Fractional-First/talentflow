@@ -38,7 +38,7 @@ const Branding = () => {
         "Free, zero-commitment intro call to assess fit"
       ],
       icon: Users,
-      imageSrc: "/lovable-uploads/executive1to1coaching.png",
+      imageSrc: "/lovable-uploads/executive1to1coaching-2.png",
       path: "/dashboard/executive-coaching"
     },
     {
