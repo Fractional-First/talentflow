@@ -3,17 +3,21 @@ import { JobPreferencesPlaceholder } from "@/components/dashboard/JobPreferences
 import { NextStepsCard } from "@/components/dashboard/NextStepsCard"
 import { OnboardingBanner } from "@/components/dashboard/OnboardingBanner"
 import { ProfileSummaryCard } from "@/components/dashboard/ProfileSummaryCard"
+import { AgreementCard } from "@/components/dashboard/AgreementCard"
 import {
   SidebarProvider,
   SidebarInset,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { Spinner } from "@/components/ui/spinner"
+import { Button } from "@/components/ui/button"
 import { useEditProfile } from "@/hooks/useEditProfile"
 import { useProfileData } from "@/queries/useProfileData"
 import { useWorkPreferences } from "@/queries/useWorkPreferences"
 import { useGetUser } from "@/queries/auth/useGetUser"
+import { useMockCandidateAgreement } from "@/hooks/useMockCandidateAgreement"
 import { toast } from "sonner"
+import { RotateCcw } from "lucide-react"
 
 // Dashboard main content with sidebar navigation
 const Dashboard = () => {
@@ -27,6 +31,7 @@ const Dashboard = () => {
   } = useEditProfile()
   const { data: profile, isLoading: profileLoading, error } = useProfileData()
   const { workPreferences, isLoading: workPrefsLoading } = useWorkPreferences()
+  const { tncRequired, acceptAgreement, resetDemo } = useMockCandidateAgreement()
   const isOnboarding = onboardingStatus === "PROFILE_CONFIRMED"
   const hasJobPreferences =
     workPreferences && Object.keys(workPreferences).length > 0
@@ -149,6 +154,30 @@ const Dashboard = () => {
           <div className="flex-1">
             {isOnboarding && <OnboardingBanner />}
             <div className="p-4 sm:p-8 max-w-7xl mx-auto w-full">
+              {/* DEMO: Reset button for testing (remove in production) */}
+              {!tncRequired && (
+                <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg flex items-center justify-between">
+                  <span className="text-sm text-yellow-800">
+                    <strong>Demo Mode:</strong> Agreement accepted. Click reset to test again.
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={resetDemo}
+                  >
+                    <RotateCcw className="h-4 w-4 mr-2" />
+                    Reset Demo
+                  </Button>
+                </div>
+              )}
+
+              {/* Show Agreement Card when TNC is required */}
+              {tncRequired && (
+                <div className="mb-8">
+                  <AgreementCard onAccept={acceptAgreement} />
+                </div>
+              )}
+
               {/* Show Next Steps card when onboarding is complete AND job preferences are submitted */}
               {!isOnboarding && hasJobPreferences && (
                 <div className="mb-8">
