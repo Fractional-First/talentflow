@@ -28,10 +28,14 @@ export function useMockCandidateAgreement() {
     localStorage.removeItem('demo_tnc_accepted_at');
   };
 
+  // Get acceptance date
+  const acceptedDate = localStorage.getItem('demo_tnc_accepted_at') || undefined;
+
   return {
     tncStatus,
     tncRequired: tncStatus === 'REQUIRED',
     tncAccepted: tncStatus === 'ACCEPTED',
+    acceptedDate,
     acceptAgreement,
     resetDemo,
     isAccepting: false

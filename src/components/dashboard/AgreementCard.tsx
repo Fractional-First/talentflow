@@ -2,16 +2,70 @@ import { useState } from 'react';
 import { StepCard, StepCardHeader, StepCardContent, StepCardTitle, StepCardDescription } from '@/components/StepCard';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { FileText, Shield, Clock } from 'lucide-react';
+import { FileText, Shield, Clock, CheckCircle2, Calendar } from 'lucide-react';
 import { CandidateAgreementModal } from './CandidateAgreementModal';
 
 interface AgreementCardProps {
+  isAccepted: boolean;
+  acceptedDate?: string;
   onAccept: () => Promise<void>;
 }
 
-export function AgreementCard({ onAccept }: AgreementCardProps) {
+export function AgreementCard({ isAccepted, acceptedDate, onAccept }: AgreementCardProps) {
   const [modalOpen, setModalOpen] = useState(false);
 
+  // Format accepted date
+  const formattedDate = acceptedDate 
+    ? new Date(acceptedDate).toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      })
+    : null;
+
+  if (isAccepted) {
+    // Accepted state - minimal card with view option
+    return (
+      <>
+        <StepCard className="border border-green-200 bg-green-50/30">
+          <StepCardContent className="py-4">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-start gap-3 flex-1">
+                <CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-sm text-foreground">
+                    Client Mandate Agreement
+                  </h3>
+                  <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
+                    <Calendar className="h-3 w-3" />
+                    <span>Accepted {formattedDate}</span>
+                  </div>
+                </div>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setModalOpen(true)}
+                className="flex-shrink-0"
+              >
+                <FileText className="h-4 w-4 mr-2" />
+                View Agreement
+              </Button>
+            </div>
+          </StepCardContent>
+        </StepCard>
+
+        <CandidateAgreementModal
+          open={modalOpen}
+          onOpenChange={setModalOpen}
+          onAccept={onAccept}
+          readOnly={true}
+        />
+      </>
+    );
+  }
+
+  // Required state - full card with action required
   return (
     <>
       <StepCard className="border-2 border-orange-500 shadow-lg">
@@ -64,6 +118,7 @@ export function AgreementCard({ onAccept }: AgreementCardProps) {
         open={modalOpen}
         onOpenChange={setModalOpen}
         onAccept={onAccept}
+        readOnly={false}
       />
     </>
   );
