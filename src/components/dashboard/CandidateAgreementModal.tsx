@@ -10,12 +10,14 @@ interface CandidateAgreementModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onAccept: () => Promise<void>;
+  readOnly?: boolean;
 }
 
 export function CandidateAgreementModal({
   open,
   onOpenChange,
-  onAccept
+  onAccept,
+  readOnly = false
 }: CandidateAgreementModalProps) {
   const [agreed, setAgreed] = useState(false);
   const [isAccepting, setIsAccepting] = useState(false);
@@ -86,33 +88,49 @@ export function CandidateAgreementModal({
           </Button>
         </div>
 
-        {/* Acceptance controls */}
-        <div className="pt-4 border-t space-y-4">
-          <div className="flex items-start gap-3">
-            <Checkbox
-              id="agree"
-              checked={agreed}
-              onCheckedChange={(checked) => setAgreed(checked === true)}
-              className="mt-1"
-            />
-            <label
-              htmlFor="agree"
-              className="text-sm leading-relaxed cursor-pointer select-none"
-            >
-              I confirm that I have reviewed, understood, and agree to the{' '}
-              <strong>Fractional First Candidate Agreement and Non-Disclosure Agreement (NDA)</strong>.
-            </label>
-          </div>
+        {/* Acceptance controls - only show if not read-only */}
+        {!readOnly && (
+          <div className="pt-4 border-t space-y-4">
+            <div className="flex items-start gap-3">
+              <Checkbox
+                id="agree"
+                checked={agreed}
+                onCheckedChange={(checked) => setAgreed(checked === true)}
+                className="mt-1"
+              />
+              <label
+                htmlFor="agree"
+                className="text-sm leading-relaxed cursor-pointer select-none"
+              >
+                I confirm that I have reviewed, understood, and agree to the{' '}
+                <strong>Fractional First Candidate Agreement and Non-Disclosure Agreement (NDA)</strong>.
+              </label>
+            </div>
 
-          <Button
-            onClick={handleAccept}
-            disabled={!agreed || isAccepting}
-            className="w-full"
-            size="lg"
-          >
-            {isAccepting ? 'Processing...' : 'Accept and Confirm'}
-          </Button>
-        </div>
+            <Button
+              onClick={handleAccept}
+              disabled={!agreed || isAccepting}
+              className="w-full"
+              size="lg"
+            >
+              {isAccepting ? 'Processing...' : 'Accept and Confirm'}
+            </Button>
+          </div>
+        )}
+
+        {/* Read-only mode - just close button */}
+        {readOnly && (
+          <div className="pt-4 border-t">
+            <Button
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              className="w-full"
+              size="lg"
+            >
+              Close
+            </Button>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );

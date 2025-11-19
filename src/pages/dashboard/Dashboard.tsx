@@ -31,7 +31,7 @@ const Dashboard = () => {
   } = useEditProfile()
   const { data: profile, isLoading: profileLoading, error } = useProfileData()
   const { workPreferences, isLoading: workPrefsLoading } = useWorkPreferences()
-  const { tncRequired, acceptAgreement, resetDemo } = useMockCandidateAgreement()
+  const { tncRequired, tncAccepted, acceptedDate, acceptAgreement, resetDemo } = useMockCandidateAgreement()
   const isOnboarding = onboardingStatus === "PROFILE_CONFIRMED"
   const hasJobPreferences =
     workPreferences && Object.keys(workPreferences).length > 0
@@ -171,12 +171,14 @@ const Dashboard = () => {
                 </div>
               )}
 
-              {/* Show Agreement Card when TNC is required */}
-              {tncRequired && (
-                <div className="mb-8">
-                  <AgreementCard onAccept={acceptAgreement} />
-                </div>
-              )}
+          {/* Show Agreement Card - transforms based on acceptance status */}
+          <div className="mb-8">
+            <AgreementCard 
+              isAccepted={tncAccepted}
+              acceptedDate={acceptedDate}
+              onAccept={acceptAgreement} 
+            />
+          </div>
 
               {/* Show Next Steps card when onboarding is complete AND job preferences are submitted */}
               {!isOnboarding && hasJobPreferences && (
