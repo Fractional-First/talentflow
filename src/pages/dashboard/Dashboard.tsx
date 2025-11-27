@@ -153,14 +153,15 @@ const Dashboard = () => {
       <CandidateAgreementModal
         open={showAgreementSplash}
         onOpenChange={(open) => {
-          // Only allow closing if already accepted
-          if (tncAccepted) {
-            setShowAgreementSplash(open)
+          // Prevent closing if not accepted, allow opening anytime
+          if (!open && !tncAccepted) {
+            return;
           }
+          setShowAgreementSplash(open);
         }}
         onAccept={async () => {
-          await acceptAgreement()
-          setShowAgreementSplash(false)
+          await acceptAgreement();
+          setShowAgreementSplash(false);
         }}
         readOnly={false}
         showPositiveMessage={true}
