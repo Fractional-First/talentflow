@@ -38,7 +38,7 @@ export function CandidateAgreementModal({
     try {
       await onAccept();
       toast.success('Agreement accepted successfully!');
-      onOpenChange(false);
+      // Don't call onOpenChange here - let parent handle closing
     } catch (error) {
       toast.error('Failed to accept agreement');
     } finally {
