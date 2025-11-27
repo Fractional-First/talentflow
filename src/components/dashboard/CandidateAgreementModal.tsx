@@ -51,7 +51,7 @@ export function CandidateAgreementModal({
 
   return (
     <Dialog open={open} onOpenChange={!readOnly ? onOpenChange : undefined}>
-      <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
+      <DialogContent className="max-w-4xl max-h-[90vh] h-[90vh] flex flex-col">
         <DialogHeader>
           {showPositiveMessage && !readOnly && (
             <div className="mb-4 p-4 bg-primary/10 border border-primary/20 rounded-lg">
@@ -74,8 +74,8 @@ export function CandidateAgreementModal({
           </DialogTitle>
         </DialogHeader>
 
-        {/* Scrollable content area */}
-        <div className="flex-1 overflow-y-auto border rounded-lg p-6 bg-muted/30 relative">
+        {/* Scrollable content area - doubled in size */}
+        <div className="flex-[2] min-h-0 overflow-y-auto border rounded-lg p-6 bg-muted/30 relative">
           <CandidateAgreementDocument />
           
           {/* Scroll indicator gradient */}
@@ -95,15 +95,15 @@ export function CandidateAgreementModal({
           </Button>
         </div>
 
-        {/* Acceptance controls - only show if not read-only */}
+        {/* Acceptance controls - only show if not read-only - compact version */}
         {!readOnly && (
-          <div className="pt-4 border-t space-y-4">
-            <p className="text-sm font-medium text-foreground mb-3">
+          <div className="pt-3 border-t space-y-2">
+            <p className="text-xs font-medium text-foreground mb-2">
               Please review and accept each section below:
             </p>
 
             {/* NDA Checkbox */}
-            <div className="flex items-start gap-3 p-3 bg-muted/30 rounded-lg">
+            <div className="flex items-start gap-2 p-2 bg-muted/30 rounded-lg">
               <Checkbox
                 id="agree-nda"
                 checked={agreedNDA}
@@ -112,7 +112,7 @@ export function CandidateAgreementModal({
               />
               <label
                 htmlFor="agree-nda"
-                className="text-sm leading-relaxed cursor-pointer select-none"
+                className="text-xs leading-snug cursor-pointer select-none"
               >
                 <strong>{CANDIDATE_AGREEMENT_CONTENT.sectionCategories.nda.title}:</strong>
                 {' '}{CANDIDATE_AGREEMENT_CONTENT.sectionCategories.nda.checkboxLabel}
@@ -120,7 +120,7 @@ export function CandidateAgreementModal({
             </div>
 
             {/* Non-Circumvention Checkbox */}
-            <div className="flex items-start gap-3 p-3 bg-muted/30 rounded-lg">
+            <div className="flex items-start gap-2 p-2 bg-muted/30 rounded-lg">
               <Checkbox
                 id="agree-non-circumvent"
                 checked={agreedNonCircumvent}
@@ -129,7 +129,7 @@ export function CandidateAgreementModal({
               />
               <label
                 htmlFor="agree-non-circumvent"
-                className="text-sm leading-relaxed cursor-pointer select-none"
+                className="text-xs leading-snug cursor-pointer select-none"
               >
                 <strong>{CANDIDATE_AGREEMENT_CONTENT.sectionCategories.nonCircumvent.title}:</strong>
                 {' '}{CANDIDATE_AGREEMENT_CONTENT.sectionCategories.nonCircumvent.checkboxLabel}
@@ -137,7 +137,7 @@ export function CandidateAgreementModal({
             </div>
 
             {/* Terms & Conditions Checkbox */}
-            <div className="flex items-start gap-3 p-3 bg-muted/30 rounded-lg">
+            <div className="flex items-start gap-2 p-2 bg-muted/30 rounded-lg">
               <Checkbox
                 id="agree-terms"
                 checked={agreedTerms}
@@ -146,7 +146,7 @@ export function CandidateAgreementModal({
               />
               <label
                 htmlFor="agree-terms"
-                className="text-sm leading-relaxed cursor-pointer select-none"
+                className="text-xs leading-snug cursor-pointer select-none"
               >
                 <strong>{CANDIDATE_AGREEMENT_CONTENT.sectionCategories.terms.title}:</strong>
                 {' '}{CANDIDATE_AGREEMENT_CONTENT.sectionCategories.terms.checkboxLabel}
