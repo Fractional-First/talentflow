@@ -2,9 +2,9 @@ import { CANDIDATE_AGREEMENT_CONTENT } from '@/content/candidateAgreement';
 
 export function CandidateAgreementDocument() {
   return (
-    <div className="prose prose-base max-w-none">
-      <div className="text-center mb-8 border-b pb-6">
-        <h1 className="text-3xl font-bold mb-3">
+    <div className="prose prose-sm max-w-none">
+      <div className="text-center mb-6 border-b pb-4">
+        <h1 className="text-2xl font-semibold mb-2">
           Client Agreement
         </h1>
         <p className="text-sm text-muted-foreground">
@@ -14,9 +14,9 @@ export function CandidateAgreementDocument() {
       </div>
 
       {CANDIDATE_AGREEMENT_CONTENT.sections.map((section, index) => (
-        <div key={index} className="mb-8">
-          <h2 className="text-xl font-bold mb-4 text-foreground">{section.heading}</h2>
-          <p className="text-base leading-loose whitespace-pre-line text-foreground">
+        <div key={index} className="mb-6">
+          <h2 className="text-lg font-semibold mb-3 text-foreground">{section.heading}</h2>
+          <p className="text-sm leading-relaxed whitespace-pre-line text-foreground">
             {section.content}
           </p>
         </div>

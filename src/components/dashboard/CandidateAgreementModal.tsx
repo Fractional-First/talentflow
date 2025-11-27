@@ -74,12 +74,12 @@ export function CandidateAgreementModal({
           </DialogTitle>
         </DialogHeader>
 
-        {/* Scrollable content area - larger and more prominent */}
-        <div className="flex-1 overflow-y-auto border rounded-lg p-8 bg-background relative min-h-[500px]">
+        {/* Scrollable content area */}
+        <div className="flex-1 overflow-y-auto border rounded-lg p-6 bg-muted/30 relative">
           <CandidateAgreementDocument />
           
           {/* Scroll indicator gradient */}
-          <div className="sticky bottom-0 h-12 bg-gradient-to-t from-background to-transparent pointer-events-none" />
+          <div className="sticky bottom-0 h-8 bg-gradient-to-t from-muted/30 to-transparent pointer-events-none" />
         </div>
 
         {/* Action buttons */}
@@ -95,59 +95,62 @@ export function CandidateAgreementModal({
           </Button>
         </div>
 
-        {/* Acceptance controls - compressed version */}
+        {/* Acceptance controls - only show if not read-only */}
         {!readOnly && (
-          <div className="pt-3 border-t space-y-3">
-            <p className="text-xs font-semibold text-foreground">
-              Accept Each Section:
+          <div className="pt-4 border-t space-y-4">
+            <p className="text-sm font-medium text-foreground mb-3">
+              Please review and accept each section below:
             </p>
 
-            {/* Compact checkboxes */}
-            <div className="space-y-2">
-              {/* NDA Checkbox */}
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  id="agree-nda"
-                  checked={agreedNDA}
-                  onCheckedChange={(checked) => setAgreedNDA(checked === true)}
-                />
-                <label
-                  htmlFor="agree-nda"
-                  className="text-xs cursor-pointer select-none"
-                >
-                  {CANDIDATE_AGREEMENT_CONTENT.sectionCategories.nda.checkboxLabel}
-                </label>
-              </div>
+            {/* NDA Checkbox */}
+            <div className="flex items-start gap-3 p-3 bg-muted/30 rounded-lg">
+              <Checkbox
+                id="agree-nda"
+                checked={agreedNDA}
+                onCheckedChange={(checked) => setAgreedNDA(checked === true)}
+                className="mt-1"
+              />
+              <label
+                htmlFor="agree-nda"
+                className="text-sm leading-relaxed cursor-pointer select-none"
+              >
+                <strong>{CANDIDATE_AGREEMENT_CONTENT.sectionCategories.nda.title}:</strong>
+                {' '}{CANDIDATE_AGREEMENT_CONTENT.sectionCategories.nda.checkboxLabel}
+              </label>
+            </div>
 
-              {/* Non-Circumvention Checkbox */}
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  id="agree-non-circumvent"
-                  checked={agreedNonCircumvent}
-                  onCheckedChange={(checked) => setAgreedNonCircumvent(checked === true)}
-                />
-                <label
-                  htmlFor="agree-non-circumvent"
-                  className="text-xs cursor-pointer select-none"
-                >
-                  {CANDIDATE_AGREEMENT_CONTENT.sectionCategories.nonCircumvent.checkboxLabel}
-                </label>
-              </div>
+            {/* Non-Circumvention Checkbox */}
+            <div className="flex items-start gap-3 p-3 bg-muted/30 rounded-lg">
+              <Checkbox
+                id="agree-non-circumvent"
+                checked={agreedNonCircumvent}
+                onCheckedChange={(checked) => setAgreedNonCircumvent(checked === true)}
+                className="mt-1"
+              />
+              <label
+                htmlFor="agree-non-circumvent"
+                className="text-sm leading-relaxed cursor-pointer select-none"
+              >
+                <strong>{CANDIDATE_AGREEMENT_CONTENT.sectionCategories.nonCircumvent.title}:</strong>
+                {' '}{CANDIDATE_AGREEMENT_CONTENT.sectionCategories.nonCircumvent.checkboxLabel}
+              </label>
+            </div>
 
-              {/* Terms & Conditions Checkbox */}
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  id="agree-terms"
-                  checked={agreedTerms}
-                  onCheckedChange={(checked) => setAgreedTerms(checked === true)}
-                />
-                <label
-                  htmlFor="agree-terms"
-                  className="text-xs cursor-pointer select-none"
-                >
-                  {CANDIDATE_AGREEMENT_CONTENT.sectionCategories.terms.checkboxLabel}
-                </label>
-              </div>
+            {/* Terms & Conditions Checkbox */}
+            <div className="flex items-start gap-3 p-3 bg-muted/30 rounded-lg">
+              <Checkbox
+                id="agree-terms"
+                checked={agreedTerms}
+                onCheckedChange={(checked) => setAgreedTerms(checked === true)}
+                className="mt-1"
+              />
+              <label
+                htmlFor="agree-terms"
+                className="text-sm leading-relaxed cursor-pointer select-none"
+              >
+                <strong>{CANDIDATE_AGREEMENT_CONTENT.sectionCategories.terms.title}:</strong>
+                {' '}{CANDIDATE_AGREEMENT_CONTENT.sectionCategories.terms.checkboxLabel}
+              </label>
             </div>
 
             <Button
@@ -156,7 +159,7 @@ export function CandidateAgreementModal({
               className="w-full"
               size="lg"
             >
-              {isAccepting ? 'Processing...' : 'Accept and Proceed'}
+              {isAccepting ? 'Processing...' : 'Accept Agreement and Proceed'}
             </Button>
           </div>
         )}
