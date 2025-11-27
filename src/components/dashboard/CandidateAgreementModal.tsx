@@ -50,7 +50,7 @@ export function CandidateAgreementModal({
   };
 
   return (
-    <Dialog open={open} onOpenChange={readOnly ? onOpenChange : undefined}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] h-[90vh] flex flex-col">
         <DialogHeader className="pr-8">
           {showPositiveMessage && !readOnly && (
