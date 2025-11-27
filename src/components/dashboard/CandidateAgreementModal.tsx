@@ -50,9 +50,9 @@ export function CandidateAgreementModal({
   };
 
   return (
-    <Dialog open={open} onOpenChange={!readOnly ? onOpenChange : undefined}>
+    <Dialog open={open} onOpenChange={readOnly ? onOpenChange : undefined}>
       <DialogContent className="max-w-4xl max-h-[90vh] h-[90vh] flex flex-col">
-        <DialogHeader>
+        <DialogHeader className="pr-8">
           {showPositiveMessage && !readOnly && (
             <div className="mb-4 p-4 bg-primary/10 border border-primary/20 rounded-lg">
               <div className="flex items-start gap-3">

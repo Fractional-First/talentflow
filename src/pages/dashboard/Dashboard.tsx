@@ -153,15 +153,15 @@ const Dashboard = () => {
       <CandidateAgreementModal
         open={showAgreementSplash}
         onOpenChange={(open) => {
-          // Prevent closing if not accepted, allow opening anytime
-          if (!open && !tncAccepted) {
-            return;
+          // Allow closing only after acceptance
+          if (tncAccepted) {
+            setShowAgreementSplash(open);
           }
-          setShowAgreementSplash(open);
         }}
         onAccept={async () => {
           await acceptAgreement();
-          setShowAgreementSplash(false);
+          // Close will be handled by the onOpenChange after tncAccepted updates
+          setTimeout(() => setShowAgreementSplash(false), 100);
         }}
         readOnly={false}
         showPositiveMessage={true}
