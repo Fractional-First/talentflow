@@ -1,9 +1,10 @@
+import { useState, useEffect } from 'react';
 import { AppSidebar } from "@/components/AppSidebar"
 import { JobPreferencesPlaceholder } from "@/components/dashboard/JobPreferencesPlaceholder"
 import { NextStepsCard } from "@/components/dashboard/NextStepsCard"
 import { OnboardingBanner } from "@/components/dashboard/OnboardingBanner"
 import { ProfileSummaryCard } from "@/components/dashboard/ProfileSummaryCard"
-import { AgreementCard } from "@/components/dashboard/AgreementCard"
+import { CandidateAgreementModal } from "@/components/dashboard/CandidateAgreementModal"
 import {
   SidebarProvider,
   SidebarInset,
@@ -32,9 +33,17 @@ const Dashboard = () => {
   const { data: profile, isLoading: profileLoading, error } = useProfileData()
   const { workPreferences, isLoading: workPrefsLoading } = useWorkPreferences()
   const { tncRequired, tncAccepted, acceptedDate, acceptAgreement, resetDemo } = useMockCandidateAgreement()
+  const [showAgreementSplash, setShowAgreementSplash] = useState(false)
   const isOnboarding = onboardingStatus === "PROFILE_CONFIRMED"
   const hasJobPreferences =
     workPreferences && Object.keys(workPreferences).length > 0
+
+  // Show splash screen on mount if TNC is required
+  useEffect(() => {
+    if (tncRequired) {
+      setShowAgreementSplash(true)
+    }
+  }, [tncRequired])
 
   const handleShareProfile = async () => {
     // Generate public profile URL using the profile slug
@@ -140,6 +149,23 @@ const Dashboard = () => {
 
   return (
     <SidebarProvider>
+      {/* Agreement Splash Screen Modal */}
+      <CandidateAgreementModal
+        open={showAgreementSplash}
+        onOpenChange={(open) => {
+          // Only allow closing if already accepted
+          if (tncAccepted) {
+            setShowAgreementSplash(open)
+          }
+        }}
+        onAccept={async () => {
+          await acceptAgreement()
+          setShowAgreementSplash(false)
+        }}
+        readOnly={false}
+        showPositiveMessage={true}
+      />
+
       <div className="min-h-screen flex w-full">
         <AppSidebar isOnboarding={isOnboarding} />
         <SidebarInset>
@@ -170,15 +196,6 @@ const Dashboard = () => {
                   </Button>
                 </div>
               )}
-
-          {/* Show Agreement Card - transforms based on acceptance status */}
-          <div className="mb-8">
-            <AgreementCard 
-              isAccepted={tncAccepted}
-              acceptedDate={acceptedDate}
-              onAccept={acceptAgreement} 
-            />
-          </div>
 
               {/* Show Next Steps card when onboarding is complete AND job preferences are submitted */}
               {!isOnboarding && hasJobPreferences && (

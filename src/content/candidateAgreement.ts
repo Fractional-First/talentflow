@@ -2,9 +2,28 @@ export const AGREEMENT_VERSION = '1.0';
 export const AGREEMENT_LAST_UPDATED = '2025-01-15';
 
 export const CANDIDATE_AGREEMENT_CONTENT = {
-  title: 'Fractional First Candidate Agreement & NDA',
+  title: 'Fractional First Client Agreement',
   version: AGREEMENT_VERSION,
   lastUpdated: AGREEMENT_LAST_UPDATED,
+  
+  // Organized into three main categories for segmented acceptance
+  sectionCategories: {
+    nda: {
+      title: 'Non-Disclosure Agreement (NDA)',
+      checkboxLabel: 'I agree to the Non-Disclosure Agreement and confidentiality terms',
+      sections: [1, 4, 8] // Section indices for NDA-related content
+    },
+    nonCircumvent: {
+      title: 'Non-Circumvention',
+      checkboxLabel: 'I agree to the Non-Circumvention terms',
+      sections: [6] // Section indices for non-circumvent content
+    },
+    terms: {
+      title: 'General Terms & Conditions',
+      checkboxLabel: 'I agree to the General Terms & Conditions',
+      sections: [0, 2, 3, 5, 7, 9, 10, 11, 12] // All other sections
+    }
+  },
   
   sections: [
     {
