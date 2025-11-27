@@ -34,7 +34,7 @@ export function AgreementCard({ isAccepted, acceptedDate, onAccept }: AgreementC
                 <CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-sm text-foreground">
-                    Client Mandate Agreement
+                    Client Agreement
                   </h3>
                   <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
                     <Calendar className="h-3 w-3" />
@@ -79,7 +79,7 @@ export function AgreementCard({ isAccepted, acceptedDate, onAccept }: AgreementC
               </div>
               <StepCardTitle className="flex items-center gap-2">
                 <Shield className="h-5 w-5 text-orange-600" />
-                Client Mandate Agreement
+                Client Agreement
               </StepCardTitle>
               <StepCardDescription className="mt-2">
                 <strong className="text-foreground">Action Required:</strong> Review and accept the Candidate Agreement and NDA

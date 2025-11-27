@@ -5,7 +5,7 @@ export function CandidateAgreementDocument() {
     <div className="prose prose-sm max-w-none">
       <div className="text-center mb-6 border-b pb-4">
         <h1 className="text-2xl font-semibold mb-2">
-          {CANDIDATE_AGREEMENT_CONTENT.title}
+          Client Agreement
         </h1>
         <p className="text-sm text-muted-foreground">
           Version {CANDIDATE_AGREEMENT_CONTENT.version} • 

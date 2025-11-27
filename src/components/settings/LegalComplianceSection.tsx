@@ -44,7 +44,7 @@ export function LegalComplianceSection() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <h3 className="font-semibold text-sm">
-                      {CANDIDATE_AGREEMENT_CONTENT.title}
+                      Client Agreement
                     </h3>
                     {tncAccepted && (
                       <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
