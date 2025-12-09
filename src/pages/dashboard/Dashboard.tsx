@@ -4,7 +4,7 @@ import { JobPreferencesPlaceholder } from "@/components/dashboard/JobPreferences
 import { NextStepsCard } from "@/components/dashboard/NextStepsCard"
 import { OnboardingBanner } from "@/components/dashboard/OnboardingBanner"
 import { ProfileSummaryCard } from "@/components/dashboard/ProfileSummaryCard"
-import { CandidateAgreementModal } from "@/components/dashboard/CandidateAgreementModal"
+import { CandidateAgreementWizard } from "@/components/dashboard/CandidateAgreementWizard"
 import {
   SidebarProvider,
   SidebarInset,
@@ -15,8 +15,7 @@ import { Button } from "@/components/ui/button"
 import { useEditProfile } from "@/hooks/useEditProfile"
 import { useProfileData } from "@/queries/useProfileData"
 import { useWorkPreferences } from "@/queries/useWorkPreferences"
-import { useGetUser } from "@/queries/auth/useGetUser"
-import { useMockCandidateAgreement } from "@/hooks/useMockCandidateAgreement"
+import { useCandidateMSA } from "@/hooks/useCandidateMSA"
 import { toast } from "sonner"
 import { RotateCcw } from "lucide-react"
 
@@ -32,7 +31,7 @@ const Dashboard = () => {
   } = useEditProfile()
   const { data: profile, isLoading: profileLoading, error } = useProfileData()
   const { workPreferences, isLoading: workPrefsLoading } = useWorkPreferences()
-  const { tncRequired, tncAccepted, acceptedDate, acceptAgreement, resetDemo } = useMockCandidateAgreement()
+  const { tncRequired, tncAccepted, resetDemo } = useCandidateMSA()
   const [showAgreementSplash, setShowAgreementSplash] = useState(false)
   const isOnboarding = onboardingStatus === "PROFILE_CONFIRMED"
   const hasJobPreferences =
@@ -149,22 +148,10 @@ const Dashboard = () => {
 
   return (
     <SidebarProvider>
-      {/* Agreement Splash Screen Modal */}
-      <CandidateAgreementModal
+      {/* Agreement Wizard Modal */}
+      <CandidateAgreementWizard
         open={showAgreementSplash}
-        onOpenChange={(open) => {
-          // Allow closing only after acceptance
-          if (tncAccepted) {
-            setShowAgreementSplash(open);
-          }
-        }}
-        onAccept={async () => {
-          await acceptAgreement();
-          // Close will be handled by the onOpenChange after tncAccepted updates
-          setTimeout(() => setShowAgreementSplash(false), 100);
-        }}
-        readOnly={false}
-        showPositiveMessage={true}
+        onOpenChange={setShowAgreementSplash}
       />
 
       <div className="min-h-screen flex w-full">
