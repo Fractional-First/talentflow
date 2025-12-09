@@ -32,17 +32,10 @@ const Dashboard = () => {
   const { data: profile, isLoading: profileLoading, error } = useProfileData()
   const { workPreferences, isLoading: workPrefsLoading } = useWorkPreferences()
   const { tncRequired, tncAccepted, resetDemo } = useCandidateMSA()
-  const [showAgreementSplash, setShowAgreementSplash] = useState(false)
+  const [showAgreementWizard, setShowAgreementWizard] = useState(false)
   const isOnboarding = onboardingStatus === "PROFILE_CONFIRMED"
   const hasJobPreferences =
     workPreferences && Object.keys(workPreferences).length > 0
-
-  // Show splash screen on mount if TNC is required
-  useEffect(() => {
-    if (tncRequired) {
-      setShowAgreementSplash(true)
-    }
-  }, [tncRequired])
 
   const handleShareProfile = async () => {
     // Generate public profile URL using the profile slug
@@ -150,8 +143,8 @@ const Dashboard = () => {
     <SidebarProvider>
       {/* Agreement Wizard Modal */}
       <CandidateAgreementWizard
-        open={showAgreementSplash}
-        onOpenChange={setShowAgreementSplash}
+        open={showAgreementWizard}
+        onOpenChange={setShowAgreementWizard}
       />
 
       <div className="min-h-screen flex w-full">
@@ -168,22 +161,32 @@ const Dashboard = () => {
           <div className="flex-1">
             {isOnboarding && <OnboardingBanner />}
             <div className="p-4 sm:p-8 max-w-7xl mx-auto w-full">
-              {/* DEMO: Reset button for testing (remove in production) */}
-              {!tncRequired && (
-                <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg flex items-center justify-between">
-                  <span className="text-sm text-yellow-800">
-                    <strong>Demo Mode:</strong> Agreement accepted. Click reset to test again.
-                  </span>
+              {/* DEMO: MSA Wizard button for testing */}
+              <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-between">
+                <span className="text-sm text-blue-800">
+                  <strong>Demo:</strong> Test the multi-stage MSA wizard
+                  {tncAccepted && " (Completed)"}
+                </span>
+                <div className="flex gap-2">
                   <Button
-                    variant="outline"
+                    variant="default"
                     size="sm"
-                    onClick={resetDemo}
+                    onClick={() => setShowAgreementWizard(true)}
                   >
-                    <RotateCcw className="h-4 w-4 mr-2" />
-                    Reset Demo
+                    Open MSA Wizard
                   </Button>
+                  {tncAccepted && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={resetDemo}
+                    >
+                      <RotateCcw className="h-4 w-4 mr-2" />
+                      Reset
+                    </Button>
+                  )}
                 </div>
-              )}
+              </div>
 
               {/* Show Next Steps card when onboarding is complete AND job preferences are submitted */}
               {!isOnboarding && hasJobPreferences && (
