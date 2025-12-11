@@ -10,7 +10,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { useNavigate, useLocation } from "react-router-dom"
-import { User, Briefcase, Home, Settings, LogOut, Award } from "lucide-react"
+import { User, Briefcase, Home, Settings, LogOut, Award, FileText } from "lucide-react"
 import React from "react"
 import { useSignOut } from "@/queries/auth/useSignOut"
 import { cn } from "@/lib/utils"
@@ -35,6 +35,11 @@ const menuItems = [
     title: "Job Preferences",
     path: "/work-preferences",
     icon: Briefcase,
+  },
+  {
+    title: "Agreements",
+    path: "/agreements",
+    icon: FileText,
   },
   {
     title: "Settings",

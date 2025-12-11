@@ -1,10 +1,8 @@
-
 import React from 'react'
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/AppSidebar'
 import { ProfileInfoSection } from '@/components/settings/ProfileInfoSection'
 import { PasswordSecuritySection } from '@/components/settings/PasswordSecuritySection'
-import { LegalComplianceSection } from '@/components/settings/LegalComplianceSection'
 import { AccountActionsSection } from '@/components/settings/AccountActionsSection'
 
 export default function Settings() {
@@ -28,7 +26,6 @@ export default function Settings() {
             <div className="max-w-2xl mx-auto p-3 sm:p-4 space-y-6">
               <ProfileInfoSection />
               <PasswordSecuritySection />
-              <LegalComplianceSection />
               <AccountActionsSection />
             </div>
           </div>

@@ -22,6 +22,8 @@ import WaitingRoom from "./pages/dashboard/WaitingRoom"
 import WorkPreferences from "./pages/WorkPreferences"
 import AuthCallback from "./pages/AuthCallback"
 import Settings from "./pages/Settings"
+import Agreements from "./pages/Agreements"
+import IdentityVerification from "./pages/IdentityVerification"
 import PrivacyPolicy from "./pages/PrivacyPolicy"
 import ProfileGenerator from "./pages/ProfileGenerator"
 import ProfileGeneratorCreate from "./pages/ProfileGeneratorCreate"
@@ -72,6 +74,16 @@ function App() {
             <Route
               path="/profile-generator/preview"
               element={<ProfileGeneratorPreview />}
+            />
+
+            {/* Identity verification - shown after email confirmation */}
+            <Route
+              path="/identity-verification"
+              element={
+                <ProtectedRoute allowedStatuses={["EMAIL_CONFIRMED"]}>
+                  <IdentityVerification />
+                </ProtectedRoute>
+              }
             />
 
             {/* Profile creation - for users with EMAIL_CONFIRMED, PROFILE_GENERATED, or PROFILE_CONFIRMED status */}
@@ -155,6 +167,16 @@ function App() {
                   allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
                 >
                   <WorkPreferences />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/agreements"
+              element={
+                <ProtectedRoute
+                  allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
+                >
+                  <Agreements />
                 </ProtectedRoute>
               }
             />
