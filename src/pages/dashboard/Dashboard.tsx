@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { AppSidebar } from "@/components/AppSidebar"
 import { JobPreferencesPlaceholder } from "@/components/dashboard/JobPreferencesPlaceholder"
 import { NextStepsCard } from "@/components/dashboard/NextStepsCard"
 import { OnboardingBanner } from "@/components/dashboard/OnboardingBanner"
 import { ProfileSummaryCard } from "@/components/dashboard/ProfileSummaryCard"
-import { CandidateAgreementWizard } from "@/components/dashboard/CandidateAgreementWizard"
+import { ConfidentialityChecklist } from "@/components/dashboard/ConfidentialityChecklist"
 import {
   SidebarProvider,
   SidebarInset,
@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button"
 import { useEditProfile } from "@/hooks/useEditProfile"
 import { useProfileData } from "@/queries/useProfileData"
 import { useWorkPreferences } from "@/queries/useWorkPreferences"
-import { useCandidateMSA } from "@/hooks/useCandidateMSA"
+import { useAgreementStatus } from "@/hooks/useAgreementStatus"
 import { toast } from "sonner"
 import { RotateCcw } from "lucide-react"
 
@@ -31,8 +31,7 @@ const Dashboard = () => {
   } = useEditProfile()
   const { data: profile, isLoading: profileLoading, error } = useProfileData()
   const { workPreferences, isLoading: workPrefsLoading } = useWorkPreferences()
-  const { tncRequired, tncAccepted, resetDemo } = useCandidateMSA()
-  const [showAgreementWizard, setShowAgreementWizard] = useState(false)
+  const { isConfidentialityComplete, confidentialityCompletedAt, resetDemo } = useAgreementStatus()
   const isOnboarding = onboardingStatus === "PROFILE_CONFIRMED"
   const hasJobPreferences =
     workPreferences && Object.keys(workPreferences).length > 0
@@ -141,12 +140,6 @@ const Dashboard = () => {
 
   return (
     <SidebarProvider>
-      {/* Agreement Wizard Modal */}
-      <CandidateAgreementWizard
-        open={showAgreementWizard}
-        onOpenChange={setShowAgreementWizard}
-      />
-
       <div className="min-h-screen flex w-full">
         <AppSidebar isOnboarding={isOnboarding} />
         <SidebarInset>
@@ -161,31 +154,19 @@ const Dashboard = () => {
           <div className="flex-1">
             {isOnboarding && <OnboardingBanner />}
             <div className="p-4 sm:p-8 max-w-7xl mx-auto w-full">
-              {/* DEMO: MSA Wizard button for testing */}
-              <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-between">
-                <span className="text-sm text-blue-800">
-                  <strong>Demo:</strong> Test the multi-stage MSA wizard
-                  {tncAccepted && " (Completed)"}
+              {/* DEMO: Reset button for testing */}
+              <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg flex items-center justify-between">
+                <span className="text-sm text-amber-800">
+                  <strong>Demo:</strong> Reset agreement state to test the flow again.
                 </span>
-                <div className="flex gap-2">
-                  <Button
-                    variant="default"
-                    size="sm"
-                    onClick={() => setShowAgreementWizard(true)}
-                  >
-                    Open MSA Wizard
-                  </Button>
-                  {tncAccepted && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={resetDemo}
-                    >
-                      <RotateCcw className="h-4 w-4 mr-2" />
-                      Reset
-                    </Button>
-                  )}
-                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={resetDemo}
+                >
+                  <RotateCcw className="h-4 w-4 mr-2" />
+                  Reset Demo
+                </Button>
               </div>
 
               {/* Show Next Steps card when onboarding is complete AND job preferences are submitted */}
@@ -207,8 +188,12 @@ const Dashboard = () => {
                     <ProfileSummaryCard profile={profile} />
                   </div>
                 </div>
-                {/* Right column - Job preferences placeholder */}
+                {/* Right column - Confidentiality checklist + Job preferences */}
                 <div className="space-y-6">
+                  {/* Confidentiality Checklist - Stage 2 of agreements */}
+                  <ConfidentialityChecklist />
+                  
+                  {/* Job preferences - shown after confidentiality is complete */}
                   <JobPreferencesPlaceholder isCompleted={!isOnboarding} />
                 </div>
               </div>
