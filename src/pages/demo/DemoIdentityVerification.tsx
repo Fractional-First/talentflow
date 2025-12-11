@@ -18,10 +18,10 @@ export default function DemoIdentityVerification() {
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 800));
     setIsSubmitting(false);
-    toast.success('Identity verified! (Demo mode - no changes saved)');
+    toast.success('Identity verified! (Demo mode)');
+    navigate('/demo/create-profile');
   };
 
   return (
@@ -31,7 +31,7 @@ export default function DemoIdentityVerification() {
         {/* Demo Banner */}
         <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-center">
           <span className="text-sm text-amber-800">
-            <strong>Demo Preview</strong> — This is how the Identity Verification page looks
+            <strong>Step 3 of 7</strong> — Identity Verification
           </span>
         </div>
 
@@ -91,15 +91,25 @@ export default function DemoIdentityVerification() {
               )}
             </Button>
 
-            {/* Back to Agreements */}
-            <Button
-              variant="ghost"
-              onClick={() => navigate('/agreements')}
-              className="w-full"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Agreements
-            </Button>
+            {/* Navigation */}
+            <div className="flex gap-2">
+              <Button
+                variant="ghost"
+                onClick={() => navigate('/demo/check-email')}
+                className="flex-1"
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => navigate('/demo/create-profile')}
+                className="flex-1"
+              >
+                Skip
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
