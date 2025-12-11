@@ -62,9 +62,9 @@ export default function Agreements() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => window.location.href = '/demo/identity-verification'}
+                  onClick={() => window.location.href = '/demo'}
                 >
-                  Preview Identity Step
+                  Preview Onboarding Flow
                 </Button>
                 <Button
                   variant="outline"

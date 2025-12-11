@@ -29,6 +29,13 @@ import ProfileGenerator from "./pages/ProfileGenerator"
 import ProfileGeneratorCreate from "./pages/ProfileGeneratorCreate"
 import ProfileGeneratorPreview from "./pages/ProfileGeneratorPreview"
 import DemoIdentityVerification from "./pages/demo/DemoIdentityVerification"
+import DemoIndex from "./pages/demo/DemoIndex"
+import DemoSignUp from "./pages/demo/DemoSignUp"
+import DemoCheckEmail from "./pages/demo/DemoCheckEmail"
+import DemoCreateProfile from "./pages/demo/DemoCreateProfile"
+import DemoEditProfile from "./pages/demo/DemoEditProfile"
+import DemoWorkPreferences from "./pages/demo/DemoWorkPreferences"
+import DemoDashboard from "./pages/demo/DemoDashboard"
 
 const queryClient = new QueryClient()
 
@@ -78,10 +85,14 @@ function App() {
             />
 
             {/* Demo routes - public preview of onboarding steps */}
-            <Route
-              path="/demo/identity-verification"
-              element={<DemoIdentityVerification />}
-            />
+            <Route path="/demo" element={<DemoIndex />} />
+            <Route path="/demo/signup" element={<DemoSignUp />} />
+            <Route path="/demo/check-email" element={<DemoCheckEmail />} />
+            <Route path="/demo/identity-verification" element={<DemoIdentityVerification />} />
+            <Route path="/demo/create-profile" element={<DemoCreateProfile />} />
+            <Route path="/demo/edit-profile" element={<DemoEditProfile />} />
+            <Route path="/demo/work-preferences" element={<DemoWorkPreferences />} />
+            <Route path="/demo/dashboard" element={<DemoDashboard />} />
 
             {/* Identity verification - shown after email confirmation */}
             <Route
