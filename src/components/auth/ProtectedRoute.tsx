@@ -7,6 +7,19 @@ interface ProtectedRouteProps {
   allowedStatuses?: string[]
 }
 
+const getIdentityVerified = () => {
+  try {
+    const stored = localStorage.getItem('agreement_status');
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      return parsed?.identity?.verified === true;
+    }
+  } catch {
+    return false;
+  }
+  return false;
+};
+
 export const ProtectedRoute = ({
   children,
   allowedStatuses,
@@ -44,6 +57,9 @@ export const ProtectedRoute = ({
       case "SIGNED_UP":
         return <Navigate to="/check-email" replace />
       case "EMAIL_CONFIRMED":
+        if (!getIdentityVerified()) {
+          return <Navigate to="/identity-verification" replace />
+        }
         return <Navigate to="/create-profile" replace />
       case "SET_PASSWORD":
         return <Navigate to="/change-password" replace />
