@@ -53,19 +53,28 @@ export default function Agreements() {
           </div>
 
           <div className="p-4 sm:p-8 max-w-4xl mx-auto">
-            {/* DEMO: Reset button */}
-            <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg flex items-center justify-between">
+            {/* DEMO: Reset button and Preview */}
+            <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <span className="text-sm text-amber-800">
-                <strong>Demo Mode:</strong> Reset agreements to test the flow again.
+                <strong>Demo Mode:</strong> Reset agreements or preview onboarding steps.
               </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={resetDemo}
-              >
-                <RotateCcw className="h-4 w-4 mr-2" />
-                Reset Demo
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => window.location.href = '/demo/identity-verification'}
+                >
+                  Preview Identity Step
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={resetDemo}
+                >
+                  <RotateCcw className="h-4 w-4 mr-2" />
+                  Reset Demo
+                </Button>
+              </div>
             </div>
 
             {/* Header */}
