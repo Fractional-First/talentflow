@@ -136,8 +136,9 @@ export function useAgreementStatus() {
 
   // Reset for demo
   const resetDemo = useCallback(() => {
-    setState(initialAgreementState);
     localStorage.removeItem(STORAGE_KEY);
+    setState({ ...initialAgreementState });
+    window.location.reload();
   }, []);
 
   return {
