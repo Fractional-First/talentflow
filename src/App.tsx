@@ -28,6 +28,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy"
 import ProfileGenerator from "./pages/ProfileGenerator"
 import ProfileGeneratorCreate from "./pages/ProfileGeneratorCreate"
 import ProfileGeneratorPreview from "./pages/ProfileGeneratorPreview"
+import DemoIdentityVerification from "./pages/demo/DemoIdentityVerification"
 
 const queryClient = new QueryClient()
 
@@ -74,6 +75,12 @@ function App() {
             <Route
               path="/profile-generator/preview"
               element={<ProfileGeneratorPreview />}
+            />
+
+            {/* Demo routes - public preview of onboarding steps */}
+            <Route
+              path="/demo/identity-verification"
+              element={<DemoIdentityVerification />}
             />
 
             {/* Identity verification - shown after email confirmation */}
