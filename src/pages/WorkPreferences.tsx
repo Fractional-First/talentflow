@@ -1,8 +1,8 @@
-
 import { DashboardLayout } from "@/components/DashboardLayout"
 import { WorkPreferencesConfirmation } from "@/components/work-preferences/WorkPreferencesConfirmation"
 import { FlexiblePreferences } from "@/components/work-preferences/FlexiblePreferences"
 import { FullTimePreferences } from "@/components/work-preferences/FullTimePreferences"
+import { TermsAcceptanceModal } from "@/components/agreements/TermsAcceptanceModal"
 import {
   StepCard,
   StepCardContent,
@@ -14,17 +14,30 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Separator } from "@/components/ui/separator"
 import { Briefcase, Clock } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { Spinner } from "@/components/ui/spinner"
 import { useWorkPreferences } from "@/hooks/useWorkPreferences"
 import { useSaveWorkPreferences } from "@/hooks/useSaveWorkPreferences"
+import { useAgreementStatus } from "@/hooks/useAgreementStatus"
+import { toast } from "sonner"
 
 const WorkPreferences = () => {
   const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState<
     "placement-type" | "confirmation"
   >("placement-type")
+
+  // Agreement status
+  const { isTermsAccepted } = useAgreementStatus()
+  const [showTermsModal, setShowTermsModal] = useState(false)
+
+  // Show terms modal on first visit if not accepted
+  useEffect(() => {
+    if (!isTermsAccepted) {
+      setShowTermsModal(true)
+    }
+  }, [isTermsAccepted])
 
   // Unified form state
   const { form, setForm, isLoading, error, setCurrentLocation, initialized } =
@@ -52,6 +65,19 @@ const WorkPreferences = () => {
 
   const handleGoToDashboard = () => {
     navigate("/dashboard")
+  }
+
+  const handleTermsSuccess = () => {
+    toast.success("Terms accepted! You can now set your job preferences.")
+  }
+
+  const handleTermsClose = (open: boolean) => {
+    // Don't allow closing if terms aren't accepted - redirect to dashboard
+    if (!open && !isTermsAccepted) {
+      navigate("/dashboard")
+      return
+    }
+    setShowTermsModal(open)
   }
 
   // Render
@@ -286,6 +312,13 @@ const WorkPreferences = () => {
 
   return (
     <DashboardLayout>
+      {/* Terms Splash Screen - shown automatically if not accepted */}
+      <TermsAcceptanceModal
+        open={showTermsModal}
+        onOpenChange={handleTermsClose}
+        onSuccess={handleTermsSuccess}
+      />
+
       <div className="container max-w-4xl py-8 px-2 sm:px-4">{renderStepContent()}</div>
     </DashboardLayout>
   )
