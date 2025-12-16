@@ -19,7 +19,7 @@ import { useEditProfile } from "@/hooks/useEditProfile"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { ArrowLeft, ArrowRight, Edit } from "lucide-react"
 import { TooltipProvider } from "@/components/ui/tooltip"
-import { AccuracyWarrantBanner } from "@/components/agreements/AccuracyWarrantBanner"
+
 
 const EditProfile = () => {
   const {
@@ -106,9 +106,6 @@ const EditProfile = () => {
           </div>
         )}
         <div ref={mainContentRef} className="max-w-6xl mx-auto space-y-6 p-6">
-          {/* Accuracy Warrant Banner - Phase 1 */}
-          <AccuracyWarrantBanner />
-
           {/* Header with explanatory text */}
           <div className="space-y-2">
             <p className="text-sm text-gray-600 text-center">

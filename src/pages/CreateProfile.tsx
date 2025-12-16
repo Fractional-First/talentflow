@@ -12,15 +12,21 @@ import {
 } from "@/components/StepCard"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
 import { useDocumentUpload } from "@/queries/useDocumentUpload"
 import { toast } from "@/hooks/use-toast"
 import { useSubmitLinkedInProfile } from "@/queries/useSubmitLinkedInProfile"
+import { useAgreementStatus } from "@/hooks/useAgreementStatus"
+import { AGREEMENT_CONTENT } from "@/content/agreementContent"
 import { AlertCircle, ArrowLeft, ArrowRight, Clock, Home } from "lucide-react"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 
 const ProfileCreation = () => {
   const navigate = useNavigate()
+  const { isWarrantAgreed, acceptWarrant } = useAgreementStatus()
+  const [localWarrantChecked, setLocalWarrantChecked] = useState(isWarrantAgreed)
 
   const {
     profile,
@@ -49,7 +55,24 @@ const ProfileCreation = () => {
     return errors
   }
 
+  const handleWarrantChange = async (checked: boolean) => {
+    setLocalWarrantChecked(checked)
+    if (checked && !isWarrantAgreed) {
+      await acceptWarrant()
+    }
+  }
+
   const handleLinkedInSubmit = async (linkedinUrl: string) => {
+    // Check warrant first
+    if (!localWarrantChecked) {
+      toast({
+        title: "Accuracy confirmation required",
+        description: "Please confirm your information is accurate before continuing.",
+        variant: "destructive",
+      })
+      return
+    }
+
     setValidationErrors([])
     setServerError("")
     handleLinkedInUrlSubmit(linkedinUrl)
@@ -230,10 +253,26 @@ const ProfileCreation = () => {
         </div>
       </div>
 
-      {/* FIXED FOOTER WITH CREATE PROFILE BUTTON */}
+      {/* FIXED FOOTER WITH ACCURACY WARRANT AND CREATE PROFILE BUTTON */}
       <div className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-md border-t border-border/40 py-4 px-4 sm:px-6 z-50">
         <div className="container mx-auto max-w-4xl">
-          <div className="flex justify-end">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            {/* Accuracy Warrant Checkbox */}
+            <div className="flex items-start gap-3">
+              <Checkbox 
+                id="accuracy-warrant"
+                checked={localWarrantChecked}
+                onCheckedChange={handleWarrantChange}
+                className="mt-0.5"
+              />
+              <Label 
+                htmlFor="accuracy-warrant"
+                className="text-sm cursor-pointer leading-relaxed text-muted-foreground"
+              >
+                {AGREEMENT_CONTENT.accuracyWarrant.label}
+              </Label>
+            </div>
+
             <Button
               onClick={() => {
                 if (currentLinkedInUrl.trim()) {
@@ -247,9 +286,9 @@ const ProfileCreation = () => {
                 }
               }}
               disabled={
-                submitLinkedInMutation.isPending || !currentLinkedInUrl.trim()
+                submitLinkedInMutation.isPending || !currentLinkedInUrl.trim() || !localWarrantChecked
               }
-              className="font-urbanist min-h-[48px] px-8"
+              className="font-urbanist min-h-[48px] px-8 whitespace-nowrap"
             >
               {submitLinkedInMutation.isPending
                 ? "Creating Profile..."
