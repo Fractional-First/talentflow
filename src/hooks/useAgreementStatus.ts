@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { 
   AgreementState, 
-  IdentityAgreement, 
-  ConfidentialityAgreement, 
+  AccuracyWarrantAgreement,
+  TermsOfServiceAgreement,
   FullMSAAgreement,
   SigningType,
   initialAgreementState 
@@ -15,7 +15,12 @@ export function useAgreementStatus() {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       try {
-        return JSON.parse(stored);
+        const parsed = JSON.parse(stored);
+        // Migrate old state structure if needed
+        if ('identity' in parsed || 'confidentiality' in parsed) {
+          return initialAgreementState;
+        }
+        return parsed;
       } catch {
         return initialAgreementState;
       }
@@ -30,18 +35,18 @@ export function useAgreementStatus() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }, [state]);
 
-  // Stage 1: Identity verification
-  const isIdentityVerified = state.identity.verified;
-  const identityVerifiedAt = state.identity.verifiedAt;
+  // Phase 1: Accuracy Warrant
+  const isWarrantAgreed = state.accuracyWarrant.agreed;
+  const warrantAgreedAt = state.accuracyWarrant.agreedAt;
 
-  const verifyIdentity = useCallback(async () => {
+  const acceptWarrant = useCallback(async () => {
     setIsSubmitting(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      const verifiedAt = new Date().toISOString();
+      await new Promise(resolve => setTimeout(resolve, 300));
+      const agreedAt = new Date().toISOString();
       setState(prev => ({
         ...prev,
-        identity: { verified: true, verifiedAt }
+        accuracyWarrant: { agreed: true, agreedAt }
       }));
       return true;
     } finally {
@@ -49,28 +54,18 @@ export function useAgreementStatus() {
     }
   }, []);
 
-  // Stage 2: Confidentiality
-  const isConfidentialityComplete = 
-    state.confidentiality.confidentialityAgreed &&
-    state.confidentiality.nonCircumventionAgreed &&
-    state.confidentiality.workBoundariesAgreed;
-  const confidentialityCompletedAt = state.confidentiality.completedAt;
+  // Phase 2: Terms of Service
+  const isTermsAccepted = state.termsOfService.agreed;
+  const termsAcceptedAt = state.termsOfService.agreedAt;
 
-  const updateConfidentiality = useCallback((data: Partial<ConfidentialityAgreement>) => {
-    setState(prev => ({
-      ...prev,
-      confidentiality: { ...prev.confidentiality, ...data }
-    }));
-  }, []);
-
-  const completeConfidentiality = useCallback(async () => {
+  const acceptTerms = useCallback(async () => {
     setIsSubmitting(true);
     try {
       await new Promise(resolve => setTimeout(resolve, 500));
-      const completedAt = new Date().toISOString();
+      const agreedAt = new Date().toISOString();
       setState(prev => ({
         ...prev,
-        confidentiality: { ...prev.confidentiality, completedAt }
+        termsOfService: { agreed: true, agreedAt }
       }));
       return true;
     } finally {
@@ -78,7 +73,7 @@ export function useAgreementStatus() {
     }
   }, []);
 
-  // Stage 3: Full MSA
+  // Phase 3: Full MSA (for future use)
   const isFullMSAComplete = state.fullMSA.agreed && state.fullMSA.completedAt;
   const fullMSACompletedAt = state.fullMSA.completedAt;
 
@@ -111,13 +106,8 @@ export function useAgreementStatus() {
       await new Promise(resolve => setTimeout(resolve, 1000));
       const now = new Date().toISOString();
       setState({
-        identity: { verified: true, verifiedAt: now },
-        confidentiality: {
-          confidentialityAgreed: true,
-          nonCircumventionAgreed: true,
-          workBoundariesAgreed: true,
-          completedAt: now
-        },
+        accuracyWarrant: { agreed: true, agreedAt: now },
+        termsOfService: { agreed: true, agreedAt: now },
         fullMSA: {
           agreed: true,
           signingType,
@@ -132,7 +122,7 @@ export function useAgreementStatus() {
   }, []);
 
   // Check if all agreements are complete
-  const allComplete = isIdentityVerified && isConfidentialityComplete && isFullMSAComplete;
+  const allComplete = isWarrantAgreed && isTermsAccepted && isFullMSAComplete;
 
   // Reset for demo
   const resetDemo = useCallback(() => {
@@ -145,19 +135,17 @@ export function useAgreementStatus() {
     // State
     state,
     
-    // Stage 1: Identity
-    isIdentityVerified,
-    identityVerifiedAt,
-    verifyIdentity,
+    // Phase 1: Accuracy Warrant
+    isWarrantAgreed,
+    warrantAgreedAt,
+    acceptWarrant,
     
-    // Stage 2: Confidentiality
-    confidentiality: state.confidentiality,
-    isConfidentialityComplete,
-    confidentialityCompletedAt,
-    updateConfidentiality,
-    completeConfidentiality,
+    // Phase 2: Terms of Service
+    isTermsAccepted,
+    termsAcceptedAt,
+    acceptTerms,
     
-    // Stage 3: Full MSA
+    // Phase 3: Full MSA
     fullMSA: state.fullMSA,
     isFullMSAComplete,
     fullMSACompletedAt,

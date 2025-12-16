@@ -23,7 +23,7 @@ import WorkPreferences from "./pages/WorkPreferences"
 import AuthCallback from "./pages/AuthCallback"
 import Settings from "./pages/Settings"
 import Agreements from "./pages/Agreements"
-import IdentityVerification from "./pages/IdentityVerification"
+
 import PrivacyPolicy from "./pages/PrivacyPolicy"
 import ProfileGenerator from "./pages/ProfileGenerator"
 import ProfileGeneratorCreate from "./pages/ProfileGeneratorCreate"
@@ -76,15 +76,6 @@ function App() {
               element={<ProfileGeneratorPreview />}
             />
 
-            {/* Identity verification - shown after email confirmation */}
-            <Route
-              path="/identity-verification"
-              element={
-                <ProtectedRoute allowedStatuses={["EMAIL_CONFIRMED"]}>
-                  <IdentityVerification />
-                </ProtectedRoute>
-              }
-            />
 
             {/* Profile creation - for users with EMAIL_CONFIRMED, PROFILE_GENERATED, or PROFILE_CONFIRMED status */}
             <Route

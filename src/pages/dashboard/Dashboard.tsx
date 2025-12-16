@@ -1,10 +1,8 @@
-import { useState } from 'react';
 import { AppSidebar } from "@/components/AppSidebar"
 import { JobPreferencesPlaceholder } from "@/components/dashboard/JobPreferencesPlaceholder"
 import { NextStepsCard } from "@/components/dashboard/NextStepsCard"
 import { OnboardingBanner } from "@/components/dashboard/OnboardingBanner"
 import { ProfileSummaryCard } from "@/components/dashboard/ProfileSummaryCard"
-import { ConfidentialityChecklist } from "@/components/dashboard/ConfidentialityChecklist"
 import {
   SidebarProvider,
   SidebarInset,
@@ -31,7 +29,7 @@ const Dashboard = () => {
   } = useEditProfile()
   const { data: profile, isLoading: profileLoading, error } = useProfileData()
   const { workPreferences, isLoading: workPrefsLoading } = useWorkPreferences()
-  const { isConfidentialityComplete, confidentialityCompletedAt, resetDemo } = useAgreementStatus()
+  const { isTermsAccepted, termsAcceptedAt, resetDemo } = useAgreementStatus()
   const isOnboarding = onboardingStatus === "PROFILE_CONFIRMED"
   const hasJobPreferences =
     workPreferences && Object.keys(workPreferences).length > 0
@@ -188,12 +186,8 @@ const Dashboard = () => {
                     <ProfileSummaryCard profile={profile} />
                   </div>
                 </div>
-                {/* Right column - Confidentiality checklist + Job preferences */}
+                {/* Right column - Job preferences */}
                 <div className="space-y-6">
-                  {/* Confidentiality Checklist - Stage 2 of agreements */}
-                  <ConfidentialityChecklist />
-                  
-                  {/* Job preferences - shown after confidentiality is complete */}
                   <JobPreferencesPlaceholder isCompleted={!isOnboarding} />
                 </div>
               </div>

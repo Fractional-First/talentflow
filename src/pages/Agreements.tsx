@@ -6,23 +6,67 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { 
   FileText, 
-  Download, 
   ExternalLink, 
   ShieldCheck,
-  RotateCcw
+  RotateCcw,
+  CheckCircle,
+  Clock
 } from 'lucide-react';
-import { AgreementCard } from '@/components/agreements/AgreementCard';
 import { FullMSAModal } from '@/components/agreements/FullMSAModal';
 import { useAgreementStatus } from '@/hooks/useAgreementStatus';
 import { AGREEMENT_VERSION } from '@/content/agreementContent';
-import { toast } from 'sonner';
+import { format } from 'date-fns';
+
+function AgreementStatusCard({ 
+  title, 
+  description, 
+  isComplete, 
+  completedAt 
+}: { 
+  title: string; 
+  description: string; 
+  isComplete: boolean; 
+  completedAt?: string;
+}) {
+  const formatDate = (dateStr?: string) => {
+    if (!dateStr) return '';
+    try {
+      return format(new Date(dateStr), 'MMM d, yyyy \'at\' h:mm a');
+    } catch {
+      return '';
+    }
+  };
+
+  return (
+    <Card className={isComplete ? 'border-green-200 bg-green-50/50' : ''}>
+      <CardContent className="p-4">
+        <div className="flex items-start gap-3">
+          {isComplete ? (
+            <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+          ) : (
+            <Clock className="h-5 w-5 text-muted-foreground mt-0.5 flex-shrink-0" />
+          )}
+          <div className="flex-1">
+            <h3 className="font-medium">{title}</h3>
+            <p className="text-sm text-muted-foreground">{description}</p>
+            {isComplete && completedAt && (
+              <p className="text-xs text-green-700 mt-1">
+                Completed {formatDate(completedAt)}
+              </p>
+            )}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
 export default function Agreements() {
   const { 
-    isIdentityVerified,
-    identityVerifiedAt,
-    isConfidentialityComplete,
-    confidentialityCompletedAt,
+    isWarrantAgreed,
+    warrantAgreedAt,
+    isTermsAccepted,
+    termsAcceptedAt,
     isFullMSAComplete,
     fullMSACompletedAt,
     allComplete,
@@ -78,31 +122,28 @@ export default function Agreements() {
 
             {/* Agreement Cards */}
             <div className="space-y-4 mb-8">
-              {/* Stage 1: Identity */}
-              <AgreementCard
-                title="Identity & Eligibility"
-                description="Verification of your identity and eligibility to work"
-                status={isIdentityVerified ? 'completed' : 'pending'}
-                completedAt={identityVerifiedAt}
+              {/* Phase 1: Accuracy Warrant */}
+              <AgreementStatusCard
+                title="Accuracy Warrant"
+                description="Confirmation that your profile information is accurate"
+                isComplete={isWarrantAgreed}
+                completedAt={warrantAgreedAt}
               />
 
-              {/* Stage 2: Confidentiality */}
-              <AgreementCard
-                title="Confidentiality & Non-Circumvention"
-                description="Agreement to protect client information and work through Fractional First"
-                status={isConfidentialityComplete ? 'completed' : isIdentityVerified ? 'pending' : 'locked'}
-                completedAt={confidentialityCompletedAt}
-                lockedMessage="Complete Identity verification first"
+              {/* Phase 2: Terms of Service */}
+              <AgreementStatusCard
+                title="Terms of Service"
+                description="Confidentiality, Non-Circumvention, and Work Boundaries"
+                isComplete={isTermsAccepted}
+                completedAt={termsAcceptedAt}
               />
 
-              {/* Stage 3: Full MSA */}
-              <AgreementCard
+              {/* Phase 3: Full MSA */}
+              <AgreementStatusCard
                 title="Master Candidate Agreement"
                 description="Full terms for engaging with client opportunities"
-                status={isFullMSAComplete ? 'completed' : 'locked'}
+                isComplete={!!isFullMSAComplete}
                 completedAt={fullMSACompletedAt}
-                onSign={() => setShowFullMSA(true)}
-                lockedMessage="Available when matched with an opportunity"
               />
             </div>
 
