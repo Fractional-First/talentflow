@@ -3,7 +3,6 @@ import AvailabilitySection from "@/components/work-preferences/AvailabilitySecti
 import CompensationSection from "@/components/work-preferences/CompensationSection"
 import LocationSection from "@/components/work-preferences/LocationSection"
 import IndustryPreferences from "./IndustryPreferences"
-import { ProfileCommitmentsSection } from "./ProfileCommitmentsSection"
 import { CombinedWorkPreferencesForm } from "@/hooks/useWorkPreferences"
 import { Separator } from "@/components/ui/separator"
 
@@ -14,20 +13,12 @@ interface FlexiblePreferencesProps {
   ) => void
   currentLocationObj?: any
   setCurrentLocation: (location: string | { place_id: string } | null) => void
-  keepProfileUpdated: boolean
-  setKeepProfileUpdated: (value: boolean) => void
-  workAuthorizationConfirmed: boolean
-  setWorkAuthorizationConfirmed: (value: boolean) => void
 }
 
 export const FlexiblePreferences = ({
   form,
   setForm,
   setCurrentLocation,
-  keepProfileUpdated,
-  setKeepProfileUpdated,
-  workAuthorizationConfirmed,
-  setWorkAuthorizationConfirmed,
 }: FlexiblePreferencesProps) => {
   const industries = form.fractional.industries || []
   
@@ -140,18 +131,6 @@ export const FlexiblePreferences = ({
               fractional: { ...prev.fractional, industries: ids },
             }))
           }
-        />
-      </div>
-
-      <Separator className="my-6" />
-
-      {/* Profile Commitments */}
-      <div className="space-y-4">
-        <ProfileCommitmentsSection
-          keepProfileUpdated={keepProfileUpdated}
-          setKeepProfileUpdated={setKeepProfileUpdated}
-          workAuthorizationConfirmed={workAuthorizationConfirmed}
-          setWorkAuthorizationConfirmed={setWorkAuthorizationConfirmed}
         />
       </div>
     </div>
