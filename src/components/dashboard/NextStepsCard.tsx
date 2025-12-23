@@ -109,13 +109,13 @@ export const NextStepsCard = ({
             </div>
           </div>
 
-          {/* Get Engagement-Ready Action (Coming Soon) */}
+          {/* Get Engagement-Ready Action */}
           <div className="space-y-3 text-center flex flex-col">
-            <div className="mx-auto w-12 h-12 rounded-full bg-muted/50 flex items-center justify-center">
-              <Search className="h-6 w-6 text-muted-foreground" />
+            <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+              <Search className="h-6 w-6 text-primary" />
             </div>
             <div className="space-y-2 flex-1">
-              <h3 className="font-semibold text-muted-foreground">
+              <h3 className="font-semibold text-foreground">
                 Get Engagement-Ready
               </h3>
               <p className="text-sm text-muted-foreground">
@@ -123,26 +123,13 @@ export const NextStepsCard = ({
               </p>
             </div>
             <div className="mt-auto">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      disabled
-                      variant="secondary"
-                      className="w-full opacity-50 cursor-not-allowed"
-                      size="sm"
-                    >
-                      Coming Soon
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>
-                      Coming soon — you'll be able to start exploring leadership
-                      opportunities here.
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <Button
+                onClick={() => navigate("/dashboard/agreement")}
+                className="w-full"
+                size="sm"
+              >
+                Complete Forms
+              </Button>
             </div>
           </div>
         </div>

@@ -11,6 +11,7 @@ import Login from "./pages/Login"
 import NotFound from "./pages/NotFound"
 import ResetPassword from "./pages/ResetPassword"
 import SignUp from "./pages/SignUp"
+import Agreement from "./pages/dashboard/Agreement"
 import Branding from "./pages/dashboard/Branding"
 import Dashboard from "./pages/dashboard/Dashboard"
 import ExecutiveCoaching from "./pages/dashboard/ExecutiveCoaching"
@@ -115,6 +116,16 @@ function App() {
                   allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
                 >
                   <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/agreement"
+              element={
+                <ProtectedRoute
+                  allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
+                >
+                  <Agreement />
                 </ProtectedRoute>
               }
             />
