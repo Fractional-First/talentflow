@@ -16,9 +16,6 @@ export const ProfileCommitmentsSection = ({
 }: ProfileCommitmentsSectionProps) => {
   return (
     <div className="bg-muted/50 border border-border rounded-xl p-5 sm:p-6">
-      <h3 className="text-lg font-semibold text-foreground mb-2 font-urbanist">
-        Profile Commitments
-      </h3>
       <p className="text-sm text-muted-foreground mb-4 font-urbanist">
         Please confirm the following to help us serve you better:
       </p>
