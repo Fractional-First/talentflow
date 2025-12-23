@@ -26,6 +26,10 @@ const WorkPreferences = () => {
     "placement-type" | "confirmation"
   >("placement-type")
 
+  // Profile commitments state
+  const [keepProfileUpdated, setKeepProfileUpdated] = useState(false)
+  const [workAuthorizationConfirmed, setWorkAuthorizationConfirmed] = useState(false)
+
   // Unified form state
   const { form, setForm, isLoading, error, setCurrentLocation, initialized } =
     useWorkPreferences()
@@ -77,6 +81,9 @@ const WorkPreferences = () => {
 
   const hasSelection =
     form.fullTime.open_for_work || form.fractional.open_for_work
+
+  // Check if commitments are confirmed for the selected work type(s)
+  const commitmentsConfirmed = keepProfileUpdated && workAuthorizationConfirmed
 
   const renderStepContent = () => {
     if (currentStep === "placement-type") {
@@ -172,6 +179,10 @@ const WorkPreferences = () => {
                           setForm={setForm}
                           currentLocationObj={form.currentLocationObj}
                           setCurrentLocation={setCurrentLocation}
+                          keepProfileUpdated={keepProfileUpdated}
+                          setKeepProfileUpdated={setKeepProfileUpdated}
+                          workAuthorizationConfirmed={workAuthorizationConfirmed}
+                          setWorkAuthorizationConfirmed={setWorkAuthorizationConfirmed}
                         />
                       </div>
                     </div>
@@ -252,6 +263,10 @@ const WorkPreferences = () => {
                           setForm={setForm}
                           currentLocationObj={form.currentLocationObj}
                           setCurrentLocation={setCurrentLocation}
+                          keepProfileUpdated={keepProfileUpdated}
+                          setKeepProfileUpdated={setKeepProfileUpdated}
+                          workAuthorizationConfirmed={workAuthorizationConfirmed}
+                          setWorkAuthorizationConfirmed={setWorkAuthorizationConfirmed}
                         />
                       </div>
                     </div>
@@ -264,7 +279,7 @@ const WorkPreferences = () => {
             <div className="pt-8 border-t">
               <Button
                 onClick={handleContinue}
-                disabled={!hasSelection || isSaving}
+                disabled={!hasSelection || !commitmentsConfirmed || isSaving}
                 className="w-full h-12 text-base font-medium rounded-full"
                 size="lg"
               >

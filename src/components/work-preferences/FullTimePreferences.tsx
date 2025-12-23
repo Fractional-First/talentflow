@@ -4,6 +4,7 @@ import CompensationSection from "@/components/work-preferences/CompensationSecti
 import LocationSection from "@/components/work-preferences/LocationSection"
 import { CombinedWorkPreferencesForm } from "@/hooks/useWorkPreferences"
 import IndustryPreferences from "./IndustryPreferences"
+import { ProfileCommitmentsSection } from "./ProfileCommitmentsSection"
 import { Separator } from "@/components/ui/separator"
 
 interface FullTimePreferencesProps {
@@ -13,12 +14,20 @@ interface FullTimePreferencesProps {
   ) => void
   currentLocationObj?: any
   setCurrentLocation: (location: string | { place_id: string } | null) => void
+  keepProfileUpdated: boolean
+  setKeepProfileUpdated: (value: boolean) => void
+  workAuthorizationConfirmed: boolean
+  setWorkAuthorizationConfirmed: (value: boolean) => void
 }
 
 export const FullTimePreferences = ({
   form,
   setForm,
   setCurrentLocation,
+  keepProfileUpdated,
+  setKeepProfileUpdated,
+  workAuthorizationConfirmed,
+  setWorkAuthorizationConfirmed,
 }: FullTimePreferencesProps) => {
   const industries = form.fullTime.industries || []
   
@@ -99,6 +108,18 @@ export const FullTimePreferences = ({
               fullTime: { ...prev.fullTime, industries: ids },
             }))
           }
+        />
+      </div>
+
+      <Separator className="my-6" />
+
+      {/* Profile Commitments */}
+      <div className="space-y-4">
+        <ProfileCommitmentsSection
+          keepProfileUpdated={keepProfileUpdated}
+          setKeepProfileUpdated={setKeepProfileUpdated}
+          workAuthorizationConfirmed={workAuthorizationConfirmed}
+          setWorkAuthorizationConfirmed={setWorkAuthorizationConfirmed}
         />
       </div>
     </div>
