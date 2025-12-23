@@ -3,6 +3,7 @@ import { DashboardLayout } from "@/components/DashboardLayout"
 import { WorkPreferencesConfirmation } from "@/components/work-preferences/WorkPreferencesConfirmation"
 import { FlexiblePreferences } from "@/components/work-preferences/FlexiblePreferences"
 import { FullTimePreferences } from "@/components/work-preferences/FullTimePreferences"
+import { ProfileCommitmentsSection } from "@/components/work-preferences/ProfileCommitmentsSection"
 import {
   StepCard,
   StepCardContent,
@@ -179,10 +180,6 @@ const WorkPreferences = () => {
                           setForm={setForm}
                           currentLocationObj={form.currentLocationObj}
                           setCurrentLocation={setCurrentLocation}
-                          keepProfileUpdated={keepProfileUpdated}
-                          setKeepProfileUpdated={setKeepProfileUpdated}
-                          workAuthorizationConfirmed={workAuthorizationConfirmed}
-                          setWorkAuthorizationConfirmed={setWorkAuthorizationConfirmed}
                         />
                       </div>
                     </div>
@@ -263,10 +260,6 @@ const WorkPreferences = () => {
                           setForm={setForm}
                           currentLocationObj={form.currentLocationObj}
                           setCurrentLocation={setCurrentLocation}
-                          keepProfileUpdated={keepProfileUpdated}
-                          setKeepProfileUpdated={setKeepProfileUpdated}
-                          workAuthorizationConfirmed={workAuthorizationConfirmed}
-                          setWorkAuthorizationConfirmed={setWorkAuthorizationConfirmed}
                         />
                       </div>
                     </div>
@@ -274,6 +267,16 @@ const WorkPreferences = () => {
                 </div>
               </div>
             </div>
+
+            {/* Profile Commitments Section */}
+            {hasSelection && (
+              <ProfileCommitmentsSection
+                keepProfileUpdated={keepProfileUpdated}
+                setKeepProfileUpdated={setKeepProfileUpdated}
+                workAuthorizationConfirmed={workAuthorizationConfirmed}
+                setWorkAuthorizationConfirmed={setWorkAuthorizationConfirmed}
+              />
+            )}
 
             {/* Action Button */}
             <div className="pt-8 border-t">
