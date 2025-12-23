@@ -109,18 +109,17 @@ export const NextStepsCard = ({
             </div>
           </div>
 
-          {/* Activate Search Action (Coming Soon) */}
+          {/* Get Engagement-Ready Action (Coming Soon) */}
           <div className="space-y-3 text-center flex flex-col">
             <div className="mx-auto w-12 h-12 rounded-full bg-muted/50 flex items-center justify-center">
               <Search className="h-6 w-6 text-muted-foreground" />
             </div>
             <div className="space-y-2 flex-1">
               <h3 className="font-semibold text-muted-foreground">
-                Activate Search (Coming Soon)
+                Get Engagement-Ready
               </h3>
               <p className="text-sm text-muted-foreground">
-                Start exploring fractional leadership opportunities tailored to
-                your profile.
+                Complete the final steps to make your profile ready to receive relevant fractional leadership opportunities.
               </p>
             </div>
             <div className="mt-auto">
