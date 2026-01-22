@@ -11,6 +11,9 @@ const WEBHOOK_ENDPOINTS = [
   { path: "/webhook/submit-profile", name: "Submit Profile" },
 ];
 
+// Test LinkedIn URL that should work for happy path testing
+const TEST_LINKEDIN_URL = "https://www.linkedin.com/in/adamjanes";
+
 export async function checkN8NWebhooks(
   config: Config
 ): Promise<HealthCheckResult[]> {
@@ -22,7 +25,76 @@ export async function checkN8NWebhooks(
     results.push(result);
   }
 
+  // Add happy path test for LinkedIn webhook if TEST_USER_ID is provided
+  if (config.testUserId) {
+    const linkedinHappyPath = await checkLinkedInHappyPath(config);
+    results.push(linkedinHappyPath);
+  }
+
   return results;
+}
+
+async function checkLinkedInHappyPath(
+  config: Config
+): Promise<HealthCheckResult> {
+  const url = `${config.n8nWebhookBase}/webhook/generate-profile-linkedin`;
+  const startTime = Date.now();
+
+  try {
+    // Create FormData-style body with userId and linkedinUrl
+    const formData = new URLSearchParams();
+    formData.append("userId", config.testUserId!);
+    formData.append("linkedinUrl", TEST_LINKEDIN_URL);
+
+    const response = await fetchWithRetry(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: formData.toString(),
+      timeout: 120000, // 2 minutes - LinkedIn processing can take time
+      retries: 0, // Don't retry this expensive operation
+    });
+
+    const latencyMs = Date.now() - startTime;
+
+    if (response.ok) {
+      const data = await response.json().catch(() => ({}));
+      return {
+        service: "n8n",
+        name: "Generate Profile (LinkedIn) - Happy Path",
+        status: "pass",
+        latencyMs,
+        message: `Profile generation successful (${response.status})`,
+        details: config.verbose ? { url, userId: config.testUserId, response: data } : undefined,
+      };
+    }
+
+    // Check for specific error types
+    const errorText = await response.text().catch(() => "");
+    let errorInfo: Record<string, unknown> = { status: response.status };
+    try {
+      errorInfo = JSON.parse(errorText);
+    } catch {
+      errorInfo.rawError = errorText;
+    }
+
+    return {
+      service: "n8n",
+      name: "Generate Profile (LinkedIn) - Happy Path",
+      status: "fail",
+      latencyMs,
+      message: `Workflow failed: ${response.status} - ${errorInfo.message || errorText.substring(0, 100)}`,
+      details: { url, userId: config.testUserId, error: errorInfo },
+    };
+  } catch (error) {
+    return {
+      service: "n8n",
+      name: "Generate Profile (LinkedIn) - Happy Path",
+      status: "fail",
+      latencyMs: Date.now() - startTime,
+      message: error instanceof Error ? error.message : "Unknown error",
+      details: { url, userId: config.testUserId, error: String(error) },
+    };
+  }
 }
 
 async function checkEndpoint(

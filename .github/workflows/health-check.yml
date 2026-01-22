@@ -36,8 +36,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: "npm"
-          cache-dependency-path: scripts/health-check/package-lock.json
 
       - name: Install dependencies
         run: |
@@ -53,6 +51,7 @@ jobs:
           GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
           TEST_PROFILE_SLUG: ${{ secrets.TEST_PROFILE_SLUG }}
           TEST_ANON_SLUG: ${{ secrets.TEST_ANON_SLUG }}
+          TEST_USER_ID: ${{ secrets.TEST_USER_ID }}
           VERBOSE: ${{ inputs.verbose || 'false' }}
           SERVICES: ${{ inputs.services || 'all' }}
         run: |

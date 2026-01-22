@@ -28,6 +28,7 @@ export interface Config {
   googlePlacesApiKey?: string;
   testProfileSlug?: string;
   testAnonSlug?: string;
+  testUserId?: string;
   verbose: boolean;
   services: string[];
 }

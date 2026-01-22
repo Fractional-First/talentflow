@@ -24,6 +24,7 @@ function getConfig(): Config {
     googlePlacesApiKey: process.env.GOOGLE_PLACES_API_KEY,
     testProfileSlug: process.env.TEST_PROFILE_SLUG,
     testAnonSlug: process.env.TEST_ANON_SLUG,
+    testUserId: process.env.TEST_USER_ID,
     verbose: process.env.VERBOSE === "true",
     services: (process.env.SERVICES || "all").split(",").map((s) => s.trim()),
   };
@@ -42,6 +43,7 @@ async function main(): Promise<void> {
     `Google Places API Key: ${config.googlePlacesApiKey ? "Provided" : "Not provided"}`
   );
   console.log(`Test Profile Slug: ${config.testProfileSlug || "(default: adam-janes)"}`);
+  console.log(`Test User ID: ${config.testUserId ? "Provided" : "Not provided (happy path tests will be skipped)"}`);
   console.log("");
 
   const results: HealthCheckResult[] = [];
