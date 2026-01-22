@@ -1,0 +1,84 @@
+name: Service Health Check
+
+on:
+  schedule:
+    # Run daily at 6 AM UTC (10 PM PST / 1 AM EST)
+    - cron: "0 6 * * *"
+
+  workflow_dispatch:
+    # Allow manual trigger from GitHub UI
+    inputs:
+      verbose:
+        description: "Enable verbose logging"
+        required: false
+        default: "false"
+        type: boolean
+
+      services:
+        description: "Services to check (comma-separated: n8n,edge,rpc or all)"
+        required: false
+        default: "all"
+        type: string
+
+env:
+  NODE_VERSION: "20"
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: scripts/health-check/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          cd scripts/health-check
+          npm ci || npm install
+
+      - name: Run health checks
+        id: health-check
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          N8N_WEBHOOK_BASE: ${{ secrets.N8N_WEBHOOK_BASE }}
+          GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
+          TEST_PROFILE_SLUG: ${{ secrets.TEST_PROFILE_SLUG }}
+          TEST_ANON_SLUG: ${{ secrets.TEST_ANON_SLUG }}
+          VERBOSE: ${{ inputs.verbose || 'false' }}
+          SERVICES: ${{ inputs.services || 'all' }}
+        run: |
+          cd scripts/health-check
+          npm run check
+
+      - name: Upload health report (JSON)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: health-report-${{ github.run_number }}
+          path: scripts/health-check/report.json
+          retention-days: 30
+
+      - name: Post summary to job
+        if: always()
+        run: |
+          if [ -f scripts/health-check/report.md ]; then
+            cat scripts/health-check/report.md >> $GITHUB_STEP_SUMMARY
+          else
+            echo "## Health Check Report" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Report file not generated - check logs for errors." >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Fail job if health checks failed
+        if: failure()
+        run: |
+          echo "::error::One or more health checks failed. See the report above for details."
