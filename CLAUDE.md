@@ -413,6 +413,50 @@ npm run lint
 
 ---
 
+## GitHub & Git Configuration
+
+### Account Setup
+
+This project uses the `adam-frationalfirst` GitHub account. Both repos are configured to use SSH:
+
+```bash
+# Remotes (already configured)
+talentflow:      git@github.com:Fractional-First/talentflow.git
+public-profiles: git@github.com:Fractional-First/candidates.git
+```
+
+### SSH Key
+
+The SSH key `~/.ssh/id_ed25519` is added to the `adam-frationalfirst` GitHub account.
+
+To verify SSH is working:
+```bash
+ssh -T git@github.com
+# Should say: Hi adam-frationalfirst! ...
+```
+
+### GitHub CLI (`gh`)
+
+The `gh` CLI has multiple accounts. Switch to the correct one before creating PRs:
+
+```bash
+# Check current account
+gh auth status
+
+# Switch to Fractional First account
+gh auth switch --user adam-frationalfirst
+```
+
+### Workflow for Changes
+
+1. Create a feature branch: `git checkout -b feature/description`
+2. Make changes and commit
+3. Push: `git push -u origin feature/description`
+4. Create PR: `gh pr create --title "..." --body "..."`
+5. Review and merge via GitHub
+
+---
+
 ## Emergency Contacts
 
 - **Supabase Dashboard**: https://supabase.com/dashboard/project/dtyugokvlksnatftpucm
