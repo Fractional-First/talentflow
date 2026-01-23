@@ -6,6 +6,16 @@
 
 ---
 
+## Shared Documentation
+
+See parent folder for shared docs across all FF projects:
+- [../CLAUDE.md](../CLAUDE.md) - Shared context for all FF projects
+- [../docs/SUPABASE.md](../docs/SUPABASE.md) - Database schema, tables, RPC functions
+- [../docs/N8N-WORKFLOWS.md](../docs/N8N-WORKFLOWS.md) - All N8N webhooks and workflows
+- [../docs/CREDENTIALS-NEEDED.md](../docs/CREDENTIALS-NEEDED.md) - API credentials
+
+---
+
 ## Quick Reference
 
 ### Bash Commands
