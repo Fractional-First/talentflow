@@ -5,6 +5,7 @@ import { AppSidebar } from "@/components/AppSidebar"
 import { Button } from "@/components/ui/button"
 import { ContractingTypeSection } from "@/components/agreement/ContractingTypeSection"
 import { TermsAcceptanceSection } from "@/components/agreement/TermsAcceptanceSection"
+import { MSAModal } from "@/components/agreement/MSAModal"
 import { CheckCircle, ArrowLeft } from "lucide-react"
 import { toast } from "sonner"
 
@@ -14,13 +15,15 @@ const Agreement = () => {
   // Contracting type state
   const [contractingType, setContractingType] = useState<"individual" | "entity" | null>(null)
   const [entityName, setEntityName] = useState("")
-  const [isAuthorized, setIsAuthorized] = useState(false)
-  const [isDesignatedPerson, setIsDesignatedPerson] = useState(false)
+  const [registrationNumber, setRegistrationNumber] = useState("")
+  const [registeredAddress, setRegisteredAddress] = useState("")
+  const [entityConfirmed, setEntityConfirmed] = useState(false)
 
   // Terms acceptance state
-  const [agreeConfidentiality, setAgreeConfidentiality] = useState(false)
-  const [agreeNonCircumvention, setAgreeNonCircumvention] = useState(false)
-  const [agreeFullAgreement, setAgreeFullAgreement] = useState(false)
+  const [acceptFullAgreement, setAcceptFullAgreement] = useState(false)
+
+  // Modal state
+  const [msaModalOpen, setMsaModalOpen] = useState(false)
 
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -28,13 +31,18 @@ const Agreement = () => {
   const isContractingValid = () => {
     if (!contractingType) return false
     if (contractingType === "entity") {
-      return entityName.trim() !== "" && isAuthorized && isDesignatedPerson
+      return (
+        entityName.trim() !== "" &&
+        registrationNumber.trim() !== "" &&
+        registeredAddress.trim() !== "" &&
+        entityConfirmed
+      )
     }
     return true
   }
 
   const isTermsValid = () => {
-    return agreeConfidentiality && agreeNonCircumvention && agreeFullAgreement
+    return acceptFullAgreement
   }
 
   const canSubmit = isContractingValid() && isTermsValid()
@@ -80,10 +88,10 @@ const Agreement = () => {
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold text-foreground">
-                    Great – your profile is ready!
+                    Great — your profile is ready.
                   </h1>
                   <p className="text-muted-foreground">
-                    To see client names, specific roles, and receive matches, please complete the following.
+                    To receive client names, client details, specific roles, and potential matches, please confirm how you will contract with us.
                   </p>
                 </div>
               </div>
@@ -93,22 +101,22 @@ const Agreement = () => {
             <ContractingTypeSection
               contractingType={contractingType}
               entityName={entityName}
-              isAuthorized={isAuthorized}
-              isDesignatedPerson={isDesignatedPerson}
+              registrationNumber={registrationNumber}
+              registeredAddress={registeredAddress}
+              entityConfirmed={entityConfirmed}
               onContractingTypeChange={setContractingType}
               onEntityNameChange={setEntityName}
-              onIsAuthorizedChange={setIsAuthorized}
-              onIsDesignatedPersonChange={setIsDesignatedPerson}
+              onRegistrationNumberChange={setRegistrationNumber}
+              onRegisteredAddressChange={setRegisteredAddress}
+              onEntityConfirmedChange={setEntityConfirmed}
+              onViewMSA={() => setMsaModalOpen(true)}
             />
 
             {/* Terms Acceptance Section */}
             <TermsAcceptanceSection
-              agreeConfidentiality={agreeConfidentiality}
-              agreeNonCircumvention={agreeNonCircumvention}
-              agreeFullAgreement={agreeFullAgreement}
-              onAgreeConfidentialityChange={setAgreeConfidentiality}
-              onAgreeNonCircumventionChange={setAgreeNonCircumvention}
-              onAgreeFullAgreementChange={setAgreeFullAgreement}
+              acceptFullAgreement={acceptFullAgreement}
+              onAcceptFullAgreementChange={setAcceptFullAgreement}
+              onViewMSA={() => setMsaModalOpen(true)}
             />
 
             {/* Submit Button */}
@@ -123,6 +131,9 @@ const Agreement = () => {
           </div>
         </main>
       </div>
+
+      {/* MSA Modal */}
+      <MSAModal open={msaModalOpen} onOpenChange={setMsaModalOpen} />
     </SidebarProvider>
   )
 }
