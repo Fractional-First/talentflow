@@ -28,8 +28,7 @@ const WorkPreferences = () => {
   >("placement-type")
 
   // Profile commitments state
-  const [keepProfileUpdated, setKeepProfileUpdated] = useState(false)
-  const [workAuthorizationConfirmed, setWorkAuthorizationConfirmed] = useState(false)
+  const [commitmentsConfirmed, setCommitmentsConfirmed] = useState(false)
 
   // Unified form state
   const { form, setForm, isLoading, error, setCurrentLocation, initialized } =
@@ -83,8 +82,6 @@ const WorkPreferences = () => {
   const hasSelection =
     form.fullTime.open_for_work || form.fractional.open_for_work
 
-  // Check if commitments are confirmed for the selected work type(s)
-  const commitmentsConfirmed = keepProfileUpdated && workAuthorizationConfirmed
 
   const renderStepContent = () => {
     if (currentStep === "placement-type") {
@@ -271,10 +268,8 @@ const WorkPreferences = () => {
             {/* Profile Commitments Section */}
             {hasSelection && (
               <ProfileCommitmentsSection
-                keepProfileUpdated={keepProfileUpdated}
-                setKeepProfileUpdated={setKeepProfileUpdated}
-                workAuthorizationConfirmed={workAuthorizationConfirmed}
-                setWorkAuthorizationConfirmed={setWorkAuthorizationConfirmed}
+                commitmentsConfirmed={commitmentsConfirmed}
+                setCommitmentsConfirmed={setCommitmentsConfirmed}
               />
             )}
 
