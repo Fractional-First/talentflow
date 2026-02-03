@@ -30,7 +30,6 @@ const tocItems = [
   { id: "data-protection", number: "13", title: "Data Protection" },
   { id: "limitation", number: "14", title: "Limitation of Liability" },
   { id: "term", number: "15", title: "Term, Termination & General Provisions" },
-  { id: "good-leaver", number: "16", title: "Good Leaver Release" },
   { id: "schedule-1", number: "", title: "Schedule 1 – Statement of Work Template" },
 ]
 
@@ -456,16 +455,108 @@ export const MSAModal = ({ open, onOpenChange }: MSAModalProps) => {
               </div>
             </section>
 
-            {/* Section 16: Good Leaver Release */}
-            <section id="good-leaver" className="space-y-4">
-              <h2 className="text-lg font-bold text-foreground">16. GOOD LEAVER RELEASE</h2>
-              <p className="text-muted-foreground italic">[Content to be provided]</p>
-            </section>
-
-            {/* Schedule 1 */}
-            <section id="schedule-1" className="space-y-4">
-              <h2 className="text-lg font-bold text-foreground">Schedule 1 – Statement of Work Template</h2>
-              <p className="text-muted-foreground italic">[Template to be provided]</p>
+            {/* Schedule 1 – Statement of Work Template */}
+            <section id="schedule-1" className="space-y-6">
+              <h2 className="text-lg font-bold text-foreground">SCHEDULE 1 – STATEMENT OF WORK TEMPLATE</h2>
+              
+              <div className="space-y-4 text-muted-foreground">
+                <div className="text-center space-y-2">
+                  <p className="font-semibold text-foreground">STATEMENT OF WORK (SOW)</p>
+                  <p className="font-medium">Fractional First – Engagement-Based Assignment</p>
+                </div>
+                
+                <p>This Statement of Work ("SOW") is entered into as of __________________ ("Effective Date") and forms part of the Master Candidate Agreement between Digital.Direction Singapore Services Pte. Ltd., operating as Fractional First ("FF"), and the Candidate.</p>
+                
+                <div className="space-y-4">
+                  <div>
+                    <p className="font-semibold text-foreground">1. Parties</p>
+                    <div className="ml-4 space-y-1">
+                      <p><strong>Fractional First:</strong> Digital.Direction Singapore Services Pte. Ltd. (operating as Fractional First)</p>
+                      <p><strong>Candidate:</strong> ______________________________</p>
+                      <p><strong>(If entity) Candidate Personnel:</strong> ______________________________</p>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <p className="font-semibold text-foreground">2. Client</p>
+                    <div className="ml-4 space-y-1">
+                      <p><strong>Client Name / Entity:</strong> ______________________________</p>
+                      <p><strong>Client Address:</strong> ______________________________</p>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <p className="font-semibold text-foreground">3. Engagement Details</p>
+                    <div className="ml-4 space-y-2">
+                      <p><strong>Role / Title:</strong> ______________________________</p>
+                      <p><strong>Nature:</strong> ☐ Fractional ☐ Interim ☐ Advisory ☐ Consulting ☐ Project-Based ☐ Other: ________</p>
+                      <p><strong>Scope of Services / Key Deliverables:</strong></p>
+                      <div className="border border-border rounded p-3 min-h-[60px] bg-muted/30"></div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <p className="font-semibold text-foreground">4. Term</p>
+                    <div className="ml-4 space-y-1">
+                      <p><strong>Start Date:</strong> __________________</p>
+                      <p><strong>End Date (if fixed):</strong> __________________ OR ☐ Ongoing until terminated on ____ days' notice</p>
+                      <p><strong>Expected Time Commitment:</strong> __________________</p>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <p className="font-semibold text-foreground">5. Reporting & Communication</p>
+                    <div className="ml-4">
+                      <p><strong>Reports to:</strong> ______________________________</p>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <p className="font-semibold text-foreground">6. Commercial Terms</p>
+                    <div className="ml-4 space-y-1">
+                      <p><strong>Rate:</strong> ______________________________ (all rates exclude GST, if applicable)</p>
+                      <p><strong>Invoicing / Payment Terms:</strong> ______________________________</p>
+                      <p><strong>Expenses:</strong> ☐ Reimbursable (with approval) ☐ Not reimbursable</p>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <p className="font-semibold text-foreground">7. Location & Arrangements</p>
+                    <div className="ml-4 space-y-1">
+                      <p><strong>Primary Location:</strong> ☐ Remote ☐ On-site ☐ Hybrid</p>
+                      <p><strong>Travel Required:</strong> ______________________________</p>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <p className="font-semibold text-foreground">8. Additional Terms (if any):</p>
+                    <div className="ml-4">
+                      <div className="border border-border rounded p-3 min-h-[60px] bg-muted/30"></div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="pt-6 border-t border-border">
+                  <p className="font-semibold text-foreground text-center mb-6">Accepted and Agreed</p>
+                  
+                  <div className="grid grid-cols-2 gap-8">
+                    <div className="space-y-3">
+                      <p className="font-semibold text-foreground">Fractional First</p>
+                      <p>By: __________________</p>
+                      <p>Name: __________________</p>
+                      <p>Title: __________________</p>
+                      <p>Date: __________________</p>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      <p className="font-semibold text-foreground">Candidate</p>
+                      <p>By: __________________</p>
+                      <p>Name: __________________</p>
+                      <p>Date: __________________</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </section>
           </div>
         </ScrollArea>
