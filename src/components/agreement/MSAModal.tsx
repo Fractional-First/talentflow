@@ -465,31 +465,31 @@ export const MSAModal = ({ open, onOpenChange }: MSAModalProps) => {
                   <p className="font-medium">Fractional First – Engagement-Based Assignment</p>
                 </div>
                 
-                <p>This Statement of Work ("SOW") is entered into as of __________________ ("Effective Date") and forms part of the Master Candidate Agreement between Digital.Direction Singapore Services Pte. Ltd., operating as Fractional First ("FF"), and the Candidate.</p>
+                <p>This Statement of Work ("SOW") is entered into as of <span className="inline-block min-w-[180px] border-b border-foreground"></span> ("Effective Date") and forms part of the Master Candidate Agreement between Digital.Direction Singapore Services Pte. Ltd., operating as Fractional First ("FF"), and the Candidate.</p>
                 
                 <div className="space-y-4">
                   <div>
                     <p className="font-semibold text-foreground">1. Parties</p>
                     <div className="ml-4 space-y-1">
                       <p><strong>Fractional First:</strong> Digital.Direction Singapore Services Pte. Ltd. (operating as Fractional First)</p>
-                      <p><strong>Candidate:</strong> ______________________________</p>
-                      <p><strong>(If entity) Candidate Personnel:</strong> ______________________________</p>
+                      <p><strong>Candidate:</strong> <span className="inline-block min-w-[250px] border-b border-foreground"></span></p>
+                      <p><strong>(If entity) Candidate Personnel:</strong> <span className="inline-block min-w-[250px] border-b border-foreground"></span></p>
                     </div>
                   </div>
                   
                   <div>
                     <p className="font-semibold text-foreground">2. Client</p>
                     <div className="ml-4 space-y-1">
-                      <p><strong>Client Name / Entity:</strong> ______________________________</p>
-                      <p><strong>Client Address:</strong> ______________________________</p>
+                      <p><strong>Client Name / Entity:</strong> <span className="inline-block min-w-[250px] border-b border-foreground"></span></p>
+                      <p><strong>Client Address:</strong> <span className="inline-block min-w-[250px] border-b border-foreground"></span></p>
                     </div>
                   </div>
                   
                   <div>
                     <p className="font-semibold text-foreground">3. Engagement Details</p>
                     <div className="ml-4 space-y-2">
-                      <p><strong>Role / Title:</strong> ______________________________</p>
-                      <p><strong>Nature:</strong> ☐ Fractional ☐ Interim ☐ Advisory ☐ Consulting ☐ Project-Based ☐ Other: ________</p>
+                      <p><strong>Role / Title:</strong> <span className="inline-block min-w-[250px] border-b border-foreground"></span></p>
+                      <p><strong>Nature:</strong> ☐ Fractional ☐ Interim ☐ Advisory ☐ Consulting ☐ Project-Based ☐ Other: <span className="inline-block min-w-[80px] border-b border-foreground"></span></p>
                       <p><strong>Scope of Services / Key Deliverables:</strong></p>
                       <div className="border border-border rounded p-3 min-h-[60px] bg-muted/30"></div>
                     </div>
@@ -498,24 +498,24 @@ export const MSAModal = ({ open, onOpenChange }: MSAModalProps) => {
                   <div>
                     <p className="font-semibold text-foreground">4. Term</p>
                     <div className="ml-4 space-y-1">
-                      <p><strong>Start Date:</strong> __________________</p>
-                      <p><strong>End Date (if fixed):</strong> __________________ OR ☐ Ongoing until terminated on ____ days' notice</p>
-                      <p><strong>Expected Time Commitment:</strong> __________________</p>
+                      <p><strong>Start Date:</strong> <span className="inline-block min-w-[150px] border-b border-foreground"></span></p>
+                      <p><strong>End Date (if fixed):</strong> <span className="inline-block min-w-[150px] border-b border-foreground"></span> OR ☐ Ongoing until terminated on <span className="inline-block min-w-[40px] border-b border-foreground"></span> days' notice</p>
+                      <p><strong>Expected Time Commitment:</strong> <span className="inline-block min-w-[150px] border-b border-foreground"></span></p>
                     </div>
                   </div>
                   
                   <div>
                     <p className="font-semibold text-foreground">5. Reporting & Communication</p>
                     <div className="ml-4">
-                      <p><strong>Reports to:</strong> ______________________________</p>
+                      <p><strong>Reports to:</strong> <span className="inline-block min-w-[250px] border-b border-foreground"></span></p>
                     </div>
                   </div>
                   
                   <div>
                     <p className="font-semibold text-foreground">6. Commercial Terms</p>
                     <div className="ml-4 space-y-1">
-                      <p><strong>Rate:</strong> ______________________________ (all rates exclude GST, if applicable)</p>
-                      <p><strong>Invoicing / Payment Terms:</strong> ______________________________</p>
+                      <p><strong>Rate:</strong> <span className="inline-block min-w-[250px] border-b border-foreground"></span> (all rates exclude GST, if applicable)</p>
+                      <p><strong>Invoicing / Payment Terms:</strong> <span className="inline-block min-w-[250px] border-b border-foreground"></span></p>
                       <p><strong>Expenses:</strong> ☐ Reimbursable (with approval) ☐ Not reimbursable</p>
                     </div>
                   </div>
@@ -524,7 +524,7 @@ export const MSAModal = ({ open, onOpenChange }: MSAModalProps) => {
                     <p className="font-semibold text-foreground">7. Location & Arrangements</p>
                     <div className="ml-4 space-y-1">
                       <p><strong>Primary Location:</strong> ☐ Remote ☐ On-site ☐ Hybrid</p>
-                      <p><strong>Travel Required:</strong> ______________________________</p>
+                      <p><strong>Travel Required:</strong> <span className="inline-block min-w-[250px] border-b border-foreground"></span></p>
                     </div>
                   </div>
                   
@@ -542,17 +542,17 @@ export const MSAModal = ({ open, onOpenChange }: MSAModalProps) => {
                   <div className="grid grid-cols-2 gap-8">
                     <div className="space-y-3">
                       <p className="font-semibold text-foreground">Fractional First</p>
-                      <p>By: __________________</p>
-                      <p>Name: __________________</p>
-                      <p>Title: __________________</p>
-                      <p>Date: __________________</p>
+                      <p>By: <span className="inline-block min-w-[150px] border-b border-foreground"></span></p>
+                      <p>Name: <span className="inline-block min-w-[150px] border-b border-foreground"></span></p>
+                      <p>Title: <span className="inline-block min-w-[150px] border-b border-foreground"></span></p>
+                      <p>Date: <span className="inline-block min-w-[150px] border-b border-foreground"></span></p>
                     </div>
                     
                     <div className="space-y-3">
                       <p className="font-semibold text-foreground">Candidate</p>
-                      <p>By: __________________</p>
-                      <p>Name: __________________</p>
-                      <p>Date: __________________</p>
+                      <p>By: <span className="inline-block min-w-[150px] border-b border-foreground"></span></p>
+                      <p>Name: <span className="inline-block min-w-[150px] border-b border-foreground"></span></p>
+                      <p>Date: <span className="inline-block min-w-[150px] border-b border-foreground"></span></p>
                     </div>
                   </div>
                 </div>
