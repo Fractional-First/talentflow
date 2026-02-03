@@ -73,11 +73,11 @@ export const ContractualRoadmap = () => {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Desktop Layout */}
+        {/* Desktop Layout - Left to Right Flow */}
         {!isMobile && (
-          <div className="flex flex-col items-center gap-6">
-            {/* Primary Step - Centered */}
-            <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 text-center min-w-[220px]">
+          <div className="flex items-stretch gap-4">
+            {/* Primary Step - Left */}
+            <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 text-center flex flex-col justify-center min-w-[180px]">
               <div className="flex items-center justify-center mb-2">
                 <span className="text-xs font-semibold text-primary bg-primary/20 px-2 py-0.5 rounded-full">
                   Step 1
@@ -90,45 +90,48 @@ export const ContractualRoadmap = () => {
               <p className="text-xs text-muted-foreground mt-1">One-time signature for all future engagements</p>
             </div>
 
-              {/* Arrow down to paths */}
-              <ArrowDown className="h-6 w-6 text-muted-foreground" />
+            {/* Arrows pointing to paths */}
+            <div className="flex flex-col justify-center gap-16">
+              <ArrowRight className="h-6 w-6 text-muted-foreground" />
+              <ArrowRight className="h-6 w-6 text-muted-foreground" />
+            </div>
 
-              {/* Branching Paths - Side by side */}
-              <div className="grid grid-cols-2 gap-4 w-full">
-                {/* Path A - Blue */}
-                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                  <div className="flex items-center gap-2 mb-4">
-                    <span className="text-xs font-semibold text-blue-700 bg-blue-200 px-2 py-0.5 rounded-full">
-                      Path A
-                    </span>
-                    <span className="text-sm font-semibold text-blue-800">
-                      Engaged via FF (Fractional/Interim)
-                    </span>
-                  </div>
-                  <PathSteps steps={pathASteps} isMobile={false} />
-                  <p className="text-xs text-blue-600 mt-4 font-medium">
-                    ✓ No additional client paperwork needed
-                  </p>
+            {/* Branching Paths - Stacked vertically on right */}
+            <div className="flex flex-col gap-4 flex-1">
+              {/* Path A - Blue */}
+              <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="text-xs font-semibold text-blue-700 bg-blue-200 px-2 py-0.5 rounded-full">
+                    Path A
+                  </span>
+                  <span className="text-sm font-semibold text-blue-800">
+                    Engaged via FF (Fractional/Interim)
+                  </span>
                 </div>
+                <PathSteps steps={pathASteps} isMobile={false} />
+                <p className="text-xs text-blue-600 mt-4 font-medium">
+                  ✓ No additional client paperwork needed
+                </p>
+              </div>
 
-                {/* Path B - Green */}
-                <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
-                  <div className="flex items-center gap-2 mb-4">
-                    <span className="text-xs font-semibold text-emerald-700 bg-emerald-200 px-2 py-0.5 rounded-full">
-                      Path B
-                    </span>
-                    <span className="text-sm font-semibold text-emerald-800">
-                      Direct-Hire
-                    </span>
-                  </div>
-                  <PathSteps steps={pathBSteps} isMobile={false} />
-                  <p className="text-xs text-emerald-600 mt-4 font-medium">
-                    ✓ Directly hired via Client's own contract
-                  </p>
+              {/* Path B - Green */}
+              <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="text-xs font-semibold text-emerald-700 bg-emerald-200 px-2 py-0.5 rounded-full">
+                    Path B
+                  </span>
+                  <span className="text-sm font-semibold text-emerald-800">
+                    Direct-Hire
+                  </span>
                 </div>
+                <PathSteps steps={pathBSteps} isMobile={false} />
+                <p className="text-xs text-emerald-600 mt-4 font-medium">
+                  ✓ Directly hired via Client's own contract
+                </p>
               </div>
             </div>
-          )}
+          </div>
+        )}
 
           {/* Mobile Layout */}
           {isMobile && (
