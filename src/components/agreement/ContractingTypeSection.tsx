@@ -3,7 +3,7 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
-import { FileText } from "lucide-react"
+
 
 interface ContractingTypeSectionProps {
   contractingType: "individual" | "entity" | null
@@ -143,15 +143,6 @@ export const ContractingTypeSection = ({
                 </div>
               </div>
 
-              {/* View MSA Link */}
-              <button
-                type="button"
-                onClick={onViewMSA}
-                className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
-              >
-                <FileText className="h-4 w-4" />
-                View Master Candidate Agreement
-              </button>
             </div>
           )}
         </div>
