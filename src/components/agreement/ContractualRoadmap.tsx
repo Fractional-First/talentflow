@@ -3,18 +3,10 @@ import {
   Users, 
   FileText, 
   Briefcase, 
-  Info, 
   ArrowRight, 
-  ArrowDown,
-  ChevronRight
+  ArrowDown
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
 import { useIsMobile } from "@/hooks/use-mobile"
 
 interface StepProps {
@@ -74,39 +66,29 @@ export const ContractualRoadmap = () => {
   ]
 
   return (
-    <TooltipProvider>
-      <Card className="border-border bg-muted/30">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-semibold text-foreground text-center">
-            How Your Contractual Relationship Works
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Desktop Layout */}
-          {!isMobile && (
-            <div className="flex flex-col items-center gap-6">
-              {/* Primary Step - Centered */}
-              <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 text-center min-w-[180px]">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <span className="text-xs font-semibold text-primary bg-primary/20 px-2 py-0.5 rounded-full">
-                    Step 1
-                  </span>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button className="text-primary hover:text-primary/80" aria-label="More information">
-                        <Info className="h-4 w-4" />
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent className="max-w-[250px]">
-                      <p>This is a one-time signature that covers all future engagements with Fractional First</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-                <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-3">
-                  <FileSignature className="h-6 w-6 text-primary" />
-                </div>
-                <p className="text-sm font-semibold text-foreground">Sign Master Agreement with FF</p>
+    <Card className="border-border bg-muted/30">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-lg font-semibold text-foreground text-center">
+          How Your Contractual Relationship Works
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {/* Desktop Layout */}
+        {!isMobile && (
+          <div className="flex flex-col items-center gap-6">
+            {/* Primary Step - Centered */}
+            <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 text-center min-w-[220px]">
+              <div className="flex items-center justify-center mb-2">
+                <span className="text-xs font-semibold text-primary bg-primary/20 px-2 py-0.5 rounded-full">
+                  Step 1
+                </span>
               </div>
+              <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-3">
+                <FileSignature className="h-6 w-6 text-primary" />
+              </div>
+              <p className="text-sm font-semibold text-foreground">Sign Master Agreement with FF</p>
+              <p className="text-xs text-muted-foreground mt-1">One-time signature for all future engagements</p>
+            </div>
 
               {/* Arrow down to paths */}
               <ArrowDown className="h-6 w-6 text-muted-foreground" />
@@ -153,25 +135,16 @@ export const ContractualRoadmap = () => {
             <div className="flex flex-col items-center gap-4">
               {/* Primary Step */}
               <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 text-center w-full">
-                <div className="flex items-center justify-center gap-2 mb-2">
+                <div className="flex items-center justify-center mb-2">
                   <span className="text-xs font-semibold text-primary bg-primary/20 px-2 py-0.5 rounded-full">
                     Step 1
                   </span>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button className="text-primary hover:text-primary/80" aria-label="More information">
-                        <Info className="h-4 w-4" />
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent className="max-w-[250px]">
-                      <p>This is a one-time signature that covers all future engagements with Fractional First</p>
-                    </TooltipContent>
-                  </Tooltip>
                 </div>
                 <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-3">
                   <FileSignature className="h-6 w-6 text-primary" />
                 </div>
                 <p className="text-sm font-semibold text-foreground">Sign Master Agreement with FF</p>
+                <p className="text-xs text-muted-foreground mt-1">One-time signature for all future engagements</p>
               </div>
 
               {/* Arrow down */}
@@ -218,6 +191,5 @@ export const ContractualRoadmap = () => {
           )}
         </CardContent>
       </Card>
-    </TooltipProvider>
   )
 }
