@@ -1,125 +1,126 @@
 
 
-## Update Agreement Page with New Text and MSA Viewer
+## Create Contractual Roadmap Component
 
 ### Overview
 
-This plan updates the Agreement page (`/dashboard/agreement`) with the latest text structure and adds functionality to view the Master Candidate Agreement. I'll present two options for displaying the MSA document.
+This plan adds a visual "Contractual Roadmap" flowchart to the Agreement page that helps candidates understand the legal relationship between themselves, Fractional First (FF), and Clients. The component will be responsive with a horizontal flow on desktop and vertical stepper on mobile.
 
 ---
 
-### MSA Display Options
+### Visual Design
 
-**Option A: Modal with Embedded PDF (Recommended)**
-- Uses the existing Dialog component to open a large modal
-- Embeds a PDF viewer using an iframe or native browser PDF rendering
-- User stays on the same page and can easily close to continue
-- Excellent mobile experience with full-screen modal
-- Requires hosting the PDF file in `public/` folder
+```text
+DESKTOP LAYOUT (Horizontal Flow):
 
-**Option B: External PDF Link (Current approach)**
-- Opens PDF in a new browser tab
-- Simplest implementation
-- User leaves the current context temporarily
-- Works well if the PDF is hosted externally (e.g., company website, Google Drive)
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│  How Your Contractual Relationship Works                                        │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                  │
+│                          ┌─ Path A (Blue) ──────────────────────────────────┐   │
+│                          │  "Engaged via FF (Fractional/Interim)"           │   │
+│    ┌────────────┐        │   ┌──────────┐    ┌──────────┐    ┌──────────┐   │   │
+│    │    1. ℹ️    │ ──────→│   │  Match   │───→│ FF Issues│───→│  Start   │   │   │
+│    │   Sign     │        │   │  with    │    │   SOW    │    │  Work    │   │   │
+│    │   Master   │        │   │  Client  │    │          │    │          │   │   │
+│    │ Agreement  │        └───┴──────────┴────┴──────────┴────┴──────────┴───┘   │
+│    │  with FF   │                                                               │
+│    │            │        ┌─ Path B (Green) ─────────────────────────────────┐   │
+│    │  (Legal    │ ──────→│  "Direct-Hire"                                   │   │
+│    │Foundation) │        │   ┌──────────┐    ┌──────────┐    ┌──────────┐   │   │
+│    └────────────┘        │   │  Match   │───→│  Client  │───→│  Start   │   │   │
+│                          │   │  with    │    │  Issues  │    │  Work    │   │   │
+│                          │   │  Client  │    │  Offer   │    │          │   │   │
+│                          └───┴──────────┴────┴──────────┴────┴──────────┴───┘   │
+│                                                                                  │
+└─────────────────────────────────────────────────────────────────────────────────┘
 
-I recommend **Option A (Modal)** for a smoother user experience that keeps users engaged in the onboarding flow.
+MOBILE LAYOUT (Vertical Stepper):
+
+┌─────────────────────────┐
+│ How Your Contractual    │
+│ Relationship Works      │
+├─────────────────────────┤
+│                         │
+│  ┌───────────────────┐  │
+│  │  1. Sign Master   │  │
+│  │  Agreement with   │  │
+│  │  FF (ℹ️ tooltip)  │  │
+│  │                   │  │
+│  │ The Legal         │  │
+│  │ Foundation        │  │
+│  └─────────┬─────────┘  │
+│            │            │
+│      ┌─────┴─────┐      │
+│      ▼           ▼      │
+│  ┌────────┐ ┌────────┐  │
+│  │Path A  │ │Path B  │  │
+│  │(Blue)  │ │(Green) │  │
+│  │Engaged │ │Direct- │  │
+│  │via FF  │ │Hire    │  │
+│  └───┬────┘ └───┬────┘  │
+│      │          │       │
+│  (vertical steps continue)
+└─────────────────────────┘
+```
 
 ---
 
-### Changes Summary
+### Component Structure
 
-#### 1. Update Page Header
-**File:** `src/pages/dashboard/Agreement.tsx`
+**New File:** `src/components/agreement/ContractualRoadmap.tsx`
 
-- Change title: "Great — your profile is ready."
-- Update subtitle: "To receive client names, client details, specific roles, and potential matches, please confirm how you will contract with us."
+The component will contain:
 
-#### 2. Restructure ContractingTypeSection
-**File:** `src/components/agreement/ContractingTypeSection.tsx`
+1. **Header Section**
+   - Title: "How Your Contractual Relationship Works"
+   - Optional subtitle for context
 
-- Rename section header: "Contracting Structure (required)"
-- Change "As an individual" (keep as-is)
-- Change "As personnel of an entity" to "Using an entity"
-- Add new fields when entity is selected:
-  - Entity name (existing)
-  - Registration number / UEN (new field)
-  - Registered address (new field)
-- Consolidate the two separate checkboxes into a single confirmation with bullet points:
-  - "I am duly authorised by the entity..."
-  - "I will personally perform all services..."
-  - Single checkbox: "I confirm and agree to the above."
-- Add "View Master Candidate Agreement" link within this section
+2. **Primary Step Card**
+   - Step 1: "Sign Master Agreement with FF"
+   - Subtitle: "The Legal Foundation"
+   - Info tooltip icon with text: "This is a one-time signature that covers all future engagements with Fractional First"
 
-#### 3. Simplify TermsAcceptanceSection
-**File:** `src/components/agreement/TermsAcceptanceSection.tsx`
+3. **Branching Paths Container**
+   - Uses CSS Grid for desktop (2 columns) and Flexbox for mobile (stacked)
 
-- Change header: "Final Step — Acceptance of Terms"
-- Change subtitle: "As a final step, please review and accept the full Master Candidate Agreement."
-- Replace three separate checkboxes with a single checkbox:
-  - "I have read and accept the Master Candidate Agreement (December 2025), including the confidentiality and 24-month non-circumvention obligations."
-- Add "View Master Candidate Agreement" link
+4. **Path A Card (Blue Theme)**
+   - Header: "Engaged via FF (Fractional/Interim)"
+   - Step indicators with icons and arrows
+   - Steps: Match → SOW Issued → Start Work
+   - Summary text: "No additional client paperwork needed"
 
-#### 4. Create MSA Modal Component (Option A)
-**File:** `src/components/agreement/MSAModal.tsx` (new)
-
-- Create a reusable modal component for viewing the MSA PDF
-- Uses Dialog component with larger max-width (`max-w-4xl`)
-- Contains an iframe to render the PDF
-- Includes header with title and close button
-- ScrollArea for content if PDF embedding isn't available
-
-#### 5. Update Agreement Page State
-**File:** `src/pages/dashboard/Agreement.tsx`
-
-- Simplify state management:
-  - Remove separate `agreeConfidentiality`, `agreeNonCircumvention`, `agreeFullAgreement`
-  - Add single `acceptFullAgreement` boolean
-  - Add `entityConfirmed` boolean for the entity confirmation checkbox
-  - Add `registrationNumber` and `registeredAddress` strings for new entity fields
-- Add modal open state for MSA viewer
-- Update validation logic
+5. **Path B Card (Green Theme)**
+   - Header: "Direct-Hire"
+   - Step indicators with icons and arrows
+   - Steps: Match → Client Offer → Start Work
+   - Summary text: "Directly hired via Client's own contract"
 
 ---
 
-### Technical Details
+### Technical Implementation
 
-#### New Entity Fields Schema
-```text
-entityName: string
-registrationNumber: string (UEN, CIN, or local company registration)
-registeredAddress: string
-entityConfirmed: boolean (single checkbox for both confirmations)
-```
+**Icons Used (lucide-react):**
+- `FileSignature` - Master Agreement step
+- `Users` - Client Match step
+- `FileText` - SOW/Offer step
+- `Briefcase` - Start Work step
+- `Info` - Tooltip trigger
+- `ArrowRight` - Horizontal connectors (desktop)
+- `ArrowDown` - Vertical connectors (mobile)
+- `ChevronRight` - Path arrow indicators
 
-#### State Structure Changes
-```text
-Current:
-- agreeConfidentiality, agreeNonCircumvention, agreeFullAgreement (3 booleans)
-- isAuthorized, isDesignatedPerson (2 booleans for entity)
+**Color Scheme:**
+- Primary step: Uses existing `bg-primary/10` and `text-primary` (Teal #449889)
+- Path A (Blue): `bg-blue-50`, `border-blue-200`, `text-blue-700`
+- Path B (Green): `bg-emerald-50`, `border-emerald-200`, `text-emerald-700`
 
-New:
-- acceptFullAgreement (1 boolean for final acceptance)
-- entityConfirmed (1 boolean for entity authorization)
-```
+**Responsive Breakpoints:**
+- Mobile (< 768px): Vertical stepper layout
+- Desktop (>= 768px): Horizontal flow with branching paths
 
-#### MSA Modal Implementation
-```text
-Dialog
-  DialogContent (max-w-4xl, h-[80vh])
-    DialogHeader
-      DialogTitle: "Master Candidate Agreement"
-      DialogDescription: "December 2025"
-    ScrollArea or iframe
-      PDF content
-    DialogFooter
-      Close button
-```
-
-#### PDF Hosting
-- PDF file should be placed in `public/documents/master-candidate-agreement.pdf`
-- Alternative: Use an external URL if the PDF is hosted elsewhere
-- For iframe embedding: `<iframe src="/documents/master-candidate-agreement.pdf" />`
+**Tooltip Implementation:**
+- Uses existing `Tooltip`, `TooltipTrigger`, `TooltipContent`, `TooltipProvider` from `@/components/ui/tooltip`
 
 ---
 
@@ -127,47 +128,32 @@ Dialog
 
 | File | Action |
 |------|--------|
-| `src/pages/dashboard/Agreement.tsx` | Modify - Update header, state, add modal |
-| `src/components/agreement/ContractingTypeSection.tsx` | Modify - Add new fields, restructure |
-| `src/components/agreement/TermsAcceptanceSection.tsx` | Modify - Simplify to single checkbox |
-| `src/components/agreement/MSAModal.tsx` | Create - New modal component |
+| `src/components/agreement/ContractualRoadmap.tsx` | Create - New roadmap component |
+| `src/pages/dashboard/Agreement.tsx` | Modify - Add roadmap after header |
 
 ---
 
-### Visual Preview
+### Integration with Agreement Page
 
-**Contracting Structure section:**
+The roadmap will be placed between the header section and the Contracting Type Section, providing immediate context before users fill out the form.
+
 ```text
-Contracting Structure (required)
-
-○ As an individual
-
-○ Using an entity
-    Entity name: [________________]
-    Registration number / UEN: [________________]
-    Registered address: [________________]
-    
-    If contracting through an entity
-    I agree and warrant that:
-    • I am duly authorised by the entity...
-    • I will personally perform all services...
-    
-    ☐ I confirm and agree to the above.
-    
-    [View Master Candidate Agreement →]
+Agreement Page Structure:
+1. Back button
+2. Header ("Great — your profile is ready.")
+3. NEW: ContractualRoadmap component    ← Insert here
+4. ContractingTypeSection
+5. TermsAcceptanceSection
+6. Submit button
 ```
 
-**Final Step section:**
-```text
-Final Step — Acceptance of Terms
+---
 
-As a final step, please review and accept the full 
-Master Candidate Agreement.
+### Accessibility Considerations
 
-☐ I have read and accept the Master Candidate Agreement 
-   (December 2025), including the confidentiality and 
-   24-month non-circumvention obligations.
-
-[View Master Candidate Agreement →]
-```
+- All icons have appropriate `aria-label` attributes
+- Tooltip content is accessible via keyboard focus
+- Color contrast meets WCAG AA standards
+- Step numbers provide clear visual hierarchy
+- Path labels clearly distinguish the two options
 
