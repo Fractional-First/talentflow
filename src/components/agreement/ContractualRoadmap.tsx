@@ -34,7 +34,7 @@ const PathSteps = ({
   steps: { icon: React.ReactNode; title: string }[]
   isMobile: boolean 
 }) => (
-  <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} items-center gap-2`}>
+  <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} items-center justify-center gap-2`}>
     {steps.map((step, index) => (
       <div key={index} className={`flex ${isMobile ? 'flex-col' : 'flex-row'} items-center gap-2`}>
         <Step icon={step.icon} title={step.title} />
@@ -99,8 +99,8 @@ export const ContractualRoadmap = () => {
             {/* Branching Paths - Stacked vertically on right */}
             <div className="flex flex-col gap-2 flex-1">
               {/* Path A */}
-              <div className="bg-primary/5 border border-primary/20 rounded-lg p-3">
-                <div className="flex items-center gap-2 mb-2">
+              <div className="bg-primary/5 border border-primary/20 rounded-lg p-3 text-center">
+                <div className="flex items-center justify-center gap-2 mb-2">
                   <span className="text-[10px] font-semibold text-primary bg-primary/20 px-2 py-0.5 rounded-full">
                     Path A
                   </span>
@@ -115,8 +115,8 @@ export const ContractualRoadmap = () => {
               </div>
 
               {/* Path B */}
-              <div className="bg-primary/5 border border-primary/20 rounded-lg p-3">
-                <div className="flex items-center gap-2 mb-2">
+              <div className="bg-primary/5 border border-primary/20 rounded-lg p-3 text-center">
+                <div className="flex items-center justify-center gap-2 mb-2">
                   <span className="text-[10px] font-semibold text-primary bg-primary/20 px-2 py-0.5 rounded-full">
                     Path B
                   </span>
@@ -159,8 +159,8 @@ export const ContractualRoadmap = () => {
               {/* Paths container */}
               <div className="grid grid-cols-1 gap-2 w-full">
                 {/* Path A */}
-                <div className="bg-primary/5 border border-primary/20 rounded-lg p-3">
-                  <div className="flex items-center gap-2 mb-2">
+                <div className="bg-primary/5 border border-primary/20 rounded-lg p-3 text-center">
+                  <div className="flex items-center justify-center gap-2 mb-2">
                     <span className="text-[10px] font-semibold text-primary bg-primary/20 px-2 py-0.5 rounded-full">
                       Path A
                     </span>
@@ -169,14 +169,14 @@ export const ContractualRoadmap = () => {
                     </span>
                   </div>
                   <PathSteps steps={pathASteps} isMobile={true} />
-                  <p className="text-[10px] text-primary mt-2 font-medium text-center">
+                  <p className="text-[10px] text-primary mt-2 font-medium">
                     ✓ No additional client paperwork needed
                   </p>
                 </div>
 
                 {/* Path B */}
-                <div className="bg-primary/5 border border-primary/20 rounded-lg p-3">
-                  <div className="flex items-center gap-2 mb-2">
+                <div className="bg-primary/5 border border-primary/20 rounded-lg p-3 text-center">
+                  <div className="flex items-center justify-center gap-2 mb-2">
                     <span className="text-[10px] font-semibold text-primary bg-primary/20 px-2 py-0.5 rounded-full">
                       Path B
                     </span>
@@ -185,7 +185,7 @@ export const ContractualRoadmap = () => {
                     </span>
                   </div>
                   <PathSteps steps={pathBSteps} isMobile={true} />
-                  <p className="text-[10px] text-primary mt-2 font-medium text-center">
+                  <p className="text-[10px] text-primary mt-2 font-medium">
                     ✓ Directly hired via Client's own contract
                   </p>
                 </div>
