@@ -30,7 +30,7 @@ const Step = ({ icon, title, subtitle }: StepProps) => (
     </div>
     <div>
       <p className="text-sm font-medium text-foreground">{title}</p>
-      {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
+      {subtitle && <p className="text-xs text-muted-foreground leading-tight">{subtitle}</p>}
     </div>
   </div>
 )
@@ -63,7 +63,7 @@ export const ContractualRoadmap = () => {
 
   const pathASteps = [
     { icon: <Users className="h-5 w-5 text-blue-600" />, title: "Match with Client" },
-    { icon: <FileText className="h-5 w-5 text-blue-600" />, title: "FF Issues SOW" },
+    { icon: <FileText className="h-5 w-5 text-blue-600" />, title: "FF Issues SOW", subtitle: "(Statement of Work)" },
     { icon: <Briefcase className="h-5 w-5 text-blue-600" />, title: "Start Work" },
   ]
 
@@ -84,41 +84,35 @@ export const ContractualRoadmap = () => {
         <CardContent className="space-y-6">
           {/* Desktop Layout */}
           {!isMobile && (
-            <div className="flex items-start gap-6">
-              {/* Primary Step */}
-              <div className="flex flex-col items-center">
-                <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 text-center min-w-[160px]">
-                  <div className="flex items-center justify-center gap-2 mb-2">
-                    <span className="text-xs font-semibold text-primary bg-primary/20 px-2 py-0.5 rounded-full">
-                      Step 1
-                    </span>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button className="text-primary hover:text-primary/80" aria-label="More information">
-                          <Info className="h-4 w-4" />
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent className="max-w-[250px]">
-                        <p>This is a one-time signature that covers all future engagements with Fractional First</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </div>
-                  <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-3">
-                    <FileSignature className="h-6 w-6 text-primary" />
-                  </div>
-                  <p className="text-sm font-semibold text-foreground">Sign Master Agreement with FF</p>
-                  <p className="text-xs text-muted-foreground mt-1">The Legal Foundation</p>
+            <div className="flex flex-col items-center gap-6">
+              {/* Primary Step - Centered */}
+              <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 text-center min-w-[180px]">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <span className="text-xs font-semibold text-primary bg-primary/20 px-2 py-0.5 rounded-full">
+                    Step 1
+                  </span>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button className="text-primary hover:text-primary/80" aria-label="More information">
+                        <Info className="h-4 w-4" />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-[250px]">
+                      <p>This is a one-time signature that covers all future engagements with Fractional First</p>
+                    </TooltipContent>
+                  </Tooltip>
                 </div>
+                <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-3">
+                  <FileSignature className="h-6 w-6 text-primary" />
+                </div>
+                <p className="text-sm font-semibold text-foreground">Sign Master Agreement with FF</p>
               </div>
 
-              {/* Arrow to paths */}
-              <div className="flex flex-col items-center justify-center self-center gap-8 pt-4">
-                <ChevronRight className="h-6 w-6 text-muted-foreground" />
-                <ChevronRight className="h-6 w-6 text-muted-foreground" />
-              </div>
+              {/* Arrow down to paths */}
+              <ArrowDown className="h-6 w-6 text-muted-foreground" />
 
-              {/* Branching Paths */}
-              <div className="flex flex-col gap-4 flex-1">
+              {/* Branching Paths - Side by side */}
+              <div className="grid grid-cols-2 gap-4 w-full">
                 {/* Path A - Blue */}
                 <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
                   <div className="flex items-center gap-2 mb-4">
@@ -178,7 +172,6 @@ export const ContractualRoadmap = () => {
                   <FileSignature className="h-6 w-6 text-primary" />
                 </div>
                 <p className="text-sm font-semibold text-foreground">Sign Master Agreement with FF</p>
-                <p className="text-xs text-muted-foreground mt-1">The Legal Foundation</p>
               </div>
 
               {/* Arrow down */}
