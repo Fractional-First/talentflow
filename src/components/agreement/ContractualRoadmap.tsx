@@ -77,7 +77,7 @@ export const ContractualRoadmap = () => {
     <TooltipProvider>
       <Card className="border-border bg-muted/30">
         <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-semibold text-foreground">
+          <CardTitle className="text-lg font-semibold text-foreground text-center">
             How Your Contractual Relationship Works
           </CardTitle>
         </CardHeader>
