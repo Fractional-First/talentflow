@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { ContractingTypeSection } from "@/components/agreement/ContractingTypeSection"
 import { TermsAcceptanceSection } from "@/components/agreement/TermsAcceptanceSection"
 import { MSAModal } from "@/components/agreement/MSAModal"
+import { ContractualRoadmap } from "@/components/agreement/ContractualRoadmap"
 import { CheckCircle, ArrowLeft } from "lucide-react"
 import { toast } from "sonner"
 
@@ -96,6 +97,9 @@ const Agreement = () => {
                 </div>
               </div>
             </div>
+
+            {/* Contractual Roadmap */}
+            <ContractualRoadmap />
 
             {/* Contracting Type Section */}
             <ContractingTypeSection
