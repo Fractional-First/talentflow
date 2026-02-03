@@ -229,24 +229,20 @@ const ProfileCreation = () => {
                       <div className="border-t pt-6 mt-6">
                         <div className="bg-muted/50 border border-border rounded-xl p-5 sm:p-6">
                           <h3 className="text-lg font-semibold text-foreground mb-2 font-urbanist">
-                            You're about to upload your CV and portfolio
+                            You're about to upload your professional profile.
                           </h3>
                           <p className="text-sm text-muted-foreground mb-4 font-urbanist">
-                            By proceeding, you confirm:
+                            By proceeding, you confirm and agree as follows:
                           </p>
                           
                           <ul className="space-y-3 text-sm text-foreground mb-6 font-urbanist">
                             <li className="flex items-start gap-2">
                               <span className="text-primary mt-0.5 font-bold">•</span>
-                              <span>I confirm that all information and materials I upload are accurate, complete, belong to me, and I have the right to share them.</span>
+                              <span>I confirm that all information and materials I upload are accurate and complete, and that I own or have the right to share them.</span>
                             </li>
                             <li className="flex items-start gap-2">
                               <span className="text-primary mt-0.5 font-bold">•</span>
-                              <span>I own the copyright or have permission to use everything in my portfolio.</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="text-primary mt-0.5 font-bold">•</span>
-                              <span>I give Fractional First permission to use and adapt the materials I upload (such as my CV or portfolio) only to provide their services. This includes improving my leadership profile, matching me with relevant opportunities, and sharing my profile with potential clients when appropriate.</span>
+                              <span>I grant Fractional First permission to use and reasonably adapt the materials I upload solely to provide its services, including creating my Leadership Profile and sharing it with prospective clients in the ordinary course of its business.</span>
                             </li>
                           </ul>
                           
