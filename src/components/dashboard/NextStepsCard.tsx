@@ -119,7 +119,7 @@ export const NextStepsCard = ({
                 Get Engagement-Ready
               </h3>
               <p className="text-sm text-muted-foreground">
-                Complete the final steps to make your profile ready to receive relevant fractional leadership opportunities.
+                Complete the final steps to make your profile ready to receive relevant fractional leadership or direct-hire opportunities.
               </p>
             </div>
             <div className="mt-auto">
