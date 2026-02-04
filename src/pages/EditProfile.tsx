@@ -10,14 +10,14 @@ import LoadingError from "@/components/edit-profile/LoadingError"
 import { PersonasSection } from "@/components/edit-profile/PersonasSection"
 import { SuperpowersSection } from "@/components/edit-profile/SuperpowersSection"
 import { PublicProfileLink } from "@/components/edit-profile/PublicProfileLink"
-import { PublishButton } from "@/components/edit-profile/PublishButton"
+import { StickyActionBar } from "@/components/edit-profile/StickyActionBar"
 import { InlineLinkedInField } from "@/components/edit-profile/InlineLinkedInField"
 import ProfilePictureUpload from "@/components/ProfilePictureUpload"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { useEditProfile } from "@/hooks/useEditProfile"
 import { useIsMobile } from "@/hooks/use-mobile"
-import { ArrowLeft, ArrowRight, Edit } from "lucide-react"
+import { Edit } from "lucide-react"
 import { TooltipProvider } from "@/components/ui/tooltip"
 
 const EditProfile = () => {
@@ -501,39 +501,19 @@ const EditProfile = () => {
             <PublicProfileLink publicProfileUrl={publicProfileUrl} />
           )}
 
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 pt-6">
-            <Button
-              variant="outline"
-              onClick={() => navigate("/create-profile")}
-              className="w-full sm:w-auto"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Regenerate Profile
-            </Button>
-
-            <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
-              <div className="flex gap-3">
-                {/* Publish/Unpublish Button */}
-                <PublishButton
-                  isPublished={isPublished}
-                  isUpdatingPublishStatus={isUpdatingPublishStatus}
-                  onPublishToggle={handlePublishToggle}
-                />
-
-                <Button
-                  onClick={handleContinue}
-                  disabled={isSubmitting}
-                  style={{ backgroundColor: "#449889" }}
-                  className="hover:opacity-90 text-white"
-                >
-                  {isSubmitting ? "Processing..." : "Save & Go to Dashboard"}
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </div>
+          {/* Bottom padding to account for sticky action bar */}
+          <div className="h-32 sm:h-24" />
         </div>
+
+        {/* Sticky Action Bar */}
+        <StickyActionBar
+          isPublished={isPublished}
+          isUpdatingPublishStatus={isUpdatingPublishStatus}
+          isSubmitting={isSubmitting}
+          onRegenerateProfile={() => navigate("/create-profile")}
+          onPublishToggle={handlePublishToggle}
+          onSaveAndContinue={handleContinue}
+        />
       </DashboardLayout>
     </TooltipProvider>
   )
