@@ -1,59 +1,58 @@
 
 
-## Agreement Page Updates
+## Restructure "How We Work" Diagram: Top-Down with Side-by-Side Paths
 
-### 1. Rename Diagram Title
-**File:** `src/components/agreement/ContractualRoadmap.tsx`
-- "How Your Contractual Relationship Works" → **"How We Work"**
+The diagram will be restructured from its current left-to-right layout to a **top-down flow** on both desktop and mobile. Path A and Path B will sit **side by side** so the "Conversion Flexibility" arrows between them make intuitive visual sense.
 
-### 2. Add Step 2: "Match with Client" as a Shared Step
-Currently "Match with Client" is duplicated inside both Path A and Path B. It will be extracted into its own **Step 2** box between Step 1 and the path split, matching the visual style of Step 1.
+### New Layout (both desktop and mobile)
 
-- Remove "Match with Client" from both `pathASteps` and `pathBSteps`
-- Add a new Step 2 card (same style as Step 1) labeled "Match with Client" with subtitle "We connect you with the right opportunity"
-- Arrow flows: Step 1 → Step 2 → then splits into Path A / Path B
-- On mobile: vertical stack with arrows down between steps
+```text
++------------------------------------+
+|        How We Work                 |
++------------------------------------+
+|                                    |
+|   [Step 1: Sign Master Agreement]  |
+|              |                     |
+|              v                     |
+|   [Step 2: Match with Client]      |
+|              |                     |
+|              v                     |
+|   "Then one of two paths:"        |
+|              |                     |
+|   +----------+----------+         |
+|   |  Path A  | <------> |  Path B |
+|   | Engaged  | Conversion| Direct |
+|   | via FF   | Flexibility| Hire  |
+|   |          |           |        |
+|   | SOW ->   |           | Offer->|
+|   | Start    |           | Start  |
+|   | Work     |           | Work   |
+|   |          |           |        |
+|   | bullets  |           | bullets|
+|   +----------+-----------+--------+
++------------------------------------+
+```
 
-### 3. Add "Conversion Flexibility" Link Between Paths
-A styled label/connector between Path A and Path B cards:
-- A small badge or annotation between the two path cards reading **"Conversion Flexibility"** with subtitle "(upon mutual agreement)"
-- Visually: a double-headed arrow or connecting element between the two paths
-- Uses the existing `ArrowRight` or a `RefreshCw`/`ArrowLeftRight` icon for visual clarity
+### Changes in `src/components/agreement/ContractualRoadmap.tsx`
 
-### 4. Add Clarifying Bullet Points to Each Path
+1. **Remove the separate desktop/mobile layouts** -- use a single unified top-down layout that works for both (the mobile layout is already close to what we want).
 
-**Path A -- Engaged via FF (Fractional/Interim):**
-Replace the single checkmark line with:
-- "Fractional First acts as your administrative partner."
-- "We handle all contracting, invoicing, and cross-border payments so you can focus on leadership impact."
+2. **Shared steps flow vertically** at the top, centered:
+   - Step 1 card -> arrow down -> Step 2 card -> arrow down -> "Then one of two paths:"
 
-**Path B -- Direct-Hire:**
-Replace the single checkmark line with:
-- "Direct alignment between you and the client."
-- "Full-time integration into the leadership team from Day 1."
+3. **Path A and Path B side by side** in a two-column grid (`grid grid-cols-2 gap-3` on desktop, `grid grid-cols-1` on mobile as fallback).
 
-### 5. Add Descriptors to Contracting Structure Options
-**File:** `src/components/agreement/ContractingTypeSection.tsx`
+4. **Conversion Flexibility connector** sits between the two path cards:
+   - On desktop (side-by-side): rendered as a horizontal `ArrowLeftRight` label centered between the two columns
+   - On mobile (stacked): remains as the current vertical connector between Path A and Path B
 
-**"As an individual" option:**
-- Add a **(Preferred)** badge next to the label
-- Add descriptor text below: *"This is the most streamlined path for rapid deployment and simplified tax compliance across our global hubs."*
-
-**"Using an entity" option:**
-- Add descriptor text below: *"Select this if you manage your professional engagements through an existing corporate structure or personal service company."*
-
----
+5. **PathSteps inside each path** always render vertically (top-down) since the cards are narrower now.
 
 ### Technical Details
 
-**ContractualRoadmap.tsx changes:**
-- New flow structure: Step 1 → arrow → Step 2 → arrow → split into Path A / Path B
-- Import `ArrowLeftRight` from lucide-react for the conversion flexibility connector
-- Path steps arrays reduced to 2 items each (SOW/Offer → Start Work)
-- Bullet points rendered as left-aligned `text-[10px]` list items within each path card
-- Desktop: horizontal layout with Step 1 and Step 2 on the left, paths stacked on the right
-- Mobile: vertical stack -- Step 1, arrow, Step 2, arrow, "Then one of two paths:", Path A, conversion connector, Path B
+- Replace the `!isMobile` and `isMobile` conditional blocks with a single layout
+- Use `grid grid-cols-1 sm:grid-cols-2 gap-3` for the paths container
+- The conversion flexibility label on desktop will be absolutely positioned or placed as a centered overlay between the two grid columns
+- On mobile (`grid-cols-1`), the conversion flexibility connector sits as a row between Path A and Path B (same as current mobile behavior)
+- `PathSteps` will always use vertical (`flex-col`) direction since the path cards are narrower in the side-by-side layout
 
-**ContractingTypeSection.tsx changes:**
-- Add a `Badge` or styled span with "Preferred" next to the individual radio label
-- Add `<p>` descriptor text below each radio option within the existing card containers
