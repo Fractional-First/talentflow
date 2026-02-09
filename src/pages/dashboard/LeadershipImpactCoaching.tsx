@@ -40,7 +40,7 @@ const LeadershipImpactCoaching = () => {
     "Complete the Leadership Circle Profile® (LCP) Self-Assessment",
     "Tailored 1:1 coaching series: four 1.5-hour sessions held fortnightly",
     "Delivery: fully virtual",
-    "Investment: AUD $3,200"
+    "Investment: AU$4,000"
   ]
 
   
