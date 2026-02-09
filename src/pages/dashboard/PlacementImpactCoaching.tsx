@@ -66,7 +66,7 @@ const PlacementImpactCoaching = () => {
                     Placement Impact Coaching is a post-placement coaching series that supports Fractional leaders in adapting quickly and delivering meaningful impact in a new role. It uses the Leadership Circle Profile® (LCP) Self-Assessment to highlight strengths and blind spots. Leaders work with a coach to clarify expectations, navigate complexity, and align their contributions with the role, team, and organisation.
                   </p>
                   <p className="text-lg text-muted-foreground leading-relaxed">
-                    Its value is in helping you avoid a slow or unclear start by gaining clarity on expectations, strengthening key relationships, and adapting your leadership to the organisational context.
+                    Its value lies in turning your entry into a strategic advantage — empowering you to rapidly decode expectations, create high-trust alliances, and calibrate your leadership to the organizational context.
                   </p>
                   <p className="text-lg text-muted-foreground leading-relaxed">
                     This coaching is suitable if you are stepping into a new role and want to adapt with confidence and add value, if you are navigating greater responsibility or complexity, or if you want a trusted sounding board to test thinking, clarify priorities, and avoid blind spots.
