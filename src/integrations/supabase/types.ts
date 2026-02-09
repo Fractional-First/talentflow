@@ -767,6 +767,36 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_linkedin_cache: {
+        Args: { p_urls: string[] }
+        Returns: {
+          city: string
+          country: string
+          country_code: string
+          current_company: string
+          education: Json
+          experience: Json
+          first_name: string
+          follower_count: number
+          full_name: string
+          headline: string
+          last_name: string
+          linkedin_url: string
+          location_text: string
+          raw_data: Json
+          skills: Json
+          state: string
+          summary: string
+        }[]
+      }
+      create_guest_profile: {
+        Args: {
+          p_anon_profile_data: Json
+          p_linkedin_url?: string
+          p_profile_data: Json
+        }
+        Returns: Json
+      }
       generate_unique_anon_slug: {
         Args: { p_anon_data: Json; p_user_id: string }
         Returns: string
@@ -813,6 +843,10 @@ export type Database = {
           metadata: Json
           similarity: number
         }[]
+      }
+      save_linkedin_profiles: {
+        Args: { p_profiles: Json; p_search_query?: string }
+        Returns: Json
       }
     }
     Enums: {
