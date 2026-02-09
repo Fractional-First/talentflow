@@ -14,21 +14,21 @@ const LeadershipImpactCoaching = () => {
       name: "Margot Thomas",
       title: "Co-Founder, Ikigai Leading",
       timezone: "Australia",
-      bio: "Margot Thomas helps leaders and teams become more conscious, purposeful, and connected through leadership programs, team effectiveness journeys, and executive coaching. With decades of corporate leadership experience across South America, Europe, and Australia, she brings a systemic approach grounded in adult development theory. She blends strategic clarity with warmth, helping leaders and teams see patterns more clearly, act with courage, and step into sustainable ways of leading.",
+      bio: "Through immersive leadership programs, team effectiveness journeys, executive coaching partnerships and culture transformation initiatives, I help leaders and teams to become more conscious, purposeful and connected, creating a ripple impact across their organisations, customers, shareholders and the wider community.\n\nI bring a systemic approach shaped by decades of corporate leadership experience and a deep grounding in adult development theory. My career has taken me across South America, Europe, and Australia, navigating diverse sectors and cultures. Along the way, I've lived through many transitions myself—experiences that not only expanded my perspective but also deepened my belief in the potential of people to grow through change.\n\nClients describe me as a listener who creates space for both honesty and possibility. I'm known for blending strategic clarity with warmth, enabling leaders and teams to see patterns more clearly, work with courage, and step into more sustainable ways of leading and working together.",
       imageSrc: "/lovable-uploads/margot-thomas.png?v=2"
     },
     {
       name: "Monique Longhurst",
       title: "Co-Founder, Ikigai Leading",
       timezone: "Australia",
-      bio: "Monique Longhurst supports leaders and teams to gain clarity, connection, and purpose through leadership programs, team effectiveness journeys, and executive coaching. Her systemic and developmental approach blends corporate, consulting, and entrepreneurial experience with her own leadership journey. She helps leaders step into conscious, values-aligned, and regenerative ways of working, creating sustainable impact across organisations and communities.",
+      bio: "I support leaders and teams to step into greater clarity, connection, and purpose through leadership programs, team effectiveness journeys, executive coaching, and culture transformation. My passion lies in building capacity not just for performance, but for sustainable impact that reaches across organisations, communities, and beyond.\n\nEnriched by a career spanning corporate, consulting and entrepreneurial contexts, alongside my own journey as a leader, parent and business founder, my approach is both systemic and developmental. Blending practical leadership experience with proven frameworks I strive to create spaces where leadership becomes conscious, values-aligned and regenerative.\n\nGrounded in curiosity and care, I bring depth of expertise and the ability to meet people where they are, holding a mirror that helps them see what is possible for themselves and those they lead.",
       imageSrc: "/lovable-uploads/monique-longhurst.png?v=2"
     },
     {
       name: "Candice Smith",
       title: "Founder, The Thinking Field",
       timezone: "Australia",
-      bio: "Candice Smith is a facilitator, coach, and thinking partner with over 20 years guiding individuals, teams, and organisations to think expansively, collaborate inclusively, and navigate complexity with clarity. She creates generative spaces where every voice matters, helping leaders and organisations reimagine connection, collaboration, and leadership.",
+      bio: "I am a facilitator, coach, and thinking partner with over two decades guiding individuals, teams, and organisations to think more expansively, collaborate inclusively, and navigate complexity with clarity.\n\nI am known for creating generative environments for both reflecting and relating, where every voice matters, eliciting fresh thinking and courageous action. I blend facilitation mastery, leadership development, and cultural awareness to help individuals and organisations reimagine how they connect, collaborate, and lead through uncertainty with ease.\n\nAs senior Time To Think Faculty I lead their accreditation programs and a great joy is supervising coaches, facilitators and leaders in creating Thinking Environments®.\n\nI am humbled to be contributing to reconciliation in Australia as a facilitator of an award-winning Aboriginal and Torres Strait Islander Allyship program, as a descendent of South African First Nations.\n\nA meditation practice spanning twenty years deeply sustains me and my leadership practice.",
       imageSrc: "/lovable-uploads/candice-smith.png"
     }
   ]
@@ -94,9 +94,11 @@ const LeadershipImpactCoaching = () => {
                           <h3 className="font-medium text-base">{coach.name}</h3>
                           <p className="text-sm text-muted-foreground">{coach.title}</p>
                           <p className="text-sm text-muted-foreground">Timezone: {coach.timezone}</p>
-                          <p className="text-sm text-muted-foreground leading-relaxed">
-                            {coach.bio}
-                          </p>
+                          <div className="text-sm text-muted-foreground leading-relaxed space-y-2">
+                            {coach.bio.split('\n\n').map((paragraph, i) => (
+                              <p key={i}>{paragraph}</p>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     ))}
