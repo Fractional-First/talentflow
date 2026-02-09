@@ -1,30 +1,57 @@
 
 
-## Polish SharedStepCard: Wider Desktop Cards with Compact Step Labels
+## Add Preferred Contact Email and Mobile Number Fields
 
-### Changes in `src/components/agreement/ContractualRoadmap.tsx`
+### Overview
+Add a new "Contact Details" section to the Agreement page where users provide their preferred contact email and mobile number (with country code selection). This section will sit between the Contracting Structure and the Terms Acceptance sections.
 
-### 1. Stretch Step 1 and Step 2 cards on desktop
-- Remove `max-w-[320px]` from `SharedStepCard` and replace with `sm:max-w-none` so cards stretch to fill the available width on desktop
-- Keep them constrained on mobile with `max-w-[320px]` only below `sm:`
+### New Component: `ContactDetailsSection`
 
-### 2. Move step label badge next to the icon
-Instead of the step label ("Step 1", "Step 2") sitting above the title text, move it inside/next to the icon circle area to keep things compact:
-- On desktop (horizontal layout): render the step label badge to the left of or overlapping the icon, then title and subtitle to the right
-- On mobile (stacked layout): step label sits just below the icon, above the title
+Create `src/components/agreement/ContactDetailsSection.tsx` with:
 
-Specifically, restructure the `SharedStepCard` inner layout so:
-- The icon and step label are grouped together (icon on top, badge below on mobile; icon left, badge overlaid or beside icon on desktop)
-- Title and subtitle remain to the right on desktop
+- **Preferred Contact Email**: A text input pre-filled with the user's auth email (editable if they prefer a different contact address)
+- **Mobile Number with Country Code**: Two fields side by side:
+  - A country code selector (using the existing `countries` table which has `alpha2_code` and `country_code` columns) displayed as a searchable select dropdown showing the flag/code (e.g., "+1", "+44", "+65")
+  - A phone number text input
+
+The section will be styled consistently with the existing `ContractingTypeSection` -- same `bg-muted/50 border border-border rounded-xl p-5 sm:p-6` wrapper, same label and input styling.
+
+### Database Change
+
+Add two new columns to the `profiles` table:
+- `preferred_contact_email` (text, nullable)
+- `mobile_country_code` (text, nullable) -- stores the dial code e.g. "+65"
+- `mobile_number` (text, nullable) -- stores the number without country code
+
+No new RLS policies needed since the existing `profiles` ALL policy already covers user read/write on their own row.
+
+### Changes to `Agreement.tsx`
+
+- Add state for `contactEmail`, `mobileCountryCode`, and `mobileNumber`
+- Pre-fill `contactEmail` from the user's auth email via `useGetUser`
+- Add `ContactDetailsSection` between `ContractingTypeSection` and `TermsAcceptanceSection`
+- Add validation: both email and mobile number are required; email must be valid format
+- Include contact details in the submit payload
+
+### Country Code Selector
+
+The selector will query the `countries` table (already has `country_code` and `alpha2_code`) and display options like:
+- "US +1"
+- "GB +44"
+- "SG +65"
+
+It will use the existing `useCountries` hook from `src/queries/useCountries.ts` and render via a searchable Select/Combobox component.
 
 ### Technical Details
 
-**SharedStepCard component updates (lines 29-54):**
+| File | Change |
+|------|--------|
+| **Migration SQL** | Add `preferred_contact_email`, `mobile_country_code`, `mobile_number` columns to `profiles` |
+| **`src/components/agreement/ContactDetailsSection.tsx`** | New component with email input, country code select, and phone input |
+| **`src/pages/dashboard/Agreement.tsx`** | Add state, validation, and render the new section |
 
-- Change container: `max-w-[320px]` to `max-w-[320px] sm:max-w-none`
-- Restructure the icon area to include the step label badge:
-  - Wrap icon + badge in a `flex flex-col items-center shrink-0` container
-  - Move the `stepLabel` span from the text area into this icon group
-  - On desktop the badge sits directly under the icon; on mobile same
-- The text area (`title` + `subtitle`) no longer contains the step label badge, keeping it cleaner and more compact
+### Validation Rules
+- Email: required, valid email format
+- Country code: required (must select one)
+- Mobile number: required, digits only, 6-15 characters
 
