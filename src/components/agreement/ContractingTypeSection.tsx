@@ -45,19 +45,32 @@ export const ContractingTypeSection = ({
         onValueChange={(value) => onContractingTypeChange(value as "individual" | "entity")}
         className="space-y-3"
       >
-        <div className="flex items-center space-x-3 bg-background border border-border rounded-lg p-4">
-          <RadioGroupItem value="individual" id="individual" />
-          <Label htmlFor="individual" className="cursor-pointer font-medium">
-            As an individual
-          </Label>
+        <div className="bg-background border border-border rounded-lg p-4 space-y-2">
+          <div className="flex items-center space-x-3">
+            <RadioGroupItem value="individual" id="individual" />
+            <Label htmlFor="individual" className="cursor-pointer font-medium flex items-center gap-2">
+              As an individual
+              <span className="text-[10px] font-semibold text-primary bg-primary/15 px-2 py-0.5 rounded-full">
+                Preferred
+              </span>
+            </Label>
+          </div>
+          <p className="text-xs text-muted-foreground ml-7">
+            This is the most streamlined path for rapid deployment and simplified tax compliance across our global hubs.
+          </p>
         </div>
 
         <div className="space-y-4">
-          <div className="flex items-center space-x-3 bg-background border border-border rounded-lg p-4">
-            <RadioGroupItem value="entity" id="entity" />
-            <Label htmlFor="entity" className="cursor-pointer font-medium">
-              Using an entity
-            </Label>
+          <div className="bg-background border border-border rounded-lg p-4 space-y-2">
+            <div className="flex items-center space-x-3">
+              <RadioGroupItem value="entity" id="entity" />
+              <Label htmlFor="entity" className="cursor-pointer font-medium">
+                Using an entity
+              </Label>
+            </div>
+            <p className="text-xs text-muted-foreground ml-7">
+              Select this if you manage your professional engagements through an existing corporate structure or personal service company.
+            </p>
           </div>
 
           {contractingType === "entity" && (
