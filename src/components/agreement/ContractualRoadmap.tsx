@@ -147,7 +147,7 @@ export const ContractualRoadmap = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <PathCard
                 label="Path A"
-                title="The Fractional Engagement"
+                title="Engaged via FF (Fractional/Interim)"
                 steps={pathASteps}
                 bullets={pathABullets}
               />
