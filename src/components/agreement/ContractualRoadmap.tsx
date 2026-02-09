@@ -48,7 +48,7 @@ const SharedStepCard = ({
     </div>
     <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
       <p className="text-xs font-semibold text-foreground">{title}</p>
-      <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>
+      <p className="text-xs text-muted-foreground mt-0.5 whitespace-pre-line">{subtitle}</p>
     </div>
   </div>
 )
@@ -129,7 +129,7 @@ export const ContractualRoadmap = () => {
               stepLabel="Step 1"
               icon={<FileSignature className="h-5 w-5 text-primary" />}
               title="Accept Master Agreement with FF"
-              subtitle="Accept once to cover your current and all future leadership roles, removing the friction of future paperwork."
+              subtitle={"Accept once to cover your current and all future leadership roles,\nremoving the friction of future paperwork."}
             />
             <ArrowDown className="h-5 w-5 text-primary/60" />
             <SharedStepCard
@@ -156,7 +156,7 @@ export const ContractualRoadmap = () => {
               <div className="flex items-center justify-center gap-2 py-1 sm:hidden">
                 <ArrowLeftRight className="h-4 w-4 text-primary/60" />
                 <div className="text-center">
-                  <p className="text-xs font-semibold text-primary">Conversion Flexibility</p>
+                  <p className="text-xs font-semibold text-primary">Convert Flexibly</p>
                   <p className="text-[11px] text-muted-foreground">(upon mutual agreement)</p>
                 </div>
                 <ArrowLeftRight className="h-4 w-4 text-primary/60" />
@@ -175,7 +175,7 @@ export const ContractualRoadmap = () => {
               <div className="flex flex-col items-center gap-0.5 bg-background/90 border border-primary/20 rounded-full px-3 py-1.5">
                 <div className="flex items-center gap-1">
                   <ArrowLeftRight className="h-3.5 w-3.5 text-primary/60" />
-                  <p className="text-xs font-semibold text-primary">Conversion Flexibility</p>
+                  <p className="text-xs font-semibold text-primary">Convert Flexibly</p>
                 </div>
                 <p className="text-[11px] text-muted-foreground">(upon mutual agreement)</p>
               </div>
