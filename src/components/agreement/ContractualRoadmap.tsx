@@ -37,17 +37,20 @@ const SharedStepCard = ({
   title: string
   subtitle: string 
 }) => (
-  <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 text-center sm:text-left flex flex-col sm:flex-row sm:items-center sm:gap-3 justify-center max-w-[320px] w-full">
+  <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 text-center sm:text-left flex flex-col sm:flex-row sm:items-center sm:gap-3 justify-center max-w-[320px] sm:max-w-none w-full">
     <div className="flex flex-col sm:flex-row items-center sm:items-center gap-2 sm:gap-3 w-full">
       <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-        {icon}
+        <span className="hidden sm:block text-[10px] font-bold text-primary leading-tight text-center">{stepLabel}</span>
+        <span className="sm:hidden">{icon}</span>
       </div>
       <div className="flex flex-col items-center sm:items-start">
-        <span className="text-[10px] font-semibold text-primary bg-primary/20 px-2 py-0.5 rounded-full mb-0.5">
+        <span className="text-[10px] font-semibold text-primary bg-primary/20 px-2 py-0.5 rounded-full mb-0.5 sm:hidden">
           {stepLabel}
         </span>
-        <p className="text-xs font-semibold text-foreground">{title}</p>
-        <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
+          <p className="text-xs font-semibold text-foreground whitespace-nowrap">{title}</p>
+          <p className="text-xs text-muted-foreground mt-0.5 sm:mt-0 whitespace-nowrap">{subtitle}</p>
+        </div>
       </div>
     </div>
   </div>
