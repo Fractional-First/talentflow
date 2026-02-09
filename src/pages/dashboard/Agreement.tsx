@@ -1,17 +1,20 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/AppSidebar"
 import { Button } from "@/components/ui/button"
 import { ContractingTypeSection } from "@/components/agreement/ContractingTypeSection"
+import { ContactDetailsSection } from "@/components/agreement/ContactDetailsSection"
 import { TermsAcceptanceSection } from "@/components/agreement/TermsAcceptanceSection"
 import { MSAModal } from "@/components/agreement/MSAModal"
 import { ContractualRoadmap } from "@/components/agreement/ContractualRoadmap"
 import { CheckCircle, ArrowLeft } from "lucide-react"
 import { toast } from "sonner"
+import { useGetUser } from "@/queries/auth/useGetUser"
 
 const Agreement = () => {
   const navigate = useNavigate()
+  const { data: user } = useGetUser()
 
   // Contracting type state
   const [contractingType, setContractingType] = useState<"individual" | "entity" | null>(null)
@@ -19,6 +22,19 @@ const Agreement = () => {
   const [registrationNumber, setRegistrationNumber] = useState("")
   const [registeredAddress, setRegisteredAddress] = useState("")
   const [entityConfirmed, setEntityConfirmed] = useState(false)
+
+  // Contact details state
+  const [contactEmail, setContactEmail] = useState("")
+  const [mobileCountryCode, setMobileCountryCode] = useState("")
+  const [mobileNumber, setMobileNumber] = useState("")
+  const [contactTouched, setContactTouched] = useState(false)
+
+  // Pre-fill email from auth user
+  useEffect(() => {
+    if (user?.email && !contactEmail) {
+      setContactEmail(user.email)
+    }
+  }, [user?.email])
 
   // Terms acceptance state
   const [acceptFullAgreement, setAcceptFullAgreement] = useState(false)
@@ -46,9 +62,41 @@ const Agreement = () => {
     return acceptFullAgreement
   }
 
-  const canSubmit = isContractingValid() && isTermsValid()
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+  const getEmailError = () => {
+    if (!contactTouched) return undefined
+    if (!contactEmail.trim()) return "Email is required"
+    if (!emailRegex.test(contactEmail.trim())) return "Please enter a valid email"
+    return undefined
+  }
+
+  const getCountryCodeError = () => {
+    if (!contactTouched) return undefined
+    if (!mobileCountryCode) return "Select a country code"
+    return undefined
+  }
+
+  const getPhoneError = () => {
+    if (!contactTouched) return undefined
+    if (!mobileNumber.trim()) return "Mobile number is required"
+    if (mobileNumber.length < 6 || mobileNumber.length > 15) return "Must be 6-15 digits"
+    return undefined
+  }
+
+  const isContactValid = () => {
+    return (
+      emailRegex.test(contactEmail.trim()) &&
+      !!mobileCountryCode &&
+      mobileNumber.length >= 6 &&
+      mobileNumber.length <= 15
+    )
+  }
+
+  const canSubmit = isContractingValid() && isContactValid() && isTermsValid()
 
   const handleSubmit = async () => {
+    setContactTouched(true)
     if (!canSubmit) return
 
     setIsSubmitting(true)
@@ -114,6 +162,19 @@ const Agreement = () => {
               onRegisteredAddressChange={setRegisteredAddress}
               onEntityConfirmedChange={setEntityConfirmed}
               onViewMSA={() => setMsaModalOpen(true)}
+            />
+
+            {/* Contact Details Section */}
+            <ContactDetailsSection
+              contactEmail={contactEmail}
+              mobileCountryCode={mobileCountryCode}
+              mobileNumber={mobileNumber}
+              onContactEmailChange={(v) => { setContactTouched(true); setContactEmail(v) }}
+              onMobileCountryCodeChange={(v) => { setContactTouched(true); setMobileCountryCode(v) }}
+              onMobileNumberChange={(v) => { setContactTouched(true); setMobileNumber(v) }}
+              emailError={getEmailError()}
+              countryCodeError={getCountryCodeError()}
+              phoneError={getPhoneError()}
             />
 
             {/* Terms Acceptance Section */}
