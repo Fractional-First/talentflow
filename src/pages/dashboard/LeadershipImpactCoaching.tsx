@@ -41,7 +41,7 @@ const LeadershipImpactCoaching = () => {
     "Investment: AUD $3,200"
   ]
 
-  const gettingStartedContent = "The process begins with a complimentary 1-hour alignment meeting to understand your context, coaching needs, and fit. You then complete the Leadership Circle Profile® (LCP) Self-Assessment, followed by a tailored 1:1 coaching series consisting of four 1.5-hour sessions held fortnightly. Delivery is fully virtual, and the investment is AUD $3,200."
+  
 
   return (
     <SidebarProvider>
@@ -106,32 +106,19 @@ const LeadershipImpactCoaching = () => {
                 </div>
 
                 {/* Process and Getting Started Sections */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {/* Process Section */}
-                  <div className="space-y-6 bg-white rounded-2xl p-6 border border-gray-200">
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-5 w-5 text-muted-foreground" />
-                      <h2 className="text-xl font-medium">The Process</h2>
-                    </div>
-                    <div className="space-y-4">
-                      {processSteps.map((step, index) => (
-                        <div key={index} className="flex items-start gap-3">
-                          <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                          <p className="text-base text-muted-foreground">{step}</p>
-                        </div>
-                      ))}
-                    </div>
+                {/* Process Section */}
+                <div className="space-y-6 bg-white rounded-2xl p-6 border border-gray-200">
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-5 w-5 text-muted-foreground" />
+                    <h2 className="text-xl font-medium">The Process</h2>
                   </div>
-
-                  {/* Getting Started Section */}
-                  <div className="space-y-6 bg-white rounded-2xl p-6 border border-gray-200">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle className="h-5 w-5 text-muted-foreground" />
-                      <h2 className="text-xl font-medium">Getting Started</h2>
-                    </div>
-                    <div>
-                      <p className="text-base text-muted-foreground leading-relaxed">{gettingStartedContent}</p>
-                    </div>
+                  <div className="space-y-4">
+                    {processSteps.map((step, index) => (
+                      <div key={index} className="flex items-start gap-3">
+                        <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                        <p className="text-base text-muted-foreground">{step}</p>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
