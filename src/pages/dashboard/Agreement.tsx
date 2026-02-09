@@ -89,7 +89,7 @@ const Agreement = () => {
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold text-foreground">
-                    Great — your profile is ready.
+                    Great, your profile is ready.
                   </h1>
                   <p className="text-muted-foreground">
                     To receive client names, client details, specific roles, and potential matches, please confirm how you will contract with us.

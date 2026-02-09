@@ -17,7 +17,7 @@ export const TermsAcceptanceSection = ({
     <div className="bg-muted/50 border border-border rounded-xl p-5 sm:p-6 space-y-5">
       <div className="space-y-2">
         <h3 className="text-lg font-semibold text-foreground">
-          Final Step — Acceptance of Terms
+          Final Step: Acceptance of Agreement
         </h3>
         <p className="text-sm text-muted-foreground">
           As a final step, please review and accept the full Master Candidate Agreement.
