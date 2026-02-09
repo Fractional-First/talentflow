@@ -1,24 +1,41 @@
 
 
-## Make Step 1 and Step 2 More Compact on Desktop
+## Diagram Polish: Compact Steps, Title Fix, and Readable Text
 
-### Changes
+### 1. Make SharedStepCard compact on desktop (icon to the left)
 
-**Replace the icon circle with the step label** on desktop so the round badge doubles as the icon area, keeping things compact and fitting everything on one line.
+Change the `SharedStepCard` layout so on `sm:` and above, the icon sits to the left of the text in a horizontal row, rather than stacked vertically. On mobile it stays stacked.
 
-**Stretch the boxes** by removing `max-w-[320px]` on desktop so they can expand to fit the full sentence on a single line.
+- Add `sm:flex-row sm:text-left` to the card container
+- Move the icon out of center and align it left on desktop
+- Keep the step label badge, title, and subtitle grouped to the right of the icon
 
-### Details (in `src/components/agreement/ContractualRoadmap.tsx`)
+### 2. Reinstate original Path A title text
 
-**SharedStepCard component updates:**
+Change Path A title from `"Engaged via FF"` to `"Engaged via FF (Fractional/Interim)"` to restore the full descriptive label.
 
-1. **Remove `max-w-[320px]`** -- replace with `max-w-[320px] sm:max-w-none` so the card stretches on desktop.
+### 3. Increase grey description text size
 
-2. **Replace the icon with the step label on desktop** -- Instead of showing the icon in a circle and the step label as a separate badge, combine them: on desktop, the round circle shows "Step 1" / "Step 2" text instead of the icon. On mobile, keep the icon with the label below it.
-   - The circle will contain `stepLabel` text (`text-[10px] font-bold`) on `sm:` and the icon on mobile.
-   - Hide the separate step label badge on desktop (`sm:hidden`).
+All `text-[10px]` and `text-[9px]` instances for description/subtitle/bullet text are too small. Bump them up:
 
-3. **Single-line title + subtitle on desktop** -- change the text container to `sm:flex-row sm:items-center sm:gap-2` so the bold title and grey subtitle sit on the same line.
+- Subtitles in SharedStepCard: `text-[10px]` to `text-xs` (12px)
+- "Then one of two paths:" label: `text-[10px]` to `text-xs`
+- Bullet points in PathCard: `text-[10px]` to `text-xs`
+- Step subtitles: `text-[10px]` to `text-xs`
+- Conversion flexibility subtitle: `text-[9px]` to `text-[11px]`
+- Step labels remain small as badges (`text-[10px]`) since they are decorative
 
-Result: each shared step becomes a single compact horizontal row on desktop -- a small "Step 1" circle on the left, then "Sign Master Agreement with FF -- One-time signature for all future engagements" all on one line.
+### Technical Details
+
+All changes in `src/components/agreement/ContractualRoadmap.tsx`:
+
+**SharedStepCard** -- change the outer div from vertical-only to responsive:
+- Current: `flex flex-col justify-center text-center`
+- New: `flex flex-col sm:flex-row sm:items-center sm:text-left justify-center text-center`
+- Icon container: remove `mx-auto` on desktop, keep it on mobile
+- Constrain max-width slightly wider to accommodate horizontal layout
+
+**PathCard title** (line 145): `"Engaged via FF"` to `"Engaged via FF (Fractional/Interim)"`
+
+**Font sizes** -- update across SharedStepCard, PathCard bullets, Step subtitle, and conversion connector text from `text-[10px]`/`text-[9px]` to `text-xs`/`text-[11px]`.
 
