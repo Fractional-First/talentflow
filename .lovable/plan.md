@@ -1,18 +1,14 @@
 
 
-## Revert to "Master Candidate Agreement"
+## Text Updates on Agreement Page
 
-The recent rename to "Master Services Agreement" will be reverted back to the original **"Master Candidate Agreement"** terminology across two files:
+### Changes in `src/pages/dashboard/Agreement.tsx`
 
-### Changes
+**Line ~88:** Remove em dash from heading
+- "Great — your profile is ready." → "Great, your profile is ready."
 
-**`src/components/agreement/MSAModal.tsx`**
-- Dialog title: "Master Services Agreement" → "Master Candidate Agreement"
-- Opening paragraph: "This Master Services Agreement" → "This Master Candidate Agreement"
-- SOW clause reference: "Master Services Agreement" → "Master Candidate Agreement"
+### Changes in `src/components/agreement/TermsAcceptanceSection.tsx`
 
-**`src/components/agreement/TermsAcceptanceSection.tsx`**
-- Description text: "Master Services Agreement" → "Master Candidate Agreement"
-- Checkbox label: "Master Services Agreement (December 2025)" → "Master Candidate Agreement (December 2025)"
-- Link text: "View Master Services Agreement" → "View Master Candidate Agreement"
+**Line ~24:** Remove em dash and rename section heading
+- "Final Step — Acceptance of Terms" → "Final Step: Acceptance of Agreement"
 
