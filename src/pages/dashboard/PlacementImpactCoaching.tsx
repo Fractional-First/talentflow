@@ -1,12 +1,14 @@
-
+import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Clock, CheckCircle, User } from "lucide-react"
 import { BlurImage } from "@/components/BlurImage"
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/AppSidebar"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 const PlacementImpactCoaching = () => {
+  const [isFormOpen, setIsFormOpen] = useState(false)
   const navigate = useNavigate()
 
   const coaches = [
@@ -127,17 +129,27 @@ const PlacementImpactCoaching = () => {
                   <Button 
                     size="lg" 
                     className="w-full lg:w-auto" 
-                    asChild
+                    onClick={() => setIsFormOpen(true)}
                   >
-                    <a 
-                      href="#" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                    >
-                      Schedule Your Alignment Call
-                    </a>
+                    Schedule Your Alignment Call
                   </Button>
                 </div>
+
+                <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+                  <DialogContent className="max-w-3xl h-[80vh] p-0">
+                    <DialogHeader className="p-6 pb-0">
+                      <DialogTitle>Schedule Your Alignment Call</DialogTitle>
+                    </DialogHeader>
+                    <iframe
+                      src="https://docs.google.com/forms/d/e/1FAIpQLSe73NoMtUB_YHGMaaK3gXzs0rELcy1-eRnkBmS8aYKJrkgSAg/viewform?embedded=true"
+                      className="w-full flex-1 border-0 px-6 pb-6"
+                      style={{ height: 'calc(80vh - 80px)' }}
+                      title="Schedule Your Alignment Call"
+                    >
+                      Loading…
+                    </iframe>
+                  </DialogContent>
+                </Dialog>
 
                 {/* Back Button */}
                 <div className="flex justify-start pt-4">
