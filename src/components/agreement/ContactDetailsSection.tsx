@@ -3,6 +3,7 @@ import { Mail, Phone } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useCountries } from "@/queries/useCountries"
+import { DIAL_CODES } from "@/utils/dialCodes"
 import {
   Command,
   CommandEmpty,
@@ -46,12 +47,12 @@ export const ContactDetailsSection = ({
   const [countryCodeOpen, setCountryCodeOpen] = useState(false)
   const { data: countries = [], isLoading } = useCountries()
 
-  // Build unique dial code options from countries
+  // Build dial code options using accurate ITU dial codes mapped by alpha2
   const dialCodeOptions = countries
-    .filter((c) => c.country_code)
+    .filter((c) => DIAL_CODES[c.alpha2_code])
     .map((c) => ({
-      label: `${c.name} +${c.country_code}`,
-      value: `+${c.country_code}`,
+      label: `${c.name} ${DIAL_CODES[c.alpha2_code]}`,
+      value: DIAL_CODES[c.alpha2_code],
       alpha2: c.alpha2_code,
       name: c.name,
     }))
