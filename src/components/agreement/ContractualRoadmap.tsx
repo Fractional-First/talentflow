@@ -104,13 +104,14 @@ export const ContractualRoadmap = () => {
   ]
 
   const pathABullets = [
-    "Fractional First acts as your administrative partner.",
-    "We handle all contracting, invoicing, and cross-border payments so you can focus on leadership impact.",
+    "You contract directly with Fractional First.",
+    "Fractional First manages all client invoicing and cross-border payments.",
+    "Revenue-sharing is built into the engagement, ensuring we remain your long-term platform partner.",
   ]
 
   const pathBBullets = [
-    "Direct alignment between you and the client.",
-    "Full-time integration into the leadership team from Day 1.",
+    "Direct integration into the client's leadership team.",
+    "The client handles the placement fee directly with Fractional First, simplifying your transition.",
   ]
 
   return (
@@ -146,7 +147,7 @@ export const ContractualRoadmap = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <PathCard
                 label="Path A"
-                title="Engaged via FF (Fractional/Interim)"
+                title="The Fractional Engagement"
                 steps={pathASteps}
                 bullets={pathABullets}
               />
