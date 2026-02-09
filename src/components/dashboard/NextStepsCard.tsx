@@ -128,7 +128,7 @@ export const NextStepsCard = ({
                 className="w-full"
                 size="sm"
               >
-                Complete Forms
+                Accept Agreement
               </Button>
             </div>
           </div>
