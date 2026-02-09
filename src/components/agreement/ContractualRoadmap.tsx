@@ -37,7 +37,7 @@ const SharedStepCard = ({
   title: string
   subtitle: string 
 }) => (
-  <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 inline-flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+  <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 w-full flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
     <div className="flex flex-col items-center shrink-0 gap-1">
       <span className="text-[10px] font-semibold text-primary bg-primary/20 px-2 py-0.5 rounded-full">
         {stepLabel}
@@ -122,20 +122,22 @@ export const ContractualRoadmap = () => {
       </CardHeader>
       <CardContent className="pt-2 pb-4">
         <div className="flex flex-col items-center gap-3">
-          {/* Shared Steps */}
-          <SharedStepCard
-            stepLabel="Step 1"
-            icon={<FileSignature className="h-5 w-5 text-primary" />}
-            title="Sign Master Agreement with FF"
-            subtitle="One-time signature for all future engagements"
-          />
-          <ArrowDown className="h-5 w-5 text-primary/60" />
-          <SharedStepCard
-            stepLabel="Step 2"
-            icon={<Users className="h-5 w-5 text-primary" />}
-            title="Match with Client"
-            subtitle="We connect you with the right opportunity"
-          />
+          {/* Shared Steps - grid ensures equal width */}
+          <div className="grid grid-cols-1 justify-items-center gap-3 w-auto">
+            <SharedStepCard
+              stepLabel="Step 1"
+              icon={<FileSignature className="h-5 w-5 text-primary" />}
+              title="Sign Master Agreement with FF"
+              subtitle="One-time signature for all future engagements"
+            />
+            <ArrowDown className="h-5 w-5 text-primary/60" />
+            <SharedStepCard
+              stepLabel="Step 2"
+              icon={<Users className="h-5 w-5 text-primary" />}
+              title="Match with Client"
+              subtitle="We connect you with the right opportunity"
+            />
+          </div>
           <ArrowDown className="h-5 w-5 text-primary/60" />
           <p className="text-xs text-muted-foreground font-medium">Then one of two paths:</p>
 
