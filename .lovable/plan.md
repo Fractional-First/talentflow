@@ -1,41 +1,30 @@
 
 
-## Diagram Polish: Compact Steps, Title Fix, and Readable Text
+## Polish SharedStepCard: Wider Desktop Cards with Compact Step Labels
 
-### 1. Make SharedStepCard compact on desktop (icon to the left)
+### Changes in `src/components/agreement/ContractualRoadmap.tsx`
 
-Change the `SharedStepCard` layout so on `sm:` and above, the icon sits to the left of the text in a horizontal row, rather than stacked vertically. On mobile it stays stacked.
+### 1. Stretch Step 1 and Step 2 cards on desktop
+- Remove `max-w-[320px]` from `SharedStepCard` and replace with `sm:max-w-none` so cards stretch to fill the available width on desktop
+- Keep them constrained on mobile with `max-w-[320px]` only below `sm:`
 
-- Add `sm:flex-row sm:text-left` to the card container
-- Move the icon out of center and align it left on desktop
-- Keep the step label badge, title, and subtitle grouped to the right of the icon
+### 2. Move step label badge next to the icon
+Instead of the step label ("Step 1", "Step 2") sitting above the title text, move it inside/next to the icon circle area to keep things compact:
+- On desktop (horizontal layout): render the step label badge to the left of or overlapping the icon, then title and subtitle to the right
+- On mobile (stacked layout): step label sits just below the icon, above the title
 
-### 2. Reinstate original Path A title text
-
-Change Path A title from `"Engaged via FF"` to `"Engaged via FF (Fractional/Interim)"` to restore the full descriptive label.
-
-### 3. Increase grey description text size
-
-All `text-[10px]` and `text-[9px]` instances for description/subtitle/bullet text are too small. Bump them up:
-
-- Subtitles in SharedStepCard: `text-[10px]` to `text-xs` (12px)
-- "Then one of two paths:" label: `text-[10px]` to `text-xs`
-- Bullet points in PathCard: `text-[10px]` to `text-xs`
-- Step subtitles: `text-[10px]` to `text-xs`
-- Conversion flexibility subtitle: `text-[9px]` to `text-[11px]`
-- Step labels remain small as badges (`text-[10px]`) since they are decorative
+Specifically, restructure the `SharedStepCard` inner layout so:
+- The icon and step label are grouped together (icon on top, badge below on mobile; icon left, badge overlaid or beside icon on desktop)
+- Title and subtitle remain to the right on desktop
 
 ### Technical Details
 
-All changes in `src/components/agreement/ContractualRoadmap.tsx`:
+**SharedStepCard component updates (lines 29-54):**
 
-**SharedStepCard** -- change the outer div from vertical-only to responsive:
-- Current: `flex flex-col justify-center text-center`
-- New: `flex flex-col sm:flex-row sm:items-center sm:text-left justify-center text-center`
-- Icon container: remove `mx-auto` on desktop, keep it on mobile
-- Constrain max-width slightly wider to accommodate horizontal layout
-
-**PathCard title** (line 145): `"Engaged via FF"` to `"Engaged via FF (Fractional/Interim)"`
-
-**Font sizes** -- update across SharedStepCard, PathCard bullets, Step subtitle, and conversion connector text from `text-[10px]`/`text-[9px]` to `text-xs`/`text-[11px]`.
+- Change container: `max-w-[320px]` to `max-w-[320px] sm:max-w-none`
+- Restructure the icon area to include the step label badge:
+  - Wrap icon + badge in a `flex flex-col items-center shrink-0` container
+  - Move the `stepLabel` span from the text area into this icon group
+  - On desktop the badge sits directly under the icon; on mobile same
+- The text area (`title` + `subtitle`) no longer contains the step label badge, keeping it cleaner and more compact
 
