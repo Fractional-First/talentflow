@@ -117,7 +117,11 @@ export const PublishConfirmationModal = ({
           </>
         ) : (
           <>
-            <div className="flex flex-col items-center text-center py-8 space-y-5">
+            <DialogHeader className="sr-only">
+              <DialogTitle>Your profile is now live!</DialogTitle>
+            </DialogHeader>
+
+            <div className="flex flex-col items-center text-center pt-4 pb-2 space-y-5">
               <div className="rounded-full bg-primary/10 p-4">
                 <CheckCircle className="h-10 w-10 text-primary" />
               </div>
@@ -130,9 +134,9 @@ export const PublishConfirmationModal = ({
                 </p>
               </div>
 
-              <div className="flex items-center gap-2 w-full bg-muted rounded-lg px-4 py-3">
+              <div className="flex items-center gap-2 w-full min-w-0 bg-muted rounded-lg px-3 py-2.5">
                 <Globe className="h-4 w-4 text-muted-foreground shrink-0" />
-                <span className="text-sm text-foreground truncate flex-1 text-left">
+                <span className="text-sm text-foreground truncate flex-1 text-left min-w-0">
                   {publicProfileUrl}
                 </span>
                 <Button
@@ -145,7 +149,7 @@ export const PublishConfirmationModal = ({
                 </Button>
               </div>
 
-              <div className="flex gap-3 w-full pt-2">
+              <div className="flex gap-3 w-full">
                 <Button
                   variant="outline"
                   className="flex-1"
@@ -170,13 +174,11 @@ export const PublishConfirmationModal = ({
                   </a>
                 </Button>
               </div>
-            </div>
 
-            <DialogFooter>
-              <Button variant="ghost" onClick={handleClose} className="w-full">
+              <Button variant="ghost" onClick={handleClose} className="w-full text-muted-foreground">
                 Done
               </Button>
-            </DialogFooter>
+            </div>
           </>
         )}
       </DialogContent>
