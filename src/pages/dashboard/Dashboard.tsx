@@ -62,31 +62,12 @@ const Dashboard = () => {
   }
 
   const handlePublishProfile = async () => {
-    try {
-      await updatePublishStatus(true)
-      toast.success("Profile published!", {
-        description: "Your profile is now live and publicly accessible.",
-        duration: 3000,
-        position: "top-left",
-        style: {
-          marginTop: "320px",
-          marginLeft: "32px",
-          maxWidth: "300px",
-        },
-      })
-    } catch (error) {
-      toast.error("Failed to publish profile", {
-        description: "Please try again later.",
-        duration: 3000,
-        position: "top-left",
-        style: {
-          marginTop: "320px",
-          marginLeft: "32px",
-          maxWidth: "300px",
-        },
-      })
-    }
+    await updatePublishStatus(true)
   }
+
+  const publicProfileUrl = profileSlug
+    ? `${window.location.origin}/profile/${profileSlug}`
+    : ""
 
   if (isLoading) {
     return (
@@ -157,6 +138,7 @@ const Dashboard = () => {
                     onPublishProfile={handlePublishProfile}
                     isPublished={isPublished}
                     isUpdatingPublishStatus={isUpdatingPublishStatus}
+                    publicProfileUrl={publicProfileUrl}
                   />
                 </div>
               )}
