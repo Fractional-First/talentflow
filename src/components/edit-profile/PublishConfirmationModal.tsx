@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { ExternalLink, Share2 } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -60,7 +61,7 @@ export const PublishConfirmationModal = ({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-lg">
         {!isSuccess ? (
           <>
             <DialogHeader>
@@ -116,12 +117,12 @@ export const PublishConfirmationModal = ({
           </>
         ) : (
           <>
-            <div className="flex flex-col items-center text-center py-6 space-y-4">
-              <div className="rounded-full bg-primary/10 p-3">
-                <CheckCircle className="h-8 w-8 text-primary" />
+            <div className="flex flex-col items-center text-center py-8 space-y-5">
+              <div className="rounded-full bg-primary/10 p-4">
+                <CheckCircle className="h-10 w-10 text-primary" />
               </div>
-              <div className="space-y-1">
-                <h3 className="text-xl font-semibold text-foreground">
+              <div className="space-y-2">
+                <h3 className="text-2xl font-semibold text-foreground">
                   Your profile is now live!
                 </h3>
                 <p className="text-sm text-muted-foreground">
@@ -129,7 +130,7 @@ export const PublishConfirmationModal = ({
                 </p>
               </div>
 
-              <div className="flex items-center gap-2 w-full bg-muted rounded-lg px-3 py-2.5">
+              <div className="flex items-center gap-2 w-full bg-muted rounded-lg px-4 py-3">
                 <Globe className="h-4 w-4 text-muted-foreground shrink-0" />
                 <span className="text-sm text-foreground truncate flex-1 text-left">
                   {publicProfileUrl}
@@ -143,10 +144,36 @@ export const PublishConfirmationModal = ({
                   <Copy className="h-4 w-4" />
                 </Button>
               </div>
+
+              <div className="flex gap-3 w-full pt-2">
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => {
+                    if (navigator.share) {
+                      navigator.share({ title: "My Profile", url: publicProfileUrl })
+                    } else {
+                      handleCopyLink()
+                    }
+                  }}
+                >
+                  <Share2 className="mr-2 h-4 w-4" />
+                  Share Profile
+                </Button>
+                <Button
+                  className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
+                  asChild
+                >
+                  <a href={publicProfileUrl} target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="mr-2 h-4 w-4" />
+                    View Profile
+                  </a>
+                </Button>
+              </div>
             </div>
 
             <DialogFooter>
-              <Button onClick={handleClose} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
+              <Button variant="ghost" onClick={handleClose} className="w-full">
                 Done
               </Button>
             </DialogFooter>
