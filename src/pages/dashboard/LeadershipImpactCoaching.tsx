@@ -131,14 +131,14 @@ const LeadershipImpactCoaching = () => {
                     className="w-full lg:w-auto" 
                     onClick={() => setIsFormOpen(true)}
                   >
-                    Schedule Your Alignment Call
+                    Schedule Your Alignment Meeting
                   </Button>
                 </div>
 
                 <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
                   <DialogContent className="max-w-3xl h-[80vh] p-0">
                     <DialogHeader className="p-6 pb-0">
-                      <DialogTitle>Schedule Your Alignment Call</DialogTitle>
+                      <DialogTitle>Schedule Your Alignment Meeting</DialogTitle>
                     </DialogHeader>
                     <iframe
                       src="https://docs.google.com/forms/d/e/1FAIpQLSe73NoMtUB_YHGMaaK3gXzs0rELcy1-eRnkBmS8aYKJrkgSAg/viewform?embedded=true"
