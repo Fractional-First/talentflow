@@ -40,15 +40,6 @@ export const StickyActionBar = ({
         <div className="max-w-6xl mx-auto px-4 py-4">
           {/* Mobile: Stack layout */}
           <div className="flex flex-col gap-3 sm:hidden">
-            <div className="flex items-start gap-2 text-xs text-muted-foreground bg-muted/50 rounded-lg p-3">
-              <Info className="h-4 w-4 mt-0.5 shrink-0 text-primary" />
-              <p>
-                Publishing makes your profile visible for networking. This does not
-                change your status to "looking for work" or opt you into active
-                placement services.
-              </p>
-            </div>
-
             <div className="flex gap-2">
               <Button
                 variant="outline"
@@ -98,15 +89,6 @@ export const StickyActionBar = ({
             </Button>
 
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 text-xs text-muted-foreground max-w-md">
-                <Info className="h-4 w-4 shrink-0 text-primary" />
-                <p className="leading-tight">
-                  Publishing makes your profile visible for networking. This does not
-                  change your status to "looking for work" or opt you into active
-                  placement services.
-                </p>
-              </div>
-
               <Button
                 onClick={handlePublishClick}
                 disabled={isUpdatingPublishStatus}
