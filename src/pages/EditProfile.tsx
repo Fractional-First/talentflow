@@ -513,6 +513,10 @@ const EditProfile = () => {
           onRegenerateProfile={() => navigate("/create-profile")}
           onPublishToggle={handlePublishToggle}
           onSaveAndContinue={handleContinue}
+          publicProfileUrl={publicProfileUrl}
+          onPublishConfirm={async () => {
+            await updatePublishStatus(true)
+          }}
         />
       </DashboardLayout>
     </TooltipProvider>
