@@ -108,7 +108,7 @@ export const StickyActionBar = ({
                 disabled={isSubmitting}
                 className="bg-primary hover:bg-primary/90 text-primary-foreground"
               >
-                {isSubmitting ? "Processing..." : "Save & Go to Dashboard"}
+                {isSubmitting ? "Processing..." : "Save Draft & Go to Dashboard"}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
