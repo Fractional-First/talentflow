@@ -234,6 +234,7 @@ const Agreement = () => {
                 {/* Contracting Type Section */}
                 <ContractingTypeSection
                   contractingType={contractingType}
+                  candidatePersonnel={personalDetails.fullLegalName}
                   entityName={entityName}
                   registrationNumber={registrationNumber}
                   registeredAddress={registeredAddress}
