@@ -149,8 +149,8 @@ const Agreement = () => {
         <AppSidebar />
         <main className="flex-1 overflow-auto">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 space-y-8">
-            {/* Header */}
-            <div className="space-y-4">
+            {/* Back button */}
+            <div>
               <Button
                 variant="ghost"
                 size="sm"
@@ -160,20 +160,6 @@ const Agreement = () => {
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Dashboard
               </Button>
-
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <CheckCircle className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-foreground">
-                    Let's get you engagement-ready!
-                  </h1>
-                  <p className="text-muted-foreground">
-                    To receive relevant roles and potential matches as they become available, please review next steps.
-                  </p>
-                </div>
-              </div>
             </div>
 
             {isSubmitted ? (
@@ -199,6 +185,21 @@ const Agreement = () => {
               </div>
             ) : (
               <>
+                {/* Header */}
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                    <CheckCircle className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h1 className="text-2xl font-bold text-foreground">
+                      Let's get you engagement-ready!
+                    </h1>
+                    <p className="text-muted-foreground">
+                      To receive relevant roles and potential matches as they become available, please review next steps.
+                    </p>
+                  </div>
+                </div>
+
                 {/* Contractual Roadmap */}
                 <ContractualRoadmap />
 
