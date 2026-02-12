@@ -155,7 +155,7 @@ const Agreement = () => {
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-foreground">
-                  Now we need your details
+                  Please provide us with your details
                 </h2>
                 <p className="text-muted-foreground">
                   Complete the sections below to finalise your agreement.
