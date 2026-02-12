@@ -37,7 +37,7 @@ const SharedStepCard = ({
   title: string
   subtitle: React.ReactNode 
 }) => (
-  <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 w-full flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+  <div className="bg-primary/5 border border-primary/20 rounded-lg p-3 w-full flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
     <div className="flex flex-col items-center shrink-0 gap-1">
       <span className="text-[10px] font-semibold text-primary bg-primary/20 px-2 py-0.5 rounded-full">
         {stepLabel}
@@ -144,7 +144,7 @@ export const ContractualRoadmap = () => {
 
           {/* Side-by-side paths with conversion flexibility */}
           <div className="w-full relative">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <PathCard
                 label="Path A"
                 title="Engaged via FF (Fractional/Interim)"
