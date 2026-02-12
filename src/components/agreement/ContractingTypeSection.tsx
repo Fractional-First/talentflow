@@ -83,7 +83,7 @@ export const ContractingTypeSection = ({
                   </Label>
                   <Input
                     id="entityName"
-                    placeholder="Enter your entity name"
+                    placeholder="Enter your full legal entity name"
                     value={entityName}
                     onChange={(e) => onEntityNameChange(e.target.value)}
                   />
