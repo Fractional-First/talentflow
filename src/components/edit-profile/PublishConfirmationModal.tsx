@@ -68,38 +68,12 @@ export const PublishConfirmationModal = ({
               <DialogTitle className="text-xl font-semibold">
                 Publish Your Profile
               </DialogTitle>
-              <DialogDescription className="text-muted-foreground pt-1">
-                Here's what publishing means:
-              </DialogDescription>
             </DialogHeader>
 
-            <div className="space-y-4 py-4">
-              <div className="flex items-start gap-3">
-                <div className="mt-0.5 rounded-full bg-primary/10 p-1.5">
-                  <Link2 className="h-4 w-4 text-primary" />
-                </div>
-                <p className="text-sm text-foreground">
-                  A clean, shareable link for peer-to-peer introductions.
-                </p>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <div className="mt-0.5 rounded-full bg-primary/10 p-1.5">
-                  <Search className="h-4 w-4 text-primary" />
-                </div>
-                <p className="text-sm text-foreground">
-                  Searchable only within our vetted internal network.
-                </p>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <div className="mt-0.5 rounded-full bg-primary/10 p-1.5">
-                  <Shield className="h-4 w-4 text-primary" />
-                </div>
-                <p className="text-sm text-foreground">
-                  No public "looking for work" signals.
-                </p>
-              </div>
+            <div className="py-4">
+              <p className="text-sm text-foreground leading-relaxed">
+                You can share the personalized link with peers and organizations as a professional alternative to your LinkedIn profile. Setting your profile to public allows others to discover you and enables the Fractional First team to match and contact you for client opportunities, regardless of whether you are actively looking for work.
+              </p>
             </div>
 
             <DialogFooter className="flex gap-2 sm:gap-0">
