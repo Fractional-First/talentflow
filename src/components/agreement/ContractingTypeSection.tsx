@@ -99,9 +99,6 @@ export const ContractingTypeSection = ({
                     value={registrationNumber}
                     onChange={(e) => onRegistrationNumberChange(e.target.value)}
                   />
-                  <p className="text-xs text-muted-foreground">
-                    e.g. UEN, CIN, or local company registration number
-                  </p>
                 </div>
 
                 <div className="space-y-2">
