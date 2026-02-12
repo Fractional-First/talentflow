@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Mail, Phone } from "lucide-react"
+import { Mail, Phone, User } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useCountries } from "@/queries/useCountries"
@@ -20,14 +20,23 @@ import {
 import { Button } from "@/components/ui/button"
 import { ChevronDown, Check } from "lucide-react"
 import { cn } from "@/lib/utils"
+import type { RegisteredAddress } from "@/components/agreement/ContractingTypeSection"
+
+export interface PersonalDetailsData {
+  fullLegalName: string
+  identificationNumber: string
+  residentialAddress: RegisteredAddress
+}
 
 interface ContactDetailsSectionProps {
   contactEmail: string
   mobileCountryCode: string
   mobileNumber: string
+  personalDetails: PersonalDetailsData
   onContactEmailChange: (value: string) => void
   onMobileCountryCodeChange: (value: string) => void
   onMobileNumberChange: (value: string) => void
+  onPersonalDetailsChange: (value: PersonalDetailsData) => void
   emailError?: string
   phoneError?: string
   countryCodeError?: string
@@ -37,9 +46,11 @@ export const ContactDetailsSection = ({
   contactEmail,
   mobileCountryCode,
   mobileNumber,
+  personalDetails,
   onContactEmailChange,
   onMobileCountryCodeChange,
   onMobileNumberChange,
+  onPersonalDetailsChange,
   emailError,
   phoneError,
   countryCodeError,
@@ -59,15 +70,88 @@ export const ContactDetailsSection = ({
 
   const selectedLabel = dialCodeOptions.find((o) => o.value === mobileCountryCode)
 
+  const updateAddress = (field: keyof RegisteredAddress, value: string) => {
+    onPersonalDetailsChange({
+      ...personalDetails,
+      residentialAddress: { ...personalDetails.residentialAddress, [field]: value },
+    })
+  }
+
   return (
     <div className="bg-muted/50 border border-border rounded-xl p-5 sm:p-6 space-y-5">
       <div className="flex items-center gap-2 mb-1">
-        <Mail className="h-5 w-5 text-primary" />
-        <h2 className="text-lg font-semibold text-foreground">Contact Details</h2>
+        <User className="h-5 w-5 text-primary" />
+        <h2 className="text-lg font-semibold text-foreground">Personal Details</h2>
       </div>
       <p className="text-sm text-muted-foreground">
-        Provide the best email and mobile number for us to reach you about opportunities.
+        Provide your personal and contact information so we can reach you about opportunities.
       </p>
+
+      {/* Full Legal Name */}
+      <div className="space-y-2">
+        <Label htmlFor="fullLegalName">Full Legal Name</Label>
+        <Input
+          id="fullLegalName"
+          placeholder="Enter your full legal name"
+          value={personalDetails.fullLegalName}
+          onChange={(e) => onPersonalDetailsChange({ ...personalDetails, fullLegalName: e.target.value })}
+        />
+      </div>
+
+      {/* Identification Number */}
+      <div className="space-y-2">
+        <Label htmlFor="identificationNumber">Identification Number</Label>
+        <Input
+          id="identificationNumber"
+          placeholder="e.g. passport number, national ID"
+          value={personalDetails.identificationNumber}
+          onChange={(e) => onPersonalDetailsChange({ ...personalDetails, identificationNumber: e.target.value })}
+        />
+      </div>
+
+      {/* Residential Address */}
+      <div className="space-y-3">
+        <Label>Residential Address</Label>
+        <Input
+          placeholder="Address Line 1"
+          value={personalDetails.residentialAddress.addressLine1}
+          onChange={(e) => updateAddress("addressLine1", e.target.value)}
+        />
+        <Input
+          placeholder="Address Line 2 (optional)"
+          value={personalDetails.residentialAddress.addressLine2}
+          onChange={(e) => updateAddress("addressLine2", e.target.value)}
+        />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <Input
+            placeholder="City"
+            value={personalDetails.residentialAddress.city}
+            onChange={(e) => updateAddress("city", e.target.value)}
+          />
+          <Input
+            placeholder="State / Province (optional)"
+            value={personalDetails.residentialAddress.stateProvince}
+            onChange={(e) => updateAddress("stateProvince", e.target.value)}
+          />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <Input
+            placeholder="Postal Code"
+            value={personalDetails.residentialAddress.postalCode}
+            onChange={(e) => updateAddress("postalCode", e.target.value)}
+          />
+          <select
+            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            value={personalDetails.residentialAddress.country}
+            onChange={(e) => updateAddress("country", e.target.value)}
+          >
+            <option value="">Select country</option>
+            {countries.map((c) => (
+              <option key={c.id} value={c.name}>{c.name}</option>
+            ))}
+          </select>
+        </div>
+      </div>
 
       {/* Preferred Contact Email */}
       <div className="space-y-2">
@@ -89,7 +173,6 @@ export const ContactDetailsSection = ({
       <div className="space-y-2">
         <Label>Mobile Number</Label>
         <div className="flex gap-2">
-          {/* Country Code Selector */}
           <Popover open={countryCodeOpen} onOpenChange={setCountryCodeOpen}>
             <PopoverTrigger asChild>
               <Button
@@ -144,14 +227,12 @@ export const ContactDetailsSection = ({
             </PopoverContent>
           </Popover>
 
-          {/* Phone Number Input */}
           <div className="flex-1">
             <Input
               type="tel"
               placeholder="Mobile number"
               value={mobileNumber}
               onChange={(e) => {
-                // Only allow digits
                 const val = e.target.value.replace(/\D/g, "")
                 onMobileNumberChange(val)
               }}

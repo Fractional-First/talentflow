@@ -4,7 +4,7 @@ import { SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/AppSidebar"
 import { Button } from "@/components/ui/button"
 import { ContractingTypeSection, type RegisteredAddress } from "@/components/agreement/ContractingTypeSection"
-import { ContactDetailsSection } from "@/components/agreement/ContactDetailsSection"
+import { ContactDetailsSection, type PersonalDetailsData } from "@/components/agreement/ContactDetailsSection"
 import { TermsAcceptanceSection } from "@/components/agreement/TermsAcceptanceSection"
 import { MSAModal } from "@/components/agreement/MSAModal"
 import { ContractualRoadmap } from "@/components/agreement/ContractualRoadmap"
@@ -29,6 +29,20 @@ const Agreement = () => {
     country: "",
   })
   const [entityConfirmed, setEntityConfirmed] = useState(false)
+
+  // Personal details state
+  const [personalDetails, setPersonalDetails] = useState<PersonalDetailsData>({
+    fullLegalName: "",
+    identificationNumber: "",
+    residentialAddress: {
+      addressLine1: "",
+      addressLine2: "",
+      city: "",
+      stateProvince: "",
+      postalCode: "",
+      country: "",
+    },
+  })
 
   // Contact details state
   const [contactEmail, setContactEmail] = useState("")
@@ -97,6 +111,12 @@ const Agreement = () => {
 
   const isContactValid = () => {
     return (
+      personalDetails.fullLegalName.trim() !== "" &&
+      personalDetails.identificationNumber.trim() !== "" &&
+      personalDetails.residentialAddress.addressLine1.trim() !== "" &&
+      personalDetails.residentialAddress.city.trim() !== "" &&
+      personalDetails.residentialAddress.postalCode.trim() !== "" &&
+      personalDetails.residentialAddress.country.trim() !== "" &&
       emailRegex.test(contactEmail.trim()) &&
       !!mobileCountryCode &&
       mobileNumber.length >= 6 &&
@@ -196,6 +216,21 @@ const Agreement = () => {
                   </div>
                 </div>
 
+                {/* Personal Details Section */}
+                <ContactDetailsSection
+                  contactEmail={contactEmail}
+                  mobileCountryCode={mobileCountryCode}
+                  mobileNumber={mobileNumber}
+                  personalDetails={personalDetails}
+                  onContactEmailChange={(v) => { setContactTouched(true); setContactEmail(v) }}
+                  onMobileCountryCodeChange={(v) => { setContactTouched(true); setMobileCountryCode(v) }}
+                  onMobileNumberChange={(v) => { setContactTouched(true); setMobileNumber(v) }}
+                  onPersonalDetailsChange={setPersonalDetails}
+                  emailError={getEmailError()}
+                  countryCodeError={getCountryCodeError()}
+                  phoneError={getPhoneError()}
+                />
+
                 {/* Contracting Type Section */}
                 <ContractingTypeSection
                   contractingType={contractingType}
@@ -209,19 +244,6 @@ const Agreement = () => {
                   onRegisteredAddressChange={setRegisteredAddress}
                   onEntityConfirmedChange={setEntityConfirmed}
                   onViewMSA={() => setMsaModalOpen(true)}
-                />
-
-                {/* Contact Details Section */}
-                <ContactDetailsSection
-                  contactEmail={contactEmail}
-                  mobileCountryCode={mobileCountryCode}
-                  mobileNumber={mobileNumber}
-                  onContactEmailChange={(v) => { setContactTouched(true); setContactEmail(v) }}
-                  onMobileCountryCodeChange={(v) => { setContactTouched(true); setMobileCountryCode(v) }}
-                  onMobileNumberChange={(v) => { setContactTouched(true); setMobileNumber(v) }}
-                  emailError={getEmailError()}
-                  countryCodeError={getCountryCodeError()}
-                  phoneError={getPhoneError()}
                 />
 
                 {/* Terms Acceptance Section */}
