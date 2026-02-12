@@ -56,7 +56,7 @@ export const ContractingTypeSection = ({
             </Label>
           </div>
           <p className="text-xs text-muted-foreground ml-7">
-            This is the most streamlined path for rapid deployment and simplified tax compliance across our global hubs.
+            This is the most streamlined path for an independent operator.
           </p>
         </div>
 
