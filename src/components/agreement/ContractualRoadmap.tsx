@@ -65,7 +65,7 @@ const PathCard = ({
   bullets: string[]
 }) => (
   <div className="bg-primary/5 border border-primary/20 rounded-lg p-3 flex-1">
-    <div className="flex items-center justify-center gap-2 mb-2">
+    <div className="flex flex-col items-center justify-center gap-1 mb-2">
       <span className="text-[10px] font-semibold text-primary bg-primary/20 px-2 py-0.5 rounded-full">
         {label}
       </span>
