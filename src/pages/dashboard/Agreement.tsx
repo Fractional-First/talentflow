@@ -205,7 +205,7 @@ const Agreement = () => {
               size="lg"
               className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-lg py-6"
             >
-              {isSubmitting ? "Processing..." : "Accept All & Unlock Opportunities"}
+              {isSubmitting ? "Processing..." : "Accept All & Get Engagement-Ready"}
             </Button>
           </div>
         </main>
