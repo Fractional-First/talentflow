@@ -149,6 +149,8 @@ const Agreement = () => {
             {/* Contractual Roadmap */}
             <ContractualRoadmap />
 
+            <h2 className="text-xl font-semibold text-foreground">Now we need your details</h2>
+
             {/* Contracting Type Section */}
             <ContractingTypeSection
               contractingType={contractingType}
