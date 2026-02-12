@@ -73,8 +73,14 @@ export const PublishConfirmationModal = ({
             </DialogHeader>
 
             <div className="py-4">
-              <p className="text-sm text-foreground leading-relaxed">
-                {firstName ? `Hi ${firstName}, you` : "You"} can share the personalized link with peers and organizations as a professional alternative to your LinkedIn profile. Setting your profile to public allows others to discover you and enables the Fractional First team to match and contact you for client opportunities, regardless of whether you are actively looking for work.
+              <p className="text-base text-foreground leading-relaxed">
+                {firstName && (
+                  <>
+                    <span className="font-semibold">Hi {firstName},</span>
+                    <br />
+                  </>
+                )}
+                You can share the personalized link with peers and organizations as a professional alternative to your LinkedIn profile. Setting your profile to public allows others to discover you and enables the Fractional First team to match and contact you for client opportunities, regardless of whether you are actively looking for work.
               </p>
             </div>
 
