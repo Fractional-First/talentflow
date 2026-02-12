@@ -97,12 +97,15 @@ export const StickyActionBar = ({
             </Button>
 
             <div className="flex items-center gap-4">
-              <p className="text-sm text-muted-foreground max-w-md leading-relaxed">
-                <Info className="h-3.5 w-3.5 inline-block mr-1 -mt-0.5" />
-                {publishInfoText}
-                <br className="hidden sm:block" />
-                You may unpublish at any time.
-              </p>
+              <div className="text-sm text-muted-foreground max-w-md leading-relaxed">
+                <p>
+                  <Info className="h-3.5 w-3.5 inline-block mr-1 -mt-0.5" />
+                  {publishInfoText}
+                </p>
+                <p className="hidden sm:block ml-[calc(0.875rem+0.25rem)]">
+                  You may unpublish at any time.
+                </p>
+              </div>
 
               <Button
                 onClick={handlePublishClick}
