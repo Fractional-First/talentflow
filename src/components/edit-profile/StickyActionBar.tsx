@@ -97,7 +97,7 @@ export const StickyActionBar = ({
             </Button>
 
             <div className="flex items-center gap-4">
-              <div className="flex items-start gap-2 text-sm text-muted-foreground max-w-md leading-relaxed">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground max-w-md leading-relaxed">
                 <Info className="h-5 w-5 mt-0.5 shrink-0" />
                 <div>
                   <p>{publishInfoText}</p>
