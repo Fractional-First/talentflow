@@ -25,6 +25,7 @@ interface NextStepsCardProps {
   isPublished?: boolean
   isUpdatingPublishStatus?: boolean
   publicProfileUrl?: string
+  firstName?: string
 }
 
 export const NextStepsCard = ({
@@ -33,6 +34,7 @@ export const NextStepsCard = ({
   isPublished = false,
   isUpdatingPublishStatus = false,
   publicProfileUrl = "",
+  firstName,
 }: NextStepsCardProps) => {
   const navigate = useNavigate()
   const [showPublishModal, setShowPublishModal] = useState(false)
@@ -170,6 +172,7 @@ export const NextStepsCard = ({
             onConfirm={onPublishProfile}
             isUpdating={isUpdatingPublishStatus}
             publicProfileUrl={publicProfileUrl}
+            firstName={firstName}
           />
         )}
       </CardContent>
