@@ -52,21 +52,7 @@ export const ContractingTypeSection = ({
         </h3>
       </div>
 
-      {/* Candidate Personnel */}
-      <div className="space-y-2">
-        <Label htmlFor="candidatePersonnel" className="text-sm font-medium">
-          Candidate Personnel
-        </Label>
-        <Input
-          id="candidatePersonnel"
-          value={candidatePersonnel}
-          disabled
-          className="bg-muted text-muted-foreground"
-        />
-        <p className="text-xs text-muted-foreground">
-          Pre-filled from your Full Legal Name above.
-        </p>
-      </div>
+
 
       <RadioGroup
         value={contractingType || ""}
