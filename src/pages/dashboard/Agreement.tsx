@@ -43,6 +43,7 @@ const Agreement = () => {
   const [msaModalOpen, setMsaModalOpen] = useState(false)
 
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitted, setIsSubmitted] = useState(false)
 
   // Validation logic
   const isContractingValid = () => {
@@ -104,8 +105,7 @@ const Agreement = () => {
       // TODO: Save agreement data to database
       await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulated API call
       
-      toast.success("Agreement accepted! You're now ready to receive opportunities.")
-      navigate("/dashboard")
+      setIsSubmitted(true)
     } catch (error) {
       toast.error("Failed to save agreement. Please try again.")
     } finally {
@@ -146,67 +146,92 @@ const Agreement = () => {
               </div>
             </div>
 
-            {/* Contractual Roadmap */}
-            <ContractualRoadmap />
-
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                <ClipboardList className="h-6 w-6 text-primary" />
+            {isSubmitted ? (
+              <div className="flex flex-col items-center text-center py-16 animate-fade-in space-y-6">
+                <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
+                  <CheckCircle className="h-10 w-10 text-primary" />
+                </div>
+                <div className="space-y-3 max-w-md">
+                  <h2 className="text-2xl font-bold text-foreground">
+                    Congratulations, you are now engagement-ready!
+                  </h2>
+                  <p className="text-muted-foreground text-body">
+                    This is all you can do for now and you will be contacted if there are relevant opportunities. We will get in touch.
+                  </p>
+                </div>
+                <Button
+                  onClick={() => navigate("/dashboard")}
+                  size="lg"
+                  className="mt-4"
+                >
+                  Back to Dashboard
+                </Button>
               </div>
-              <div>
-                <h2 className="text-2xl font-bold text-foreground">
-                  Please provide us with your details
-                </h2>
-                <p className="text-muted-foreground">
-                  Complete the sections below to finalise your agreement.
-                </p>
-              </div>
-            </div>
+            ) : (
+              <>
+                {/* Contractual Roadmap */}
+                <ContractualRoadmap />
 
-            {/* Contracting Type Section */}
-            <ContractingTypeSection
-              contractingType={contractingType}
-              entityName={entityName}
-              registrationNumber={registrationNumber}
-              registeredAddress={registeredAddress}
-              entityConfirmed={entityConfirmed}
-              onContractingTypeChange={setContractingType}
-              onEntityNameChange={setEntityName}
-              onRegistrationNumberChange={setRegistrationNumber}
-              onRegisteredAddressChange={setRegisteredAddress}
-              onEntityConfirmedChange={setEntityConfirmed}
-              onViewMSA={() => setMsaModalOpen(true)}
-            />
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                    <ClipboardList className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-foreground">
+                      Please provide us with your details
+                    </h2>
+                    <p className="text-muted-foreground">
+                      Complete the sections below to finalise your agreement.
+                    </p>
+                  </div>
+                </div>
 
-            {/* Contact Details Section */}
-            <ContactDetailsSection
-              contactEmail={contactEmail}
-              mobileCountryCode={mobileCountryCode}
-              mobileNumber={mobileNumber}
-              onContactEmailChange={(v) => { setContactTouched(true); setContactEmail(v) }}
-              onMobileCountryCodeChange={(v) => { setContactTouched(true); setMobileCountryCode(v) }}
-              onMobileNumberChange={(v) => { setContactTouched(true); setMobileNumber(v) }}
-              emailError={getEmailError()}
-              countryCodeError={getCountryCodeError()}
-              phoneError={getPhoneError()}
-            />
+                {/* Contracting Type Section */}
+                <ContractingTypeSection
+                  contractingType={contractingType}
+                  entityName={entityName}
+                  registrationNumber={registrationNumber}
+                  registeredAddress={registeredAddress}
+                  entityConfirmed={entityConfirmed}
+                  onContractingTypeChange={setContractingType}
+                  onEntityNameChange={setEntityName}
+                  onRegistrationNumberChange={setRegistrationNumber}
+                  onRegisteredAddressChange={setRegisteredAddress}
+                  onEntityConfirmedChange={setEntityConfirmed}
+                  onViewMSA={() => setMsaModalOpen(true)}
+                />
 
-            {/* Terms Acceptance Section */}
-            <TermsAcceptanceSection
-              acceptFullAgreement={acceptFullAgreement}
-              onAcceptFullAgreementChange={setAcceptFullAgreement}
-              onViewMSA={() => setMsaModalOpen(true)}
-            />
+                {/* Contact Details Section */}
+                <ContactDetailsSection
+                  contactEmail={contactEmail}
+                  mobileCountryCode={mobileCountryCode}
+                  mobileNumber={mobileNumber}
+                  onContactEmailChange={(v) => { setContactTouched(true); setContactEmail(v) }}
+                  onMobileCountryCodeChange={(v) => { setContactTouched(true); setMobileCountryCode(v) }}
+                  onMobileNumberChange={(v) => { setContactTouched(true); setMobileNumber(v) }}
+                  emailError={getEmailError()}
+                  countryCodeError={getCountryCodeError()}
+                  phoneError={getPhoneError()}
+                />
 
-            {/* Submit Button */}
-            <Button
-              onClick={handleSubmit}
-              disabled={!canSubmit || isSubmitting}
-              size="lg"
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-lg py-6"
-            >
-              {isSubmitting ? "Processing..." : "Accept All & Get Engagement-Ready"}
-            </Button>
+                {/* Terms Acceptance Section */}
+                <TermsAcceptanceSection
+                  acceptFullAgreement={acceptFullAgreement}
+                  onAcceptFullAgreementChange={setAcceptFullAgreement}
+                  onViewMSA={() => setMsaModalOpen(true)}
+                />
+
+                {/* Submit Button */}
+                <Button
+                  onClick={handleSubmit}
+                  disabled={!canSubmit || isSubmitting}
+                  size="lg"
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-lg py-6"
+                >
+                  {isSubmitting ? "Processing..." : "Accept All & Get Engagement-Ready"}
+                </Button>
+              </>
+            )}
           </div>
         </main>
       </div>
