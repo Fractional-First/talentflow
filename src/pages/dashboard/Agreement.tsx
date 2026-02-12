@@ -140,7 +140,7 @@ const Agreement = () => {
                     Let's get you engagement-ready!
                   </h1>
                   <p className="text-muted-foreground">
-                    To receive relevant roles and potential matches as they become available, please go through the following steps.
+                    To receive relevant roles and potential matches as they become available, please review next steps.
                   </p>
                 </div>
               </div>
