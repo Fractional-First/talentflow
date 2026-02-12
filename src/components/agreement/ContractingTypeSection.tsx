@@ -36,7 +36,7 @@ export const ContractingTypeSection = ({
     <div className="bg-muted/50 border border-border rounded-xl p-5 sm:p-6 space-y-5">
       <div className="space-y-2">
         <h3 className="text-lg font-semibold text-foreground">
-          Contracting Structure (required)
+          Contracting Party (required)
         </h3>
       </div>
 
