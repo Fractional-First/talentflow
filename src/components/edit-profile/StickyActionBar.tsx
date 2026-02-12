@@ -28,7 +28,7 @@ export const StickyActionBar = ({
 }: StickyActionBarProps) => {
   const [showPublishModal, setShowPublishModal] = useState(false)
 
-  const publishInfoText = "Publishing creates a personalized shareable link. This does not mean that you are looking for work."
+  const publishInfoText = "Publish to go live. Your work availability remains private."
 
   const handlePublishClick = () => {
     if (!isPublished && onPublishConfirm) {
@@ -44,7 +44,7 @@ export const StickyActionBar = ({
         <div className="max-w-6xl mx-auto px-4 py-4">
           {/* Mobile layout */}
           <div className="flex flex-col gap-3 sm:hidden">
-            <div className="flex items-start gap-2 text-xs text-muted-foreground">
+            <div className="flex items-start gap-2 text-sm text-muted-foreground">
               <Info className="h-3.5 w-3.5 mt-0.5 shrink-0" />
               <p>{publishInfoText}</p>
             </div>
@@ -97,7 +97,7 @@ export const StickyActionBar = ({
             </Button>
 
             <div className="flex items-center gap-4">
-              <p className="text-xs text-muted-foreground max-w-md leading-relaxed">
+              <p className="text-sm text-muted-foreground max-w-md leading-relaxed">
                 <Info className="h-3.5 w-3.5 inline-block mr-1 -mt-0.5" />
                 {publishInfoText}
               </p>
