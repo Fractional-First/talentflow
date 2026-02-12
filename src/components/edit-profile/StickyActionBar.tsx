@@ -1,6 +1,12 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, ArrowRight, Globe, Info } from "lucide-react"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { PublishConfirmationModal } from "./PublishConfirmationModal"
 
 interface StickyActionBarProps {
@@ -51,20 +57,31 @@ export const StickyActionBar = ({
                 Regenerate
               </Button>
               
-              <Button
-                onClick={handlePublishClick}
-                disabled={isUpdatingPublishStatus}
-                variant={!isPublished ? "default" : "outline"}
-                className={!isPublished ? "bg-primary hover:bg-primary/90 text-primary-foreground flex-1" : "flex-1"}
-                size="sm"
-              >
-                <Globe className="mr-1 h-4 w-4" />
-                {isUpdatingPublishStatus
-                  ? "..."
-                  : !isPublished
-                  ? "Publish"
-                  : "Unpublish"}
-              </Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      onClick={handlePublishClick}
+                      disabled={isUpdatingPublishStatus}
+                      variant={!isPublished ? "default" : "outline"}
+                      className={!isPublished ? "bg-primary hover:bg-primary/90 text-primary-foreground flex-1" : "flex-1"}
+                      size="sm"
+                    >
+                      <Globe className="mr-1 h-4 w-4" />
+                      {isUpdatingPublishStatus
+                        ? "..."
+                        : !isPublished
+                        ? "Publish"
+                        : "Unpublish"}
+                    </Button>
+                  </TooltipTrigger>
+                  {!isPublished && (
+                    <TooltipContent className="max-w-xs text-left">
+                      Publishing creates a personalized shareable link as an alternative to your LinkedIn profile. This does not mean that you are looking for work. Making your profile publicly accessible helps the Fractional First team internally match and contact you for client opportunities.
+                    </TooltipContent>
+                  )}
+                </Tooltip>
+              </TooltipProvider>
 
               <Button
                 onClick={onSaveAndContinue}
@@ -89,19 +106,30 @@ export const StickyActionBar = ({
             </Button>
 
             <div className="flex items-center gap-4">
-              <Button
-                onClick={handlePublishClick}
-                disabled={isUpdatingPublishStatus}
-                variant={!isPublished ? "default" : "outline"}
-                className={!isPublished ? "bg-primary hover:bg-primary/90 text-primary-foreground" : ""}
-              >
-                <Globe className="mr-2 h-4 w-4" />
-                {isUpdatingPublishStatus
-                  ? "Updating..."
-                  : !isPublished
-                  ? "Publish"
-                  : "Unpublish"}
-              </Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      onClick={handlePublishClick}
+                      disabled={isUpdatingPublishStatus}
+                      variant={!isPublished ? "default" : "outline"}
+                      className={!isPublished ? "bg-primary hover:bg-primary/90 text-primary-foreground" : ""}
+                    >
+                      <Globe className="mr-2 h-4 w-4" />
+                      {isUpdatingPublishStatus
+                        ? "Updating..."
+                        : !isPublished
+                        ? "Publish"
+                        : "Unpublish"}
+                    </Button>
+                  </TooltipTrigger>
+                  {!isPublished && (
+                    <TooltipContent className="max-w-xs text-left">
+                      Publishing creates a personalized shareable link as an alternative to your LinkedIn profile. This does not mean that you are looking for work. Making your profile publicly accessible helps the Fractional First team internally match and contact you for client opportunities.
+                    </TooltipContent>
+                  )}
+                </Tooltip>
+              </TooltipProvider>
 
               <Button
                 onClick={onSaveAndContinue}
