@@ -8,6 +8,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useRef } from "react"
+import { Download } from "lucide-react"
 
 interface MSAModalProps {
   open: boolean
@@ -51,12 +52,25 @@ export const MSAModal = ({ open, onOpenChange }: MSAModalProps) => {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl h-[90vh] flex flex-col p-0">
         <DialogHeader className="px-6 py-4 border-b border-border flex-shrink-0">
-          <DialogTitle className="text-xl font-semibold">
-            Candidate Agreement
-          </DialogTitle>
-          <DialogDescription className="text-sm text-muted-foreground">
-            December 2025
-          </DialogDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <DialogTitle className="text-xl font-semibold">
+                Candidate Agreement
+              </DialogTitle>
+              <DialogDescription className="text-sm text-muted-foreground">
+                December 2025
+              </DialogDescription>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2"
+              onClick={() => window.print()}
+            >
+              <Download className="h-4 w-4" />
+              Download PDF
+            </Button>
+          </div>
         </DialogHeader>
         
         <ScrollArea ref={scrollAreaRef} className="flex-1 px-6">
