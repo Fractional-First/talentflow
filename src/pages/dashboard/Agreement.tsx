@@ -186,7 +186,7 @@ const Agreement = () => {
                     Congratulations, you are now engagement-ready!
                   </h2>
                   <p className="text-muted-foreground text-body">
-                    This is all you can do for now and you will be contacted if there are relevant opportunities. We will get in touch.
+                    Thanks for getting set up! We've got your details on file, and you're officially on our radar. We'll be in touch the moment a project comes up that fits your unique skill set.
                   </p>
                 </div>
                 <Button
