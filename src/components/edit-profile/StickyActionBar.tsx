@@ -26,7 +26,7 @@ export const StickyActionBar = ({
 }: StickyActionBarProps) => {
   const [showPublishModal, setShowPublishModal] = useState(false)
 
-  const publishInfoText = "Publishing creates a personalized shareable link as an alternative to your LinkedIn profile. This does not mean that you are looking for work. Making your profile publicly accessible helps the Fractional First team internally match and contact you for client opportunities."
+  const publishInfoText = "Publishing creates a personalized shareable link. This does not mean that you are looking for work."
 
   const handlePublishClick = () => {
     if (!isPublished && onPublishConfirm) {
