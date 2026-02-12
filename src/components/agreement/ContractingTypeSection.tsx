@@ -168,7 +168,7 @@ export const ContractingTypeSection = ({
                     If contracting through an entity
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    I agree and warrant that:
+                    I, {candidatePersonnel || "[Full Legal Name]"}, agree and warrant that:
                   </p>
                   <ul className="text-sm text-muted-foreground space-y-2 ml-4">
                     <li className="flex gap-2">
