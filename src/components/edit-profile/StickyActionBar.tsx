@@ -12,7 +12,6 @@ interface StickyActionBarProps {
   onSaveAndContinue: () => void
   publicProfileUrl?: string
   onPublishConfirm?: () => Promise<void>
-  userName?: string
 }
 
 export const StickyActionBar = ({
@@ -24,13 +23,10 @@ export const StickyActionBar = ({
   onSaveAndContinue,
   publicProfileUrl = "",
   onPublishConfirm,
-  userName = "",
 }: StickyActionBarProps) => {
   const [showPublishModal, setShowPublishModal] = useState(false)
 
-  const firstName = userName?.split(" ")[0] || ""
-  const greeting = firstName ? `Hi ${firstName}, ` : ""
-  const publishInfoText = `${greeting}You can share this personalized link with peers and organizations as a professional alternative to your LinkedIn profile. Setting your profile to public allows others to discover you and enables the Fractional First team to match and contact you for client opportunities, regardless of whether you are actively looking for work.`
+  const publishInfoText = "Publishing creates a personalized shareable link. This does not mean that you are looking for work."
 
   const handlePublishClick = () => {
     if (!isPublished && onPublishConfirm) {
