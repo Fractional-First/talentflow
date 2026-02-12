@@ -118,7 +118,7 @@ export const ContractualRoadmap = () => {
     <Card className="border-border bg-muted/30">
       <CardHeader className="pb-2 pt-4">
         <CardTitle className="text-base font-semibold text-foreground text-center">
-          How We Work
+          Next Steps
         </CardTitle>
       </CardHeader>
       <CardContent className="pt-2 pb-4">
