@@ -105,7 +105,7 @@ export const ContractualRoadmap = () => {
 
   const pathABullets = [
     "You contract directly with Fractional First.",
-    "Fractional First manages all client invoicing and cross-border payments.",
+    "Fractional First manages all client invoicing and will process and pay your invoices.",
     "Revenue-sharing is built into the engagement, ensuring we remain your long-term platform partner.",
   ]
 
