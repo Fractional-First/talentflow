@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/AppSidebar"
 import { Button } from "@/components/ui/button"
-import { ContractingTypeSection } from "@/components/agreement/ContractingTypeSection"
+import { ContractingTypeSection, type RegisteredAddress } from "@/components/agreement/ContractingTypeSection"
 import { ContactDetailsSection } from "@/components/agreement/ContactDetailsSection"
 import { TermsAcceptanceSection } from "@/components/agreement/TermsAcceptanceSection"
 import { MSAModal } from "@/components/agreement/MSAModal"
@@ -20,7 +20,14 @@ const Agreement = () => {
   const [contractingType, setContractingType] = useState<"individual" | "entity" | null>(null)
   const [entityName, setEntityName] = useState("")
   const [registrationNumber, setRegistrationNumber] = useState("")
-  const [registeredAddress, setRegisteredAddress] = useState("")
+  const [registeredAddress, setRegisteredAddress] = useState<RegisteredAddress>({
+    addressLine1: "",
+    addressLine2: "",
+    city: "",
+    stateProvince: "",
+    postalCode: "",
+    country: "",
+  })
   const [entityConfirmed, setEntityConfirmed] = useState(false)
 
   // Contact details state
@@ -52,7 +59,10 @@ const Agreement = () => {
       return (
         entityName.trim() !== "" &&
         registrationNumber.trim() !== "" &&
-        registeredAddress.trim() !== "" &&
+        registeredAddress.addressLine1.trim() !== "" &&
+        registeredAddress.city.trim() !== "" &&
+        registeredAddress.postalCode.trim() !== "" &&
+        registeredAddress.country.trim() !== "" &&
         entityConfirmed
       )
     }
