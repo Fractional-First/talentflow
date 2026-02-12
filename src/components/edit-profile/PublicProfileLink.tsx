@@ -39,7 +39,7 @@ export const PublicProfileLink = ({
           </h3>
         </div>
         <p className="text-sm text-muted-foreground">
-          Share your public profile link or open it in a new window
+          Share your personalized link with your network.
         </p>
       </CardHeader>
 
