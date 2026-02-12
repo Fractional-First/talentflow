@@ -94,7 +94,7 @@ const PathCard = ({
 
 export const ContractualRoadmap = () => {
   const pathASteps = [
-    { icon: <FileText className="h-4 w-4 text-primary" />, title: "Fractional First Issues Statement of Work" },
+    { icon: <FileText className="h-4 w-4 text-primary" />, title: "Accept Statement of Work issued by Fractional First" },
     { icon: <Briefcase className="h-4 w-4 text-primary" />, title: "Start Work" },
   ]
 
