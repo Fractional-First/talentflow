@@ -140,7 +140,7 @@ export const ContractualRoadmap = () => {
             />
           </div>
           <ArrowDown className="h-5 w-5 text-primary/60" />
-          <p className="text-xs text-muted-foreground font-medium">Then one of two paths:</p>
+          <p className="text-xs text-muted-foreground font-medium">Then one of two paths - Fractional First facilitates both paths so you're in good hands</p>
 
           {/* Side-by-side paths with conversion flexibility */}
           <div className="w-full relative">
