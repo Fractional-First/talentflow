@@ -80,7 +80,7 @@ export const PublishConfirmationModal = ({
                     <br />
                   </>
                 )}
-                You can share the personalized link with peers and organizations as a professional alternative to your LinkedIn profile. Setting your profile to public allows others to discover you and enables the Fractional First team to match and contact you for client opportunities, regardless of whether you are actively looking for work.
+                Publishing your profile creates a dedicated link for you to share with peers and organizations. It also gives us the green light to precision-match you with opportunities as they become available. It's about being discoverable to the right audiences, without broadcasting your availability and status publicly.
               </p>
             </div>
 
