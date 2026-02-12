@@ -49,7 +49,7 @@ export const ContractingTypeSection = ({
           <div className="flex items-center space-x-3">
             <RadioGroupItem value="individual" id="individual" />
             <Label htmlFor="individual" className="cursor-pointer font-medium flex items-center gap-2">
-              As an individual
+              You as an individual
               <span className="text-[10px] font-semibold text-primary bg-primary/15 px-2 py-0.5 rounded-full">
                 Preferred
               </span>
