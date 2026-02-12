@@ -77,7 +77,7 @@ export const PublishConfirmationModal = ({
                 {firstName && (
                   <>
                     <span className="font-semibold">Hi {firstName},</span>
-                    <br />
+                    <br /><br />
                   </>
                 )}
                 Publishing your profile creates a dedicated link for you to share with peers and organizations. It also gives us the green light to precision-match you with opportunities as they become available. It's about being discoverable to the right audiences, without broadcasting your availability and status publicly.
