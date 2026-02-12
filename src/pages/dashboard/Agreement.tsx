@@ -181,7 +181,7 @@ const Agreement = () => {
                 <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
                   <CheckCircle className="h-10 w-10 text-primary" />
                 </div>
-                <div className="space-y-3 max-w-md">
+                <div className="space-y-3 max-w-lg">
                   <h2 className="text-2xl font-bold text-foreground">
                     Congratulations, you are now engagement-ready!
                   </h2>
