@@ -68,7 +68,7 @@ export const PublishConfirmationModal = ({
           <>
             <DialogHeader>
               <DialogTitle className="text-xl font-semibold">
-                Publish Your Profile
+                Publish Your Leadership Profile
               </DialogTitle>
             </DialogHeader>
 
