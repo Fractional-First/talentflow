@@ -111,8 +111,8 @@ export const PublishConfirmationModal = ({
                 <h3 className="text-2xl font-semibold text-foreground">
                   Your profile is now live!
                 </h3>
-                <p className="text-sm text-muted-foreground">
-                  Share your profile link with your network.
+                 <p className="text-sm text-muted-foreground">
+                   Share your personalized link with your network.
                 </p>
               </div>
 
