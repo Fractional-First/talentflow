@@ -2,19 +2,28 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Textarea } from "@/components/ui/textarea"
+import { useCountries } from "@/queries/useCountries"
 
+
+export interface RegisteredAddress {
+  addressLine1: string
+  addressLine2: string
+  city: string
+  stateProvince: string
+  postalCode: string
+  country: string
+}
 
 interface ContractingTypeSectionProps {
   contractingType: "individual" | "entity" | null
   entityName: string
   registrationNumber: string
-  registeredAddress: string
+  registeredAddress: RegisteredAddress
   entityConfirmed: boolean
   onContractingTypeChange: (value: "individual" | "entity") => void
   onEntityNameChange: (value: string) => void
   onRegistrationNumberChange: (value: string) => void
-  onRegisteredAddressChange: (value: string) => void
+  onRegisteredAddressChange: (value: RegisteredAddress) => void
   onEntityConfirmedChange: (value: boolean) => void
   onViewMSA: () => void
 }
@@ -32,6 +41,7 @@ export const ContractingTypeSection = ({
   onEntityConfirmedChange,
   onViewMSA,
 }: ContractingTypeSectionProps) => {
+  const { data: countries = [] } = useCountries()
   return (
     <div className="bg-muted/50 border border-border rounded-xl p-5 sm:p-6 space-y-5">
       <div className="space-y-2">
@@ -101,17 +111,49 @@ export const ContractingTypeSection = ({
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="registeredAddress" className="text-sm font-medium">
-                    Registered address
-                  </Label>
-                  <Textarea
-                    id="registeredAddress"
-                    placeholder="Enter your entity's registered address"
-                    value={registeredAddress}
-                    onChange={(e) => onRegisteredAddressChange(e.target.value)}
-                    rows={2}
-                  />
+                <div className="space-y-4">
+                  <Label className="text-sm font-medium">Registered address</Label>
+                  <div className="space-y-3">
+                    <Input
+                      placeholder="Address Line 1"
+                      value={registeredAddress.addressLine1}
+                      onChange={(e) => onRegisteredAddressChange({ ...registeredAddress, addressLine1: e.target.value })}
+                    />
+                    <Input
+                      placeholder="Address Line 2 (optional)"
+                      value={registeredAddress.addressLine2}
+                      onChange={(e) => onRegisteredAddressChange({ ...registeredAddress, addressLine2: e.target.value })}
+                    />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <Input
+                        placeholder="City"
+                        value={registeredAddress.city}
+                        onChange={(e) => onRegisteredAddressChange({ ...registeredAddress, city: e.target.value })}
+                      />
+                      <Input
+                        placeholder="State / Province (optional)"
+                        value={registeredAddress.stateProvince}
+                        onChange={(e) => onRegisteredAddressChange({ ...registeredAddress, stateProvince: e.target.value })}
+                      />
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <Input
+                        placeholder="Postal Code"
+                        value={registeredAddress.postalCode}
+                        onChange={(e) => onRegisteredAddressChange({ ...registeredAddress, postalCode: e.target.value })}
+                      />
+                      <select
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                        value={registeredAddress.country}
+                        onChange={(e) => onRegisteredAddressChange({ ...registeredAddress, country: e.target.value })}
+                      >
+                        <option value="">Select country</option>
+                        {countries.map((c) => (
+                          <option key={c.id} value={c.name}>{c.name}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
                 </div>
               </div>
 
