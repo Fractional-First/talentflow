@@ -99,7 +99,7 @@ export const ContractualRoadmap = () => {
   ]
 
   const pathBSteps = [
-    { icon: <FileText className="h-4 w-4 text-primary" />, title: "Client Issues Offer" },
+    { icon: <FileText className="h-4 w-4 text-primary" />, title: "Accept offer issued by Client" },
     { icon: <Briefcase className="h-4 w-4 text-primary" />, title: "Start Work" },
   ]
 
