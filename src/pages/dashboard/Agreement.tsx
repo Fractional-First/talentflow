@@ -140,7 +140,7 @@ const Agreement = () => {
                     Let's get you engagement-ready!
                   </h1>
                   <p className="text-muted-foreground">
-                    To receive client names, client details, specific roles, and potential matches, please confirm how you will contract with us.
+                    To receive relevant roles and potential matches as they become available, please go through the following steps.
                   </p>
                 </div>
               </div>
