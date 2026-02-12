@@ -69,7 +69,7 @@ export const ContractingTypeSection = ({
               </Label>
             </div>
             <p className="text-xs text-muted-foreground ml-7">
-              Select this if you manage your professional engagements through an existing corporate structure or personal service company.
+              Select this if you manage your professional engagements through an entity designed for this purpose.
             </p>
           </div>
 
