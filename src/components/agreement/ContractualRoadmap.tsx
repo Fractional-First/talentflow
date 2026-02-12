@@ -60,7 +60,7 @@ const PathCard = ({
   bullets,
 }: {
   label: string
-  title: string
+  title: React.ReactNode
   steps: { icon: React.ReactNode; title: string }[]
   bullets: string[]
 }) => (
@@ -147,7 +147,7 @@ export const ContractualRoadmap = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <PathCard
                 label="Path A"
-                title="Engagement-based (Fractional/Interim)"
+                title={<>Engagement-based<br />(Fractional/Interim)</>}
                 steps={pathASteps}
                 bullets={pathABullets}
               />
