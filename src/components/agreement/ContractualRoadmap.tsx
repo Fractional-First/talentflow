@@ -135,8 +135,8 @@ export const ContractualRoadmap = () => {
             <SharedStepCard
               stepLabel="Step 2"
               icon={<Users className="h-5 w-5 text-primary" />}
-              title="Match with Client"
-              subtitle="We connect you with the right opportunity"
+              title="Introduction to Relevant Opportunities"
+              subtitle="We connect you with the right opportunity based on your selected job preferences."
             />
           </div>
           <ArrowDown className="h-5 w-5 text-primary/60" />
