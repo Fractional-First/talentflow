@@ -128,7 +128,7 @@ export const ContractualRoadmap = () => {
             <SharedStepCard
               stepLabel="Step 1"
               icon={<FileSignature className="h-5 w-5 text-primary" />}
-              title="Accept Master Agreement with FF"
+              title="Accept Agreement with FF"
               subtitle={<>Accept once to cover your current and all future leadership roles,<br className="hidden sm:inline" /> removing the friction of future paperwork.</>}
             />
             <ArrowDown className="h-5 w-5 text-primary/60" />
