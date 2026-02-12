@@ -514,6 +514,7 @@ const EditProfile = () => {
           onPublishToggle={handlePublishToggle}
           onSaveAndContinue={handleContinue}
           publicProfileUrl={publicProfileUrl}
+          userName={formData?.name || ""}
           onPublishConfirm={async () => {
             await updatePublishStatus(true)
           }}
