@@ -100,6 +100,8 @@ export const StickyActionBar = ({
               <p className="text-sm text-muted-foreground max-w-md leading-relaxed">
                 <Info className="h-3.5 w-3.5 inline-block mr-1 -mt-0.5" />
                 {publishInfoText}
+                <br className="hidden sm:block" />
+                You may unpublish at any time.
               </p>
 
               <Button
