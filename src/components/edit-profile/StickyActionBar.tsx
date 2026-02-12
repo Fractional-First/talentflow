@@ -1,11 +1,5 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
 import { ArrowLeft, ArrowRight, Globe, Info } from "lucide-react"
 import { PublishConfirmationModal } from "./PublishConfirmationModal"
 
@@ -46,8 +40,12 @@ export const StickyActionBar = ({
     <>
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-t border-border shadow-lg">
         <div className="max-w-6xl mx-auto px-4 py-4">
-          {/* Mobile: Stack layout */}
+          {/* Mobile layout */}
           <div className="flex flex-col gap-3 sm:hidden">
+            <div className="flex items-start gap-2 text-xs text-muted-foreground">
+              <Info className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+              <p>{publishInfoText}</p>
+            </div>
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
@@ -58,35 +56,21 @@ export const StickyActionBar = ({
                 <ArrowLeft className="mr-1 h-4 w-4" />
                 Regenerate
               </Button>
-              
-              <div className="flex items-center gap-1 flex-1">
-                <Button
-                  onClick={handlePublishClick}
-                  disabled={isUpdatingPublishStatus}
-                  variant={!isPublished ? "default" : "outline"}
-                  className={!isPublished ? "bg-primary hover:bg-primary/90 text-primary-foreground flex-1" : "flex-1"}
-                  size="sm"
-                >
-                  <Globe className="mr-1 h-4 w-4" />
-                  {isUpdatingPublishStatus
-                    ? "..."
-                    : !isPublished
-                    ? "Publish"
-                    : "Unpublish"}
-                </Button>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button type="button" className="text-muted-foreground hover:text-foreground transition-colors p-1">
-                        <Info className="h-4 w-4" />
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent side="top" className="max-w-[280px] text-xs">
-                      {publishInfoText}
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
+
+              <Button
+                onClick={handlePublishClick}
+                disabled={isUpdatingPublishStatus}
+                variant={!isPublished ? "default" : "outline"}
+                className={!isPublished ? "bg-primary hover:bg-primary/90 text-primary-foreground flex-1" : "flex-1"}
+                size="sm"
+              >
+                <Globe className="mr-1 h-4 w-4" />
+                {isUpdatingPublishStatus
+                  ? "..."
+                  : !isPublished
+                  ? "Publish"
+                  : "Unpublish"}
+              </Button>
 
               <Button
                 onClick={onSaveAndContinue}
@@ -100,7 +84,7 @@ export const StickyActionBar = ({
             </div>
           </div>
 
-          {/* Desktop: Horizontal layout */}
+          {/* Desktop layout */}
           <div className="hidden sm:flex items-center justify-between gap-4">
             <Button
               variant="outline"
@@ -111,38 +95,29 @@ export const StickyActionBar = ({
             </Button>
 
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1.5">
-                <Button
-                  onClick={handlePublishClick}
-                  disabled={isUpdatingPublishStatus}
-                  variant={!isPublished ? "default" : "outline"}
-                  className={!isPublished ? "bg-primary hover:bg-primary/90 text-primary-foreground" : ""}
-                >
-                  <Globe className="mr-2 h-4 w-4" />
-                  {isUpdatingPublishStatus
-                    ? "Updating..."
-                    : !isPublished
-                    ? "Publish"
-                    : "Unpublish"}
-                </Button>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button type="button" className="text-muted-foreground hover:text-foreground transition-colors p-1">
-                        <Info className="h-4 w-4" />
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent side="top" className="max-w-[320px] text-xs">
-                      {publishInfoText}
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
+              <p className="text-xs text-muted-foreground max-w-md leading-relaxed">
+                <Info className="h-3.5 w-3.5 inline-block mr-1 -mt-0.5" />
+                {publishInfoText}
+              </p>
+
+              <Button
+                onClick={handlePublishClick}
+                disabled={isUpdatingPublishStatus}
+                variant={!isPublished ? "default" : "outline"}
+                className={!isPublished ? "bg-primary hover:bg-primary/90 text-primary-foreground shrink-0" : "shrink-0"}
+              >
+                <Globe className="mr-2 h-4 w-4" />
+                {isUpdatingPublishStatus
+                  ? "Updating..."
+                  : !isPublished
+                  ? "Publish"
+                  : "Unpublish"}
+              </Button>
 
               <Button
                 onClick={onSaveAndContinue}
                 disabled={isSubmitting}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground shrink-0"
               >
                 {isSubmitting ? "Processing..." : "Save Draft & Go to Dashboard"}
                 <ArrowRight className="ml-2 h-4 w-4" />
