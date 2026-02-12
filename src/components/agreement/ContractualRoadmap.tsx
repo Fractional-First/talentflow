@@ -129,7 +129,7 @@ export const ContractualRoadmap = () => {
               stepLabel="Step 1"
               icon={<FileSignature className="h-5 w-5 text-primary" />}
               title="Accept Agreement with Fractional First"
-              subtitle={<>Accept once to cover your current and all future leadership roles,<br className="hidden sm:inline" /> removing the friction of future paperwork.</>}
+              subtitle="One-time acceptance for all future engagements"
             />
             <ArrowDown className="h-5 w-5 text-primary/60" />
             <SharedStepCard
