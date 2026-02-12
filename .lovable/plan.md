@@ -1,28 +1,27 @@
 
 
-## Show Success Confirmation After Agreement Acceptance
+## Split Registered Address into Individual Fields
 
-The best UX-friendly approach is an **inline success state** -- after clicking the button, the form content smoothly transitions into a centered confirmation message on the same page. This avoids jarring navigation or dismissible modals, and gives the user a clear sense of completion.
+Replace the single "Registered address" textarea with structured address fields for better data quality.
 
-### What the user will see
+### New Fields
 
-After clicking "Accept All & Get Engagement-Ready":
-1. Button shows "Processing..." briefly
-2. The entire form fades out and is replaced by a clean, centered success state:
-   - A large teal checkmark icon in a circular background
-   - Bold heading: "Congratulations, you are now engagement-ready!"
-   - Supporting text: "This is all you can do for now and you will be contacted if there are relevant opportunities. We will get in touch."
-   - A "Back to Dashboard" button below
+1. **Address Line 1** -- Street address (required)
+2. **Address Line 2** -- Suite, unit, floor (optional)
+3. **City** -- City/town (required)
+4. **State / Province** -- State or region (optional)
+5. **Postal Code** -- ZIP/postal code (required)
+6. **Country** -- Country name (required)
 
-### Technical changes
+### Technical Changes
 
-**File: `src/pages/dashboard/Agreement.tsx`**
+**`src/components/agreement/ContractingTypeSection.tsx`**
+- Replace the single `registeredAddress` string prop with an object type: `{ addressLine1, addressLine2, city, stateProvince, postalCode, country }`
+- Replace the `Textarea` with 6 `Input` fields, laid out with City/State side-by-side and Postal Code/Country side-by-side on larger screens
+- Update the props interface accordingly (`onRegisteredAddressChange` will pass the full object)
 
-- Add a `isSubmitted` state (boolean, default `false`)
-- After the simulated API call succeeds, set `isSubmitted = true` instead of navigating away
-- Conditionally render:
-  - If `isSubmitted` is `false`: show the current form (contracting type, contact details, terms, submit button)
-  - If `isSubmitted` is `true`: show a centered success card with the congratulations message, a CheckCircle icon, and a "Back to Dashboard" button
-- The success state will use a simple fade-in animation for a polished feel
-- The header ("Great, your profile is ready") remains visible above both states for continuity
+**`src/pages/dashboard/Agreement.tsx`**
+- Replace the `registeredAddress` string state with an object state containing all 6 fields
+- Update validation in `isContractingValid()` to check that required fields (addressLine1, city, postalCode, country) are filled
+- Pass the new object and setter to `ContractingTypeSection`
 
