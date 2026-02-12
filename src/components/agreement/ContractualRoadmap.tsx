@@ -94,7 +94,7 @@ const PathCard = ({
 
 export const ContractualRoadmap = () => {
   const pathASteps = [
-    { icon: <FileText className="h-4 w-4 text-primary" />, title: "FF Issues SOW" },
+    { icon: <FileText className="h-4 w-4 text-primary" />, title: "Fractional First Issues Statement of Work" },
     { icon: <Briefcase className="h-4 w-4 text-primary" />, title: "Start Work" },
   ]
 
@@ -128,7 +128,7 @@ export const ContractualRoadmap = () => {
             <SharedStepCard
               stepLabel="Step 1"
               icon={<FileSignature className="h-5 w-5 text-primary" />}
-              title="Accept Agreement with FF"
+              title="Accept Agreement with Fractional First"
               subtitle={<>Accept once to cover your current and all future leadership roles,<br className="hidden sm:inline" /> removing the friction of future paperwork.</>}
             />
             <ArrowDown className="h-5 w-5 text-primary/60" />
