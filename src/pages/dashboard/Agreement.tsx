@@ -8,7 +8,7 @@ import { ContactDetailsSection } from "@/components/agreement/ContactDetailsSect
 import { TermsAcceptanceSection } from "@/components/agreement/TermsAcceptanceSection"
 import { MSAModal } from "@/components/agreement/MSAModal"
 import { ContractualRoadmap } from "@/components/agreement/ContractualRoadmap"
-import { CheckCircle, ArrowLeft } from "lucide-react"
+import { CheckCircle, ArrowLeft, ClipboardList } from "lucide-react"
 import { toast } from "sonner"
 import { useGetUser } from "@/queries/auth/useGetUser"
 
@@ -149,7 +149,19 @@ const Agreement = () => {
             {/* Contractual Roadmap */}
             <ContractualRoadmap />
 
-            <h2 className="text-xl font-semibold text-foreground">Now we need your details</h2>
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <ClipboardList className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-foreground">
+                  Now we need your details
+                </h2>
+                <p className="text-muted-foreground">
+                  Complete the sections below to finalise your agreement.
+                </p>
+              </div>
+            </div>
 
             {/* Contracting Type Section */}
             <ContractingTypeSection
