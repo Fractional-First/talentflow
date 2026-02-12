@@ -65,7 +65,7 @@ export const ContractingTypeSection = ({
             <div className="flex items-center space-x-3">
               <RadioGroupItem value="entity" id="entity" />
               <Label htmlFor="entity" className="cursor-pointer font-medium">
-                Using an entity
+                You as part of your personal entity
               </Label>
             </div>
             <p className="text-xs text-muted-foreground ml-7">
