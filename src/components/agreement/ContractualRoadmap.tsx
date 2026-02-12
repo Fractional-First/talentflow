@@ -110,7 +110,7 @@ export const ContractualRoadmap = () => {
   ]
 
   const pathBBullets = [
-    "Direct integration into the client's leadership team.",
+    "You are directly hired by the client.",
     "The client handles the placement fee directly with Fractional First, simplifying your transition.",
   ]
 
