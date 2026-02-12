@@ -91,7 +91,7 @@ export const ContractingTypeSection = ({
 
                 <div className="space-y-2">
                   <Label htmlFor="registrationNumber" className="text-sm font-medium">
-                    Registration number / UEN
+                    Unique Entity Number (UEN)
                   </Label>
                   <Input
                     id="registrationNumber"
