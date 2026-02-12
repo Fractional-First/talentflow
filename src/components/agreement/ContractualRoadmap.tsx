@@ -163,7 +163,7 @@ export const ContractualRoadmap = () => {
 
               <PathCard
                 label="Path B"
-                title="Direct-Hire"
+                title={<>Direct-Hire<br />(Full-time)</>}
                 steps={pathBSteps}
                 bullets={pathBBullets}
               />
