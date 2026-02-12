@@ -20,7 +20,7 @@ export const TermsAcceptanceSection = ({
           Final Step: Acceptance of Agreement
         </h3>
         <p className="text-sm text-muted-foreground">
-          As a final step, please review and accept the full Master Candidate Agreement.
+          As a final step, please review and accept the Candidate Agreement.
         </p>
       </div>
 
@@ -33,7 +33,7 @@ export const TermsAcceptanceSection = ({
             className="mt-0.5"
           />
           <Label htmlFor="acceptFullAgreement" className="text-sm leading-relaxed cursor-pointer">
-            I have read and accept the Master Candidate Agreement (December 2025), including the confidentiality and 24-month non-circumvention obligations.
+            I have read and accept the Candidate Agreement (December 2025), including the confidentiality and 24-month non-circumvention obligations.
           </Label>
         </div>
       </div>
@@ -45,7 +45,7 @@ export const TermsAcceptanceSection = ({
         className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
       >
         <FileText className="h-4 w-4" />
-        View Master Candidate Agreement
+        View Candidate Agreement
       </button>
     </div>
   )

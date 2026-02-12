@@ -52,7 +52,7 @@ export const MSAModal = ({ open, onOpenChange }: MSAModalProps) => {
       <DialogContent className="max-w-4xl h-[90vh] flex flex-col p-0">
         <DialogHeader className="px-6 py-4 border-b border-border flex-shrink-0">
           <DialogTitle className="text-xl font-semibold">
-            Master Candidate Agreement
+            Candidate Agreement
           </DialogTitle>
           <DialogDescription className="text-sm text-muted-foreground">
             December 2025
