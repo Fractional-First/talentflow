@@ -108,8 +108,8 @@ export const PublishConfirmationModal = ({
                 <CheckCircle className="h-10 w-10 text-primary" />
               </div>
               <div className="space-y-2">
-                <h3 className="text-2xl font-semibold text-foreground">
-                  Your profile is now live!
+                 <h3 className="text-2xl font-semibold text-foreground">
+                   Your Leadership Profile is now live!
                 </h3>
                  <p className="text-sm text-muted-foreground">
                    Share your personalized link with your network.
