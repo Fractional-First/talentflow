@@ -18,6 +18,7 @@ interface PublishConfirmationModalProps {
   onConfirm: () => Promise<void>
   isUpdating: boolean
   publicProfileUrl: string
+  firstName?: string
 }
 
 export const PublishConfirmationModal = ({
@@ -26,6 +27,7 @@ export const PublishConfirmationModal = ({
   onConfirm,
   isUpdating,
   publicProfileUrl,
+  firstName,
 }: PublishConfirmationModalProps) => {
   const [isSuccess, setIsSuccess] = useState(false)
 
@@ -72,7 +74,7 @@ export const PublishConfirmationModal = ({
 
             <div className="py-4">
               <p className="text-sm text-foreground leading-relaxed">
-                You can share the personalized link with peers and organizations as a professional alternative to your LinkedIn profile. Setting your profile to public allows others to discover you and enables the Fractional First team to match and contact you for client opportunities, regardless of whether you are actively looking for work.
+                {firstName ? `Hi ${firstName}, you` : "You"} can share the personalized link with peers and organizations as a professional alternative to your LinkedIn profile. Setting your profile to public allows others to discover you and enables the Fractional First team to match and contact you for client opportunities, regardless of whether you are actively looking for work.
               </p>
             </div>
 

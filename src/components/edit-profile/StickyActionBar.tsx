@@ -12,6 +12,7 @@ interface StickyActionBarProps {
   onSaveAndContinue: () => void
   publicProfileUrl?: string
   onPublishConfirm?: () => Promise<void>
+  firstName?: string
 }
 
 export const StickyActionBar = ({
@@ -23,6 +24,7 @@ export const StickyActionBar = ({
   onSaveAndContinue,
   publicProfileUrl = "",
   onPublishConfirm,
+  firstName,
 }: StickyActionBarProps) => {
   const [showPublishModal, setShowPublishModal] = useState(false)
 
@@ -134,6 +136,7 @@ export const StickyActionBar = ({
           onConfirm={onPublishConfirm}
           isUpdating={isUpdatingPublishStatus}
           publicProfileUrl={publicProfileUrl}
+          firstName={firstName}
         />
       )}
     </>

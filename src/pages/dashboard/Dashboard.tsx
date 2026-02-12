@@ -139,6 +139,7 @@ const Dashboard = () => {
                     isPublished={isPublished}
                     isUpdatingPublishStatus={isUpdatingPublishStatus}
                     publicProfileUrl={publicProfileUrl}
+                    firstName={profile?.name?.split(" ")[0]}
                   />
                 </div>
               )}
