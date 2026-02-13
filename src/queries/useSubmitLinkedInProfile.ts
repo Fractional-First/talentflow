@@ -22,19 +22,14 @@ export function useSubmitLinkedInProfile() {
     }: SubmitLinkedInProfileArgs) => {
       const formDataToSubmit = new FormData()
 
-      // Get the current user - required for profile creation
+      // Get the current user (optional — guest flow has no user)
       const {
         data: { user },
-        error: userError,
       } = await supabase.auth.getUser()
 
-      if (userError || !user) {
-        throw new Error(
-          "Your session has expired. Please log in again to create your profile."
-        )
+      if (user) {
+        formDataToSubmit.append("userId", user.id)
       }
-
-      formDataToSubmit.append("userId", user.id)
       formDataToSubmit.append("linkedinUrl", linkedinUrl)
 
       // Add resume file if present
