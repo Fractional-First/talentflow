@@ -43,20 +43,16 @@ const ProfileGeneratorCreate = () => {
   const [currentLinkedInUrl, setCurrentLinkedInUrl] = useState("")
   // const [useResumeFlow, setUseResumeFlow] = useState(false) // Commented out - only LinkedIn flow for unauthenticated users
 
-  // Redirect authenticated users
+  // Redirect authenticated users (use getSession to avoid AuthSessionMissingError in guest flow)
   useEffect(() => {
     const checkAuth = async () => {
-      try {
-        const {
-          data: { user },
-        } = await import("@/integrations/supabase/client").then((m) =>
-          m.supabase.auth.getUser()
-        )
-        if (user) {
-          navigate("/create-profile", { replace: true })
-        }
-      } catch (error) {
-        // User is not authenticated, continue with anonymous flow
+      const {
+        data: { session },
+      } = await import("@/integrations/supabase/client").then((m) =>
+        m.supabase.auth.getSession()
+      )
+      if (session?.user) {
+        navigate("/create-profile", { replace: true })
       }
     }
     checkAuth()
