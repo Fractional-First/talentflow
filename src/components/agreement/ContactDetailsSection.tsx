@@ -98,16 +98,6 @@ export const ContactDetailsSection = ({
         />
       </div>
 
-      {/* Identification Number */}
-      <div className="space-y-2">
-        <Label htmlFor="identificationNumber">Identification Number</Label>
-        <Input
-          id="identificationNumber"
-          placeholder="e.g. passport number, national ID"
-          value={personalDetails.identificationNumber}
-          onChange={(e) => onPersonalDetailsChange({ ...personalDetails, identificationNumber: e.target.value })}
-        />
-      </div>
 
       {/* Residential Address */}
       <div className="space-y-3">
