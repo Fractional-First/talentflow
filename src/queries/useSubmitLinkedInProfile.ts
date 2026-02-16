@@ -71,7 +71,7 @@ export function useSubmitLinkedInProfile() {
       if (responseData.error || responseData.status === "error") {
         throw new Error(
           responseData.message ||
-            "Server reported an error processing your LinkedIn profile"
+            "Server reported an error processing your profile"
         )
       }
 
