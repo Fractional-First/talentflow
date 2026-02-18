@@ -1,7 +1,7 @@
 # Job Descriptions Table — Tasks
 
 > **PRD:** [PRD.md](./PRD.md)
-> **Status:** 4/6 tasks complete (1.1 + 2.1 + 3.1 + 3.2 verified 2026-02-18)
+> **Status:** 5/6 tasks complete (1.1 + 2.1 + 3.1 + 3.2 + 4.1 verified 2026-02-18)
 > **Migrations:** Write SQL to local migration file first, then apply via Supabase MCP `apply_migration`.
 > **Production:** Applies directly to production Supabase (`dtyugokvlksnatftpucm`). Additive change only (new table). Be careful.
 
@@ -227,7 +227,7 @@
 
 ## 4. Type Regeneration
 
-- [ ] **4.1 Regenerate Supabase TypeScript types**
+- [x] **4.1 Regenerate Supabase TypeScript types**
   Use Supabase MCP `generate_typescript_types` for project `dtyugokvlksnatftpucm`.
   Write the output to `src/integrations/supabase/types.ts`.
   Verify the file contains `job_descriptions` in the Tables section with correct Row/Insert/Update types.
