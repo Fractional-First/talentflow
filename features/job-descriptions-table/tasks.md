@@ -1,7 +1,7 @@
 # Job Descriptions Table — Tasks
 
 > **PRD:** [PRD.md](./PRD.md)
-> **Status:** 2/6 tasks complete (1.1 + 2.1 applied via fractional-command session 2026-02-18)
+> **Status:** 4/6 tasks complete (1.1 + 2.1 + 3.1 + 3.2 verified 2026-02-18)
 > **Migrations:** Write SQL to local migration file first, then apply via Supabase MCP `apply_migration`.
 > **Production:** Applies directly to production Supabase (`dtyugokvlksnatftpucm`). Additive change only (new table). Be careful.
 
@@ -200,7 +200,7 @@
   ```
   Assert: Response contains `success: true`, a valid UUID `id`, slug `financial-custodian-cfo-player-coach-india`, and url.
 
-- [ ] **3.2 Test RLS, update RPC, and edge cases**
+- [x] **3.2 Test RLS, update RPC, and edge cases**
   Run these verification queries via Supabase MCP `execute_sql`:
   ```sql
   -- 1. Verify published JD is readable
