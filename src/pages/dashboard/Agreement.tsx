@@ -117,7 +117,6 @@ const Agreement = () => {
   const isContactValid = () => {
     return (
       personalDetails.fullLegalName.trim() !== "" &&
-      personalDetails.identificationNumber.trim() !== "" &&
       personalDetails.residentialAddress.addressLine1.trim() !== "" &&
       personalDetails.residentialAddress.city.trim() !== "" &&
       personalDetails.residentialAddress.postalCode.trim() !== "" &&
