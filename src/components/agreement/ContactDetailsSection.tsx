@@ -88,9 +88,6 @@ export const ContactDetailsSection = ({
       <p className="text-sm text-muted-foreground">
         Provide your personal and contact information so we can reach you about opportunities.
       </p>
-      {showErrors && (
-        <p className="text-sm text-destructive">Please complete all required fields in this section.</p>
-      )}
 
       {/* Full Legal Name */}
       <div className="space-y-2">
@@ -100,7 +97,11 @@ export const ContactDetailsSection = ({
           placeholder="Enter your full legal name"
           value={personalDetails.fullLegalName}
           onChange={(e) => onPersonalDetailsChange({ ...personalDetails, fullLegalName: e.target.value })}
+          className={showErrors && !personalDetails.fullLegalName.trim() ? "border-destructive" : ""}
         />
+        {showErrors && !personalDetails.fullLegalName.trim() && (
+          <p className="text-sm text-destructive">Full legal name is required</p>
+        )}
       </div>
 
 
@@ -111,18 +112,28 @@ export const ContactDetailsSection = ({
           placeholder="Address Line 1"
           value={personalDetails.residentialAddress.addressLine1}
           onChange={(e) => updateAddress("addressLine1", e.target.value)}
+          className={showErrors && !personalDetails.residentialAddress.addressLine1.trim() ? "border-destructive" : ""}
         />
+        {showErrors && !personalDetails.residentialAddress.addressLine1.trim() && (
+          <p className="text-sm text-destructive">Address line 1 is required</p>
+        )}
         <Input
           placeholder="Address Line 2 (optional)"
           value={personalDetails.residentialAddress.addressLine2}
           onChange={(e) => updateAddress("addressLine2", e.target.value)}
         />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <Input
-            placeholder="City"
-            value={personalDetails.residentialAddress.city}
-            onChange={(e) => updateAddress("city", e.target.value)}
-          />
+          <div className="space-y-1">
+            <Input
+              placeholder="City"
+              value={personalDetails.residentialAddress.city}
+              onChange={(e) => updateAddress("city", e.target.value)}
+              className={showErrors && !personalDetails.residentialAddress.city.trim() ? "border-destructive" : ""}
+            />
+            {showErrors && !personalDetails.residentialAddress.city.trim() && (
+              <p className="text-sm text-destructive">City is required</p>
+            )}
+          </div>
           <Input
             placeholder="State / Province (optional)"
             value={personalDetails.residentialAddress.stateProvince}
@@ -130,21 +141,35 @@ export const ContactDetailsSection = ({
           />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <Input
-            placeholder="Postal Code"
-            value={personalDetails.residentialAddress.postalCode}
-            onChange={(e) => updateAddress("postalCode", e.target.value)}
-          />
-          <select
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            value={personalDetails.residentialAddress.country}
-            onChange={(e) => updateAddress("country", e.target.value)}
-          >
-            <option value="">Select country</option>
-            {countries.map((c) => (
-              <option key={c.id} value={c.name}>{c.name}</option>
-            ))}
-          </select>
+          <div className="space-y-1">
+            <Input
+              placeholder="Postal Code"
+              value={personalDetails.residentialAddress.postalCode}
+              onChange={(e) => updateAddress("postalCode", e.target.value)}
+              className={showErrors && !personalDetails.residentialAddress.postalCode.trim() ? "border-destructive" : ""}
+            />
+            {showErrors && !personalDetails.residentialAddress.postalCode.trim() && (
+              <p className="text-sm text-destructive">Postal code is required</p>
+            )}
+          </div>
+          <div className="space-y-1">
+            <select
+              className={cn(
+                "flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                showErrors && !personalDetails.residentialAddress.country ? "border-destructive" : "border-input"
+              )}
+              value={personalDetails.residentialAddress.country}
+              onChange={(e) => updateAddress("country", e.target.value)}
+            >
+              <option value="">Select country</option>
+              {countries.map((c) => (
+                <option key={c.id} value={c.name}>{c.name}</option>
+              ))}
+            </select>
+            {showErrors && !personalDetails.residentialAddress.country && (
+              <p className="text-sm text-destructive">Country is required</p>
+            )}
+          </div>
         </div>
       </div>
 
@@ -157,10 +182,13 @@ export const ContactDetailsSection = ({
           placeholder="you@example.com"
           value={contactEmail}
           onChange={(e) => onContactEmailChange(e.target.value)}
-          className={emailError ? "border-destructive" : ""}
+          className={(emailError || (showErrors && !contactEmail.trim())) ? "border-destructive" : ""}
         />
         {emailError && (
           <p className="text-sm text-destructive">{emailError}</p>
+        )}
+        {!emailError && showErrors && !contactEmail.trim() && (
+          <p className="text-sm text-destructive">Email is required</p>
         )}
       </div>
 

@@ -52,8 +52,11 @@ export const ContractingTypeSection = ({
         <h3 className="text-lg font-semibold text-foreground">
           Contracting Party (required)
         </h3>
-        {showErrors && (
-          <p className="text-sm text-destructive">Please select a contracting type and complete all required fields.</p>
+        {showErrors && !contractingType && (
+          <p className="text-sm text-destructive">Please select a contracting type.</p>
+        )}
+        {showErrors && contractingType === "entity" && (
+          <p className="text-sm text-destructive">Please complete all entity fields and confirm the declaration.</p>
         )}
       </div>
 
