@@ -6,15 +6,17 @@ interface TermsAcceptanceSectionProps {
   acceptFullAgreement: boolean
   onAcceptFullAgreementChange: (value: boolean) => void
   onViewMSA: () => void
+  showErrors?: boolean
 }
 
 export const TermsAcceptanceSection = ({
   acceptFullAgreement,
   onAcceptFullAgreementChange,
   onViewMSA,
+  showErrors,
 }: TermsAcceptanceSectionProps) => {
   return (
-    <div className="bg-muted/50 border border-border rounded-xl p-5 sm:p-6 space-y-5">
+    <div className={`bg-muted/50 border rounded-xl p-5 sm:p-6 space-y-5 ${showErrors ? "border-destructive" : "border-border"}`}>
       <div className="space-y-2">
         <h3 className="text-lg font-semibold text-foreground">
           Final Step: Acceptance of Agreement
@@ -22,6 +24,9 @@ export const TermsAcceptanceSection = ({
         <p className="text-sm text-muted-foreground">
           As a final step, please review and accept the Candidate Agreement.
         </p>
+        {showErrors && (
+          <p className="text-sm text-destructive">Please accept the Candidate Agreement to continue.</p>
+        )}
       </div>
 
       <div className="bg-background border border-border rounded-lg p-4">

@@ -40,6 +40,7 @@ interface ContactDetailsSectionProps {
   emailError?: string
   phoneError?: string
   countryCodeError?: string
+  showErrors?: boolean
 }
 
 export const ContactDetailsSection = ({
@@ -54,6 +55,7 @@ export const ContactDetailsSection = ({
   emailError,
   phoneError,
   countryCodeError,
+  showErrors,
 }: ContactDetailsSectionProps) => {
   const [countryCodeOpen, setCountryCodeOpen] = useState(false)
   const { data: countries = [], isLoading } = useCountries()
@@ -78,7 +80,7 @@ export const ContactDetailsSection = ({
   }
 
   return (
-    <div className="bg-muted/50 border border-border rounded-xl p-5 sm:p-6 space-y-5">
+    <div className={cn("bg-muted/50 border rounded-xl p-5 sm:p-6 space-y-5", showErrors ? "border-destructive" : "border-border")}>
       <div className="flex items-center gap-2 mb-1">
         <User className="h-5 w-5 text-primary" />
         <h2 className="text-lg font-semibold text-foreground">Personal Details</h2>
@@ -86,6 +88,9 @@ export const ContactDetailsSection = ({
       <p className="text-sm text-muted-foreground">
         Provide your personal and contact information so we can reach you about opportunities.
       </p>
+      {showErrors && (
+        <p className="text-sm text-destructive">Please complete all required fields in this section.</p>
+      )}
 
       {/* Full Legal Name */}
       <div className="space-y-2">
