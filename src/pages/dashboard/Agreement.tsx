@@ -180,8 +180,8 @@ const Agreement = () => {
                   <h2 className="text-2xl font-bold text-foreground">
                     Congratulations, you are now engagement-ready!
                   </h2>
-                  <p className="text-muted-foreground text-body">
-                    Thanks for getting set up! We've got your details on file, and you're officially on our radar. We'll be in touch the moment a project comes up that fits your unique skill set.
+                   <p className="text-muted-foreground text-body">
+                     We will contact you once we find a good match.
                   </p>
                 </div>
                 <Button
