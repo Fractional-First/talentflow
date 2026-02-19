@@ -33,7 +33,7 @@ export const TermsAcceptanceSection = ({
             className="mt-0.5"
           />
           <Label htmlFor="acceptFullAgreement" className="text-sm leading-relaxed cursor-pointer">
-            I have read and accept the Candidate Agreement, including the confidentiality and 18-month non-circumvention obligations.
+            I have read and accepted the Candidate Agreement, including the confidentiality and 18-month non-circumvention obligations.
           </Label>
         </div>
       </div>
