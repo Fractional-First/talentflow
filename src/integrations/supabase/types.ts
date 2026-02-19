@@ -336,6 +336,81 @@ export type Database = {
         }
         Relationships: []
       }
+      linkedin_profiles: {
+        Row: {
+          city: string | null
+          country: string | null
+          country_code: string | null
+          created_at: string | null
+          current_company: string | null
+          education: Json | null
+          experience: Json | null
+          first_name: string | null
+          follower_count: number | null
+          full_name: string | null
+          headline: string | null
+          id: string
+          last_name: string | null
+          linkedin_url: string
+          location_text: string | null
+          raw_data: Json | null
+          scraped_at: string | null
+          search_query: string | null
+          skills: Json | null
+          state: string | null
+          summary: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          city?: string | null
+          country?: string | null
+          country_code?: string | null
+          created_at?: string | null
+          current_company?: string | null
+          education?: Json | null
+          experience?: Json | null
+          first_name?: string | null
+          follower_count?: number | null
+          full_name?: string | null
+          headline?: string | null
+          id?: string
+          last_name?: string | null
+          linkedin_url: string
+          location_text?: string | null
+          raw_data?: Json | null
+          scraped_at?: string | null
+          search_query?: string | null
+          skills?: Json | null
+          state?: string | null
+          summary?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          city?: string | null
+          country?: string | null
+          country_code?: string | null
+          created_at?: string | null
+          current_company?: string | null
+          education?: Json | null
+          experience?: Json | null
+          first_name?: string | null
+          follower_count?: number | null
+          full_name?: string | null
+          headline?: string | null
+          id?: string
+          last_name?: string | null
+          linkedin_url?: string
+          location_text?: string | null
+          raw_data?: Json | null
+          scraped_at?: string | null
+          search_query?: string | null
+          skills?: Json | null
+          state?: string | null
+          summary?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       locations: {
         Row: {
           city: string | null
@@ -479,7 +554,7 @@ export type Database = {
           onboarding_status: Database["public"]["Enums"]["onboarding_status"]
           profile_data: Json
           profile_data_original: Json | null
-          profile_slug: string
+          profile_slug: string | null
           profile_type: Database["public"]["Enums"]["profile_type"]
           profile_version: string
           updated_at: string
@@ -498,7 +573,7 @@ export type Database = {
           onboarding_status?: Database["public"]["Enums"]["onboarding_status"]
           profile_data?: Json
           profile_data_original?: Json | null
-          profile_slug: string
+          profile_slug?: string | null
           profile_type?: Database["public"]["Enums"]["profile_type"]
           profile_version?: string
           updated_at?: string
@@ -517,7 +592,7 @@ export type Database = {
           onboarding_status?: Database["public"]["Enums"]["onboarding_status"]
           profile_data?: Json
           profile_data_original?: Json | null
-          profile_slug?: string
+          profile_slug?: string | null
           profile_type?: Database["public"]["Enums"]["profile_type"]
           profile_version?: string
           updated_at?: string
@@ -692,6 +767,36 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_linkedin_cache: {
+        Args: { p_urls: string[] }
+        Returns: {
+          city: string
+          country: string
+          country_code: string
+          current_company: string
+          education: Json
+          experience: Json
+          first_name: string
+          follower_count: number
+          full_name: string
+          headline: string
+          last_name: string
+          linkedin_url: string
+          location_text: string
+          raw_data: Json
+          skills: Json
+          state: string
+          summary: string
+        }[]
+      }
+      create_guest_profile: {
+        Args: {
+          p_anon_profile_data: Json
+          p_linkedin_url?: string
+          p_profile_data: Json
+        }
+        Returns: Json
+      }
       generate_unique_anon_slug: {
         Args: { p_anon_data: Json; p_user_id: string }
         Returns: string
@@ -738,6 +843,10 @@ export type Database = {
           metadata: Json
           similarity: number
         }[]
+      }
+      save_linkedin_profiles: {
+        Args: { p_profiles: Json; p_search_query?: string }
+        Returns: Json
       }
     }
     Enums: {
