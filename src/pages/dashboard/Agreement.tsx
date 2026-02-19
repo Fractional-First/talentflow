@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/AppSidebar"
@@ -65,6 +65,11 @@ const Agreement = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [attemptedSubmit, setAttemptedSubmit] = useState(false)
+
+  const personalRef = useRef<HTMLDivElement>(null)
+  const contractingRef = useRef<HTMLDivElement>(null)
+  const termsRef = useRef<HTMLDivElement>(null)
 
   // Validation logic
   const isContractingValid = () => {
@@ -127,8 +132,13 @@ const Agreement = () => {
   const canSubmit = isContractingValid() && isContactValid() && isTermsValid()
 
   const handleSubmit = async () => {
+    setAttemptedSubmit(true)
     setContactTouched(true)
-    if (!canSubmit) return
+    if (!canSubmit) {
+      const firstInvalid = !isContactValid() ? personalRef : !isContractingValid() ? contractingRef : termsRef
+      firstInvalid.current?.scrollIntoView({ behavior: "smooth", block: "center" })
+      return
+    }
 
     setIsSubmitting(true)
     try {
@@ -218,47 +228,56 @@ const Agreement = () => {
                 </div>
 
                 {/* Personal Details Section */}
-                <ContactDetailsSection
-                  contactEmail={contactEmail}
-                  mobileCountryCode={mobileCountryCode}
-                  mobileNumber={mobileNumber}
-                  personalDetails={personalDetails}
-                  onContactEmailChange={(v) => { setContactTouched(true); setContactEmail(v) }}
-                  onMobileCountryCodeChange={(v) => { setContactTouched(true); setMobileCountryCode(v) }}
-                  onMobileNumberChange={(v) => { setContactTouched(true); setMobileNumber(v) }}
-                  onPersonalDetailsChange={setPersonalDetails}
-                  emailError={getEmailError()}
-                  countryCodeError={getCountryCodeError()}
-                  phoneError={getPhoneError()}
-                />
+                <div ref={personalRef}>
+                  <ContactDetailsSection
+                    contactEmail={contactEmail}
+                    mobileCountryCode={mobileCountryCode}
+                    mobileNumber={mobileNumber}
+                    personalDetails={personalDetails}
+                    onContactEmailChange={(v) => { setContactTouched(true); setContactEmail(v) }}
+                    onMobileCountryCodeChange={(v) => { setContactTouched(true); setMobileCountryCode(v) }}
+                    onMobileNumberChange={(v) => { setContactTouched(true); setMobileNumber(v) }}
+                    onPersonalDetailsChange={setPersonalDetails}
+                    emailError={getEmailError()}
+                    countryCodeError={getCountryCodeError()}
+                    phoneError={getPhoneError()}
+                    showErrors={attemptedSubmit && !isContactValid()}
+                  />
+                </div>
 
                 {/* Contracting Type Section */}
-                <ContractingTypeSection
-                  contractingType={contractingType}
-                  candidatePersonnel={personalDetails.fullLegalName}
-                  entityName={entityName}
-                  registrationNumber={registrationNumber}
-                  registeredAddress={registeredAddress}
-                  entityConfirmed={entityConfirmed}
-                  onContractingTypeChange={setContractingType}
-                  onEntityNameChange={setEntityName}
-                  onRegistrationNumberChange={setRegistrationNumber}
-                  onRegisteredAddressChange={setRegisteredAddress}
-                  onEntityConfirmedChange={setEntityConfirmed}
-                  onViewMSA={() => setMsaModalOpen(true)}
-                />
+                <div ref={contractingRef}>
+                  <ContractingTypeSection
+                    contractingType={contractingType}
+                    candidatePersonnel={personalDetails.fullLegalName}
+                    entityName={entityName}
+                    registrationNumber={registrationNumber}
+                    registeredAddress={registeredAddress}
+                    entityConfirmed={entityConfirmed}
+                    onContractingTypeChange={setContractingType}
+                    onEntityNameChange={setEntityName}
+                    onRegistrationNumberChange={setRegistrationNumber}
+                    onRegisteredAddressChange={setRegisteredAddress}
+                    onEntityConfirmedChange={setEntityConfirmed}
+                    onViewMSA={() => setMsaModalOpen(true)}
+                    showErrors={attemptedSubmit && !isContractingValid()}
+                  />
+                </div>
 
                 {/* Terms Acceptance Section */}
-                <TermsAcceptanceSection
-                  acceptFullAgreement={acceptFullAgreement}
-                  onAcceptFullAgreementChange={setAcceptFullAgreement}
-                  onViewMSA={() => setMsaModalOpen(true)}
-                />
+                <div ref={termsRef}>
+                  <TermsAcceptanceSection
+                    acceptFullAgreement={acceptFullAgreement}
+                    onAcceptFullAgreementChange={setAcceptFullAgreement}
+                    onViewMSA={() => setMsaModalOpen(true)}
+                    showErrors={attemptedSubmit && !isTermsValid()}
+                  />
+                </div>
 
                 {/* Submit Button */}
                 <Button
                   onClick={handleSubmit}
-                  disabled={!canSubmit || isSubmitting}
+                  disabled={isSubmitting}
                   size="lg"
                   className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-lg py-6"
                 >

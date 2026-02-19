@@ -27,6 +27,7 @@ interface ContractingTypeSectionProps {
   onRegisteredAddressChange: (value: RegisteredAddress) => void
   onEntityConfirmedChange: (value: boolean) => void
   onViewMSA: () => void
+  showErrors?: boolean
 }
 
 export const ContractingTypeSection = ({
@@ -42,14 +43,18 @@ export const ContractingTypeSection = ({
   onRegisteredAddressChange,
   onEntityConfirmedChange,
   onViewMSA,
+  showErrors,
 }: ContractingTypeSectionProps) => {
   const { data: countries = [] } = useCountries()
   return (
-    <div className="bg-muted/50 border border-border rounded-xl p-5 sm:p-6 space-y-5">
+    <div className={`bg-muted/50 border rounded-xl p-5 sm:p-6 space-y-5 ${showErrors ? "border-destructive" : "border-border"}`}>
       <div className="space-y-2">
         <h3 className="text-lg font-semibold text-foreground">
           Contracting Party (required)
         </h3>
+        {showErrors && (
+          <p className="text-sm text-destructive">Please select a contracting type and complete all required fields.</p>
+        )}
       </div>
 
 
