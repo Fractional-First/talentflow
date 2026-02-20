@@ -16,11 +16,16 @@ const Agreement = () => {
   const navigate = useNavigate()
   const { data: user } = useGetUser()
 
+  const isAccepted = localStorage.getItem("agreement_accepted") === "true"
+  const savedData = (() => {
+    try { return JSON.parse(localStorage.getItem("agreement_data") || "null") } catch { return null }
+  })()
+
   // Contracting type state
-  const [contractingType, setContractingType] = useState<"individual" | "entity" | null>(null)
-  const [entityName, setEntityName] = useState("")
-  const [registrationNumber, setRegistrationNumber] = useState("")
-  const [registeredAddress, setRegisteredAddress] = useState<RegisteredAddress>({
+  const [contractingType, setContractingType] = useState<"individual" | "entity" | null>(savedData?.contractingType ?? null)
+  const [entityName, setEntityName] = useState(savedData?.entityName ?? "")
+  const [registrationNumber, setRegistrationNumber] = useState(savedData?.registrationNumber ?? "")
+  const [registeredAddress, setRegisteredAddress] = useState<RegisteredAddress>(savedData?.registeredAddress ?? {
     addressLine1: "",
     addressLine2: "",
     city: "",
@@ -28,10 +33,10 @@ const Agreement = () => {
     postalCode: "",
     country: "",
   })
-  const [entityConfirmed, setEntityConfirmed] = useState(false)
+  const [entityConfirmed, setEntityConfirmed] = useState(savedData?.entityConfirmed ?? false)
 
   // Personal details state
-  const [personalDetails, setPersonalDetails] = useState<PersonalDetailsData>({
+  const [personalDetails, setPersonalDetails] = useState<PersonalDetailsData>(savedData?.personalDetails ?? {
     fullLegalName: "",
     identificationNumber: "",
     residentialAddress: {
@@ -45,12 +50,12 @@ const Agreement = () => {
   })
 
   // Contact details state
-  const [contactEmail, setContactEmail] = useState("")
-  const [mobileCountryCode, setMobileCountryCode] = useState("")
-  const [mobileNumber, setMobileNumber] = useState("")
+  const [contactEmail, setContactEmail] = useState(savedData?.contactEmail ?? "")
+  const [mobileCountryCode, setMobileCountryCode] = useState(savedData?.mobileCountryCode ?? "")
+  const [mobileNumber, setMobileNumber] = useState(savedData?.mobileNumber ?? "")
   const [contactTouched, setContactTouched] = useState(false)
 
-  // Pre-fill email from auth user
+  // Pre-fill email from auth user (only if no saved data)
   useEffect(() => {
     if (user?.email && !contactEmail) {
       setContactEmail(user.email)
@@ -58,13 +63,13 @@ const Agreement = () => {
   }, [user?.email])
 
   // Terms acceptance state
-  const [acceptFullAgreement, setAcceptFullAgreement] = useState(false)
+  const [acceptFullAgreement, setAcceptFullAgreement] = useState(savedData?.acceptFullAgreement ?? false)
 
   // Modal state
   const [msaModalOpen, setMsaModalOpen] = useState(false)
 
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isSubmitted, setIsSubmitted] = useState(() => localStorage.getItem("agreement_accepted") === "true")
+  const [isSubmitted, setIsSubmitted] = useState(false)
   const [attemptedSubmit, setAttemptedSubmit] = useState(false)
 
   const personalRef = useRef<HTMLDivElement>(null)
@@ -145,6 +150,10 @@ const Agreement = () => {
       await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulated API call
       
       localStorage.setItem("agreement_accepted", "true")
+      localStorage.setItem("agreement_data", JSON.stringify({
+        contractingType, entityName, registrationNumber, registeredAddress, entityConfirmed,
+        personalDetails, contactEmail, mobileCountryCode, mobileNumber, acceptFullAgreement,
+      }))
       setIsSubmitted(true)
     } catch (error) {
       toast.error("Failed to save agreement. Please try again.")
@@ -172,7 +181,7 @@ const Agreement = () => {
               </Button>
             </div>
 
-            {isSubmitted ? (
+            {isSubmitted && !isAccepted && (
               <div className="flex flex-col items-center text-center py-16 animate-fade-in space-y-6">
                 <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
                   <CheckCircle className="h-10 w-10 text-primary" />
@@ -193,39 +202,53 @@ const Agreement = () => {
                   Back to Dashboard
                 </Button>
               </div>
-            ) : (
-              <>
+            )}
+
+            {(!isSubmitted || isAccepted) && (
+              <div className={isAccepted ? "pointer-events-none opacity-80" : ""}>
+                {isAccepted && (
+                  <div className="pointer-events-auto opacity-100 flex items-center gap-3 p-4 rounded-lg bg-primary/5 border border-primary/20 mb-6">
+                    <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />
+                    <p className="text-sm text-foreground">
+                      You're engagement-ready! This is a read-only view of your accepted agreement.
+                    </p>
+                  </div>
+                )}
+
                 {/* Header */}
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                    <CheckCircle className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h1 className="text-2xl font-bold text-foreground">
-                      Let's get you engagement-ready!
-                    </h1>
-                    <p className="text-muted-foreground">
-                      To receive relevant roles and potential matches as they become available, please review next steps.
-                    </p>
-                  </div>
-                </div>
+                {!isAccepted && (
+                  <>
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                        <CheckCircle className="h-6 w-6 text-primary" />
+                      </div>
+                      <div>
+                        <h1 className="text-2xl font-bold text-foreground">
+                          Let's get you engagement-ready!
+                        </h1>
+                        <p className="text-muted-foreground">
+                          To receive relevant roles and potential matches as they become available, please review next steps.
+                        </p>
+                      </div>
+                    </div>
 
-                {/* Contractual Roadmap */}
-                <ContractualRoadmap />
+                    <ContractualRoadmap />
 
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                    <ClipboardList className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-foreground">
-                      If you're ready, let's move ahead.
-                    </h2>
-                    <p className="text-muted-foreground">
-                      Complete the sections below.
-                    </p>
-                  </div>
-                </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                        <ClipboardList className="h-6 w-6 text-primary" />
+                      </div>
+                      <div>
+                        <h2 className="text-2xl font-bold text-foreground">
+                          If you're ready, let's move ahead.
+                        </h2>
+                        <p className="text-muted-foreground">
+                          Complete the sections below.
+                        </p>
+                      </div>
+                    </div>
+                  </>
+                )}
 
                 {/* Personal Details Section */}
                 <div ref={personalRef}>
@@ -275,15 +298,17 @@ const Agreement = () => {
                 </div>
 
                 {/* Submit Button */}
-                <Button
-                  onClick={handleSubmit}
-                  disabled={isSubmitting}
-                  size="lg"
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-lg py-6"
-                >
-                  {isSubmitting ? "Processing..." : "Accept All & Get Engagement-Ready"}
-                </Button>
-              </>
+                {!isAccepted && (
+                  <Button
+                    onClick={handleSubmit}
+                    disabled={isSubmitting}
+                    size="lg"
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-lg py-6"
+                  >
+                    {isSubmitting ? "Processing..." : "Accept All & Get Engagement-Ready"}
+                  </Button>
+                )}
+              </div>
             )}
           </div>
         </main>
