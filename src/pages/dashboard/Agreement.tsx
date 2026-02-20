@@ -181,7 +181,7 @@ const Agreement = () => {
               </Button>
             </div>
 
-            {isSubmitted && !isAccepted && (
+            {isSubmitted && (
               <div className="flex flex-col items-center text-center py-16 animate-fade-in space-y-6">
                 <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
                   <CheckCircle className="h-10 w-10 text-primary" />
@@ -204,7 +204,7 @@ const Agreement = () => {
               </div>
             )}
 
-            {(!isSubmitted || isAccepted) && (
+            {!isSubmitted && (
               <>
                 {isAccepted && (
                   <div className="flex items-center gap-3 p-4 rounded-lg bg-primary/5 border border-primary/20 mb-6">
