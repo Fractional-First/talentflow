@@ -467,7 +467,7 @@ export const MSAModal = ({ open, onOpenChange }: MSAModalProps) => {
             </section>
 
             {/* Schedule 1 – Statement of Work Template */}
-            <section id="schedule-1" className="space-y-6">
+            <section id="schedule-1" className="space-y-6 border-t-2 border-border pt-8">
               <h2 className="text-lg font-bold text-foreground">SCHEDULE 1 – STATEMENT OF WORK TEMPLATE</h2>
               
               <div className="space-y-4 text-muted-foreground">
@@ -572,7 +572,7 @@ export const MSAModal = ({ open, onOpenChange }: MSAModalProps) => {
           </div>
         </ScrollArea>
         
-        <div className="px-6 py-4 border-t border-border flex-shrink-0 flex items-center justify-between gap-3">
+        <div className="msa-modal-footer px-6 py-4 border-t border-border flex-shrink-0 flex items-center justify-between gap-3">
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
