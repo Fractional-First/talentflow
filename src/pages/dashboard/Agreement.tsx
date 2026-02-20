@@ -205,15 +205,17 @@ const Agreement = () => {
             )}
 
             {(!isSubmitted || isAccepted) && (
-              <div className={isAccepted ? "pointer-events-none opacity-80" : ""}>
+              <>
                 {isAccepted && (
-                  <div className="pointer-events-auto opacity-100 flex items-center gap-3 p-4 rounded-lg bg-primary/5 border border-primary/20 mb-6">
+                  <div className="flex items-center gap-3 p-4 rounded-lg bg-primary/5 border border-primary/20 mb-6">
                     <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />
                     <p className="text-sm text-foreground">
                       You're engagement-ready! This is a read-only view of your accepted agreement.
                     </p>
                   </div>
                 )}
+
+                <div className={isAccepted ? "pointer-events-none opacity-80" : ""}>
 
                 {/* Header */}
                 {!isAccepted && (
@@ -308,7 +310,8 @@ const Agreement = () => {
                     {isSubmitting ? "Processing..." : "Accept All & Get Engagement-Ready"}
                   </Button>
                 )}
-              </div>
+                </div>
+              </>
             )}
           </div>
         </main>
