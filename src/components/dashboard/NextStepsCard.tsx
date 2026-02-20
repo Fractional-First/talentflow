@@ -32,6 +32,7 @@ export const NextStepsCard = ({
   isUpdatingPublishStatus = false,
 }: NextStepsCardProps) => {
   const navigate = useNavigate()
+  const isAgreementAccepted = localStorage.getItem("agreement_accepted") === "true"
 
   const handleGetGuidance = () => {
     navigate("/dashboard/branding")
@@ -118,10 +119,12 @@ export const NextStepsCard = ({
             <div className="space-y-2 flex-1">
               <h3 className="font-semibold text-foreground flex items-center justify-center gap-2">
                 Get Engagement-Ready
-                <Badge variant="default" className="text-[10px] px-1.5 py-0">New</Badge>
+                {!isAgreementAccepted && <Badge variant="default" className="text-[10px] px-1.5 py-0">New</Badge>}
               </h3>
               <p className="text-sm text-muted-foreground">
-                Complete the final steps to become client engagement-ready.
+                {isAgreementAccepted
+                  ? "You're engagement-ready. View your accepted agreement."
+                  : "Complete the final steps to become client engagement-ready."}
               </p>
             </div>
             <div className="mt-auto">
@@ -130,7 +133,7 @@ export const NextStepsCard = ({
                 className="w-full"
                 size="sm"
               >
-                Accept Agreement
+                {isAgreementAccepted ? "View Agreement" : "Accept Agreement"}
               </Button>
             </div>
           </div>
