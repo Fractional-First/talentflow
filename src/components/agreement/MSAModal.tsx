@@ -53,10 +53,10 @@ export const MSAModal = ({ open, onOpenChange }: MSAModalProps) => {
       <DialogContent className="max-w-4xl h-[90vh] flex flex-col p-0">
         <DialogHeader className="px-6 py-4 border-b border-border flex-shrink-0">
           <DialogTitle className="text-xl font-semibold">
-            Candidate Agreement
+            Master Candidate Agreement (13.02.2026)
           </DialogTitle>
           <DialogDescription className="text-sm text-muted-foreground">
-            December 2025
+            13.02.2026
           </DialogDescription>
         </DialogHeader>
         
@@ -102,16 +102,12 @@ export const MSAModal = ({ open, onOpenChange }: MSAModalProps) => {
                 
                 <p><strong>1.4 "Client"</strong> means any existing, former, or prospective organisation with which FF has engaged, is engaging, or intends to engage regarding leadership, advisory, or placement opportunities, including pipeline, evaluation-stage, and outreach-stage organisations, and their Affiliates, subsidiaries, portfolio companies, Beneficiary Entities, and related entities.</p>
                 
-                <p><strong>1.5 "Disclosed Client"</strong> means any Client (including its Affiliates, subsidiaries, parent entities, Portfolio Companies, Beneficiary Entities, and related organisations) whose identity:</p>
-                <ul className="list-none ml-4 space-y-1">
-                  <li>(a) FF discloses, mentions, or discusses with the Candidate; or</li>
-                  <li>(b) the Candidate independently learns is a Client of FF.</li>
-                </ul>
+                <p><strong>1.5 "Disclosed Client"</strong> means any Client (including its Affiliates, subsidiaries, parent entities, Portfolio Companies, Beneficiary Entities, and related organisations) whose identity FF discloses, mentions, or discusses with the Candidate, or the Candidate reasonably becomes aware, through FF interactions or communications, is a Client of FF.</p>
                 
                 <p><strong>1.6 "Exempt Client"</strong> means a Disclosed Client for which the Candidate:</p>
                 <ul className="list-none ml-4 space-y-1">
                   <li>(a) notifies FF in writing within three (3) business days of becoming aware of the Disclosed Client;</li>
-                  <li>(b) provides reasonable documentary evidence of a bona fide professional relationship that was active within the preceding twelve (12) months; and</li>
+                  <li>(b) provides reasonable documentary evidence of a bona fide professional relationship that was active within the preceding six (6) months; and</li>
                   <li>(c) receives written confirmation from FF that the Disclosed Client qualifies as an Exempt Client.</li>
                 </ul>
                 
@@ -124,7 +120,7 @@ export const MSAModal = ({ open, onOpenChange }: MSAModalProps) => {
                 <p><strong>1.10 "Direct-Hire Opportunity"</strong> means any full-time, part-time, permanent, long-term, or other employment-based, whether arising directly or indirectly from FF's introductions, Opportunity Flow, conversions from Engagement-Based Assignments, ecosystem participation, or any interaction facilitated by FF, including any role or engagement in which the Candidate provides services directly to the Client (or its affiliates) outside a Statement of Work governed by FF.</p>
                 <p className="ml-4">Direct-Hire Opportunities are not governed by Statements of Work and are subject to FF's client-borne placement or conversion fee arrangements.</p>
                 
-                <p><strong>1.11 "Engagement-Based Assignments"</strong> means any fractional, interim, advisory, consulting, project-based, specialist scopes, or other non-employment-based contract relationships facilitated by FF. These Assignments are governed by Statements of Work ("SOWs") issued by FF.</p>
+                <p><strong>1.11 "Engagement-Based Assignments"</strong> means any fractional, interim, advisory, consulting, specialist, project-based, or other non-employment-based contract relationships facilitated through and by FF. These Assignments are governed by Statements of Work ("SOWs") issued by FF.</p>
                 
                 <p><strong>1.12 "SOW" or "Statement of Work"</strong> means a written schedule, agreement, or confirmation setting out the commercial terms of an Assignment substantially in the form set out in Schedule 1.</p>
                 
@@ -163,7 +159,7 @@ export const MSAModal = ({ open, onOpenChange }: MSAModalProps) => {
                 <p>The Candidate possesses the skills, experience, and qualifications to perform Assignments with professional competence.</p>
                 
                 <p><strong>3.3 No Conflicts</strong></p>
-                <p>The Candidate is free to enter into this Agreement and performing Assignments will not breach any contractual or legal obligations, including any prior agreement that would prevent the Candidate from disclosing or assigning ideas, inventions, computer software, trade secrets, or other intellectual property to a Client.</p>
+                <p>The Candidate is free to enter into this Agreement, and performing Assignments will not breach any contractual or legal obligations, including any prior agreement that would prevent the Candidate from disclosing or assigning ideas, inventions, computer software, trade secrets, or other intellectual property to a Client.</p>
                 
                 <p><strong>3.4 Professional Conduct</strong></p>
                 <p>The Candidate will act ethically, lawfully, and in a manner that upholds FF's reputation with Clients.</p>
@@ -174,7 +170,7 @@ export const MSAModal = ({ open, onOpenChange }: MSAModalProps) => {
                 <p><strong>3.6 Background and Qualifications</strong></p>
                 <ul className="list-none ml-4 space-y-1">
                   <li>(a) The Candidate is properly qualified and holds all necessary permits, licences, visas, and other authorisations under applicable laws to perform the Assignments contemplated by this Agreement.</li>
-                  <li>(b) The Candidate has not been convicted of, pleaded guilty to, or charged with any offence involving dishonesty, fraud, corruption, or bribery in any jurisdiction.</li>
+                  <li>(b) The Candidate has not been convicted of, pleaded guilty to, or formally charged with any offence involving dishonesty, fraud, corruption, or bribery in any jurisdiction.</li>
                 </ul>
               </div>
             </section>
@@ -182,16 +178,18 @@ export const MSAModal = ({ open, onOpenChange }: MSAModalProps) => {
             {/* Section 4: FF's Role & Responsibilities */}
             <section id="ff-role" className="space-y-4">
               <h2 className="text-lg font-bold text-foreground">4. FF'S ROLE & RESPONSIBILITIES</h2>
+              <p className="text-muted-foreground">FF acts as a facilitator and ecosystem intermediary and does not manage, supervise, or direct the Candidate's work or professional activities.</p>
               
               <div className="space-y-3 text-muted-foreground">
                 <p><strong>4.1 Platform & Introductions</strong></p>
-                <p>FF provides curated introductions, opportunity routing, ecosystem access, and Assignment facilitation.</p>
+                <p>FF provides curated introductions, opportunity routing, ecosystem access, and Assignment facilitation. FF applies professional judgment, ecosystem insight, and experience-based assessment in facilitating introductions and opportunities.</p>
+                <p><strong>Leadership Fit and Market Signals.</strong> As part of its role in assessing leadership fit and suitability, Fractional First may, on a discreet and professional basis, gather high-level market signals relating to the Candidate's leadership style, professional reputation, and operating approach. Such signals may include informal perspectives from individuals reasonably believed to have worked with or alongside the Candidate, as well as insights derived from publicly available information and technology-assisted analysis used to identify patterns, themes, or indicators relevant to senior leadership engagements. This process is intended to support informed matching and presentation to prospective Clients and does not constitute a formal background check, investigation, or verification process. Fractional First will exercise reasonable judgment and discretion in conducting any such signal-gathering activities, in accordance with applicable data protection and privacy laws. The Candidate consents to such limited market-signal and reference-seeking for these purposes.</p>
                 
                 <p><strong>4.2 Communications Management</strong></p>
-                <p>FF may communicate with Clients on behalf of the Candidate regarding availability, scope, fit, engagement terms, and performance.</p>
+                <p>FF may facilitate communications between the Candidate and Clients regarding availability, scope, fit, engagement terms, and performance.</p>
                 
                 <p><strong>4.3 Commercial Handling</strong></p>
-                <p>FF may facilitate discussions with Clients regarding scope, rates, and engagement terms, draft SOWs, and coordinate invoicing and payments where relevant. FF does not act as the Candidate's agent in negotiating employment or engagement terms.</p>
+                <p>Where appropriate, FF may facilitate discussions with Clients regarding scope, rates, and engagement terms, draft SOWs, and coordinate invoicing and payments where relevant. FF does not act as the Candidate's agent in negotiating employment or engagement terms.</p>
                 
                 <p><strong>4.4 Client Decisions Outside of FF's Control</strong></p>
                 <p>FF is not responsible for Client decisions, budget changes, hiring freezes, or termination of Assignments.</p>
@@ -207,7 +205,7 @@ export const MSAModal = ({ open, onOpenChange }: MSAModalProps) => {
               
               <div className="space-y-3 text-muted-foreground">
                 <p><strong>5.1 Nature of Engagement-Based Assignments</strong></p>
-                <p>The Candidate performs services under the Client's direction and supervision. FF acts solely as an introducer, quality-assurance, and payment-collection facilitator and agent, and is not responsible for the Candidate's performance, deliverables, or any acts or omissions of the Candidate or Client.</p>
+                <p>The Candidate performs services independently in accordance with the Client's direction regarding scope, priorities, and deliverables. FF acts solely as an introducer, ecosystem facilitator, and administrative and commercial coordinator, and does not provide supervision, management, or operational direction over the Candidate. FF is not responsible for the Candidate's performance, deliverables, or any acts or omissions of the Candidate or Client, and nothing in this Agreement shall be construed as creating supervision, management, or control by FF over the Candidate's work.</p>
                 
                 <p><strong>5.2 Statements of Work (SOWs)</strong></p>
                 <p>Each Engagement-Based Assignment shall be documented in an SOW specifying the scope, deliverables, fees, duration, reporting lines, and commercial terms.</p>
@@ -219,7 +217,7 @@ export const MSAModal = ({ open, onOpenChange }: MSAModalProps) => {
                 <p>The Candidate shall notify FF of any material changes in the scope of services that the Client may require, including those that may affect the commercial terms of the SOW. These changes are not binding on FF, unless FF agrees otherwise.</p>
                 
                 <p><strong>5.5 Multi-Assignment Capability</strong></p>
-                <p>The Candidate may perform multiple Engagement-Based Assignments concurrently, provided that performance standards are maintained and no conflict of interest arises.</p>
+                <p>Unless otherwise agreed in writing, the Candidate may perform multiple Engagement-Based Assignments concurrently, provided that performance standards are maintained and no conflict of interest arises.</p>
                 
                 <p><strong>5.6 Applicability of Sections</strong></p>
                 <p>Sections 1–4 and Sections 6–15 apply equally to all Assignments and all Direct-Hire Opportunities. Section 7.1 applies to Engagement-Based Assignments. Sections 7.2 and 7.3 apply to Direct-Hire Opportunities.</p>
@@ -229,16 +227,17 @@ export const MSAModal = ({ open, onOpenChange }: MSAModalProps) => {
             {/* Section 6: Candidate Conduct */}
             <section id="candidate-conduct" className="space-y-4">
               <h2 className="text-lg font-bold text-foreground">6. CANDIDATE CONDUCT, OBLIGATIONS, & PERFORMANCE STANDARDS</h2>
+              <p className="text-muted-foreground">Unless expressly stated otherwise, provisions relating to Engagement-Based Assignments under Section 5 do not apply to Direct-Hire placements under this Section 6.</p>
               
               <div className="space-y-3 text-muted-foreground">
                 <p><strong>6.1 Professional Conduct and Cooperation</strong></p>
-                <p>The Candidate shall act professionally, respectfully, and in good faith throughout all interactions with FF, Clients, and related parties, including introductions, evaluations, interviews, negotiations, and performance of Assignments. The Candidate shall respond promptly to FF communications, provide requested information, and collaborate in Opportunity development and Client processes.</p>
+                <p>The Candidate shall act professionally, respectfully, and in good faith throughout all interactions with FF, Clients, and related parties, including introductions, evaluations, interviews, negotiations, and the performance of Assignments. The Candidate shall respond promptly to communications from FF, provide reasonably requested information, and collaborate in Opportunity development and Client processes. The Candidate consents to being contacted by FF using the contact details provided, including through communications and tools reasonably used to facilitate introductions, opportunities, matching activities, ecosystem participation, and the ongoing development of FF's services and ecosystem.</p>
                 
                 <p><strong>6.2 Notification</strong></p>
                 <p>The Candidate shall promptly notify FF of direct Client outreach, potential conversions, conflicts, or changes affecting availability or performance.</p>
                 
                 <p><strong>6.3 Participation in Processes</strong></p>
-                <p>If the Candidate chooses to pursue an Opportunity, the Candidate shall route all communications, discussions, interviews, meetings, and negotiations exclusively through FF (unless FF consents otherwise) and participate in reasonable Client processes.</p>
+                <p>If the Candidate chooses to pursue a Client-related Opportunity, the Candidate shall route all communications, discussions, interviews, meetings, and negotiations exclusively through FF (unless FF consents otherwise) and participate in reasonable Client processes.</p>
                 
                 <p><strong>6.4 Performance Standards</strong></p>
                 <p>For accepted Assignments, the Candidate shall perform services diligently and competently in accordance with the SOW, maintain clear communication, escalate issues promptly, and comply with all Client policies and applicable laws.</p>
@@ -261,6 +260,7 @@ export const MSAModal = ({ open, onOpenChange }: MSAModalProps) => {
             {/* Section 7: Commercial Terms */}
             <section id="commercial-terms" className="space-y-4">
               <h2 className="text-lg font-bold text-foreground">7. COMMERCIAL TERMS FOR ENGAGEMENT-BASED AND DIRECT-HIRE OPPORTUNITIES</h2>
+              <p className="text-muted-foreground">This Section 7 applies primarily to Engagement-Based Assignments under Section 5, unless expressly stated otherwise in a Statement of Work or Direct-Hire placement terms.</p>
               
               <div className="space-y-3 text-muted-foreground">
                 <p><strong>7.1 Engagement-Based Assignments</strong></p>
@@ -278,7 +278,7 @@ export const MSAModal = ({ open, onOpenChange }: MSAModalProps) => {
                   </li>
                   <li>(c) <strong>Client Delays or Disputes:</strong> If the Client delays payment, disputes any amount, or reduces payment, FF may proportionally delay, reduce, or withhold the corresponding payment to the Candidate until the matter is resolved and cleared funds are received from the Client.</li>
                   <li>(d) <strong>Dispute Resolution Facilitation:</strong> FF may, at its sole discretion, facilitate resolution of payment disputes by reviewing both parties' positions and documentation. FF's determination as to the amount ultimately payable by the Client shall be final and binding for purposes of determining the amount payable to the Candidate under this Agreement.</li>
-                  <li>(e) <strong>Direct Client Pursuit:</strong> Nothing in this Section prevents the Candidate from pursuing any claim directly against the Client for services rendered, provided such pursuit does not breach Sections 9, 10, or 12 of this Agreement.</li>
+                  <li>(e) <strong>Direct Client Pursuit:</strong> Nothing in this Section prevents the Candidate from pursuing any claim directly against the Client for services rendered, provided such pursuit does not breach Sections 9, 10, or 12 of this Agreement or Sections 7.2 or 7.3</li>
                 </ul>
                 <p>FF may deduct applicable withholding or similar taxes without gross-up. The Candidate shall not negotiate alternative commercial arrangements directly with Clients without FF's approval.</p>
                 
@@ -290,8 +290,8 @@ export const MSAModal = ({ open, onOpenChange }: MSAModalProps) => {
                 <ul className="list-none ml-4 space-y-1">
                   <li>(a) FF's client-borne placement-fee arrangements apply automatically to any such conversion.</li>
                   <li>(b) The Candidate must notify FF in writing within five (5) business days of the Client or any Internal Stakeholder first raising the possibility of conversion, whether directly or indirectly, and must provide details of the nature of the discussions and the Candidate's interest level.</li>
-                  <li>(c) If the Candidate declines the opportunity and timely notifies FF per subsection (b), the Candidate may continue or conclude the Assignment per the SOW, and has no further obligation regarding that specific conversion discussion.</li>
-                  <li>(d) If the Candidate expresses interest or wishes to explore the opportunity, all subsequent discussions, interviews, and negotiations must occur exclusively through FF.</li>
+                  <li>(c) If the Candidate declines the Opportunity and timely notifies FF per subsection (b), the Candidate may continue or conclude the Assignment per the SOW, and has no further obligation regarding that specific conversion discussion.</li>
+                  <li>(d) If the Candidate expresses interest or wishes to explore the Opportunity, all subsequent discussions, interviews, and negotiations must occur exclusively through FF.</li>
                   <li>(e) If the Candidate fails to notify FF within the timeframe specified in subsection (b), or provides incomplete or misleading information, such failure shall constitute a material breach of this Agreement. If the Candidate subsequently accepts a Direct-Hire Opportunity with that Client within the non-circumvention period, the Candidate shall:
                     <ul className="list-none ml-4 mt-1 space-y-1">
                       <li>(i) immediately notify FF of the acceptance; and</li>
@@ -349,7 +349,7 @@ export const MSAModal = ({ open, onOpenChange }: MSAModalProps) => {
                 <p>This Section applies to Assignments, Direct-Hire Opportunities, renewals, extensions, expansions, engagements with Internal Stakeholders, Beneficiary Entities, portfolio companies, affiliates, subsidiaries, related entities, referrals, derivative opportunities, and any Opportunity Flow.</p>
                 
                 <p><strong>10.3 Duration</strong></p>
-                <p>This non-circumvention obligation applies for a period of twenty-four (24) months from the later of:</p>
+                <p>This non-circumvention obligation applies for a period of eighteen (18) months from the later of:</p>
                 <ul className="list-none ml-4 space-y-1">
                   <li>(a) the date on which the organisation became a Disclosed Client; and</li>
                   <li>(b) the date of the last FF-facilitated interaction between the Candidate and that Disclosed Client, including the completion date of any prior engagement.</li>
@@ -406,6 +406,9 @@ export const MSAModal = ({ open, onOpenChange }: MSAModalProps) => {
                 
                 <p><strong>13.2 Breach Notification and Return/Destruction</strong></p>
                 <p>The Candidate shall notify FF immediately of any data breach and, upon request or termination, return or securely destroy all personal data. The Candidate is liable for losses arising from breaches.</p>
+                
+                <p><strong>13.3 Public Profiles and Ecosystem Visibility</strong></p>
+                <p>The Candidate acknowledges that, where the Candidate has expressly opted in through Fractional First's onboarding workflows, Fractional First may create and display a public profile for ecosystem visibility based on information provided by the Candidate. The Candidate remains responsible for the content submitted.</p>
               </div>
             </section>
 
@@ -428,6 +431,7 @@ export const MSAModal = ({ open, onOpenChange }: MSAModalProps) => {
             {/* Section 15: Term, Termination & General Provisions */}
             <section id="term" className="space-y-4">
               <h2 className="text-lg font-bold text-foreground">15. TERM, TERMINATION & GENERAL PROVISIONS</h2>
+              <p className="text-muted-foreground">The provisions in this Section 15 apply to the Agreement as a whole and are intended to be interpreted consistently with the parties' ongoing professional relationship and ecosystem participation.</p>
               
               <div className="space-y-3 text-muted-foreground">
                 <p><strong>15.1 Term and Termination for Convenience</strong></p>
@@ -437,13 +441,13 @@ export const MSAModal = ({ open, onOpenChange }: MSAModalProps) => {
                 <p>FF may terminate immediately (with a five (5) business day cure period where the breach is curable) for material breaches, misconduct, unethical behaviour, inadequate performance, or conduct harming FF's reputation or relationships.</p>
                 
                 <p><strong>15.3 Obligations on Termination</strong></p>
-                <p>Upon termination, ongoing Assignments conclude per their SOW, the Candidate shall return/destroy confidential materials and assist with transition if required. Payment and survival obligations remain enforceable.</p>
+                <p>Upon termination, ongoing Assignments conclude per their SOW. The candidate shall return/destroy confidential materials and assist with transition if required. Payment and survival obligations remain enforceable.</p>
                 
                 <p><strong>15.4 Survival</strong></p>
-                <p>Sections 1, 8–14, 15.3–15.4, and confidentiality/indefinite protections survive termination.</p>
+                <p>Sections 1, 9–14, 15.3–15.4, confidentiality/indefinite protections, and payment obligations survive termination.</p>
                 
                 <p><strong>15.5 Governing Law and Jurisdiction</strong></p>
-                <p>This Agreement is governed by Singapore law. The Parties submit to the non-exclusive jurisdiction of the Singapore courts (exclusive if the Candidate is Singapore-based).</p>
+                <p>This Agreement is governed by Singapore law. The Parties submit to the non-exclusive jurisdiction of the Singapore courts (exclusive if the Candidate is Singapore-based)</p>
                 
                 <p><strong>15.6 Dispute Resolution, Notices, Assignment, and Miscellaneous</strong></p>
                 <p>Notices may be by email. The Candidate may not assign this Agreement without FF's consent; FF may assign to any Affiliate.</p>
@@ -453,6 +457,12 @@ export const MSAModal = ({ open, onOpenChange }: MSAModalProps) => {
                 
                 <p><strong>15.8 Updates to Terms</strong></p>
                 <p>FF may update this Agreement from time to time by providing reasonable notice to the Candidate. Any update shall apply prospectively only and shall not affect accrued rights or existing Assignments unless expressly agreed. Continued participation in Assignments or Direct-Hire Opportunities after the effective date of an update constitutes acceptance of the updated terms.</p>
+                
+                <p><strong>15.9 Entire Agreement</strong></p>
+                <p>This Agreement constitutes the entire agreement between the parties in relation to its subject matter and supersedes all prior or contemporaneous agreements, understandings, representations, or arrangements, whether written or oral, relating to such subject matter.</p>
+                
+                <p><strong>15.10 Electronic Acceptance</strong></p>
+                <p>Acceptance of this Agreement by electronic means, including click-wrap, digital acknowledgement, or email confirmation, constitutes a legally binding agreement between the parties and shall have the same force and effect as a handwritten signature.</p>
               </div>
             </section>
 
