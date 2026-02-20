@@ -36,6 +36,7 @@ const tocItems = [
 
 export const MSAModal = ({ open, onOpenChange }: MSAModalProps) => {
   const scrollAreaRef = useRef<HTMLDivElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id)
@@ -46,6 +47,38 @@ export const MSAModal = ({ open, onOpenChange }: MSAModalProps) => {
         scrollContainer.scrollTo({ top: elementTop, behavior: 'smooth' })
       }
     }
+  }
+
+  const handleDownloadPDF = () => {
+    if (!contentRef.current) return
+    const printWindow = window.open('', '_blank')
+    if (!printWindow) return
+    const content = contentRef.current.innerHTML
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Master Candidate Agreement (13.02.2026)</title>
+        <style>
+          body { font-family: 'Urbanist', 'Helvetica Neue', sans-serif; color: #1a1a1a; max-width: 800px; margin: 0 auto; padding: 40px 24px; font-size: 13px; line-height: 1.6; }
+          h2 { font-size: 16px; font-weight: 700; margin-top: 28px; margin-bottom: 8px; }
+          p { margin: 4px 0; }
+          strong { font-weight: 600; }
+          ul { list-style: none; padding-left: 16px; }
+          li { margin: 4px 0; }
+          nav button { display: block; color: #449889; text-align: left; background: none; border: none; padding: 2px 0; font-size: 13px; cursor: pointer; }
+          .border-t-2 { border-top: 2px solid #e6e6e6; padding-top: 24px; }
+          .border-b { border-bottom: 1px solid #1a1a1a; }
+          .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+          .border { border: 1px solid #e6e6e6; border-radius: 4px; padding: 12px; min-height: 60px; }
+          @media print { body { padding: 20px; } }
+        </style>
+      </head>
+      <body>${content}</body>
+      </html>
+    `)
+    printWindow.document.close()
+    setTimeout(() => { printWindow.print() }, 300)
   }
 
   return (
@@ -61,7 +94,7 @@ export const MSAModal = ({ open, onOpenChange }: MSAModalProps) => {
         </DialogHeader>
         
         <ScrollArea ref={scrollAreaRef} className="flex-1 px-6">
-          <div className="py-6 space-y-8 text-sm leading-relaxed">
+          <div ref={contentRef} className="py-6 space-y-8 text-sm leading-relaxed">
             {/* Table of Contents */}
             <section className="space-y-4">
               <h2 className="text-lg font-bold text-foreground">TABLE OF CONTENTS</h2>
@@ -584,7 +617,7 @@ export const MSAModal = ({ open, onOpenChange }: MSAModalProps) => {
             variant="outline"
             size="sm"
             className="gap-2"
-            onClick={() => window.print()}
+            onClick={handleDownloadPDF}
           >
             <Download className="h-4 w-4" />
             Download PDF
