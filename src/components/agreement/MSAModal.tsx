@@ -50,35 +50,7 @@ export const MSAModal = ({ open, onOpenChange }: MSAModalProps) => {
   }
 
   const handleDownloadPDF = () => {
-    if (!contentRef.current) return
-    const printWindow = window.open('', '_blank')
-    if (!printWindow) return
-    const content = contentRef.current.innerHTML
-    printWindow.document.write(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>Master Candidate Agreement (13.02.2026)</title>
-        <style>
-          body { font-family: 'Urbanist', 'Helvetica Neue', sans-serif; color: #1a1a1a; max-width: 800px; margin: 0 auto; padding: 40px 24px; font-size: 13px; line-height: 1.6; }
-          h2 { font-size: 16px; font-weight: 700; margin-top: 28px; margin-bottom: 8px; }
-          p { margin: 4px 0; }
-          strong { font-weight: 600; }
-          ul { list-style: none; padding-left: 16px; }
-          li { margin: 4px 0; }
-          nav button { display: block; color: #449889; text-align: left; background: none; border: none; padding: 2px 0; font-size: 13px; cursor: pointer; }
-          .border-t-2 { border-top: 2px solid #e6e6e6; padding-top: 24px; }
-          .border-b { border-bottom: 1px solid #1a1a1a; }
-          .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
-          .border { border: 1px solid #e6e6e6; border-radius: 4px; padding: 12px; min-height: 60px; }
-          @media print { body { padding: 20px; } }
-        </style>
-      </head>
-      <body>${content}</body>
-      </html>
-    `)
-    printWindow.document.close()
-    setTimeout(() => { printWindow.print() }, 300)
+    window.open('https://drive.google.com/file/d/1HTQNfUzvSnommKGEzQXbYmWWbXEjHeL4/view?usp=sharing', '_blank')
   }
 
   return (
@@ -576,27 +548,6 @@ export const MSAModal = ({ open, onOpenChange }: MSAModalProps) => {
                     <p className="font-semibold text-foreground">8. Additional Terms (if any):</p>
                     <div className="ml-4">
                       <div className="border border-border rounded p-3 min-h-[60px] bg-muted/30"></div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="pt-6 border-t border-border">
-                  <p className="font-semibold text-foreground text-center mb-6">Accepted and Agreed</p>
-                  
-                  <div className="grid grid-cols-2 gap-8">
-                    <div className="space-y-3">
-                      <p className="font-semibold text-foreground">Fractional First</p>
-                      <p>By: <span className="inline-block min-w-[150px] border-b border-foreground"></span></p>
-                      <p>Name: <span className="inline-block min-w-[150px] border-b border-foreground"></span></p>
-                      <p>Title: <span className="inline-block min-w-[150px] border-b border-foreground"></span></p>
-                      <p>Date: <span className="inline-block min-w-[150px] border-b border-foreground"></span></p>
-                    </div>
-                    
-                    <div className="space-y-3">
-                      <p className="font-semibold text-foreground">Candidate</p>
-                      <p>By: <span className="inline-block min-w-[150px] border-b border-foreground"></span></p>
-                      <p>Name: <span className="inline-block min-w-[150px] border-b border-foreground"></span></p>
-                      <p>Date: <span className="inline-block min-w-[150px] border-b border-foreground"></span></p>
                     </div>
                   </div>
                 </div>
