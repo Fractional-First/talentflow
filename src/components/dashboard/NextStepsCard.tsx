@@ -69,7 +69,7 @@ export const NextStepsCard = ({
               </h3>
               <p className="text-sm text-muted-foreground">
                 {isPublished
-                  ? "Showcase your expertise to your network and allow companies and recruiters to find you directly through our platform."
+                  ? "Showcase your expertise to your network and allow companies to find you directly through our platform."
                   : "Make your profile publicly accessible so others can discover and connect with you."}
               </p>
             </div>
