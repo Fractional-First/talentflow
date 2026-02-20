@@ -215,7 +215,7 @@ const Agreement = () => {
                   </div>
                 )}
 
-                <div className={isAccepted ? "pointer-events-none opacity-80" : ""}>
+                <div className={`space-y-6 ${isAccepted ? "pointer-events-none opacity-80" : ""}`}>
 
                 {/* Header */}
                 {!isAccepted && (
