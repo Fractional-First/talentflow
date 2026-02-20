@@ -64,7 +64,7 @@ const Agreement = () => {
   const [msaModalOpen, setMsaModalOpen] = useState(false)
 
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [isSubmitted, setIsSubmitted] = useState(() => localStorage.getItem("agreement_accepted") === "true")
   const [attemptedSubmit, setAttemptedSubmit] = useState(false)
 
   const personalRef = useRef<HTMLDivElement>(null)
@@ -144,6 +144,7 @@ const Agreement = () => {
       // TODO: Save agreement data to database
       await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulated API call
       
+      localStorage.setItem("agreement_accepted", "true")
       setIsSubmitted(true)
     } catch (error) {
       toast.error("Failed to save agreement. Please try again.")
