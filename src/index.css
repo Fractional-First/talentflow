@@ -196,3 +196,39 @@
 .image-blur-loaded {
   filter: blur(0);
 }
+
+/* Print styles for MSA modal */
+@media print {
+  body > *:not([data-radix-portal]) {
+    display: none !important;
+  }
+
+  [data-radix-portal] [role="dialog"] {
+    position: static !important;
+    transform: none !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  [data-radix-portal] [data-radix-scroll-area-viewport] {
+    max-height: none !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  [data-radix-portal] [data-radix-scroll-area-viewport] > div {
+    overflow: visible !important;
+  }
+
+  /* Hide scrollbar, overlay, close button, and footer buttons */
+  [data-radix-portal] [data-radix-scroll-area-scrollbar],
+  [data-radix-portal] [data-state="open"].fixed.inset-0,
+  [data-radix-portal] button[class*="absolute right"],
+  .msa-modal-footer {
+    display: none !important;
+  }
+}
