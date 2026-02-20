@@ -6,6 +6,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { Badge } from "@/components/ui/badge"
 import {
   Share2,
   Users,
@@ -115,8 +116,9 @@ export const NextStepsCard = ({
               <Search className="h-6 w-6 text-primary" />
             </div>
             <div className="space-y-2 flex-1">
-              <h3 className="font-semibold text-foreground">
+              <h3 className="font-semibold text-foreground flex items-center justify-center gap-2">
                 Get Engagement-Ready
+                <Badge variant="default" className="text-[10px] px-1.5 py-0">New</Badge>
               </h3>
               <p className="text-sm text-muted-foreground">
                 Complete the final steps to become client engagement-ready.
