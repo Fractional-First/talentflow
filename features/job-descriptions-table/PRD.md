@@ -1,7 +1,7 @@
 # Job Descriptions Table — PRD
 
 > **Feature:** job-descriptions-table
-> **Status:** draft
+> **Status:** complete
 > **Generated:** 2026-02-18
 > **Project:** TalentFlow (Fractional First)
 
@@ -19,10 +19,12 @@ Create a `job_descriptions` table in Supabase with JSONB storage for structured 
 
 | Capability | Type | Description |
 |------------|------|-------------|
-| job_descriptions table | migration | PostgreSQL table with slug, jd_data JSONB, status, timestamps |
+| job_descriptions table | migration | PostgreSQL table with slug, jd_data JSONB, status, client_name, timestamps |
 | RLS policies | migration | Anon can read published JDs; all writes via SECURITY DEFINER RPCs |
 | create_job_description RPC | migration | Creates a new JD with slug and JSONB data |
 | update_job_description RPC | migration | Updates jd_data for an existing JD by slug |
+| list_job_descriptions RPC | migration | Returns paginated JSON array of JDs with key fields (id, slug, client_name, status, role_title, location, created_at) |
+| get_job_description RPC | migration | Returns full JD row as JSON by slug |
 | generate_unique_jd_slug function | migration | Auto-generates URL slug from role_title + location with collision handling |
 | updated_at trigger | migration | Auto-updates timestamp on row changes |
 | TypeScript types regeneration | types | Regenerate Supabase types to include new table |
@@ -31,9 +33,12 @@ Create a `job_descriptions` table in Supabase with JSONB storage for structured 
 
 **In scope:**
 - `job_descriptions` table creation with all columns
+- `client_name` TEXT column (nullable, for internal client tracking)
 - RLS policies for public read of published JDs
 - `create_job_description` RPC function (SECURITY DEFINER)
 - `update_job_description` RPC function (SECURITY DEFINER)
+- `list_job_descriptions` RPC function (SECURITY DEFINER)
+- `get_job_description` RPC function (SECURITY DEFINER)
 - `generate_unique_jd_slug` helper function
 - `updated_at` trigger
 - TypeScript type regeneration
@@ -43,7 +48,6 @@ Create a `job_descriptions` table in Supabase with JSONB storage for structured 
 - No frontend UI in talentflow (JDs are created via fractional-command CLI)
 - No ff-jobs Next.js app (separate project)
 - No `/generate-jd` slash command (lives in fractional-command repo)
-- No JD listing/index page
 - No JD deletion RPC (manual via dashboard if needed)
 - No JD versioning or history tracking
 - No analytics or view counting
@@ -83,6 +87,7 @@ CREATE TABLE public.job_descriptions (
   slug TEXT UNIQUE NOT NULL,
   jd_data JSONB NOT NULL DEFAULT '{}',
   status TEXT NOT NULL DEFAULT 'published' CHECK (status IN ('draft', 'published')),
+  client_name TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -153,7 +158,8 @@ $$;
 -- Create RPC
 CREATE OR REPLACE FUNCTION public.create_job_description(
   p_jd_data JSONB,
-  p_status TEXT DEFAULT 'published'
+  p_status TEXT DEFAULT 'published',
+  p_client_name TEXT DEFAULT NULL
 ) RETURNS JSON
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -173,15 +179,15 @@ BEGIN
   v_slug := generate_unique_jd_slug(v_role_title, v_location);
 
   -- Insert
-  INSERT INTO public.job_descriptions (slug, jd_data, status)
-  VALUES (v_slug, p_jd_data, p_status)
+  INSERT INTO public.job_descriptions (slug, jd_data, status, client_name)
+  VALUES (v_slug, p_jd_data, p_status, p_client_name)
   RETURNING id INTO v_id;
 
   RETURN json_build_object(
     'success', true,
     'id', v_id,
     'slug', v_slug,
-    'url', 'https://jobs.fractionalfirst.com/' || v_slug
+    'url', 'https://roles.fractionalfirst.com/' || v_slug
   );
 
 EXCEPTION WHEN OTHERS THEN
@@ -201,7 +207,8 @@ GRANT EXECUTE ON FUNCTION public.create_job_description TO anon, authenticated;
 CREATE OR REPLACE FUNCTION public.update_job_description(
   p_slug TEXT,
   p_jd_data JSONB,
-  p_status TEXT DEFAULT NULL
+  p_status TEXT DEFAULT NULL,
+  p_client_name TEXT DEFAULT NULL
 ) RETURNS JSON
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -210,11 +217,12 @@ AS $$
 DECLARE
   v_id UUID;
 BEGIN
-  -- Update jd_data and optionally status
+  -- Update jd_data, optionally status and client_name
   UPDATE public.job_descriptions
   SET
     jd_data = p_jd_data,
-    status = COALESCE(p_status, status)
+    status = COALESCE(p_status, status),
+    client_name = COALESCE(p_client_name, client_name)
   WHERE slug = p_slug
   RETURNING id INTO v_id;
 
@@ -241,6 +249,66 @@ $$;
 
 -- Grant access
 GRANT EXECUTE ON FUNCTION public.update_job_description TO anon, authenticated;
+```
+
+```sql
+-- List RPC
+CREATE OR REPLACE FUNCTION public.list_job_descriptions(
+  p_status TEXT DEFAULT NULL,
+  p_limit INT DEFAULT 20
+) RETURNS JSON
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = 'public'
+AS $$
+BEGIN
+  RETURN (
+    SELECT json_agg(row_to_json(t))
+    FROM (
+      SELECT
+        id,
+        slug,
+        client_name,
+        status,
+        jd_data->>'role_title' AS role_title,
+        jd_data->>'location' AS location,
+        created_at
+      FROM public.job_descriptions
+      WHERE (p_status IS NULL OR status = p_status)
+      ORDER BY created_at DESC
+      LIMIT p_limit
+    ) t
+  );
+END;
+$$;
+
+-- Grant access
+GRANT EXECUTE ON FUNCTION public.list_job_descriptions TO anon, authenticated;
+```
+
+```sql
+-- Get RPC
+CREATE OR REPLACE FUNCTION public.get_job_description(
+  p_slug TEXT
+) RETURNS JSON
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = 'public'
+AS $$
+DECLARE
+  v_result JSON;
+BEGIN
+  SELECT row_to_json(t) INTO v_result
+  FROM (
+    SELECT * FROM public.job_descriptions WHERE slug = p_slug
+  ) t;
+
+  RETURN v_result;
+END;
+$$;
+
+-- Grant access
+GRANT EXECUTE ON FUNCTION public.get_job_description TO anon, authenticated;
 ```
 
 ### Key Interfaces
@@ -307,7 +375,7 @@ This feature has no user-facing UI in talentflow. The interaction flow is:
 3. CLI generates `jd_data` JSONB matching the schema above
 4. CLI calls `create_job_description` RPC via Supabase MCP
 5. RPC generates slug, inserts row, returns `{ success, id, slug, url }`
-6. CLI displays the live URL: `https://jobs.fractionalfirst.com/<slug>`
+6. CLI displays the live URL: `https://roles.fractionalfirst.com/<slug>`
 7. For updates: CLI calls `update_job_description` with modified `jd_data`
 
 ## 7. Requirements
@@ -371,6 +439,20 @@ The system SHALL include the job_descriptions table in the generated TypeScript 
 **WHEN** types are regenerated via Supabase CLI
 **THEN** `Database['public']['Tables']['job_descriptions']` exists with correct Row/Insert/Update types
 
+### REQ-10: List RPC
+The system SHALL provide a `list_job_descriptions` RPC function accessible via anon key.
+
+**WHEN** called with optional `p_status` and `p_limit` parameters
+**THEN** a JSON array is returned containing id, slug, client_name, status, role_title, location, and created_at for each matching JD
+**AND** results are ordered by created_at descending
+
+### REQ-11: Get RPC
+The system SHALL provide a `get_job_description` RPC function accessible via anon key.
+
+**WHEN** called with a valid `p_slug`
+**THEN** the full JD row is returned as JSON
+**AND** if no matching slug exists, NULL is returned
+
 ## 8. Risks
 
 | Risk | Likelihood | Impact | Mitigation |
@@ -382,16 +464,16 @@ The system SHALL include the job_descriptions table in the generated TypeScript 
 
 ## 9. Success Criteria
 
-- [ ] Migration applies cleanly to production Supabase
-- [ ] `create_job_description` RPC creates a JD and returns success with slug
-- [ ] `update_job_description` RPC updates jd_data for an existing slug
-- [ ] Anonymous SELECT only returns published JDs
-- [ ] Anonymous SELECT does not return draft JDs
-- [ ] Slug is auto-generated from role_title + location
-- [ ] Duplicate slugs get numeric suffix
-- [ ] updated_at updates on row modification
-- [ ] TypeScript types include job_descriptions table
-- [ ] Status CHECK constraint rejects invalid values
+- [x] Migration applies cleanly to production Supabase
+- [x] `create_job_description` RPC creates a JD and returns success with slug
+- [x] `update_job_description` RPC updates jd_data for an existing slug
+- [x] Anonymous SELECT only returns published JDs
+- [x] Anonymous SELECT does not return draft JDs
+- [x] Slug is auto-generated from role_title + location
+- [x] Duplicate slugs get numeric suffix
+- [x] updated_at updates on row modification
+- [x] TypeScript types include job_descriptions table
+- [x] Status CHECK constraint rejects invalid values
 
 ## 10. Impact
 
@@ -399,6 +481,7 @@ The system SHALL include the job_descriptions table in the generated TypeScript 
 | File | Purpose |
 |------|---------|
 | `supabase/migrations/<timestamp>_create_job_descriptions.sql` | Full migration: table, RLS, RPCs, triggers |
+| `supabase/migrations/20260223000000_job_descriptions_client_name_and_rpcs.sql` | Adds client_name column and list_job_descriptions / get_job_description RPCs |
 
 ### Modified Files
 | File | Changes |
