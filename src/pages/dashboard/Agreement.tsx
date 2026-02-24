@@ -8,7 +8,7 @@ import { ContactDetailsSection, type PersonalDetailsData } from "@/components/ag
 import { TermsAcceptanceSection } from "@/components/agreement/TermsAcceptanceSection"
 import { MSAModal } from "@/components/agreement/MSAModal"
 import { ContractualRoadmap } from "@/components/agreement/ContractualRoadmap"
-import { CheckCircle, ArrowLeft, ClipboardList } from "lucide-react"
+import { CheckCircle, ArrowLeft, ClipboardList, Info } from "lucide-react"
 import { toast } from "sonner"
 import { useGetUser } from "@/queries/auth/useGetUser"
 import { useAgreementStatus, useRecordAcceptance, CURRENT_AGREEMENT_VERSION } from "@/queries/useAgreementAcceptance"
@@ -16,7 +16,7 @@ import { useAgreementStatus, useRecordAcceptance, CURRENT_AGREEMENT_VERSION } fr
 const Agreement = () => {
   const navigate = useNavigate()
   const { data: user } = useGetUser()
-  const { isAccepted, isCurrentVersion } = useAgreementStatus()
+  const { isAccepted, isCurrentVersion, acceptanceData } = useAgreementStatus()
   const recordAcceptance = useRecordAcceptance()
 
   // Contracting type state
@@ -59,6 +59,29 @@ const Agreement = () => {
       setContactEmail(user.email)
     }
   }, [user?.email])
+
+  // Pre-fill form with saved acceptance data
+  useEffect(() => {
+    if (!acceptanceData) return
+    setPersonalDetails({
+      fullLegalName: acceptanceData.fullLegalName,
+      identificationNumber: "",
+      residentialAddress: acceptanceData.residentialAddress,
+    })
+    setContactEmail(acceptanceData.contactEmail)
+    setMobileCountryCode(acceptanceData.mobileCountryCode)
+    setMobileNumber(acceptanceData.mobileNumber)
+    setContractingType(acceptanceData.contractingType)
+    if (acceptanceData.contractingType === "entity") {
+      setEntityName(acceptanceData.entityName ?? "")
+      setRegistrationNumber(acceptanceData.entityRegistrationNumber ?? "")
+      if (acceptanceData.entityAddress) {
+        setRegisteredAddress(acceptanceData.entityAddress)
+      }
+      setEntityConfirmed(acceptanceData.entityConfirmed ?? false)
+    }
+    setAcceptFullAgreement(true)
+  }, [acceptanceData])
 
   // Terms acceptance state
   const [acceptFullAgreement, setAcceptFullAgreement] = useState(false)
@@ -217,6 +240,15 @@ const Agreement = () => {
                     <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />
                     <p className="text-sm text-foreground">
                       You're engagement-ready! This is a read-only view of your accepted agreement.
+                    </p>
+                  </div>
+                )}
+
+                {isAccepted && !isCurrentVersion && (
+                  <div className="flex items-center gap-3 p-4 rounded-lg bg-blue-50 border border-blue-200 mb-6">
+                    <Info className="h-5 w-5 text-blue-600 flex-shrink-0" />
+                    <p className="text-sm text-foreground">
+                      Our agreement has been updated since you last accepted. Please review and re-accept to remain engagement-ready.
                     </p>
                   </div>
                 )}

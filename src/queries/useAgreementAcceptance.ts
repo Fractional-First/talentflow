@@ -4,11 +4,40 @@ import { useGetUser } from "@/queries/auth/useGetUser"
 
 export const CURRENT_AGREEMENT_VERSION = "2026-01-30-mca-v1"
 
+interface AcceptanceData {
+  signatureName: string
+  contactEmail: string
+  mobileCountryCode: string
+  mobileNumber: string
+  fullLegalName: string
+  residentialAddress: {
+    addressLine1: string
+    addressLine2?: string
+    city: string
+    stateProvince: string
+    postalCode: string
+    country: string
+  }
+  contractingType: "individual" | "entity"
+  entityName: string | null
+  entityRegistrationNumber: string | null
+  entityAddress: {
+    addressLine1: string
+    addressLine2?: string
+    city: string
+    stateProvince: string
+    postalCode: string
+    country: string
+  } | null
+  entityConfirmed: boolean | null
+}
+
 interface AgreementStatus {
   isAccepted: boolean
   isCurrentVersion: boolean
   acceptedAt: string | null
   agreementVersion: string | null
+  acceptanceData: AcceptanceData | null
   isLoading: boolean
 }
 
@@ -60,6 +89,7 @@ export function useAgreementStatus(): AgreementStatus {
           isCurrentVersion: false,
           acceptedAt: null,
           agreementVersion: null,
+          acceptanceData: null,
         }
       }
 
@@ -69,6 +99,21 @@ export function useAgreementStatus(): AgreementStatus {
         isCurrentVersion: row.is_current_version ?? false,
         acceptedAt: row.accepted_at ?? null,
         agreementVersion: row.agreement_version ?? null,
+        acceptanceData: row.is_accepted
+          ? {
+              signatureName: row.signature_name,
+              contactEmail: row.contact_email,
+              mobileCountryCode: row.mobile_country_code,
+              mobileNumber: row.mobile_number,
+              fullLegalName: row.full_legal_name,
+              residentialAddress: row.residential_address,
+              contractingType: row.contracting_type as "individual" | "entity",
+              entityName: row.entity_name,
+              entityRegistrationNumber: row.entity_registration_number,
+              entityAddress: row.entity_address,
+              entityConfirmed: row.entity_confirmed,
+            }
+          : null,
       }
     },
     enabled: !!user?.id,
@@ -79,6 +124,7 @@ export function useAgreementStatus(): AgreementStatus {
     isCurrentVersion: data?.isCurrentVersion ?? false,
     acceptedAt: data?.acceptedAt ?? null,
     agreementVersion: data?.agreementVersion ?? null,
+    acceptanceData: data?.acceptanceData ?? null,
     isLoading,
   }
 }
