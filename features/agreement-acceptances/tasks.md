@@ -1,7 +1,7 @@
 # Agreement Acceptances — Tasks
 
 > **PRD:** [PRD.md](./PRD.md)
-> **Status:** 5/8 tasks complete
+> **Status:** 6/8 tasks complete
 
 ## Test User for UI Verification
 
@@ -59,7 +59,7 @@ Sign in at `http://localhost:5173/login` using email/password (not LinkedIn). Th
 
 ## 4. Cleanup
 
-- [ ] **4.1 Remove all localStorage agreement references**
+- [x] **4.1 Remove all localStorage agreement references**
   `src/pages/dashboard/Agreement.tsx`, `src/components/dashboard/NextStepsCard.tsx`
   Search the entire codebase for `agreement_accepted` and `agreement_data` localStorage keys. Remove any remaining reads/writes. This should already be done by tasks 3.1 and 3.2, but do a final sweep to catch anything missed (e.g., other components, utils).
   Run `npm run build` to verify no TypeScript errors.
