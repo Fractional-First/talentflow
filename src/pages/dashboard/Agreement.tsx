@@ -11,21 +11,19 @@ import { ContractualRoadmap } from "@/components/agreement/ContractualRoadmap"
 import { CheckCircle, ArrowLeft, ClipboardList } from "lucide-react"
 import { toast } from "sonner"
 import { useGetUser } from "@/queries/auth/useGetUser"
+import { useAgreementStatus, useRecordAcceptance, CURRENT_AGREEMENT_VERSION } from "@/queries/useAgreementAcceptance"
 
 const Agreement = () => {
   const navigate = useNavigate()
   const { data: user } = useGetUser()
-
-  const isAccepted = localStorage.getItem("agreement_accepted") === "true"
-  const savedData = (() => {
-    try { return JSON.parse(localStorage.getItem("agreement_data") || "null") } catch { return null }
-  })()
+  const { isAccepted, isCurrentVersion } = useAgreementStatus()
+  const recordAcceptance = useRecordAcceptance()
 
   // Contracting type state
-  const [contractingType, setContractingType] = useState<"individual" | "entity" | null>(savedData?.contractingType ?? null)
-  const [entityName, setEntityName] = useState(savedData?.entityName ?? "")
-  const [registrationNumber, setRegistrationNumber] = useState(savedData?.registrationNumber ?? "")
-  const [registeredAddress, setRegisteredAddress] = useState<RegisteredAddress>(savedData?.registeredAddress ?? {
+  const [contractingType, setContractingType] = useState<"individual" | "entity" | null>(null)
+  const [entityName, setEntityName] = useState("")
+  const [registrationNumber, setRegistrationNumber] = useState("")
+  const [registeredAddress, setRegisteredAddress] = useState<RegisteredAddress>({
     addressLine1: "",
     addressLine2: "",
     city: "",
@@ -33,10 +31,10 @@ const Agreement = () => {
     postalCode: "",
     country: "",
   })
-  const [entityConfirmed, setEntityConfirmed] = useState(savedData?.entityConfirmed ?? false)
+  const [entityConfirmed, setEntityConfirmed] = useState(false)
 
   // Personal details state
-  const [personalDetails, setPersonalDetails] = useState<PersonalDetailsData>(savedData?.personalDetails ?? {
+  const [personalDetails, setPersonalDetails] = useState<PersonalDetailsData>({
     fullLegalName: "",
     identificationNumber: "",
     residentialAddress: {
@@ -50,12 +48,12 @@ const Agreement = () => {
   })
 
   // Contact details state
-  const [contactEmail, setContactEmail] = useState(savedData?.contactEmail ?? "")
-  const [mobileCountryCode, setMobileCountryCode] = useState(savedData?.mobileCountryCode ?? "")
-  const [mobileNumber, setMobileNumber] = useState(savedData?.mobileNumber ?? "")
+  const [contactEmail, setContactEmail] = useState("")
+  const [mobileCountryCode, setMobileCountryCode] = useState("")
+  const [mobileNumber, setMobileNumber] = useState("")
   const [contactTouched, setContactTouched] = useState(false)
 
-  // Pre-fill email from auth user (only if no saved data)
+  // Pre-fill email from auth user
   useEffect(() => {
     if (user?.email && !contactEmail) {
       setContactEmail(user.email)
@@ -63,12 +61,11 @@ const Agreement = () => {
   }, [user?.email])
 
   // Terms acceptance state
-  const [acceptFullAgreement, setAcceptFullAgreement] = useState(savedData?.acceptFullAgreement ?? false)
+  const [acceptFullAgreement, setAcceptFullAgreement] = useState(false)
 
   // Modal state
   const [msaModalOpen, setMsaModalOpen] = useState(false)
 
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [attemptedSubmit, setAttemptedSubmit] = useState(false)
 
@@ -135,7 +132,7 @@ const Agreement = () => {
 
   const canSubmit = isContractingValid() && isContactValid() && isTermsValid()
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     setAttemptedSubmit(true)
     setContactTouched(true)
     if (!canSubmit) {
@@ -144,22 +141,31 @@ const Agreement = () => {
       return
     }
 
-    setIsSubmitting(true)
-    try {
-      // TODO: Save agreement data to database
-      await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulated API call
-      
-      localStorage.setItem("agreement_accepted", "true")
-      localStorage.setItem("agreement_data", JSON.stringify({
-        contractingType, entityName, registrationNumber, registeredAddress, entityConfirmed,
-        personalDetails, contactEmail, mobileCountryCode, mobileNumber, acceptFullAgreement,
-      }))
-      setIsSubmitted(true)
-    } catch (error) {
-      toast.error("Failed to save agreement. Please try again.")
-    } finally {
-      setIsSubmitting(false)
-    }
+    recordAcceptance.mutate(
+      {
+        p_agreement_version: CURRENT_AGREEMENT_VERSION,
+        p_signature_name: personalDetails.fullLegalName,
+        p_contact_email: contactEmail,
+        p_mobile_country_code: mobileCountryCode,
+        p_mobile_number: mobileNumber,
+        p_full_legal_name: personalDetails.fullLegalName,
+        p_residential_address: personalDetails.residentialAddress,
+        p_contracting_type: contractingType!,
+        p_entity_name: contractingType === "entity" ? entityName : null,
+        p_entity_registration_number: contractingType === "entity" ? registrationNumber : null,
+        p_entity_address: contractingType === "entity" ? registeredAddress : null,
+        p_entity_confirmed: contractingType === "entity" ? entityConfirmed : undefined,
+        p_user_agent: navigator.userAgent,
+      },
+      {
+        onSuccess: () => {
+          setIsSubmitted(true)
+        },
+        onError: () => {
+          toast.error("Failed to save agreement. Please try again.")
+        },
+      }
+    )
   }
 
   return (
@@ -206,7 +212,7 @@ const Agreement = () => {
 
             {!isSubmitted && (
               <>
-                {isAccepted && (
+                {isAccepted && isCurrentVersion && (
                   <div className="flex items-center gap-3 p-4 rounded-lg bg-primary/5 border border-primary/20 mb-6">
                     <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />
                     <p className="text-sm text-foreground">
@@ -215,10 +221,10 @@ const Agreement = () => {
                   </div>
                 )}
 
-                <div className={`space-y-6 ${isAccepted ? "pointer-events-none opacity-80" : ""}`}>
+                <div className={`space-y-6 ${isAccepted && isCurrentVersion ? "pointer-events-none opacity-80" : ""}`}>
 
                 {/* Header */}
-                {!isAccepted && (
+                {!(isAccepted && isCurrentVersion) && (
                   <>
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
@@ -300,14 +306,14 @@ const Agreement = () => {
                 </div>
 
                 {/* Submit Button */}
-                {!isAccepted && (
+                {!(isAccepted && isCurrentVersion) && (
                   <Button
                     onClick={handleSubmit}
-                    disabled={isSubmitting}
+                    disabled={recordAcceptance.isPending}
                     size="lg"
                     className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-lg py-6"
                   >
-                    {isSubmitting ? "Processing..." : "Accept All & Get Engagement-Ready"}
+                    {recordAcceptance.isPending ? "Processing..." : "Accept All & Get Engagement-Ready"}
                   </Button>
                 )}
                 </div>
