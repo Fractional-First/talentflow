@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import {
@@ -16,12 +17,15 @@ import {
   Copy,
 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import { PublishConfirmationModal } from "@/components/edit-profile/PublishConfirmationModal"
 
 interface NextStepsCardProps {
   onShareProfile?: () => void
-  onPublishProfile?: () => void
+  onPublishProfile?: () => Promise<void>
   isPublished?: boolean
   isUpdatingPublishStatus?: boolean
+  publicProfileUrl?: string
+  firstName?: string
 }
 
 export const NextStepsCard = ({
@@ -29,8 +33,11 @@ export const NextStepsCard = ({
   onPublishProfile,
   isPublished = false,
   isUpdatingPublishStatus = false,
+  publicProfileUrl = "",
+  firstName,
 }: NextStepsCardProps) => {
   const navigate = useNavigate()
+  const [showPublishModal, setShowPublishModal] = useState(false)
 
   const handleGetGuidance = () => {
     navigate("/dashboard/branding")
@@ -75,7 +82,7 @@ export const NextStepsCard = ({
             </div>
             <div className="mt-auto">
               <Button
-                onClick={isPublished ? onShareProfile : onPublishProfile}
+                onClick={isPublished ? onShareProfile : () => setShowPublishModal(true)}
                 disabled={isUpdatingPublishStatus}
                 className="w-full"
                 size="sm"
@@ -157,6 +164,17 @@ export const NextStepsCard = ({
             stay relevant.
           </div>
         </div>
+
+        {onPublishProfile && (
+          <PublishConfirmationModal
+            open={showPublishModal}
+            onOpenChange={setShowPublishModal}
+            onConfirm={onPublishProfile}
+            isUpdating={isUpdatingPublishStatus}
+            publicProfileUrl={publicProfileUrl}
+            firstName={firstName}
+          />
+        )}
       </CardContent>
     </Card>
   )
