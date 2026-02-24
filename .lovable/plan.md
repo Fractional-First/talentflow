@@ -1,34 +1,52 @@
 
-## Toggle "Accept Agreement" to "View Agreement" After Completion
 
-Use `localStorage` to persist agreement completion status (consistent with the demo-phase pattern already used in the codebase), and update the NextStepsCard to reflect the completed state.
+## Publish Confirmation Modal
 
-### Changes
+### Overview
+When a user clicks "Publish" (from either the StickyActionBar or the Dashboard NextStepsCard), a confirmation modal will appear explaining what publishing means, with two options: **Confirm Publish** or **Cancel**. After confirming, the modal transitions to a "Your profile is now live!" success state with the shareable profile link.
 
-**1. `src/pages/dashboard/Agreement.tsx`**
-- After successful submission (inside `handleSubmit`, after `setIsSubmitted(true)`), save to localStorage: `localStorage.setItem("agreement_accepted", "true")`
-- On mount, check localStorage -- if already accepted, immediately show the success state (`setIsSubmitted(true)`)
+### What the user will see
 
-**2. `src/components/dashboard/NextStepsCard.tsx`**
-- Read `localStorage.getItem("agreement_accepted")` to determine state
-- When accepted:
-  - Button text changes from "Accept Agreement" to "View Agreement"
-  - Description updates to "You're engagement-ready. View your accepted agreement."
-  - Remove the "New" badge
-- Navigation still goes to `/dashboard/agreement` (where they see the success state)
+**Step 1 - Confirmation modal** (on clicking Publish):
+- Title: "Publish Your Profile"
+- Three bullet points:
+  - A clean, shareable link for peer-to-peer introductions.
+  - Searchable only within our vetted internal network.
+  - No public "looking for work" signals.
+- Two buttons: "Cancel" (outline) and "Confirm Publish" (primary teal)
 
-**3. Fix existing build error in `src/components/ui/dialog.tsx`**
-- The `DialogDescription` forwardRef is returning `void` instead of JSX. Restore the missing return statement to fix the TS error.
+**Step 2 - Success state** (after confirming):
+- Checkmark icon with "Your profile is now live!" heading
+- The public profile link displayed with a copy button
+- A "Done" button to close the modal
 
 ### Technical Details
 
-```text
-NextStepsCard
-  |-- reads localStorage("agreement_accepted")
-  |-- if "true": show "View Agreement" button + updated copy
-  |-- else: show "Accept Agreement" button + "New" badge
+**New file: `src/components/edit-profile/PublishConfirmationModal.tsx`**
+- A Dialog component using the existing Radix UI dialog primitive
+- Two internal states: `confirming` and `success`
+- Props: `open`, `onOpenChange`, `onConfirm` (async), `isUpdating`, `publicProfileUrl`
+- On confirm, calls the publish mutation; on success, transitions to the "live" view
+- Uses existing brand colors (#449889) and design system components
 
-Agreement page
-  |-- on mount: check localStorage, if accepted -> show success view
-  |-- on submit: set localStorage("agreement_accepted", "true")
-```
+**Modified file: `src/components/edit-profile/StickyActionBar.tsx`**
+- Import and render `PublishConfirmationModal`
+- Add local `showPublishModal` state
+- When "Publish" is clicked (and profile is not yet published), open the modal instead of calling `onPublishToggle` directly
+- When profile is already published (Unpublish), keep the current direct behavior
+- Pass `publicProfileUrl` as a new prop
+
+**Modified file: `src/pages/EditProfile.tsx`**
+- Pass `publicProfileUrl` to `StickyActionBar`
+
+**Modified file: `src/components/dashboard/NextStepsCard.tsx`**
+- Same pattern: open the modal when clicking "Publish Profile"
+- Add local state and render `PublishConfirmationModal`
+- Requires `publicProfileUrl` as a new prop
+
+**Modified file: `src/pages/dashboard/Dashboard.tsx`**
+- Pass `publicProfileUrl` (constructed from `profileSlug`) to `NextStepsCard`
+
+**Modified file: `src/hooks/useEditProfile.ts`**
+- `handlePublishToggle` will be split: unpublish stays as-is; publish logic will be reusable via `updatePublishStatus(true)` called from the modal's confirm handler
+
