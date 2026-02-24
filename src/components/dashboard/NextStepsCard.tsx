@@ -17,6 +17,7 @@ import {
   Copy,
 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import { useAgreementStatus } from "@/queries/useAgreementAcceptance"
 
 interface NextStepsCardProps {
   onShareProfile?: () => void
@@ -32,7 +33,7 @@ export const NextStepsCard = ({
   isUpdatingPublishStatus = false,
 }: NextStepsCardProps) => {
   const navigate = useNavigate()
-  const isAgreementAccepted = localStorage.getItem("agreement_accepted") === "true"
+  const { isAccepted: isAgreementAccepted } = useAgreementStatus()
 
   const handleGetGuidance = () => {
     navigate("/dashboard/branding")
