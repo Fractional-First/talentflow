@@ -43,19 +43,34 @@ const ProfileCreation = () => {
   const [serverError, setServerError] = useState("")
   const [currentLinkedInUrl, setCurrentLinkedInUrl] = useState("")
   const [uploadConfirmed, setUploadConfirmed] = useState(false)
+  const hasResume = !!profile.resume
+  const hasLinkedIn = !!currentLinkedInUrl.trim()
+  const canSubmit = hasLinkedIn || hasResume
 
   const validateProfile = (): string[] => {
     const errors: string[] = []
-    if (!profile.linkedinUrl) {
-      errors.push("LinkedIn URL is required")
+    if (!currentLinkedInUrl.trim() && !profile.resume) {
+      errors.push(
+        "Please provide at least one of the following: LinkedIn URL or Resume"
+      )
     }
     return errors
   }
 
-  const handleLinkedInSubmit = async (linkedinUrl: string) => {
+  const handleSubmit = async () => {
+    const errors = validateProfile()
+    if (errors.length > 0) {
+      setValidationErrors(errors)
+      return
+    }
+
     setValidationErrors([])
     setServerError("")
-    handleLinkedInUrlSubmit(linkedinUrl)
+
+    const linkedinUrl = currentLinkedInUrl.trim()
+    if (linkedinUrl) {
+      handleLinkedInUrlSubmit(linkedinUrl)
+    }
 
     submitLinkedInMutation.mutate(
       { linkedinUrl, profile },
@@ -63,21 +78,20 @@ const ProfileCreation = () => {
         onSuccess: () => {
           toast({
             title: "Profile created successfully",
-            description:
-              "Your profile has been created from your LinkedIn information.",
+            description: "Your profile has been created successfully.",
           })
           navigate("/edit-profile")
         },
         onError: (error) => {
           let errorMessage =
-            "There was a problem creating your profile from LinkedIn. Please try again."
+            "There was a problem creating your profile. Please try again."
           if (error instanceof Error) {
             if (error.message.includes("Failed to fetch")) {
               errorMessage =
                 "Unable to connect to the server. Please check your internet connection and try again."
             } else if (error.message.includes("Server error")) {
               errorMessage =
-                "The server encountered an error processing your LinkedIn profile. Please try again."
+                "The server encountered an error processing your profile. Please try again."
             } else {
               errorMessage = error.message
             }
@@ -143,8 +157,8 @@ const ProfileCreation = () => {
                       Create Your Profile
                     </StepCardTitle>
                     <StepCardDescription className="text-body font-urbanist text-center sm:text-left mt-2">
-                      Tell us about your professional background and career
-                      goals
+                      Provide at least one of the following: your LinkedIn URL
+                      or a resume upload
                     </StepCardDescription>
                     <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start mt-4 bg-muted/40 px-4 py-3 rounded-md">
                       <Clock className="h-4 w-4 text-muted-foreground mb-1 sm:mb-0 sm:mr-2" />
@@ -195,16 +209,25 @@ const ProfileCreation = () => {
 
                     <div className="space-y-6 sm:space-y-8">
                       <LinkedInInputSection
-                        onLinkedInSubmit={handleLinkedInSubmit}
-                        onResumeFallback={() => {}} // Disabled - no resume flow
+                        onLinkedInSubmit={() => handleSubmit()}
+                        onResumeFallback={() => {}}
                         isSubmitting={submitLinkedInMutation.isPending}
                         hideResumeFallback={true}
-                        showSubmitButton={false} // Hide the submit button since we'll use the sticky footer
+                        showSubmitButton={false}
                         onLinkedInUrlChange={setCurrentLinkedInUrl}
                       />
 
-                      {/* OPTIONAL DOCUMENT UPLOAD SECTIONS */}
-                      <div className="border-t pt-6">
+                      {/* OR DIVIDER */}
+                      <div className="relative flex items-center py-2">
+                        <div className="flex-grow border-t border-border" />
+                        <span className="mx-4 flex-shrink-0 text-sm font-medium text-muted-foreground uppercase tracking-wide">
+                          or
+                        </span>
+                        <div className="flex-grow border-t border-border" />
+                      </div>
+
+                      {/* DOCUMENT UPLOAD SECTIONS */}
+                      <div>
                         <DocumentUploadSection
                           linkedinFile={profile.linkedin}
                           resumeFile={profile.resume}
@@ -273,20 +296,8 @@ const ProfileCreation = () => {
         <div className="container mx-auto max-w-4xl">
           <div className="flex justify-end">
             <Button
-              onClick={() => {
-                if (currentLinkedInUrl.trim()) {
-                  handleLinkedInSubmit(currentLinkedInUrl.trim())
-                } else {
-                  toast({
-                    title: "LinkedIn URL required",
-                    description: "Please enter your LinkedIn URL to continue.",
-                    variant: "destructive",
-                  })
-                }
-              }}
-              disabled={
-                submitLinkedInMutation.isPending || !currentLinkedInUrl.trim() || !uploadConfirmed
-              }
+              onClick={() => handleSubmit()}
+              disabled={submitLinkedInMutation.isPending || !canSubmit || !uploadConfirmed}
               className="font-urbanist min-h-[48px] px-8"
             >
               {submitLinkedInMutation.isPending
