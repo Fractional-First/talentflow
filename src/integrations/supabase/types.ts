@@ -336,6 +336,33 @@ export type Database = {
         }
         Relationships: []
       }
+      job_descriptions: {
+        Row: {
+          created_at: string
+          id: string
+          jd_data: Json
+          slug: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          jd_data?: Json
+          slug: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          jd_data?: Json
+          slug?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       linkedin_profiles: {
         Row: {
           city: string | null
@@ -797,8 +824,16 @@ export type Database = {
         }
         Returns: Json
       }
+      create_job_description: {
+        Args: { p_jd_data: Json; p_status?: string }
+        Returns: Json
+      }
       generate_unique_anon_slug: {
         Args: { p_anon_data: Json; p_user_id: string }
+        Returns: string
+      }
+      generate_unique_jd_slug: {
+        Args: { p_location: string; p_role_title: string }
         Returns: string
       }
       generate_unique_profile_slug: {
@@ -846,6 +881,10 @@ export type Database = {
       }
       save_linkedin_profiles: {
         Args: { p_profiles: Json; p_search_query?: string }
+        Returns: Json
+      }
+      update_job_description: {
+        Args: { p_jd_data: Json; p_slug: string; p_status?: string }
         Returns: Json
       }
     }
