@@ -14,6 +14,77 @@ export type Database = {
   }
   public: {
     Tables: {
+      agreement_acceptances: {
+        Row: {
+          accepted_at: string
+          agreement_version: string
+          contact_email: string
+          contracting_type: string
+          created_at: string
+          entity_address: Json | null
+          entity_confirmed: boolean | null
+          entity_name: string | null
+          entity_registration_number: string | null
+          full_legal_name: string
+          id: string
+          mobile_country_code: string
+          mobile_number: string
+          profile_id: string
+          residential_address: Json
+          signature_name: string
+          updated_at: string
+          user_agent: string | null
+        }
+        Insert: {
+          accepted_at?: string
+          agreement_version: string
+          contact_email: string
+          contracting_type: string
+          created_at?: string
+          entity_address?: Json | null
+          entity_confirmed?: boolean | null
+          entity_name?: string | null
+          entity_registration_number?: string | null
+          full_legal_name: string
+          id?: string
+          mobile_country_code: string
+          mobile_number: string
+          profile_id: string
+          residential_address: Json
+          signature_name: string
+          updated_at?: string
+          user_agent?: string | null
+        }
+        Update: {
+          accepted_at?: string
+          agreement_version?: string
+          contact_email?: string
+          contracting_type?: string
+          created_at?: string
+          entity_address?: Json | null
+          entity_confirmed?: boolean | null
+          entity_name?: string | null
+          entity_registration_number?: string | null
+          full_legal_name?: string
+          id?: string
+          mobile_country_code?: string
+          mobile_number?: string
+          profile_id?: string
+          residential_address?: Json
+          signature_name?: string
+          updated_at?: string
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agreement_acceptances_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       countries: {
         Row: {
           alpha2_code: string
@@ -338,7 +409,9 @@ export type Database = {
       }
       job_descriptions: {
         Row: {
+          client_name: string | null
           created_at: string
+          google_doc_url: string | null
           id: string
           jd_data: Json
           slug: string
@@ -346,7 +419,9 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          client_name?: string | null
           created_at?: string
+          google_doc_url?: string | null
           id?: string
           jd_data?: Json
           slug: string
@@ -354,7 +429,9 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          client_name?: string | null
           created_at?: string
+          google_doc_url?: string | null
           id?: string
           jd_data?: Json
           slug?: string
@@ -825,7 +902,12 @@ export type Database = {
         Returns: Json
       }
       create_job_description: {
-        Args: { p_jd_data: Json; p_status?: string }
+        Args: {
+          p_client_name?: string
+          p_google_doc_url?: string
+          p_jd_data: Json
+          p_status?: string
+        }
         Returns: Json
       }
       generate_unique_anon_slug: {
@@ -846,6 +928,27 @@ export type Database = {
           anon_profile_data: Json
           anon_slug: string
           profile_version: string
+        }[]
+      }
+      get_current_agreement_status: {
+        Args: { p_current_version: string }
+        Returns: {
+          accepted_at: string
+          agreement_version: string
+          is_accepted: boolean
+          is_current_version: boolean
+        }[]
+      }
+      get_job_description: { Args: { p_slug: string }; Returns: Json }
+      get_profiles_by_slugs: {
+        Args: { p_slugs: string[] }
+        Returns: {
+          email: string
+          first_name: string
+          last_name: string
+          linkedinurl: string
+          profile_data: Json
+          profile_slug: string
         }[]
       }
       get_public_profile: {
@@ -870,6 +973,10 @@ export type Database = {
           profile_version: string
         }[]
       }
+      list_job_descriptions: {
+        Args: { p_limit?: number; p_status?: string }
+        Returns: Json
+      }
       match_documents: {
         Args: { filter?: Json; match_count?: number; query_embedding: string }
         Returns: {
@@ -879,12 +986,55 @@ export type Database = {
           similarity: number
         }[]
       }
+      record_agreement_acceptance: {
+        Args: {
+          p_agreement_version: string
+          p_contact_email: string
+          p_contracting_type: string
+          p_entity_address?: Json
+          p_entity_confirmed?: boolean
+          p_entity_name?: string
+          p_entity_registration_number?: string
+          p_full_legal_name: string
+          p_mobile_country_code: string
+          p_mobile_number: string
+          p_residential_address: Json
+          p_signature_name: string
+          p_user_agent?: string
+        }
+        Returns: {
+          accepted_at: string
+          agreement_version: string
+          contact_email: string
+          contracting_type: string
+          created_at: string
+          entity_address: Json | null
+          entity_confirmed: boolean | null
+          entity_name: string | null
+          entity_registration_number: string | null
+          full_legal_name: string
+          id: string
+          mobile_country_code: string
+          mobile_number: string
+          profile_id: string
+          residential_address: Json
+          signature_name: string
+          updated_at: string
+          user_agent: string | null
+        }
+      }
       save_linkedin_profiles: {
         Args: { p_profiles: Json; p_search_query?: string }
         Returns: Json
       }
       update_job_description: {
-        Args: { p_jd_data: Json; p_slug: string; p_status?: string }
+        Args: {
+          p_client_name?: string
+          p_google_doc_url?: string
+          p_jd_data: Json
+          p_slug: string
+          p_status?: string
+        }
         Returns: Json
       }
     }
