@@ -1,7 +1,18 @@
 # Agreement Acceptances — Tasks
 
 > **PRD:** [PRD.md](./PRD.md)
-> **Status:** 1/8 tasks complete
+> **Status:** 5/8 tasks complete
+
+## Test User for UI Verification
+
+Use this pre-created test account to sign in and verify UI changes:
+
+| Field | Value |
+|-------|-------|
+| **Email** | `test@fractionalfirst.com` |
+| **Password** | `TestUser123!` |
+
+Sign in at `http://localhost:5173/login` using email/password (not LinkedIn). This user has `PROFILE_CONFIRMED` status and can access all dashboard routes including `/dashboard/agreement`.
 
 ---
 
@@ -20,7 +31,7 @@
 
 ## 2. Query Layer
 
-- [ ] **2.1 Create useAgreementAcceptance query hook**
+- [x] **2.1 Create useAgreementAcceptance query hook**
   `src/queries/useAgreementAcceptance.ts` — new file
   Export `CURRENT_AGREEMENT_VERSION` constant (`"2026-01-30-mca-v1"`).
   Export `useAgreementStatus()` — calls `get_current_agreement_status` RPC, returns `{ isAccepted, isCurrentVersion, acceptedAt, agreementVersion, isLoading }`. Query key: `["agreement-status", user?.id]`, enabled when user is logged in.
@@ -29,19 +40,19 @@
 
 ## 3. Frontend Integration
 
-- [ ] **3.1 Wire Agreement.tsx to database**
+- [x] **3.1 Wire Agreement.tsx to database**
   `src/pages/dashboard/Agreement.tsx`
   Replace the localStorage reads (lines 19-22) with `useAgreementStatus()` hook. Use `isAccepted` and `isCurrentVersion` from the hook instead of `localStorage.getItem("agreement_accepted")`.
   Replace the localStorage writes in `handleSubmit` (lines 149-156) with `recordAcceptance.mutate({...})`. Remove all `localStorage.setItem` calls. Remove the `savedData` variable and its usage for pre-filling form state (form should start blank for new acceptances; if re-consenting, don't pre-fill old data — they need to re-enter).
   Keep `isSubmitting` state tied to mutation's `isPending`. Show toast on error.
   VERIFY: Navigate to `http://localhost:5173/dashboard/agreement`. Fill in all required fields (name, address, email, phone, contracting type, accept checkbox). Click submit. Verify no localStorage keys are set. Verify the acceptance shows in the database via `execute_sql SELECT * FROM agreement_acceptances`.
 
-- [ ] **3.2 Wire NextStepsCard.tsx to database**
+- [x] **3.2 Wire NextStepsCard.tsx to database**
   `src/components/dashboard/NextStepsCard.tsx`
   Replace `localStorage.getItem("agreement_accepted")` (line 35) with `useAgreementStatus()` hook. Use `isAccepted` to control the "New" badge visibility.
   VERIFY: Navigate to `http://localhost:5173/dashboard`. Check that the agreement card shows "New" badge when no acceptance exists in the database.
 
-- [ ] **3.3 Add re-consent banner**
+- [x] **3.3 Add re-consent banner**
   `src/pages/dashboard/Agreement.tsx`
   When `isAccepted && !isCurrentVersion` (from `useAgreementStatus()`), show the form in editable mode (not read-only) with an info banner at the top: "Our agreement has been updated since you last accepted. Please review and re-accept to remain engagement-ready." Use the existing blue info banner style (similar to the read-only banner but with different copy). Remove the `pointer-events-none opacity-80` wrapper when re-consent is needed.
   VERIFY: Manually insert a row in `agreement_acceptances` with an old version string (e.g., `"2025-01-01-old"`). Navigate to `http://localhost:5173/dashboard/agreement`. Verify the re-consent banner appears and the form is editable.
