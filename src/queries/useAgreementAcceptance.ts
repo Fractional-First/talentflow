@@ -68,7 +68,6 @@ interface RecordAcceptanceParams {
     country: string
   } | null
   p_entity_confirmed?: boolean
-  p_user_agent?: string | null
 }
 
 export function useAgreementStatus(): AgreementStatus {
@@ -134,11 +133,10 @@ export function useRecordAcceptance() {
 
   return useMutation({
     mutationFn: async (params: RecordAcceptanceParams) => {
-      const { data, error } = await supabase.rpc("record_agreement_acceptance", {
-        ...params,
-        p_residential_address: params.p_residential_address as unknown as never,
-        p_entity_address: (params.p_entity_address ?? null) as unknown as never,
-      })
+      const { data, error } = await supabase.functions.invoke(
+        "record-agreement-acceptance",
+        { body: params }
+      )
 
       if (error) throw error
       return data

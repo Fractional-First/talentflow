@@ -27,6 +27,7 @@ export type Database = {
           entity_registration_number: string | null
           full_legal_name: string
           id: string
+          ip_address: string | null
           mobile_country_code: string
           mobile_number: string
           profile_id: string
@@ -47,6 +48,7 @@ export type Database = {
           entity_registration_number?: string | null
           full_legal_name: string
           id?: string
+          ip_address?: string | null
           mobile_country_code: string
           mobile_number: string
           profile_id: string
@@ -67,6 +69,7 @@ export type Database = {
           entity_registration_number?: string | null
           full_legal_name?: string
           id?: string
+          ip_address?: string | null
           mobile_country_code?: string
           mobile_number?: string
           profile_id?: string
@@ -930,13 +933,25 @@ export type Database = {
           profile_version: string
         }[]
       }
+      get_candidate_details: { Args: { p_name: string }; Returns: Json }
       get_current_agreement_status: {
         Args: { p_current_version: string }
         Returns: {
           accepted_at: string
           agreement_version: string
+          contact_email: string
+          contracting_type: string
+          entity_address: Json
+          entity_confirmed: boolean
+          entity_name: string
+          entity_registration_number: string
+          full_legal_name: string
           is_accepted: boolean
           is_current_version: boolean
+          mobile_country_code: string
+          mobile_number: string
+          residential_address: Json
+          signature_name: string
         }[]
       }
       get_job_description: { Args: { p_slug: string }; Returns: Json }
@@ -986,43 +1001,96 @@ export type Database = {
           similarity: number
         }[]
       }
-      record_agreement_acceptance: {
-        Args: {
-          p_agreement_version: string
-          p_contact_email: string
-          p_contracting_type: string
-          p_entity_address?: Json
-          p_entity_confirmed?: boolean
-          p_entity_name?: string
-          p_entity_registration_number?: string
-          p_full_legal_name: string
-          p_mobile_country_code: string
-          p_mobile_number: string
-          p_residential_address: Json
-          p_signature_name: string
-          p_user_agent?: string
-        }
-        Returns: {
-          accepted_at: string
-          agreement_version: string
-          contact_email: string
-          contracting_type: string
-          created_at: string
-          entity_address: Json | null
-          entity_confirmed: boolean | null
-          entity_name: string | null
-          entity_registration_number: string | null
-          full_legal_name: string
-          id: string
-          mobile_country_code: string
-          mobile_number: string
-          profile_id: string
-          residential_address: Json
-          signature_name: string
-          updated_at: string
-          user_agent: string | null
-        }
-      }
+      record_agreement_acceptance:
+        | {
+            Args: {
+              p_agreement_version: string
+              p_contact_email: string
+              p_contracting_type: string
+              p_entity_address?: Json
+              p_entity_confirmed?: boolean
+              p_entity_name?: string
+              p_entity_registration_number?: string
+              p_full_legal_name: string
+              p_mobile_country_code: string
+              p_mobile_number: string
+              p_residential_address: Json
+              p_signature_name: string
+              p_user_agent?: string
+            }
+            Returns: {
+              accepted_at: string
+              agreement_version: string
+              contact_email: string
+              contracting_type: string
+              created_at: string
+              entity_address: Json | null
+              entity_confirmed: boolean | null
+              entity_name: string | null
+              entity_registration_number: string | null
+              full_legal_name: string
+              id: string
+              ip_address: string | null
+              mobile_country_code: string
+              mobile_number: string
+              profile_id: string
+              residential_address: Json
+              signature_name: string
+              updated_at: string
+              user_agent: string | null
+            }
+            SetofOptions: {
+              from: "*"
+              to: "agreement_acceptances"
+              isOneToOne: true
+              isSetofReturn: false
+            }
+          }
+        | {
+            Args: {
+              p_agreement_version: string
+              p_contact_email: string
+              p_contracting_type: string
+              p_entity_address?: Json
+              p_entity_confirmed?: boolean
+              p_entity_name?: string
+              p_entity_registration_number?: string
+              p_full_legal_name: string
+              p_ip_address?: string
+              p_mobile_country_code: string
+              p_mobile_number: string
+              p_residential_address: Json
+              p_signature_name: string
+              p_user_agent?: string
+            }
+            Returns: {
+              accepted_at: string
+              agreement_version: string
+              contact_email: string
+              contracting_type: string
+              created_at: string
+              entity_address: Json | null
+              entity_confirmed: boolean | null
+              entity_name: string | null
+              entity_registration_number: string | null
+              full_legal_name: string
+              id: string
+              ip_address: string | null
+              mobile_country_code: string
+              mobile_number: string
+              profile_id: string
+              residential_address: Json
+              signature_name: string
+              updated_at: string
+              user_agent: string | null
+            }
+            SetofOptions: {
+              from: "*"
+              to: "agreement_acceptances"
+              isOneToOne: true
+              isSetofReturn: false
+            }
+          }
       save_linkedin_profiles: {
         Args: { p_profiles: Json; p_search_query?: string }
         Returns: Json

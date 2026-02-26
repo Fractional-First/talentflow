@@ -178,7 +178,6 @@ const Agreement = () => {
         p_entity_registration_number: contractingType === "entity" ? registrationNumber : null,
         p_entity_address: contractingType === "entity" ? registeredAddress : null,
         p_entity_confirmed: contractingType === "entity" ? entityConfirmed : undefined,
-        p_user_agent: navigator.userAgent,
       },
       {
         onSuccess: () => {
