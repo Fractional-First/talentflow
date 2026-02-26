@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.google-place-details]
 verify_jwt = false
+
+[functions.record-agreement-acceptance]
+verify_jwt = true

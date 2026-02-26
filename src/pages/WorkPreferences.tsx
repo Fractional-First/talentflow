@@ -3,6 +3,7 @@ import { DashboardLayout } from "@/components/DashboardLayout"
 import { WorkPreferencesConfirmation } from "@/components/work-preferences/WorkPreferencesConfirmation"
 import { FlexiblePreferences } from "@/components/work-preferences/FlexiblePreferences"
 import { FullTimePreferences } from "@/components/work-preferences/FullTimePreferences"
+import { ProfileCommitmentsSection } from "@/components/work-preferences/ProfileCommitmentsSection"
 import {
   StepCard,
   StepCardContent,
@@ -25,6 +26,9 @@ const WorkPreferences = () => {
   const [currentStep, setCurrentStep] = useState<
     "placement-type" | "confirmation"
   >("placement-type")
+
+  // Profile commitments state
+  const [commitmentsConfirmed, setCommitmentsConfirmed] = useState(false)
 
   // Unified form state
   const { form, setForm, isLoading, error, setCurrentLocation, initialized } =
@@ -77,6 +81,7 @@ const WorkPreferences = () => {
 
   const hasSelection =
     form.fullTime.open_for_work || form.fractional.open_for_work
+
 
   const renderStepContent = () => {
     if (currentStep === "placement-type") {
@@ -260,11 +265,19 @@ const WorkPreferences = () => {
               </div>
             </div>
 
+            {/* Profile Commitments Section */}
+            {hasSelection && (
+              <ProfileCommitmentsSection
+                commitmentsConfirmed={commitmentsConfirmed}
+                setCommitmentsConfirmed={setCommitmentsConfirmed}
+              />
+            )}
+
             {/* Action Button */}
             <div className="pt-8 border-t">
               <Button
                 onClick={handleContinue}
-                disabled={!hasSelection || isSaving}
+                disabled={!hasSelection || !commitmentsConfirmed || isSaving}
                 className="w-full h-12 text-base font-medium rounded-full"
                 size="lg"
               >

@@ -12,10 +12,12 @@ import {
 } from "@/components/StepCard"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
 import { useDocumentUpload } from "@/queries/useDocumentUpload"
 import { toast } from "@/hooks/use-toast"
 import { useSubmitLinkedInProfile } from "@/queries/useSubmitLinkedInProfile"
-import { AlertCircle, ArrowLeft, ArrowRight, Clock, Home } from "lucide-react"
+import { AlertCircle, ArrowRight, Clock, Home } from "lucide-react"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 
@@ -40,6 +42,7 @@ const ProfileCreation = () => {
   const [validationErrors, setValidationErrors] = useState<string[]>([])
   const [serverError, setServerError] = useState("")
   const [currentLinkedInUrl, setCurrentLinkedInUrl] = useState("")
+  const [uploadConfirmed, setUploadConfirmed] = useState(false)
   const hasResume = !!profile.resume
   const hasLinkedIn = !!currentLinkedInUrl.trim()
   const canSubmit = hasLinkedIn || hasResume
@@ -244,6 +247,41 @@ const ProfileCreation = () => {
                           removeLink={removeSupportingLink}
                         />
                       </div>
+
+                      {/* UPLOAD CONFIRMATION SEGMENT */}
+                      <div className="border-t pt-6 mt-6">
+                        <div className="bg-muted/50 border border-border rounded-xl p-5 sm:p-6">
+                          <h3 className="text-lg font-semibold text-foreground mb-2 font-urbanist">
+                            You're about to upload your professional profile.
+                          </h3>
+                          <p className="text-sm text-muted-foreground mb-4 font-urbanist">
+                            By proceeding, you confirm and agree as follows:
+                          </p>
+                          
+                          <ul className="space-y-3 text-sm text-foreground mb-6 font-urbanist">
+                            <li className="flex items-start gap-2">
+                              <span className="text-primary mt-0.5 font-bold">•</span>
+                              <span>I confirm that all information and materials I upload are accurate and complete, and that I own or have the right to share them.</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="text-primary mt-0.5 font-bold">•</span>
+                              <span>I grant Fractional First permission to use and reasonably adapt the materials I upload solely to provide its services, including creating my Leadership Profile and sharing it with prospective clients in the ordinary course of its business.</span>
+                            </li>
+                          </ul>
+                          
+                          <div className="flex items-start gap-3 p-4 bg-background border border-border rounded-lg">
+                            <Checkbox 
+                              id="upload-confirm"
+                              checked={uploadConfirmed}
+                              onCheckedChange={(checked) => setUploadConfirmed(checked as boolean)}
+                              className="mt-0.5"
+                            />
+                            <Label htmlFor="upload-confirm" className="text-sm font-medium cursor-pointer font-urbanist">
+                              I confirm the above and grant Fractional First the permission described.
+                            </Label>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </StepCardContent>
                 </StepCard>
@@ -259,7 +297,7 @@ const ProfileCreation = () => {
           <div className="flex justify-end">
             <Button
               onClick={() => handleSubmit()}
-              disabled={submitLinkedInMutation.isPending || !canSubmit}
+              disabled={submitLinkedInMutation.isPending || !canSubmit || !uploadConfirmed}
               className="font-urbanist min-h-[48px] px-8"
             >
               {submitLinkedInMutation.isPending

@@ -7,6 +7,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { Badge } from "@/components/ui/badge"
 import {
   Share2,
   Users,
@@ -17,6 +18,7 @@ import {
   Copy,
 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import { useAgreementStatus } from "@/queries/useAgreementAcceptance"
 import { PublishConfirmationModal } from "@/components/edit-profile/PublishConfirmationModal"
 
 interface NextStepsCardProps {
@@ -37,6 +39,7 @@ export const NextStepsCard = ({
   firstName,
 }: NextStepsCardProps) => {
   const navigate = useNavigate()
+  const { isAccepted: isAgreementAccepted } = useAgreementStatus()
   const [showPublishModal, setShowPublishModal] = useState(false)
 
   const handleGetGuidance = () => {
@@ -76,7 +79,7 @@ export const NextStepsCard = ({
               </h3>
               <p className="text-sm text-muted-foreground">
                 {isPublished
-                  ? "Showcase your expertise to your network and allow companies and recruiters to find you directly through our platform."
+                  ? "Showcase your expertise to your network and allow companies to find you."
                   : "Make your profile publicly accessible so others can discover and connect with you."}
               </p>
             </div>
@@ -116,41 +119,30 @@ export const NextStepsCard = ({
             </div>
           </div>
 
-          {/* Activate Search Action (Coming Soon) */}
+          {/* Get Engagement-Ready Action */}
           <div className="space-y-3 text-center flex flex-col">
-            <div className="mx-auto w-12 h-12 rounded-full bg-muted/50 flex items-center justify-center">
-              <Search className="h-6 w-6 text-muted-foreground" />
+            <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+              <Search className="h-6 w-6 text-primary" />
             </div>
             <div className="space-y-2 flex-1">
-              <h3 className="font-semibold text-muted-foreground">
-                Activate Search (Coming Soon)
+              <h3 className="font-semibold text-foreground flex items-center justify-center gap-2">
+                Get Engagement-Ready
+                {!isAgreementAccepted && <Badge variant="default" className="text-[10px] px-1.5 py-0">New</Badge>}
               </h3>
               <p className="text-sm text-muted-foreground">
-                Start exploring fractional leadership opportunities tailored to
-                your profile.
+                {isAgreementAccepted
+                  ? "You're engagement-ready. View your accepted agreement."
+                  : "Complete the final steps to become client engagement-ready."}
               </p>
             </div>
             <div className="mt-auto">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      disabled
-                      variant="secondary"
-                      className="w-full opacity-50 cursor-not-allowed"
-                      size="sm"
-                    >
-                      Coming Soon
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>
-                      Coming soon — you'll be able to start exploring leadership
-                      opportunities here.
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <Button
+                onClick={() => navigate("/dashboard/agreement")}
+                className="w-full"
+                size="sm"
+              >
+                {isAgreementAccepted ? "View Agreement" : "Accept Agreement"}
+              </Button>
             </div>
           </div>
         </div>
