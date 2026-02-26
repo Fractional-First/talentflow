@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { useGetUser } from "@/queries/auth/useGetUser"
 
-export const CURRENT_AGREEMENT_VERSION = "2026-01-30-mca-v1"
+export const CURRENT_AGREEMENT_VERSION = "Master Candidate Agreement (13.02.2026) PDF"
 
 interface AcceptanceData {
   signatureName: string
