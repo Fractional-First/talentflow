@@ -1,15 +1,14 @@
--- RPC function to create guest profiles (no auth required)
--- Used by fractional-command CLI for bulk profile creation
+-- RPC function to create guest profiles without exposing service role key
+-- Replaces direct REST API calls that required SUPABASE_SERVICE_ROLE_KEY
 
-CREATE OR REPLACE FUNCTION public.create_guest_profile(
-  p_profile_data jsonb,
-  p_anon_profile_data jsonb,
-  p_linkedin_url text DEFAULT NULL
-)
-RETURNS json
+CREATE OR REPLACE FUNCTION create_guest_profile(
+  p_profile_data JSONB,
+  p_anon_profile_data JSONB,
+  p_linkedin_url TEXT DEFAULT NULL
+) RETURNS JSON
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = 'public'
+SET search_path = public
 AS $$
 DECLARE
   v_profile_id UUID;
@@ -22,26 +21,26 @@ DECLARE
 BEGIN
   -- Extract name from profile data
   v_name := COALESCE(p_profile_data->>'name', 'Unknown');
-
+  
   -- Parse name into first/last
   v_name_parts := string_to_array(v_name, ' ');
   v_first_name := v_name_parts[1];
-  v_last_name := CASE
-    WHEN array_length(v_name_parts, 1) > 1
+  v_last_name := CASE 
+    WHEN array_length(v_name_parts, 1) > 1 
     THEN array_to_string(v_name_parts[2:], ' ')
     ELSE NULL
   END;
 
   -- Check for duplicate by LinkedIn URL
   IF p_linkedin_url IS NOT NULL AND p_linkedin_url != '' THEN
-    SELECT id INTO v_existing_id
-    FROM profiles
+    SELECT id INTO v_existing_id 
+    FROM profiles 
     WHERE linkedinurl = p_linkedin_url;
-
+    
     IF v_existing_id IS NOT NULL THEN
       -- Return existing profile info
       SELECT anon_slug INTO v_anon_slug FROM profiles WHERE id = v_existing_id;
-
+      
       RETURN json_build_object(
         'success', true,
         'profile_id', v_existing_id,
@@ -115,4 +114,11 @@ WHEN OTHERS THEN
 END;
 $$;
 
-COMMENT ON FUNCTION public.create_guest_profile IS 'Creates a guest profile from LinkedIn data. Returns existing profile if LinkedIn URL matches.';
+-- Grant execute permission to authenticated users (Reza/Daniel when logged in via MCP)
+GRANT EXECUTE ON FUNCTION create_guest_profile(JSONB, JSONB, TEXT) TO authenticated;
+
+-- Also grant to anon so CLI tools can work without full auth
+-- This is safe because the function only allows creating guest profiles
+GRANT EXECUTE ON FUNCTION create_guest_profile(JSONB, JSONB, TEXT) TO anon;
+
+COMMENT ON FUNCTION create_guest_profile IS 'Creates a guest profile in the profiles table. Returns JSON with profile_id, anon_slug, and profile_url. Checks for duplicates by LinkedIn URL. Safe to call with anon key - no service role needed.';
