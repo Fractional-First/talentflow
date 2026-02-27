@@ -1,35 +1,32 @@
--- RPC functions for linkedin_profiles cache
--- Allows anon key to read/write via SECURITY DEFINER functions
--- while keeping the table locked down (RLS with no policies = service role only)
-
--- Check cache for existing profiles by LinkedIn URLs
-CREATE OR REPLACE FUNCTION public.check_linkedin_cache(p_urls text[])
-RETURNS TABLE(
-  linkedin_url text,
-  full_name text,
-  first_name text,
-  last_name text,
-  headline text,
-  summary text,
-  current_company text,
-  follower_count integer,
-  location_text text,
-  city text,
-  state text,
-  country text,
-  country_code text,
-  experience jsonb,
-  education jsonb,
-  skills jsonb,
-  raw_data jsonb
+-- RPC to check which LinkedIn URLs are already cached
+-- Returns cached profiles for the given URLs
+CREATE OR REPLACE FUNCTION check_linkedin_cache(p_urls TEXT[])
+RETURNS TABLE (
+  linkedin_url TEXT,
+  full_name TEXT,
+  first_name TEXT,
+  last_name TEXT,
+  headline TEXT,
+  summary TEXT,
+  current_company TEXT,
+  follower_count INTEGER,
+  location_text TEXT,
+  city TEXT,
+  state TEXT,
+  country TEXT,
+  country_code TEXT,
+  experience JSONB,
+  education JSONB,
+  skills JSONB,
+  raw_data JSONB
 )
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = 'public'
+SET search_path = public
 AS $$
 BEGIN
   RETURN QUERY
-  SELECT
+  SELECT 
     lp.linkedin_url,
     lp.full_name,
     lp.first_name,
@@ -52,17 +49,13 @@ BEGIN
 END;
 $$;
 
-COMMENT ON FUNCTION public.check_linkedin_cache IS 'Check if LinkedIn profiles are already cached. Returns matching profiles.';
-
--- Save/upsert LinkedIn profiles to cache
-CREATE OR REPLACE FUNCTION public.save_linkedin_profiles(
-  p_profiles jsonb,
-  p_search_query text DEFAULT 'manual scrape'
-)
-RETURNS json
+-- RPC to save scraped LinkedIn profiles to cache
+-- Uses upsert to handle duplicates gracefully
+CREATE OR REPLACE FUNCTION save_linkedin_profiles(p_profiles JSONB, p_search_query TEXT DEFAULT 'manual scrape')
+RETURNS JSON
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = 'public'
+SET search_path = public
 AS $$
 DECLARE
   profile JSONB;
@@ -76,7 +69,7 @@ BEGIN
       'error', 'No profiles provided'
     );
   END IF;
-
+  
   -- Limit batch size to prevent abuse (max 50 profiles at once)
   IF jsonb_array_length(p_profiles) > 50 THEN
     RETURN json_build_object(
@@ -146,7 +139,7 @@ BEGIN
       raw_data = EXCLUDED.raw_data,
       search_query = EXCLUDED.search_query,
       updated_at = NOW();
-
+    
     IF FOUND THEN
       inserted_count := inserted_count + 1;
     END IF;
@@ -160,4 +153,8 @@ BEGIN
 END;
 $$;
 
-COMMENT ON FUNCTION public.save_linkedin_profiles IS 'Save/upsert LinkedIn profiles to cache. Max 50 profiles per batch.';
+-- Grant execute permissions to anon and authenticated roles
+GRANT EXECUTE ON FUNCTION check_linkedin_cache TO anon;
+GRANT EXECUTE ON FUNCTION check_linkedin_cache TO authenticated;
+GRANT EXECUTE ON FUNCTION save_linkedin_profiles TO anon;
+GRANT EXECUTE ON FUNCTION save_linkedin_profiles TO authenticated;

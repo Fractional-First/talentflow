@@ -3,10 +3,10 @@
 
 CREATE TABLE public.linkedin_profiles (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-
+  
   -- Canonical identifier
   linkedin_url text UNIQUE NOT NULL,
-
+  
   -- Basic info
   full_name text,
   first_name text,
@@ -15,26 +15,26 @@ CREATE TABLE public.linkedin_profiles (
   summary text,
   current_company text,
   follower_count integer,
-
+  
   -- Parsed location
   location_text text,
   city text,
   state text,
   country text,
   country_code text,
-
+  
   -- Complex data as JSONB
   experience jsonb,
   education jsonb,
   skills jsonb,
-
+  
   -- Raw Apify response for anything we missed
   raw_data jsonb,
-
+  
   -- Search context
   scraped_at timestamptz DEFAULT now(),
   search_query text,
-
+  
   -- Timestamps
   created_at timestamptz DEFAULT now(),
   updated_at timestamptz DEFAULT now()
@@ -53,16 +53,12 @@ CREATE INDEX linkedin_profiles_scraped_at_idx ON public.linkedin_profiles(scrape
 
 -- Updated_at trigger
 CREATE OR REPLACE FUNCTION public.update_linkedin_profiles_updated_at()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = 'public'
-AS $$
+RETURNS TRIGGER AS $$
 BEGIN
   NEW.updated_at = now();
   RETURN NEW;
 END;
-$$;
+$$ LANGUAGE plpgsql;
 
 CREATE TRIGGER linkedin_profiles_updated_at
   BEFORE UPDATE ON public.linkedin_profiles

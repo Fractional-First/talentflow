@@ -1,6 +1,4 @@
--- Fix search_path on linkedin_profiles trigger function
--- This was applied separately from the table creation
-
+-- Fix search_path for security
 CREATE OR REPLACE FUNCTION public.update_linkedin_profiles_updated_at()
 RETURNS TRIGGER
 LANGUAGE plpgsql
