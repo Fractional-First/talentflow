@@ -34,5 +34,6 @@ dist-ssr
 # MCP configuration (contains environment variable references)
 .mcp.json
 
-# Supabase temp files
+# Supabase local state
 supabase/.temp/
+supabase/.branches/
