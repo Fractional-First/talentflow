@@ -60,9 +60,11 @@ function App() {
               }
             />
 
-            {/* Public profile route - no auth required */}
+            {/* Public profile routes - no auth required */}
             <Route path="/profile/:slug" element={<PublicProfile />} />
             <Route path="/profile/preview/:uuid" element={<PublicProfile />} />
+            <Route path="/guest-profile/:slug" element={<PublicProfile />} />
+            <Route path="/guest-profile/preview/:uuid" element={<PublicProfile />} />
 
             {/* Profile Generator routes - no auth required */}
             <Route path="/profile-generator" element={<ProfileGenerator />} />
