@@ -26,7 +26,7 @@ BEGIN
     p.last_name,
     p.email,
     p.linkedinurl,
-    p.profile_type,
+    p.profile_type::text,
     p.profile_data
   FROM profiles p
   WHERE p.id = ANY(p_ids);
