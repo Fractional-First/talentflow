@@ -1,5 +1,6 @@
 
-import { DashboardLayout } from "@/components/DashboardLayout"
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
+import { AppSidebar } from "@/components/AppSidebar"
 import { WorkPreferencesConfirmation } from "@/components/work-preferences/WorkPreferencesConfirmation"
 import { FlexiblePreferences } from "@/components/work-preferences/FlexiblePreferences"
 import { FullTimePreferences } from "@/components/work-preferences/FullTimePreferences"
@@ -58,30 +59,40 @@ const WorkPreferences = () => {
     navigate("/dashboard")
   }
 
-  // Render
+  // Loading state
   if (isLoading || !initialized) {
     return (
-      <DashboardLayout>
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <Spinner size="lg" />
+      <SidebarProvider>
+        <div className="min-h-screen flex w-full">
+          <AppSidebar />
+          <SidebarInset>
+            <div className="flex items-center justify-center min-h-[60vh]">
+              <Spinner size="lg" />
+            </div>
+          </SidebarInset>
         </div>
-      </DashboardLayout>
+      </SidebarProvider>
     )
   }
 
+  // Error state
   if (error) {
     return (
-      <DashboardLayout>
-        <div className="flex items-center justify-center min-h-[60vh] text-red-600">
-          Error loading preferences: {error.message}
+      <SidebarProvider>
+        <div className="min-h-screen flex w-full">
+          <AppSidebar />
+          <SidebarInset>
+            <div className="flex items-center justify-center min-h-[60vh] text-red-600">
+              Error loading preferences: {error.message}
+            </div>
+          </SidebarInset>
         </div>
-      </DashboardLayout>
+      </SidebarProvider>
     )
   }
 
   const hasSelection =
     form.fullTime.open_for_work || form.fractional.open_for_work
-
 
   const renderStepContent = () => {
     if (currentStep === "placement-type") {
@@ -298,9 +309,27 @@ const WorkPreferences = () => {
   }
 
   return (
-    <DashboardLayout>
-      <div className="container max-w-4xl py-8 px-2 sm:px-4">{renderStepContent()}</div>
-    </DashboardLayout>
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full">
+        <AppSidebar />
+        <SidebarInset>
+          <header className="flex h-auto min-h-16 shrink-0 items-start gap-2 border-b px-2 sm:px-4 py-3 sm:py-4">
+            <SidebarTrigger className="-ml-1 mt-1 flex-shrink-0" />
+            <div className="flex flex-col min-w-0 flex-1 pr-2">
+              <h1 className="text-lg sm:text-xl lg:text-2xl font-semibold text-foreground leading-tight break-words">
+                Job Preferences
+              </h1>
+              <p className="text-xs sm:text-sm lg:text-base text-muted-foreground mt-1 leading-relaxed break-words">
+                Set your work preferences to help us match you with the right opportunities
+              </p>
+            </div>
+          </header>
+          <div className="container max-w-4xl py-8 px-2 sm:px-4">
+            {renderStepContent()}
+          </div>
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
   )
 }
 
