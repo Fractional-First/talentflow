@@ -930,9 +930,11 @@ export type Database = {
         Returns: {
           anon_profile_data: Json
           anon_slug: string
+          profile_type: string
           profile_version: string
         }[]
       }
+      get_candidate_admin: { Args: { candidate_id: string }; Returns: Json }
       get_candidate_details: { Args: { p_name: string }; Returns: Json }
       get_current_agreement_status: {
         Args: { p_current_version: string }
@@ -955,6 +957,19 @@ export type Database = {
         }[]
       }
       get_job_description: { Args: { p_slug: string }; Returns: Json }
+      get_profiles_by_ids: {
+        Args: { p_ids: string[] }
+        Returns: {
+          email: string
+          first_name: string
+          id: string
+          last_name: string
+          linkedinurl: string
+          profile_data: Json
+          profile_slug: string
+          profile_type: string
+        }[]
+      }
       get_profiles_by_slugs: {
         Args: { p_slugs: string[] }
         Returns: {
@@ -1095,6 +1110,33 @@ export type Database = {
         Args: { p_profiles: Json; p_search_query?: string }
         Returns: Json
       }
+      search_candidates_admin:
+        | {
+            Args: {
+              has_agreement?: boolean
+              open_for_work?: boolean
+              page_number?: number
+              page_size?: number
+              search_query?: string
+              status_filter?: string
+              type_filter?: string
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              has_agreement?: boolean
+              open_for_work?: boolean
+              page_number?: number
+              page_size?: number
+              search_query?: string
+              sort_by?: string
+              sort_dir?: string
+              status_filter?: string
+              type_filter?: string
+            }
+            Returns: Json
+          }
       update_job_description: {
         Args: {
           p_client_name?: string
@@ -1103,6 +1145,10 @@ export type Database = {
           p_slug: string
           p_status?: string
         }
+        Returns: Json
+      }
+      update_profile_picture: {
+        Args: { p_picture_url: string; p_profile_id: string }
         Returns: Json
       }
     }
