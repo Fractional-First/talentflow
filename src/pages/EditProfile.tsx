@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { useEditProfile } from "@/hooks/useEditProfile"
 import { useIsMobile } from "@/hooks/use-mobile"
-import { Edit } from "lucide-react"
+import { Edit, Eye } from "lucide-react"
 import { TooltipProvider } from "@/components/ui/tooltip"
 
 const EditProfile = () => {
@@ -81,17 +81,20 @@ const EditProfile = () => {
       <DashboardLayout>
         {/* Preview Mode Banner on Edit Screen */}
         {user?.id && (
-          <div className="bg-gradient-to-r from-teal-600 to-teal-500 border-b border-teal-400">
-            <div className="px-4 py-4">
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="text-white">
-                  <h3 className="font-semibold text-lg">
+          <div className="bg-muted border-b border-border">
+            <div className="px-4 py-2">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-2 text-foreground">
+                  <Eye className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <span className="text-sm font-medium">
                     See how your profile will appear on your public page.
-                  </h3>
+                  </span>
                 </div>
                 <Button
                   asChild
-                  className="bg-white text-teal-600 hover:bg-teal-50 font-medium whitespace-nowrap"
+                  variant="outline"
+                  size="sm"
+                  className="whitespace-nowrap"
                 >
                   <a
                     href={`/profile/preview/${user.id}`}
