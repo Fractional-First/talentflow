@@ -78,36 +78,22 @@ const EditProfile = () => {
 
   return (
     <TooltipProvider>
-      <DashboardLayout>
-        {/* Preview Mode Banner on Edit Screen */}
-        {user?.id && (
-          <div className="bg-muted border-b border-border">
-            <div className="px-4 py-2">
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-2 text-foreground">
-                  <Eye className="h-4 w-4 text-muted-foreground shrink-0" />
-                  <span className="text-sm font-medium">
-                    See how your profile will appear on your public page.
-                  </span>
-                </div>
-                <Button
-                  asChild
-                  variant="outline"
-                  size="sm"
-                  className="whitespace-nowrap"
-                >
-                  <a
-                    href={`/profile/preview/${user.id}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Open Preview
-                  </a>
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
+      <DashboardLayout
+        headerActions={
+          user?.id ? (
+            <Button asChild variant="outline" size="sm" className="gap-2">
+              <a
+                href={`/profile/preview/${user.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Eye className="h-4 w-4" />
+                Open Preview
+              </a>
+            </Button>
+          ) : undefined
+        }
+      >
         <div ref={mainContentRef} className="max-w-6xl mx-auto space-y-6 p-6">
           {/* Header with explanatory text */}
           <div className="space-y-2">
