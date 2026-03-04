@@ -44,6 +44,8 @@ const EditProfile = () => {
     setPersonasActiveTab,
     toggleEdit,
     handleContinue,
+    handleSaveDraft,
+    isSavingDraft,
     handleInputChange,
     handleProfilePictureUpdate,
     retrySave,
@@ -510,9 +512,11 @@ const EditProfile = () => {
           isPublished={isPublished}
           isUpdatingPublishStatus={isUpdatingPublishStatus}
           isSubmitting={isSubmitting}
+          isSavingDraft={isSavingDraft}
           onRegenerateProfile={() => navigate("/create-profile")}
           onPublishToggle={handlePublishToggle}
           onSaveAndContinue={handleContinue}
+          onSaveDraft={handleSaveDraft}
           publicProfileUrl={publicProfileUrl}
           firstName={formData.name?.split(" ")[0]}
           onPublishConfirm={async () => {
