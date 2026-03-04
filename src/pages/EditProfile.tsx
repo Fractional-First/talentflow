@@ -86,8 +86,7 @@ const EditProfile = () => {
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="text-white">
                   <h3 className="font-semibold text-lg">
-                    Your profile is still in preview mode. See how it will
-                    appear on your public page before going live.
+                    See how your profile will appear on your public page.
                   </h3>
                 </div>
                 <Button
