@@ -1,4 +1,5 @@
 import { useRef, useState } from "react"
+import { supabase } from "@/integrations/supabase/client"
 import { useNavigate } from "react-router-dom"
 import { toast } from "@/hooks/use-toast"
 import { useGetUser } from "@/queries/auth/useGetUser"
@@ -15,6 +16,7 @@ export const useEditProfile = () => {
   const navigate = useNavigate()
   const { data: user } = useGetUser()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSavingDraft, setIsSavingDraft] = useState(false)
 
   // Fetch profile data using the query hook
   const {
@@ -135,6 +137,32 @@ export const useEditProfile = () => {
     })
   })
 
+  // Save draft without navigating
+  const handleSaveDraft = async () => {
+    if (!user?.id || !formData || Object.keys(formData).length === 0) return
+    setIsSavingDraft(true)
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ profile_data: formData as any })
+        .eq("id", user.id)
+      if (error) throw error
+      toast({
+        title: "Draft saved",
+        description: "Your profile changes have been saved.",
+      })
+    } catch (error) {
+      console.error("Error saving draft:", error)
+      toast({
+        title: "Save failed",
+        description: "Could not save your draft. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsSavingDraft(false)
+    }
+  }
+
   // Complete onboarding mutation
   const completeOnboardingMutation = useCompleteOnboarding()
   const handleContinue = async () => {
@@ -217,6 +245,7 @@ export const useEditProfile = () => {
   return {
     // Data
     user,
+    isSavingDraft,
     profileData,
     profileVersion,
     formData,
@@ -246,6 +275,7 @@ export const useEditProfile = () => {
     setPersonasActiveTab,
     toggleEdit,
     handleContinue,
+    handleSaveDraft,
     handleInputChange,
     handleProfilePictureUpdate,
     retrySave,
