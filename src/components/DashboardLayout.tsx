@@ -12,6 +12,7 @@ interface DashboardLayoutProps {
   currentStep?: number;
   className?: string;
   sidebar?: boolean;
+  headerActions?: ReactNode;
 }
 
 export function DashboardLayout({
@@ -19,7 +20,8 @@ export function DashboardLayout({
   steps,
   currentStep,
   className,
-  sidebar = false
+  sidebar = false,
+  headerActions
 }: DashboardLayoutProps) {
   const navigate = useNavigate();
   const [onboardingComplete, setOnboardingComplete] = useState(false);
@@ -66,6 +68,7 @@ export function DashboardLayout({
           </div>
 
           <div className="flex items-center space-x-2">
+            {headerActions}
             {onboardingComplete && window.location.pathname !== '/dashboard' && (
               <Button variant="outline" size="sm" onClick={() => navigate('/dashboard')} className="gap-2">
                 <Home className="h-4 w-4" />
