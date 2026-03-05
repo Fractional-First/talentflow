@@ -105,11 +105,11 @@ export function useAgreementStatus(): AgreementStatus {
               mobileCountryCode: row.mobile_country_code,
               mobileNumber: row.mobile_number,
               fullLegalName: row.full_legal_name,
-              residentialAddress: row.residential_address,
+              residentialAddress: row.residential_address as unknown as AcceptanceData["residentialAddress"],
               contractingType: row.contracting_type as "individual" | "entity",
               entityName: row.entity_name,
               entityRegistrationNumber: row.entity_registration_number,
-              entityAddress: row.entity_address,
+              entityAddress: row.entity_address as unknown as AcceptanceData["entityAddress"],
               entityConfirmed: row.entity_confirmed,
             }
           : null,
