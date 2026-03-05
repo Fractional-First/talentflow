@@ -57,7 +57,7 @@ export function DashboardLayout({
       {backgroundEffect}
 
       <header className="border-b border-border/40 bg-background/80 backdrop-blur-md sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <img 
               src="/lovable-uploads/daefe55a-8953-4582-8fc8-12a66755ac2a.png" 
