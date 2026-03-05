@@ -78,15 +78,8 @@ export const StickyActionBar = ({
                   : "Unpublish"}
               </Button>
 
-              <Button
-                variant="outline"
-                onClick={onSaveDraft}
-                disabled={isSavingDraft}
-                className="flex-1"
-                size="sm"
-              >
-                {isSavingDraft ? "..." : "Save Draft"}
-              </Button>
+
+
 
               <Button
                 onClick={onSaveAndContinue}
@@ -133,14 +126,8 @@ export const StickyActionBar = ({
                   : "Unpublish"}
               </Button>
 
-              <Button
-                variant="outline"
-                onClick={onSaveDraft}
-                disabled={isSavingDraft}
-                className="shrink-0"
-              >
-                {isSavingDraft ? "Saving..." : "Save Draft"}
-              </Button>
+
+
 
               <Button
                 onClick={onSaveAndContinue}
