@@ -69,12 +69,6 @@ export function DashboardLayout({
 
           <div className="flex items-center space-x-2">
             {headerActions}
-            {onboardingComplete && window.location.pathname !== '/dashboard' && (
-              <Button variant="outline" size="sm" onClick={() => navigate('/dashboard')} className="gap-2">
-                <Home className="h-4 w-4" />
-                Back to Dashboard
-              </Button>
-            )}
           </div>
         </div>
       </header>
