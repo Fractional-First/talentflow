@@ -96,7 +96,7 @@ const EditProfile = () => {
       >
         <div ref={mainContentRef} className="max-w-6xl mx-auto space-y-6 p-6">
           {/* Header with explanatory text */}
-          <div className="space-y-2">
+          <div className="space-y-0.5">
             <p className="text-sm text-gray-600 text-center">
               This summary is curated based on your experience and skills. Feel
               free to refine it to better reflect your voice by clicking on the
