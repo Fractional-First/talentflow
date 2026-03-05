@@ -100,7 +100,7 @@ const EditProfile = () => {
             <p className="text-sm text-gray-600 text-center">
               This summary is curated based on your experience and skills. Feel
               free to refine it to better reflect your voice by clicking on the
-              edit icon <Edit className="h-4 w-4 inline-block ml-1" />.
+              edit icon <Edit className="h-4 w-4 inline-block ml-1" />. Your edits will be auto-saved.
             </p>
 
             {/* Auto-save Status positioned below */}
