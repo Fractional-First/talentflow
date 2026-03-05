@@ -78,24 +78,23 @@ const EditProfile = () => {
 
   return (
     <TooltipProvider>
-      <DashboardLayout>
+      <DashboardLayout
+        headerActions={
+          user?.id ? (
+            <Button asChild variant="outline" size="sm" className="gap-2">
+              <a
+                href={`/profile/preview/${user.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Eye className="h-4 w-4" />
+                Open Preview
+              </a>
+            </Button>
+          ) : undefined
+        }
+      >
         <div ref={mainContentRef} className="max-w-6xl mx-auto space-y-6 p-6">
-          {/* Open Preview aligned to content */}
-          {user?.id && (
-            <div className="flex justify-end">
-              <Button asChild variant="outline" size="sm" className="gap-2">
-                <a
-                  href={`/profile/preview/${user.id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Eye className="h-4 w-4" />
-                  Open Preview
-                </a>
-              </Button>
-            </div>
-          )}
-
           {/* Header with explanatory text */}
           <div className="space-y-2">
             <p className="text-sm text-gray-600 text-center">
