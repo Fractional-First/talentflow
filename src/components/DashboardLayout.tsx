@@ -1,10 +1,8 @@
 
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { OnboardingProgress, Step } from './OnboardingProgress';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Home } from 'lucide-react';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -12,6 +10,7 @@ interface DashboardLayoutProps {
   currentStep?: number;
   className?: string;
   sidebar?: boolean;
+  headerActions?: ReactNode;
 }
 
 export function DashboardLayout({
@@ -19,17 +18,10 @@ export function DashboardLayout({
   steps,
   currentStep,
   className,
-  sidebar = false
+  sidebar = false,
+  headerActions
 }: DashboardLayoutProps) {
   const navigate = useNavigate();
-  const [onboardingComplete, setOnboardingComplete] = useState(false);
-
-  useEffect(() => {
-    const onboardingStatus = localStorage.getItem('onboardingComplete');
-    if (onboardingStatus === 'true') {
-      setOnboardingComplete(true);
-    }
-  }, []);
 
   const backgroundEffect = (
     <div className="fixed inset-0 -z-10 overflow-hidden">
@@ -66,12 +58,7 @@ export function DashboardLayout({
           </div>
 
           <div className="flex items-center space-x-2">
-            {onboardingComplete && window.location.pathname !== '/dashboard' && (
-              <Button variant="outline" size="sm" onClick={() => navigate('/dashboard')} className="gap-2">
-                <Home className="h-4 w-4" />
-                Back to Dashboard
-              </Button>
-            )}
+            {headerActions}
           </div>
         </div>
       </header>

@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { useEditProfile } from "@/hooks/useEditProfile"
 import { useIsMobile } from "@/hooks/use-mobile"
-import { Edit } from "lucide-react"
+import { Edit, Eye } from "lucide-react"
 import { TooltipProvider } from "@/components/ui/tooltip"
 
 const EditProfile = () => {
@@ -76,41 +76,32 @@ const EditProfile = () => {
 
   return (
     <TooltipProvider>
-      <DashboardLayout>
-        {/* Preview Mode Banner on Edit Screen */}
-        {user?.id && (
-          <div className="bg-gradient-to-r from-teal-600 to-teal-500 border-b border-teal-400">
-            <div className="px-4 py-4">
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="text-white">
-                  <h3 className="font-semibold text-lg">
-                    Your profile is still in preview mode. See how it will
-                    appear on your public page before going live.
-                  </h3>
-                </div>
-                <Button
-                  asChild
-                  className="bg-white text-teal-600 hover:bg-teal-50 font-medium whitespace-nowrap"
-                >
-                  <a
-                    href={`/profile/preview/${user.id}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Open Preview
-                  </a>
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
+      <DashboardLayout
+        headerActions={
+          user?.id ? (
+            <Button variant="outline" size="sm" asChild className="gap-2">
+              <a
+                href={`/profile/preview/${user.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Eye className="h-4 w-4" />
+                Open Preview
+              </a>
+            </Button>
+          ) : undefined
+        }
+      >
         <div ref={mainContentRef} className="max-w-6xl mx-auto space-y-6 p-6">
           {/* Header with explanatory text */}
-          <div className="space-y-2">
+          <div className="space-y-0.5">
             <p className="text-sm text-gray-600 text-center">
               This summary is curated based on your experience and skills. Feel
               free to refine it to better reflect your voice by clicking on the
               edit icon <Edit className="h-4 w-4 inline-block ml-1" />.
+            </p>
+            <p className="text-xs text-muted-foreground text-center">
+              Your edits will be auto-saved.
             </p>
 
             {/* Auto-save Status positioned below */}
