@@ -7,7 +7,7 @@ import { useCountries } from "@/queries/useCountries"
 
 export interface RegisteredAddress {
   addressLine1: string
-  addressLine2: string
+  addressLine2?: string
   city: string
   stateProvince: string
   postalCode: string
