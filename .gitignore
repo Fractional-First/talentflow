@@ -37,3 +37,10 @@ dist-ssr
 # Supabase local state
 supabase/.temp/
 supabase/.branches/
+
+# Next.js build cache (not a Next.js project — created by ff-client-portal dev server)
+.next/
+
+# Ralph verification screenshots
+screenshots/
+next-env.d.ts

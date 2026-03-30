@@ -47,3 +47,16 @@ CREATE POLICY "Users can update own client profile"
 CREATE POLICY "Users can insert own client profile"
   ON public.client_profiles FOR INSERT
   WITH CHECK (user_id = auth.uid());
+
+-- Organizations RLS policies (deferred from organizations migration because they reference client_profiles)
+CREATE POLICY "Users can view own organization"
+  ON public.organizations FOR SELECT
+  USING (id IN (
+    SELECT organization_id FROM public.client_profiles WHERE user_id = auth.uid()
+  ));
+
+CREATE POLICY "Users can update own organization"
+  ON public.organizations FOR UPDATE
+  USING (id IN (
+    SELECT organization_id FROM public.client_profiles WHERE user_id = auth.uid()
+  ));

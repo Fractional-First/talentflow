@@ -21,20 +21,8 @@ CREATE TRIGGER update_organizations_updated_at
   FOR EACH ROW
   EXECUTE FUNCTION public.update_updated_at_column();
 
--- RLS: users can see/edit orgs they belong to (via client_profiles FK)
+-- Enable RLS (policies that reference client_profiles are in the next migration)
 ALTER TABLE public.organizations ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Users can view own organization"
-  ON public.organizations FOR SELECT
-  USING (id IN (
-    SELECT organization_id FROM public.client_profiles WHERE user_id = auth.uid()
-  ));
-
-CREATE POLICY "Users can update own organization"
-  ON public.organizations FOR UPDATE
-  USING (id IN (
-    SELECT organization_id FROM public.client_profiles WHERE user_id = auth.uid()
-  ));
 
 -- INSERT is allowed for any authenticated user (they link themselves during onboarding)
 CREATE POLICY "Authenticated users can create organizations"
