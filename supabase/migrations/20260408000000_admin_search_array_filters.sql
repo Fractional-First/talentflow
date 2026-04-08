@@ -1,6 +1,5 @@
--- Admin Search: accept text[] arrays for status_filter and type_filter
+-- Admin Search: accept text[] arrays for status, type, location, and role filters.
 -- This enables multi-select faceted filtering in the admin dashboard.
--- Single-value calls still work: passing ARRAY['value'] matches = 'value'.
 
 -- Must drop old signature first: changing param types (text → text[]) creates
 -- a new overload rather than replacing. Two functions with the same name causes
@@ -13,6 +12,8 @@ CREATE OR REPLACE FUNCTION public.search_candidates_admin(
   search_query text DEFAULT NULL,
   status_filter text[] DEFAULT NULL,
   type_filter text[] DEFAULT NULL,
+  location_filter text[] DEFAULT NULL,
+  role_filter text[] DEFAULT NULL,
   has_agreement boolean DEFAULT NULL,
   open_for_work boolean DEFAULT NULL,
   page_number integer DEFAULT 1,
@@ -87,6 +88,8 @@ BEGIN
     ))
     AND (status_filter IS NULL OR p.onboarding_status::text = ANY(status_filter))
     AND (type_filter IS NULL OR p.profile_type::text = ANY(type_filter))
+    AND (location_filter IS NULL OR p.profile_data->>'location' = ANY(location_filter))
+    AND (role_filter IS NULL OR p.profile_data->>'role' = ANY(role_filter))
     AND (has_agreement IS NULL OR (
       CASE WHEN has_agreement THEN
         EXISTS (SELECT 1 FROM agreement_acceptances aa WHERE aa.profile_id = p.id)
@@ -99,6 +102,9 @@ BEGIN
     ));
 
   -- Fetch page with dynamic ORDER BY.
+  -- Positional params: $1=total_count, $2=page_number, $3=page_size,
+  -- $4=search_query, $5=status_filter, $6=type_filter, $7=location_filter,
+  -- $8=role_filter, $9=has_agreement, $10=open_for_work, $11=offset_val
   EXECUTE format(
     'SELECT json_build_object(
       ''data'', COALESCE(json_agg(row_to_json(t)), ''[]''::json),
@@ -143,24 +149,45 @@ BEGIN
         ))
         AND ($5 IS NULL OR p.onboarding_status::text = ANY($5))
         AND ($6 IS NULL OR p.profile_type::text = ANY($6))
-        AND ($7 IS NULL OR (
-          CASE WHEN $7 THEN
+        AND ($7 IS NULL OR p.profile_data->>''location'' = ANY($7))
+        AND ($8 IS NULL OR p.profile_data->>''role'' = ANY($8))
+        AND ($9 IS NULL OR (
+          CASE WHEN $9 THEN
             EXISTS (SELECT 1 FROM agreement_acceptances aa WHERE aa.profile_id = p.id)
           ELSE
             NOT EXISTS (SELECT 1 FROM agreement_acceptances aa WHERE aa.profile_id = p.id)
           END
         ))
-        AND ($8 IS NULL OR EXISTS (
-          SELECT 1 FROM fractional_preferences fp WHERE fp.user_id = p.id AND fp.open_for_work = $8
+        AND ($10 IS NULL OR EXISTS (
+          SELECT 1 FROM fractional_preferences fp WHERE fp.user_id = p.id AND fp.open_for_work = $10
         ))
       ORDER BY %s
-      LIMIT $3 OFFSET $9
+      LIMIT $3 OFFSET $11
     ) t',
     order_clause
   )
   INTO result
-  USING total_count, page_number, page_size, search_query, status_filter, type_filter, has_agreement, open_for_work, offset_val;
+  USING total_count, page_number, page_size, search_query, status_filter, type_filter, location_filter, role_filter, has_agreement, open_for_work, offset_val;
 
   RETURN result;
 END;
 $function$;
+
+-- Lightweight RPC to return distinct location and role values for faceted filter options.
+-- Cached client-side (5 min staleTime) so this runs rarely.
+CREATE OR REPLACE FUNCTION public.get_candidate_facets()
+RETURNS json
+LANGUAGE sql
+SECURITY DEFINER
+AS $$
+  SELECT json_build_object(
+    'locations', (
+      SELECT COALESCE(json_agg(loc ORDER BY loc), '[]'::json)
+      FROM (SELECT DISTINCT profile_data->>'location' AS loc FROM profiles WHERE profile_data->>'location' IS NOT NULL AND profile_data->>'location' != '') sub
+    ),
+    'roles', (
+      SELECT COALESCE(json_agg(r ORDER BY r), '[]'::json)
+      FROM (SELECT DISTINCT profile_data->>'role' AS r FROM profiles WHERE profile_data->>'role' IS NOT NULL AND profile_data->>'role' != '') sub
+    )
+  );
+$$;
