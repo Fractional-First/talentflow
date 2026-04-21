@@ -64,13 +64,15 @@ const Agreement = () => {
   useEffect(() => {
     if (!acceptanceData) return
     setPersonalDetails({
-      fullLegalName: acceptanceData.fullLegalName,
+      fullLegalName: acceptanceData.fullLegalName ?? "",
       identificationNumber: "",
-      residentialAddress: acceptanceData.residentialAddress,
+      residentialAddress: acceptanceData.residentialAddress ?? {
+        addressLine1: "", addressLine2: "", city: "", stateProvince: "", postalCode: "", country: "",
+      },
     })
-    setContactEmail(acceptanceData.contactEmail)
-    setMobileCountryCode(acceptanceData.mobileCountryCode)
-    setMobileNumber(acceptanceData.mobileNumber)
+    setContactEmail(acceptanceData.contactEmail ?? "")
+    setMobileCountryCode(acceptanceData.mobileCountryCode ?? "")
+    setMobileNumber(acceptanceData.mobileNumber ?? "")
     setContractingType(acceptanceData.contractingType)
     if (acceptanceData.contractingType === "entity") {
       setEntityName(acceptanceData.entityName ?? "")
