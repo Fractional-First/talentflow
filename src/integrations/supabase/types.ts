@@ -30,11 +30,12 @@ export type Database = {
           ip_address: string | null
           mobile_country_code: string
           mobile_number: string
-          profile_id: string
+          profile_id: string | null
           residential_address: Json
           signature_name: string
           updated_at: string
           user_agent: string | null
+          user_id: string
         }
         Insert: {
           accepted_at?: string
@@ -51,11 +52,12 @@ export type Database = {
           ip_address?: string | null
           mobile_country_code: string
           mobile_number: string
-          profile_id: string
+          profile_id?: string | null
           residential_address: Json
           signature_name: string
           updated_at?: string
           user_agent?: string | null
+          user_id: string
         }
         Update: {
           accepted_at?: string
@@ -72,11 +74,12 @@ export type Database = {
           ip_address?: string | null
           mobile_country_code?: string
           mobile_number?: string
-          profile_id?: string
+          profile_id?: string | null
           residential_address?: Json
           signature_name?: string
           updated_at?: string
           user_agent?: string | null
+          user_id?: string
         }
         Relationships: [
           {
@@ -84,6 +87,65 @@ export type Database = {
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      client_profiles: {
+        Row: {
+          company_email: string | null
+          created_at: string | null
+          first_name: string | null
+          id: string
+          is_onboarded: boolean | null
+          last_name: string | null
+          mobile_number: string | null
+          organization_id: string | null
+          social_links: Json | null
+          updated_at: string | null
+          user_designation: string | null
+          user_id: string
+          user_location: string | null
+          user_name: string | null
+        }
+        Insert: {
+          company_email?: string | null
+          created_at?: string | null
+          first_name?: string | null
+          id?: string
+          is_onboarded?: boolean | null
+          last_name?: string | null
+          mobile_number?: string | null
+          organization_id?: string | null
+          social_links?: Json | null
+          updated_at?: string | null
+          user_designation?: string | null
+          user_id: string
+          user_location?: string | null
+          user_name?: string | null
+        }
+        Update: {
+          company_email?: string | null
+          created_at?: string | null
+          first_name?: string | null
+          id?: string
+          is_onboarded?: boolean | null
+          last_name?: string | null
+          mobile_number?: string | null
+          organization_id?: string | null
+          social_links?: Json | null
+          updated_at?: string | null
+          user_designation?: string | null
+          user_id?: string
+          user_location?: string | null
+          user_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_profiles_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -443,6 +505,45 @@ export type Database = {
         }
         Relationships: []
       }
+      linkedin_connections: {
+        Row: {
+          company: string | null
+          connected_on: string | null
+          email: string | null
+          first_name: string | null
+          id: string
+          imported_at: string
+          last_name: string | null
+          linkedin_username: string
+          owner: string
+          position: string | null
+        }
+        Insert: {
+          company?: string | null
+          connected_on?: string | null
+          email?: string | null
+          first_name?: string | null
+          id?: string
+          imported_at?: string
+          last_name?: string | null
+          linkedin_username: string
+          owner: string
+          position?: string | null
+        }
+        Update: {
+          company?: string | null
+          connected_on?: string | null
+          email?: string | null
+          first_name?: string | null
+          id?: string
+          imported_at?: string
+          last_name?: string | null
+          linkedin_username?: string
+          owner?: string
+          position?: string | null
+        }
+        Relationships: []
+      }
       linkedin_profiles: {
         Row: {
           city: string | null
@@ -570,6 +671,30 @@ export type Database = {
             referencedColumns: ["alpha2_code"]
           },
         ]
+      }
+      organizations: {
+        Row: {
+          company_url: string | null
+          created_at: string | null
+          id: string
+          metadata: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          company_url?: string | null
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          company_url?: string | null
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       profile_documents: {
         Row: {
@@ -936,6 +1061,7 @@ export type Database = {
       }
       get_candidate_admin: { Args: { candidate_id: string }; Returns: Json }
       get_candidate_details: { Args: { p_name: string }; Returns: Json }
+      get_candidate_facets: { Args: never; Returns: Json }
       get_current_agreement_status: {
         Args: { p_current_version: string }
         Returns: {
@@ -960,9 +1086,11 @@ export type Database = {
       get_profiles_by_ids: {
         Args: { p_ids: string[] }
         Returns: {
+          anon_slug: string
           email: string
           first_name: string
           id: string
+          ispublished: boolean
           last_name: string
           linkedinurl: string
           profile_data: Json
@@ -1001,6 +1129,25 @@ export type Database = {
           profile_data: Json
           profile_slug: string
           profile_version: string
+        }[]
+      }
+      linkedin_username_from_url: { Args: { url: string }; Returns: string }
+      list_client_signatories_admin: {
+        Args: never
+        Returns: {
+          agreement_version: string
+          company_logo: string
+          company_name: string
+          company_url: string
+          contracting_type: string
+          entity_name: string
+          organization_id: string
+          signatory_email: string
+          signatory_name: string
+          signatory_user_id: string
+          signed_at: string
+          signed_up_at: string
+          status: string
         }[]
       }
       list_job_descriptions: {
@@ -1048,11 +1195,12 @@ export type Database = {
               ip_address: string | null
               mobile_country_code: string
               mobile_number: string
-              profile_id: string
+              profile_id: string | null
               residential_address: Json
               signature_name: string
               updated_at: string
               user_agent: string | null
+              user_id: string
             }
             SetofOptions: {
               from: "*"
@@ -1093,11 +1241,12 @@ export type Database = {
               ip_address: string | null
               mobile_country_code: string
               mobile_number: string
-              profile_id: string
+              profile_id: string | null
               residential_address: Json
               signature_name: string
               updated_at: string
               user_agent: string | null
+              user_id: string
             }
             SetofOptions: {
               from: "*"
@@ -1125,15 +1274,18 @@ export type Database = {
           }
         | {
             Args: {
+              connected_to?: string
               has_agreement?: boolean
+              location_filter?: string[]
               open_for_work?: boolean
               page_number?: number
               page_size?: number
+              role_filter?: string[]
               search_query?: string
               sort_by?: string
               sort_dir?: string
-              status_filter?: string
-              type_filter?: string
+              status_filter?: string[]
+              type_filter?: string[]
             }
             Returns: Json
           }
