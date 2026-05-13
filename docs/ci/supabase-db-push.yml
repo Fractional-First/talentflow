@@ -1,14 +1,17 @@
 name: Supabase DB Push
 
-# Apply Supabase migrations to production whenever a PR that changes
-# `supabase/migrations/**` is merged into `main`. Also exposes a manual
-# trigger with an optional dry-run flag for safe inspection.
+# Apply Supabase migrations to the production project whenever a commit
+# landing on `main` touches `supabase/migrations/**`. Also exposes a manual
+# `workflow_dispatch` trigger with an optional dry-run flag for inspection.
+#
+# The Supabase project ref is read from `supabase/config.toml` (`project_id`)
+# at runtime, so the workflow tracks whatever the repo is linked to and there
+# is no separate `SUPABASE_PROJECT_REF` secret to keep in sync.
 #
 # Required repo secrets (Settings → Secrets and variables → Actions):
 #   SUPABASE_ACCESS_TOKEN  — personal access token from
 #                            https://supabase.com/dashboard/account/tokens
-#   SUPABASE_DB_PASSWORD   — production DB password for project
-#                            dtyugokvlksnatftpucm
+#   SUPABASE_DB_PASSWORD   — production DB password for the linked project
 
 on:
   push:
@@ -16,6 +19,7 @@ on:
       - main
     paths:
       - "supabase/migrations/**"
+      - "supabase/config.toml"
       - ".github/workflows/supabase-db-push.yml"
 
   workflow_dispatch:
@@ -41,7 +45,6 @@ jobs:
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
-      SUPABASE_PROJECT_ID: dtyugokvlksnatftpucm
 
     steps:
       - name: Checkout repository
@@ -51,6 +54,18 @@ jobs:
         uses: supabase/setup-cli@v1
         with:
           version: latest
+
+      - name: Resolve project ref from supabase/config.toml
+        id: project
+        run: |
+          set -euo pipefail
+          ref=$(awk -F' *= *' '$1=="project_id"{gsub(/"/,"",$2); print $2; exit}' supabase/config.toml)
+          if [ -z "${ref:-}" ]; then
+            echo "::error::Could not read project_id from supabase/config.toml"
+            exit 1
+          fi
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+          echo "Resolved Supabase project ref: $ref"
 
       - name: Verify required secrets are set
         run: |
@@ -66,12 +81,11 @@ jobs:
           if [ "$missing" -ne 0 ]; then
             exit 1
           fi
-          echo "Project ref: $SUPABASE_PROJECT_ID"
 
       - name: Link Supabase project
-        run: supabase link --project-ref "$SUPABASE_PROJECT_ID"
+        run: supabase link --project-ref "${{ steps.project.outputs.ref }}"
 
-      - name: List pending migrations
+      - name: List migrations (local vs remote)
         run: supabase migration list --linked
 
       - name: Dry-run db push
@@ -84,13 +98,15 @@ jobs:
       - name: Summary
         if: always()
         run: |
-          if [ "${{ inputs.dry_run }}" = "true" ]; then
-            echo "## Supabase DB Push (dry-run)" >> "$GITHUB_STEP_SUMMARY"
-            echo "" >> "$GITHUB_STEP_SUMMARY"
-            echo "Dry-run only. No migrations were applied." >> "$GITHUB_STEP_SUMMARY"
-          else
-            echo "## Supabase DB Push" >> "$GITHUB_STEP_SUMMARY"
-            echo "" >> "$GITHUB_STEP_SUMMARY"
-            echo "Project: \`$SUPABASE_PROJECT_ID\`" >> "$GITHUB_STEP_SUMMARY"
-            echo "Triggered by: \`${{ github.event_name }}\`" >> "$GITHUB_STEP_SUMMARY"
-          fi
+          {
+            if [ "${{ inputs.dry_run }}" = "true" ]; then
+              echo "## Supabase DB Push (dry-run)"
+              echo ""
+              echo "Dry-run only. No migrations were applied."
+            else
+              echo "## Supabase DB Push"
+              echo ""
+              echo "Project: \`${{ steps.project.outputs.ref }}\`"
+              echo "Triggered by: \`${{ github.event_name }}\`"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
