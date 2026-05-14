@@ -10,9 +10,9 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: "Dry-run only (no changes applied)"
+        description: "Dry-run only (no changes applied). Defaults to true for manual dispatch — set to false to actually apply."
         required: false
-        default: "false"
+        default: "true"
         type: choice
         options:
           - "true"

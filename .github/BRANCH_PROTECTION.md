@@ -29,9 +29,14 @@ This file documents the GitHub settings that must exist outside the repo for the
 
 Used by workflows that run on every PR (not just merges to `main`):
 
-- `VITE_SUPABASE_URL` — public Supabase project URL, required by the Vite build step in `ci.yml`
-- `VITE_SUPABASE_ANON_KEY` — public anon key, required by the Vite build step in `ci.yml`
 - `OPENROUTER_API_KEY` — OpenRouter API key, used by `claude-review.yml` to call Claude on every PR
+
+The Supabase URL and anon key are currently hardcoded in
+`src/integrations/supabase/client.ts` and not read from env, so the Vite
+build step in `ci.yml` does not need them. If client.ts is later
+switched to read `import.meta.env.VITE_SUPABASE_*`, add those values
+back here as repository secrets and reintroduce the corresponding `env:`
+block in `ci.yml`'s Build step.
 
 ## Data-loss posture
 
