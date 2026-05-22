@@ -14,6 +14,142 @@ export type Database = {
   }
   public: {
     Tables: {
+      agreement_acceptances: {
+        Row: {
+          accepted_at: string
+          agreement_version: string
+          contact_email: string
+          contracting_type: string
+          created_at: string
+          entity_address: Json | null
+          entity_confirmed: boolean | null
+          entity_name: string | null
+          entity_registration_number: string | null
+          full_legal_name: string
+          id: string
+          ip_address: string | null
+          mobile_country_code: string
+          mobile_number: string
+          profile_id: string | null
+          residential_address: Json
+          signature_name: string
+          updated_at: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          accepted_at?: string
+          agreement_version: string
+          contact_email: string
+          contracting_type: string
+          created_at?: string
+          entity_address?: Json | null
+          entity_confirmed?: boolean | null
+          entity_name?: string | null
+          entity_registration_number?: string | null
+          full_legal_name: string
+          id?: string
+          ip_address?: string | null
+          mobile_country_code: string
+          mobile_number: string
+          profile_id?: string | null
+          residential_address: Json
+          signature_name: string
+          updated_at?: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          accepted_at?: string
+          agreement_version?: string
+          contact_email?: string
+          contracting_type?: string
+          created_at?: string
+          entity_address?: Json | null
+          entity_confirmed?: boolean | null
+          entity_name?: string | null
+          entity_registration_number?: string | null
+          full_legal_name?: string
+          id?: string
+          ip_address?: string | null
+          mobile_country_code?: string
+          mobile_number?: string
+          profile_id?: string | null
+          residential_address?: Json
+          signature_name?: string
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agreement_acceptances_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      client_profiles: {
+        Row: {
+          company_email: string | null
+          created_at: string | null
+          first_name: string | null
+          id: string
+          is_onboarded: boolean | null
+          last_name: string | null
+          mobile_number: string | null
+          organization_id: string | null
+          social_links: Json | null
+          updated_at: string | null
+          user_designation: string | null
+          user_id: string
+          user_location: string | null
+          user_name: string | null
+        }
+        Insert: {
+          company_email?: string | null
+          created_at?: string | null
+          first_name?: string | null
+          id?: string
+          is_onboarded?: boolean | null
+          last_name?: string | null
+          mobile_number?: string | null
+          organization_id?: string | null
+          social_links?: Json | null
+          updated_at?: string | null
+          user_designation?: string | null
+          user_id: string
+          user_location?: string | null
+          user_name?: string | null
+        }
+        Update: {
+          company_email?: string | null
+          created_at?: string | null
+          first_name?: string | null
+          id?: string
+          is_onboarded?: boolean | null
+          last_name?: string | null
+          mobile_number?: string | null
+          organization_id?: string | null
+          social_links?: Json | null
+          updated_at?: string | null
+          user_designation?: string | null
+          user_id?: string
+          user_location?: string | null
+          user_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_profiles_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       countries: {
         Row: {
           alpha2_code: string
@@ -336,6 +472,78 @@ export type Database = {
         }
         Relationships: []
       }
+      job_descriptions: {
+        Row: {
+          client_name: string | null
+          created_at: string
+          google_doc_url: string | null
+          id: string
+          jd_data: Json
+          slug: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          client_name?: string | null
+          created_at?: string
+          google_doc_url?: string | null
+          id?: string
+          jd_data?: Json
+          slug: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          client_name?: string | null
+          created_at?: string
+          google_doc_url?: string | null
+          id?: string
+          jd_data?: Json
+          slug?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      linkedin_connections: {
+        Row: {
+          company: string | null
+          connected_on: string | null
+          email: string | null
+          first_name: string | null
+          id: string
+          imported_at: string
+          last_name: string | null
+          linkedin_username: string
+          owner: string
+          position: string | null
+        }
+        Insert: {
+          company?: string | null
+          connected_on?: string | null
+          email?: string | null
+          first_name?: string | null
+          id?: string
+          imported_at?: string
+          last_name?: string | null
+          linkedin_username: string
+          owner: string
+          position?: string | null
+        }
+        Update: {
+          company?: string | null
+          connected_on?: string | null
+          email?: string | null
+          first_name?: string | null
+          id?: string
+          imported_at?: string
+          last_name?: string | null
+          linkedin_username?: string
+          owner?: string
+          position?: string | null
+        }
+        Relationships: []
+      }
       linkedin_profiles: {
         Row: {
           city: string | null
@@ -463,6 +671,30 @@ export type Database = {
             referencedColumns: ["alpha2_code"]
           },
         ]
+      }
+      organizations: {
+        Row: {
+          company_url: string | null
+          created_at: string | null
+          id: string
+          metadata: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          company_url?: string | null
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          company_url?: string | null
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       profile_documents: {
         Row: {
@@ -797,8 +1029,21 @@ export type Database = {
         }
         Returns: Json
       }
+      create_job_description: {
+        Args: {
+          p_client_name?: string
+          p_google_doc_url?: string
+          p_jd_data: Json
+          p_status?: string
+        }
+        Returns: Json
+      }
       generate_unique_anon_slug: {
         Args: { p_anon_data: Json; p_user_id: string }
+        Returns: string
+      }
+      generate_unique_jd_slug: {
+        Args: { p_location: string; p_role_title: string }
         Returns: string
       }
       generate_unique_profile_slug: {
@@ -810,7 +1055,58 @@ export type Database = {
         Returns: {
           anon_profile_data: Json
           anon_slug: string
+          profile_type: string
           profile_version: string
+        }[]
+      }
+      get_candidate_admin: { Args: { candidate_id: string }; Returns: Json }
+      get_candidate_details: { Args: { p_name: string }; Returns: Json }
+      get_candidate_facets: { Args: never; Returns: Json }
+      get_current_agreement_status: {
+        Args: { p_current_version: string }
+        Returns: {
+          accepted_at: string
+          agreement_version: string
+          contact_email: string
+          contracting_type: string
+          entity_address: Json
+          entity_confirmed: boolean
+          entity_name: string
+          entity_registration_number: string
+          full_legal_name: string
+          is_accepted: boolean
+          is_current_version: boolean
+          mobile_country_code: string
+          mobile_number: string
+          residential_address: Json
+          signature_name: string
+        }[]
+      }
+      get_job_description: { Args: { p_slug: string }; Returns: Json }
+      get_profiles_by_ids: {
+        Args: { p_ids: string[] }
+        Returns: {
+          anon_slug: string
+          email: string
+          first_name: string
+          id: string
+          ispublished: boolean
+          last_name: string
+          linkedinurl: string
+          profile_data: Json
+          profile_slug: string
+          profile_type: string
+        }[]
+      }
+      get_profiles_by_slugs: {
+        Args: { p_slugs: string[] }
+        Returns: {
+          email: string
+          first_name: string
+          last_name: string
+          linkedinurl: string
+          profile_data: Json
+          profile_slug: string
         }[]
       }
       get_public_profile: {
@@ -835,6 +1131,29 @@ export type Database = {
           profile_version: string
         }[]
       }
+      linkedin_username_from_url: { Args: { url: string }; Returns: string }
+      list_client_signatories_admin: {
+        Args: never
+        Returns: {
+          agreement_version: string
+          company_logo: string
+          company_name: string
+          company_url: string
+          contracting_type: string
+          entity_name: string
+          organization_id: string
+          signatory_email: string
+          signatory_name: string
+          signatory_user_id: string
+          signed_at: string
+          signed_up_at: string
+          status: string
+        }[]
+      }
+      list_job_descriptions: {
+        Args: { p_limit?: number; p_status?: string }
+        Returns: Json
+      }
       match_documents: {
         Args: { filter?: Json; match_count?: number; query_embedding: string }
         Returns: {
@@ -844,8 +1163,144 @@ export type Database = {
           similarity: number
         }[]
       }
+      record_agreement_acceptance:
+        | {
+            Args: {
+              p_agreement_version: string
+              p_contact_email: string
+              p_contracting_type: string
+              p_entity_address?: Json
+              p_entity_confirmed?: boolean
+              p_entity_name?: string
+              p_entity_registration_number?: string
+              p_full_legal_name: string
+              p_mobile_country_code: string
+              p_mobile_number: string
+              p_residential_address: Json
+              p_signature_name: string
+              p_user_agent?: string
+            }
+            Returns: {
+              accepted_at: string
+              agreement_version: string
+              contact_email: string
+              contracting_type: string
+              created_at: string
+              entity_address: Json | null
+              entity_confirmed: boolean | null
+              entity_name: string | null
+              entity_registration_number: string | null
+              full_legal_name: string
+              id: string
+              ip_address: string | null
+              mobile_country_code: string
+              mobile_number: string
+              profile_id: string | null
+              residential_address: Json
+              signature_name: string
+              updated_at: string
+              user_agent: string | null
+              user_id: string
+            }
+            SetofOptions: {
+              from: "*"
+              to: "agreement_acceptances"
+              isOneToOne: true
+              isSetofReturn: false
+            }
+          }
+        | {
+            Args: {
+              p_agreement_version: string
+              p_contact_email: string
+              p_contracting_type: string
+              p_entity_address?: Json
+              p_entity_confirmed?: boolean
+              p_entity_name?: string
+              p_entity_registration_number?: string
+              p_full_legal_name: string
+              p_ip_address?: string
+              p_mobile_country_code: string
+              p_mobile_number: string
+              p_residential_address: Json
+              p_signature_name: string
+              p_user_agent?: string
+            }
+            Returns: {
+              accepted_at: string
+              agreement_version: string
+              contact_email: string
+              contracting_type: string
+              created_at: string
+              entity_address: Json | null
+              entity_confirmed: boolean | null
+              entity_name: string | null
+              entity_registration_number: string | null
+              full_legal_name: string
+              id: string
+              ip_address: string | null
+              mobile_country_code: string
+              mobile_number: string
+              profile_id: string | null
+              residential_address: Json
+              signature_name: string
+              updated_at: string
+              user_agent: string | null
+              user_id: string
+            }
+            SetofOptions: {
+              from: "*"
+              to: "agreement_acceptances"
+              isOneToOne: true
+              isSetofReturn: false
+            }
+          }
       save_linkedin_profiles: {
         Args: { p_profiles: Json; p_search_query?: string }
+        Returns: Json
+      }
+      search_candidates_admin:
+        | {
+            Args: {
+              has_agreement?: boolean
+              open_for_work?: boolean
+              page_number?: number
+              page_size?: number
+              search_query?: string
+              status_filter?: string
+              type_filter?: string
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              connected_to?: string
+              has_agreement?: boolean
+              location_filter?: string[]
+              open_for_work?: boolean
+              page_number?: number
+              page_size?: number
+              role_filter?: string[]
+              search_query?: string
+              sort_by?: string
+              sort_dir?: string
+              status_filter?: string[]
+              type_filter?: string[]
+            }
+            Returns: Json
+          }
+      update_job_description: {
+        Args: {
+          p_client_name?: string
+          p_google_doc_url?: string
+          p_jd_data: Json
+          p_slug: string
+          p_status?: string
+        }
+        Returns: Json
+      }
+      update_profile_picture: {
+        Args: { p_picture_url: string; p_profile_id: string }
         Returns: Json
       }
     }
