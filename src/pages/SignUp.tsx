@@ -66,6 +66,9 @@ const SignUp = () => {
       navigate(`/check-email?email=${encodeURIComponent(email)}`)
     } catch (error: any) {
       toast.error(error.message || "Sign up failed")
+      if (error.code === "user_already_exists") {
+        navigate(`/login?email=${encodeURIComponent(email)}`)
+      }
     }
   }
 

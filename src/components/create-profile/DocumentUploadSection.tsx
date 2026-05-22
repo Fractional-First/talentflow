@@ -27,8 +27,8 @@ export const DocumentUploadSection = ({
     <div className="space-y-6 sm:space-y-8">
       {/* RESUME UPLOAD */}
       <DocumentUpload
-        title="Resume Upload (Optional)"
-        description="Upload your resume and we'll extract the relevant information to help enhance your profile."
+        title="Resume Upload"
+        description="Upload your resume to generate your profile. If you also provide a LinkedIn URL, we'll combine both for a richer result."
         file={resumeFile}
         onUpload={onResumeUpload}
         onRemove={onResumeRemove}

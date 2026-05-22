@@ -24,6 +24,14 @@ export function useSignUp() {
 
       if (error) throw error
 
+      // Supabase returns a fake success with empty identities when the email
+      // already exists (to prevent email enumeration). Surface this to the caller.
+      if (data.user?.identities?.length === 0) {
+        const err = new Error("An account with this email already exists. Please log in.")
+        ;(err as any).code = "user_already_exists"
+        throw err
+      }
+
       // If user was created and we have generated profile data, submit via N8N
       if (data.user) {
         const generatedProfile = profileStorage.get()

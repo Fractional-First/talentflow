@@ -27,8 +27,9 @@ export const LinkedInInputSection = ({
 
   const validateLinkedInUrl = (url: string): boolean => {
     if (!url.trim()) {
-      setValidationError("Please enter your LinkedIn username or URL")
-      return false
+      // Empty is OK — LinkedIn is optional when resume is provided
+      setValidationError("")
+      return true
     }
 
     // Clean up the input - remove any whitespace
@@ -75,8 +76,6 @@ export const LinkedInInputSection = ({
             </h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
               Enter your LinkedIn username or URL to automatically generate your profile.
-              <br />
-              This is the fastest way to get started — no uploads required!
             </p>
           </div>
         </div>

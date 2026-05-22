@@ -1,0 +1,10 @@
+# Dependencies
+node_modules/
+.npm-cache/
+
+# Generated reports (artifacts uploaded in CI)
+report.json
+report.md
+
+# Lock file (regenerated in CI)
+package-lock.json

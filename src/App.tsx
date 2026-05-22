@@ -11,6 +11,7 @@ import Login from "./pages/Login"
 import NotFound from "./pages/NotFound"
 import ResetPassword from "./pages/ResetPassword"
 import SignUp from "./pages/SignUp"
+import Agreement from "./pages/dashboard/Agreement"
 import Branding from "./pages/dashboard/Branding"
 import Dashboard from "./pages/dashboard/Dashboard"
 import ExecutiveCoaching from "./pages/dashboard/ExecutiveCoaching"
@@ -61,9 +62,11 @@ function App() {
               }
             />
 
-            {/* Public profile route - no auth required */}
+            {/* Public profile routes - no auth required */}
             <Route path="/profile/:slug" element={<PublicProfile />} />
             <Route path="/profile/preview/:uuid" element={<PublicProfile />} />
+            <Route path="/guest-profile/:slug" element={<PublicProfile />} />
+            <Route path="/guest-profile/preview/:uuid" element={<PublicProfile />} />
 
             {/* Profile Generator routes - no auth required */}
             <Route path="/profile-generator" element={<ProfileGenerator />} />
@@ -117,6 +120,16 @@ function App() {
                   allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
                 >
                   <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/agreement"
+              element={
+                <ProtectedRoute
+                  allowedStatuses={["PROFILE_CONFIRMED", "PREFERENCES_SET"]}
+                >
+                  <Agreement />
                 </ProtectedRoute>
               }
             />

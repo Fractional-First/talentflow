@@ -22,16 +22,14 @@ export function useSubmitLinkedInProfile() {
     }: SubmitLinkedInProfileArgs) => {
       const formDataToSubmit = new FormData()
 
-      // Get the current user (only for authenticated flows)
+      // Get the current user (optional — guest flow has no user)
       const {
         data: { user },
-        error: userError,
       } = await supabase.auth.getUser()
 
       if (user) {
         formDataToSubmit.append("userId", user.id)
       }
-
       formDataToSubmit.append("linkedinUrl", linkedinUrl)
 
       // Add resume file if present
@@ -73,7 +71,7 @@ export function useSubmitLinkedInProfile() {
       if (responseData.error || responseData.status === "error") {
         throw new Error(
           responseData.message ||
-            "Server reported an error processing your LinkedIn profile"
+            "Server reported an error processing your profile"
         )
       }
 
