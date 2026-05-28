@@ -70,9 +70,9 @@ We don't support custom domains (yet). If you want to deploy your project under 
 
 ## How DB migrations ship
 
-Schema changes live in `supabase/migrations/`. When a PR that touches that folder merges into `main`, the **Supabase DB Push** GitHub Action (`.github/workflows/supabase-db-push.yml`) runs `supabase db push --linked` against the production project ref pinned in `supabase/config.toml`. The job prints `migration list` and a `--dry-run` plan before applying, fails loudly on history conflicts, and is a no-op when no new migrations are present. You can also trigger it manually from the Actions tab with `dry_run = true` to inspect the plan without writing.
+Schema changes live in `supabase/migrations/`. When a PR that touches that folder merges into `main`, the **Apply Supabase Migrations** GitHub Action (`.github/workflows/migrate.yml`) runs `supabase db push --linked` against the production project ref. The job prints `migration list` and a `--dry-run` plan before applying, fails loudly on history conflicts, and is a no-op when no new migrations are present. You can also trigger it manually from the Actions tab with `dry_run = true` to inspect the plan without writing.
 
-Two repo secrets must be present for the workflow to succeed: `SUPABASE_ACCESS_TOKEN` (Supabase personal access token) and `SUPABASE_DB_PASSWORD` (the linked project's DB password). See `docs/ci/README.md` if the workflow file is still staged there pending activation.
+Three repo secrets must be present for the workflow to succeed: `SUPABASE_ACCESS_TOKEN` (Supabase personal access token), `SUPABASE_DB_PASSWORD` (the linked project's DB password), and `SUPABASE_PROJECT_REF` (the Supabase project reference ID). The workflow fails loudly if any of these are missing.
 
 # Fractional First – UX & Design System (Mobile-First)
 
