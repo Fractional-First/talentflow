@@ -1,4 +1,7 @@
 const ALLOWED_ORIGINS = [
+  "https://app.fractionalfirst.com",
+  "https://candidates.fractionalfirst.com",
+  "https://orgs.fractionalfirst.com",
   "https://role-description-generator.fractionalfirst.com",
   "https://rdg.fractionalfirst.com",
   "https://guest-jd-generator.netlify.app",
