@@ -2,10 +2,13 @@
 -- photo (profile_data->>'profilePicture') over the LinkedIn CDN URL stored in
 -- anon_profile_data (which may expire). Guest profiles fall back to the LinkedIn
 -- CDN URL already in anon_profile_data.
+--
+-- Security: SECURITY INVOKER (default) — RLS on profiles table continues to
+-- apply. Explicit ispublished check added as belt-and-suspenders since
+-- SECURITY DEFINER contexts would bypass RLS.
 CREATE OR REPLACE FUNCTION get_anon_profile(anon_slug_param TEXT)
 RETURNS TABLE(anon_slug TEXT, anon_profile_data JSONB, profile_version TEXT, profile_type TEXT)
 LANGUAGE plpgsql
-SECURITY DEFINER
 AS $$
 DECLARE
   profile_record RECORD;
@@ -16,6 +19,7 @@ BEGIN
   INTO profile_record
   FROM public.profiles AS p
   WHERE p.anon_slug = anon_slug_param
+    AND p.ispublished = true
   LIMIT 1;
 
   IF NOT FOUND THEN RETURN; END IF;
