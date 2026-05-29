@@ -26,17 +26,23 @@ Deno.serve(async (req) => {
   const role = body.refine?.roleTitle ?? body.refine?.functionArea ?? "Unknown role";
   const shortlisted: string[] = body.shortlistedSlugs;
   const passed: string[] = body.passedSlugs ?? [];
+  const isNoMatch = body.context === "no_match";
+  const sender = `${body.firstName ?? ""} ${body.lastName ?? ""}`.trim() || body.email;
 
-  const subject = `[Match] Shortlist from ${body.firstName ?? body.email}: ${shortlisted.length} candidate${shortlisted.length === 1 ? "" : "s"} for ${company} — ${role}`;
+  const subject = isNoMatch
+    ? `[Match] No matches — ${sender} looking for ${role} at ${company}`
+    : `[Match] Shortlist from ${sender}: ${shortlisted.length} candidate${shortlisted.length === 1 ? "" : "s"} for ${company} — ${role}`;
 
   const candidateRow = (slug: string, label: string) =>
     `<tr><td style="padding:4px 8px;">${label}</td><td style="padding:4px 8px;"><a href="https://candidates.fractionalfirst.com/profile/${slug}">${slug}</a></td></tr>`;
 
   const html = `
-    <h2>Candidate Shortlist</h2>
-    <p><strong>${body.firstName ?? ""} ${body.lastName ?? ""}${body.firstName || body.lastName ? " &lt;" : ""}${body.email}${body.firstName || body.lastName ? "&gt;" : ""}</strong></p>
+    <h2>${isNoMatch ? "No Matches Found — Contact Request" : "Candidate Shortlist"}</h2>
+    <p><strong>${sender} &lt;${body.email}&gt;</strong></p>
     <p><strong>Role:</strong> ${role} at ${company}</p>
+    ${body.note ? `<p><strong>Message:</strong> ${body.note}</p>` : ""}
     <hr/>
+    ${isNoMatch ? "<p><em>No candidates met the quality threshold for this search.</em></p>" : `
     <h3>Shortlisted (${shortlisted.length})</h3>
     <table border="0" cellpadding="0" cellspacing="0">
       ${shortlisted.map(s => candidateRow(s, "✅")).join("\n")}
@@ -45,7 +51,7 @@ Deno.serve(async (req) => {
     <h3>Passed (${passed.length})</h3>
     <table border="0" cellpadding="0" cellspacing="0">
       ${passed.map(s => candidateRow(s, "❌")).join("\n")}
-    </table>` : ""}
+    </table>` : ""}`}
   `;
 
   try {
