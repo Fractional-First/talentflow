@@ -1,7 +1,7 @@
 import { corsHeaders, handlePreflight } from "../_shared/cors.ts";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY")!;
-const NOTIFY_TO = ["reza@fractionalfirst.com", "adam@fractionalfirst.com"];
+const NOTIFY_TO = ["reza@fractionalfirst.com", "adam@fractionalfirst.com", "daniel@fractionalfirst.com"];
 const FROM = "Fractional First <noreply@fractionalfirst.com>";
 
 Deno.serve(async (req) => {
