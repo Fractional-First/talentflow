@@ -19,6 +19,42 @@ Deno.serve(async (req) => {
   let body: any;
   try { body = await req.json(); } catch { return new Response(JSON.stringify({ error: "Invalid JSON" }), { status: 400, headers: { ...cors, "content-type": "application/json" } }); }
 
+  // New branch — shortlist and custom-search from authenticated portal
+  if (body.type === "shortlist" || body.type === "custom_search") {
+    if (!body.firstName || !body.email) {
+      return new Response(JSON.stringify({ error: "Missing required fields: firstName, email" }), {
+        status: 400, headers: { ...cors, "content-type": "application/json" }
+      });
+    }
+    const subject = body.type === "shortlist"
+      ? `[RDG Shortlist] ${body.firstName}${body.lastName ? " " + body.lastName : ""} — ${body.companyName ?? "Unknown"} (${body.jdRoleTitle ?? ""})`
+      : `[RDG Custom Search] ${body.firstName}${body.lastName ? " " + body.lastName : ""} — ${body.companyName ?? "Unknown"}`;
+    const jdUrl = body.jdSlug ? `https://roles.fractionalfirst.com/${body.jdSlug}` : null;
+    const html = body.type === "shortlist"
+      ? `<h2>Shortlist Submitted</h2>
+         <p><strong>${body.firstName} ${body.lastName ?? ""}</strong> &lt;${body.email}&gt;${body.designation ? ` — ${body.designation}` : ""}</p>
+         <p><strong>Company:</strong> ${body.companyName ?? "Unknown"}</p>
+         <p><strong>Role:</strong> ${body.jdRoleTitle ?? "Unknown"}</p>
+         ${jdUrl ? `<p><a href="${jdUrl}">View JD on roles site</a></p>` : ""}
+         <h3>Shortlisted Candidates (${(body.shortlistedCandidates ?? []).length})</h3>
+         <ul>${(body.shortlistedCandidates ?? []).map((s: string) => `<li><a href="https://candidates.fractionalfirst.com/profile/${s}">${s}</a></li>`).join("")}</ul>
+         ${(body.passedCandidates ?? []).length ? `<h3>Passed</h3><ul>${body.passedCandidates.map((s: string) => `<li>${s}</li>`).join("")}</ul>` : ""}`
+      : `<h2>Custom Search Request</h2>
+         <p><strong>${body.firstName} ${body.lastName ?? ""}</strong> &lt;${body.email}&gt;${body.designation ? ` — ${body.designation}` : ""}</p>
+         <p><strong>Company:</strong> ${body.companyName ?? "Unknown"}</p>
+         <p><strong>Role:</strong> ${body.jdRoleTitle ?? "Unknown"}</p>
+         ${jdUrl ? `<p><a href="${jdUrl}">View JD on roles site</a></p>` : ""}
+         <blockquote>${(body.note ?? "").replace(/[<>&]/g, (c: string) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" }[c]!))}</blockquote>`;
+    const r = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { authorization: `Bearer ${RESEND_API_KEY}`, "content-type": "application/json" },
+      body: JSON.stringify({ from: FROM, to: NOTIFY_TO, reply_to: body.email, subject, html }),
+    });
+    if (!r.ok) console.error("[submit-rdg-lead] Resend error", r.status, await r.text());
+    return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { ...cors, "content-type": "application/json" } });
+  }
+
+  // Legacy lead-capture path (guest JD generator gate form) — unchanged
   if (!body?.firstName || !body?.email || !body?.jdText) {
     return new Response(JSON.stringify({ error: "Missing required fields: firstName, email, jdText" }), { status: 400, headers: { ...cors, "content-type": "application/json" } });
   }
