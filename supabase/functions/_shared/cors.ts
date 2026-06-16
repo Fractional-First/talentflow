@@ -1,11 +1,12 @@
 const ALLOWED_ORIGINS = [
   "https://app.fractionalfirst.com",
   "https://candidates.fractionalfirst.com",
-  "https://orgs.fractionalfirst.com",
+  "https://clients.fractionalfirst.com",
   "https://role-description-generator.fractionalfirst.com",
   "https://rdg.fractionalfirst.com",
   "https://guest-jd-generator.netlify.app",
   "http://localhost:5173",
+  "http://localhost:3000",
 ];
 
 const ALLOWED_PATTERNS = [
