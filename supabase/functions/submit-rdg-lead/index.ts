@@ -19,6 +19,34 @@ Deno.serve(async (req) => {
   let body: any;
   try { body = await req.json(); } catch { return new Response(JSON.stringify({ error: "Invalid JSON" }), { status: 400, headers: { ...cors, "content-type": "application/json" } }); }
 
+  // Internal FYI — a client generated a role description (clicked "Continue to
+  // Download" in the client portal). Notifies the FF team only; the client sees
+  // nothing. jdSlug may be null if the create_job_description RPC hadn't resolved
+  // by the time the portal fired this off.
+  if (body.type === "jd_created") {
+    if (!body.email) {
+      return new Response(JSON.stringify({ error: "Missing required fields: email" }), {
+        status: 400, headers: { ...cors, "content-type": "application/json" }
+      });
+    }
+    const name = `${body.firstName ?? ""}${body.lastName ? " " + body.lastName : ""}`.trim() || "A client";
+    const jdUrl = body.jdSlug ? `https://roles.fractionalfirst.com/${body.jdSlug}` : null;
+    const subject = `[RDG] Role generated — ${body.companyName ?? "Unknown"}${body.jdRoleTitle ? ` (${body.jdRoleTitle})` : ""}`;
+    const html = `<h2>Role Description Generated</h2>
+       <p><strong>${name}</strong> &lt;${body.email}&gt;${body.designation ? ` — ${body.designation}` : ""}</p>
+       <p><strong>Company:</strong> ${body.companyName ?? "Unknown"}</p>
+       <p><strong>Role:</strong> ${body.jdRoleTitle ?? "Unknown"}</p>
+       ${jdUrl ? `<p><a href="${jdUrl}">View JD on roles site</a></p>` : "<p><em>JD slug not yet available.</em></p>"}
+       <p style="color:#888;font-size:12px;">Triggered when the client clicked &ldquo;Continue to Download&rdquo; in the client portal.</p>`;
+    const r = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { authorization: `Bearer ${RESEND_API_KEY}`, "content-type": "application/json" },
+      body: JSON.stringify({ from: FROM, to: NOTIFY_TO, reply_to: body.email, subject, html }),
+    });
+    if (!r.ok) console.error("[submit-rdg-lead] Resend error (jd_created)", r.status, await r.text());
+    return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { ...cors, "content-type": "application/json" } });
+  }
+
   // New branch — shortlist and custom-search from authenticated portal
   if (body.type === "shortlist" || body.type === "custom_search") {
     if (!body.firstName || !body.email) {
