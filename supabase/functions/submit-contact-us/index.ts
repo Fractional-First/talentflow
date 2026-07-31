@@ -1,5 +1,6 @@
 import { corsHeaders, handlePreflight } from "../_shared/cors.ts";
 
+const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY");
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY")!;
 const NOTIFY_TO = [
   "reza@fractionalfirst.com",
@@ -55,6 +56,11 @@ function normalizeSubject(value: string) {
   return value.replace(/[\r\n]+/g, " ").slice(0, 140);
 }
 
+function hasForwardedAnonKey(req: Request) {
+  const expectedAuth = SUPABASE_ANON_KEY ? `Bearer ${SUPABASE_ANON_KEY}` : null;
+  return !!expectedAuth && req.headers.get("authorization") === expectedAuth;
+}
+
 Deno.serve(async (req) => {
   const pre = handlePreflight(req);
   if (pre) return pre;
@@ -62,6 +68,10 @@ Deno.serve(async (req) => {
 
   if (req.method !== "POST") {
     return jsonResponse({ error: "Method not allowed" }, 405, cors);
+  }
+
+  if (!hasForwardedAnonKey(req)) {
+    return jsonResponse({ error: "Unauthorized" }, 401, cors);
   }
 
   let body: ContactBody;
