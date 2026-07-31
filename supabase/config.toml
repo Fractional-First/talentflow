@@ -20,3 +20,9 @@ verify_jwt = false
 
 [functions.submit-shortlist]
 verify_jwt = false
+
+# Called through the same-origin public-profiles proxy, which forwards the
+# Supabase anon key. Keep JWT verification explicit so direct unauthenticated
+# calls are rejected at the gateway before the email code runs.
+[functions.submit-contact-us]
+verify_jwt = true
