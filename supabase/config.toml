@@ -20,9 +20,3 @@ verify_jwt = false
 
 [functions.submit-shortlist]
 verify_jwt = false
-
-# Called through the same-origin public-profiles proxy. Gateway JWT verification
-# is disabled so the function can handle CORS and verify the forwarded anon key
-# itself before parsing or sending any inquiry.
-[functions.submit-contact-us]
-verify_jwt = false
