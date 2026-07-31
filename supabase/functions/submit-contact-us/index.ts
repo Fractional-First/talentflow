@@ -2,6 +2,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders, handlePreflight } from "../_shared/cors.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY");
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY")!;
 const NOTIFY_TO = (
@@ -76,13 +77,25 @@ function normalizeProfileUrl(value: unknown) {
       /^deploy-preview-\d+--talentflow-candidates\.netlify\.app$/.test(
         url.hostname,
       );
+    const allowedPath = url.pathname.startsWith("/profile/") ||
+      url.pathname.startsWith("/guest-profile/");
 
     if (url.protocol !== "https:" && url.hostname !== "localhost") return null;
     if (!allowedHost) return null;
+    if (!allowedPath) return null;
     return url.toString();
   } catch {
     return null;
   }
+}
+
+function hasForwardedAnonKey(req: Request) {
+  const bearer = req.headers.get("authorization")?.match(/^Bearer\s+(.+)$/i)
+    ?.[1];
+  const apikey = req.headers.get("apikey");
+
+  return !!SUPABASE_ANON_KEY &&
+    (bearer === SUPABASE_ANON_KEY || apikey === SUPABASE_ANON_KEY);
 }
 
 function clientIp(req: Request) {
@@ -99,6 +112,10 @@ Deno.serve(async (req) => {
 
   if (req.method !== "POST") {
     return jsonResponse({ error: "Method not allowed" }, 405, cors);
+  }
+
+  if (!hasForwardedAnonKey(req)) {
+    return jsonResponse({ error: "Unauthorized" }, 401, cors);
   }
 
   let body: ContactBody;
