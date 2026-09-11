@@ -1,8 +1,7 @@
 import { AppSidebar } from "@/components/AppSidebar"
-import { JobPreferencesPlaceholder } from "@/components/dashboard/JobPreferencesPlaceholder"
 import { NextStepsCard } from "@/components/dashboard/NextStepsCard"
-import { OnboardingBanner } from "@/components/dashboard/OnboardingBanner"
 import { ProfileSummaryCard } from "@/components/dashboard/ProfileSummaryCard"
+import { WhatHappensNextCard } from "@/components/dashboard/WhatHappensNextCard"
 import {
   SidebarProvider,
   SidebarInset,
@@ -27,7 +26,6 @@ const Dashboard = () => {
   } = useEditProfile()
   const { data: profile, isLoading: profileLoading, error } = useProfileData()
   const { workPreferences, isLoading: workPrefsLoading } = useWorkPreferences()
-  const isOnboarding = onboardingStatus === "PROFILE_CONFIRMED"
   const hasJobPreferences =
     workPreferences && Object.keys(workPreferences).length > 0
 
@@ -117,7 +115,7 @@ const Dashboard = () => {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
-        <AppSidebar isOnboarding={isOnboarding} />
+        <AppSidebar />
         <SidebarInset>
           <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
             <SidebarTrigger className="-ml-1" />
@@ -128,21 +126,18 @@ const Dashboard = () => {
             </div>
           </header>
           <div className="flex-1">
-            {isOnboarding && <OnboardingBanner />}
             <div className="p-4 sm:p-8 max-w-7xl mx-auto w-full">
-              {/* Show Next Steps card when onboarding is complete AND job preferences are submitted */}
-              {!isOnboarding && hasJobPreferences && (
-                <div className="mb-8">
-                  <NextStepsCard
-                    onShareProfile={handleShareProfile}
-                    onPublishProfile={handlePublishProfile}
-                    isPublished={isPublished}
-                    isUpdatingPublishStatus={isUpdatingPublishStatus}
-                    publicProfileUrl={publicProfileUrl}
-                    firstName={profile?.name?.split(" ")[0]}
-                  />
-                </div>
-              )}
+              <div className="mb-8">
+                <NextStepsCard
+                  onShareProfile={handleShareProfile}
+                  onPublishProfile={handlePublishProfile}
+                  isPublished={isPublished}
+                  isUpdatingPublishStatus={isUpdatingPublishStatus}
+                  publicProfileUrl={publicProfileUrl}
+                  firstName={profile?.name?.split(" ")[0]}
+                  hasJobPreferences={hasJobPreferences}
+                />
+              </div>
 
               <div className="grid lg:grid-cols-2 gap-8">
                 {/* Left column - Read-only profile summary */}
@@ -151,9 +146,9 @@ const Dashboard = () => {
                     <ProfileSummaryCard profile={profile} />
                   </div>
                 </div>
-                {/* Right column - Job preferences placeholder */}
+                {/* Right column - What happens next */}
                 <div className="space-y-6">
-                  <JobPreferencesPlaceholder isCompleted={!isOnboarding} />
+                  <WhatHappensNextCard />
                 </div>
               </div>
             </div>

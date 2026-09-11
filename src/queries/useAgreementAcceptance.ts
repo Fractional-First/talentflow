@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { useGetUser } from "@/queries/auth/useGetUser"
+import { getDemoStage } from "@/lib/demoStage"
 
 export const CURRENT_AGREEMENT_VERSION = "Master Candidate Agreement (13.02.2026) PDF"
 
@@ -117,6 +118,19 @@ export function useAgreementStatus(): AgreementStatus {
     },
     enabled: !!user?.id,
   })
+
+  // Dev-only demo affordance (see src/lib/demoStage.ts) forces the unsigned state so the
+  // Get Engagement-Ready redesign can be previewed without real account data or DB access.
+  if (getDemoStage() === "unsigned") {
+    return {
+      isAccepted: false,
+      isCurrentVersion: false,
+      acceptedAt: null,
+      agreementVersion: null,
+      acceptanceData: null,
+      isLoading: false,
+    }
+  }
 
   return {
     isAccepted: data?.isAccepted ?? false,
