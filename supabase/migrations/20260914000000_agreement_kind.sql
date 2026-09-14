@@ -63,11 +63,26 @@ BEGIN
 END;
 $$;
 
--- Backfill. Rollback: `UPDATE public.agreement_acceptances SET agreement_kind = NULL;` restores
--- the pre-migration state exactly — no other column is touched and no row is added or removed.
+-- Backfill.
+--
+-- The timestamp trigger is disabled around it on purpose.
+-- `update_agreement_acceptances_updated_at` is a BEFORE UPDATE trigger that sets
+-- `updated_at = now()` unconditionally, so a plain UPDATE here would stamp today's date onto the
+-- audit timestamp of all 103 signature records — destroying, irrecoverably, the fact that 10 of
+-- them were amended after signing (measured: 10 rows where updated_at <> created_at). That field
+-- is not internal: `get_client_admin` and `get_candidate_admin` both return the whole row to
+-- ff-admin. `SET agreement_kind = ..., updated_at = updated_at` does NOT work — the trigger
+-- overwrites NEW.updated_at regardless.
+--
+-- Rollback: `UPDATE public.agreement_acceptances SET agreement_kind = NULL;` — but run it inside
+-- the same trigger bracket, or it bumps `updated_at` on the way back out.
+ALTER TABLE public.agreement_acceptances DISABLE TRIGGER update_agreement_acceptances_updated_at;
+
 UPDATE public.agreement_acceptances
 SET agreement_kind = public.agreement_kind_for_version(agreement_version)
 WHERE agreement_kind IS NULL;
+
+ALTER TABLE public.agreement_acceptances ENABLE TRIGGER update_agreement_acceptances_updated_at;
 
 DO $$
 DECLARE
