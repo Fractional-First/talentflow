@@ -20,6 +20,8 @@ interface NextStepsCardProps {
   publicProfileUrl?: string
   firstName?: string
   hasJobPreferences?: boolean
+  /** Work-preferences query still in flight — see the settling note below. */
+  isPreferencesLoading?: boolean
 }
 
 export const NextStepsCard = ({
@@ -30,10 +32,19 @@ export const NextStepsCard = ({
   publicProfileUrl = "",
   firstName,
   hasJobPreferences = false,
+  isPreferencesLoading = false,
 }: NextStepsCardProps) => {
   const navigate = useNavigate()
-  const { isAccepted, isCurrentVersion } = useAgreementStatus()
+  const { isAccepted, isCurrentVersion, isLoading: isAgreementLoading } =
+    useAgreementStatus({ allowDemoOverride: true })
   const [showPublishModal, setShowPublishModal] = useState(false)
+
+  // Until both queries settle, "not done" is indistinguishable from "not loaded yet". This card
+  // now renders unconditionally, so on a cold load a candidate who has already accepted would
+  // otherwise be shown an "Accept Agreement" button; following it reaches the agreement form,
+  // whose read-only guard is also still unsettled, and acceptances are append-only INSERTs — a
+  // duplicate row in the legal record. Disabling until settled closes that window.
+  const isSettling = isPreferencesLoading || isAgreementLoading
 
   // Accepting a version that has since been superseded leaves the candidate needing to
   // re-accept — the agreement page says as much — so it is not "engagement-ready" yet.
@@ -104,10 +115,15 @@ export const NextStepsCard = ({
             <div className="mt-auto">
               <Button
                 onClick={() => navigate("/work-preferences")}
+                disabled={isSettling}
                 className="w-full"
                 size="sm"
               >
-                {hasJobPreferences ? "View or Edit Preferences" : "Set Preferences"}
+                {isSettling
+                  ? "Loading…"
+                  : hasJobPreferences
+                  ? "View or Edit Preferences"
+                  : "Set Preferences"}
               </Button>
             </div>
           </div>
@@ -122,7 +138,9 @@ export const NextStepsCard = ({
                 Get Engagement-Ready
               </h3>
               <p className="text-sm text-muted-foreground">
-                {isAgreementAccepted
+                {isSettling
+                  ? "Checking your agreement status…"
+                  : isAgreementAccepted
                   ? "You're engagement-ready. View your accepted agreement."
                   : needsReAcceptance
                   ? "Our agreement has been updated. Review and re-accept to stay engagement-ready."
@@ -132,10 +150,13 @@ export const NextStepsCard = ({
             <div className="mt-auto">
               <Button
                 onClick={() => navigate("/dashboard/agreement")}
+                disabled={isSettling}
                 className="w-full"
                 size="sm"
               >
-                {isAgreementAccepted
+                {isSettling
+                  ? "Loading…"
+                  : isAgreementAccepted
                   ? "View Agreement"
                   : needsReAcceptance
                   ? "Review Agreement"

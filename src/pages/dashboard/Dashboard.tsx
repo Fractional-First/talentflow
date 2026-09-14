@@ -137,6 +137,7 @@ const Dashboard = () => {
                   publicProfileUrl={publicProfileUrl}
                   firstName={profile?.name?.split(" ")[0]}
                   hasJobPreferences={hasJobPreferences}
+                  isPreferencesLoading={workPrefsLoading}
                 />
               </div>
 
@@ -152,6 +153,7 @@ const Dashboard = () => {
                   <WhatHappensNextCard
                     isPublished={isPublished}
                     hasJobPreferences={hasJobPreferences}
+                    isPreferencesLoading={workPrefsLoading}
                   />
                 </div>
               </div>

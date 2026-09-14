@@ -76,6 +76,26 @@ describe('WhatHappensNextCard', () => {
     )
   })
 
+  it('claims nothing about a step while the queries are still settling', () => {
+    // Everything is actually done, but neither query has resolved. Marking the steps
+    // outstanding here tells a fully-onboarded candidate they have work left to do.
+    mockUseAgreementStatus.mockReturnValue({
+      ...agreementStatus(true),
+      isLoading: true,
+    })
+
+    render(
+      <WhatHappensNextCard isPublished hasJobPreferences isPreferencesLoading />
+    )
+
+    const item = screen.getByText('Set your job preferences').closest('li')
+    expect(within(item!).getByText('Checking')).toBeInTheDocument()
+    expect(within(item!).queryByText('Not done yet')).not.toBeInTheDocument()
+    expect(
+      screen.queryByText("You're all set — our team is reviewing your profile.")
+    ).not.toBeInTheDocument()
+  })
+
   it('confirms everything is complete once all three are done', () => {
     mockUseAgreementStatus.mockReturnValue(agreementStatus(true))
 

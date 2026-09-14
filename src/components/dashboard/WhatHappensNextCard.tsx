@@ -17,16 +17,23 @@ const steps = [
 interface WhatHappensNextCardProps {
   isPublished?: boolean
   hasJobPreferences?: boolean
+  /** Work-preferences query still in flight — see the settling note below. */
+  isPreferencesLoading?: boolean
 }
 
 export const WhatHappensNextCard = ({
   isPublished = false,
   hasJobPreferences = false,
+  isPreferencesLoading = false,
 }: WhatHappensNextCardProps) => {
-  const { isAccepted, isCurrentVersion } = useAgreementStatus()
+  const { isAccepted, isCurrentVersion, isLoading: isAgreementLoading } =
+    useAgreementStatus({ allowDemoOverride: true })
   // An acceptance of a superseded agreement version still needs re-accepting — the agreement
   // page prompts for it — so it does not count as done here.
   const isAgreementAccepted = isAccepted && isCurrentVersion
+  // Before both queries settle, every step reads as outstanding — which tells a candidate who
+  // has already done them that they haven't. Show the steps without verdicts until it is true.
+  const isSettling = isPreferencesLoading || isAgreementLoading
 
   // The three actions are independent — a candidate can complete them in any order,
   // so this list reflects what they have already done instead of prescribing a sequence.
@@ -39,7 +46,7 @@ export const WhatHappensNextCard = ({
     },
   ]
 
-  const allDone = prerequisites.every((item) => item.isDone)
+  const allDone = !isSettling && prerequisites.every((item) => item.isDone)
 
   return (
     <StepCard className="h-full flex flex-col bg-primary/5 border-primary/20 shadow-none">
@@ -64,36 +71,43 @@ export const WhatHappensNextCard = ({
               </span>
             </div>
             <ul className="space-y-2 pl-8">
-              {prerequisites.map((item, index) => (
-                <li
-                  key={item.label}
-                  className={cn(
-                    "flex items-center gap-2 text-sm",
-                    item.isDone
-                      ? "text-muted-foreground line-through"
-                      : "text-foreground"
-                  )}
-                >
-                  <span
+              {prerequisites.map((item, index) => {
+                const isDone = !isSettling && item.isDone
+                return (
+                  <li
+                    key={item.label}
                     className={cn(
-                      "flex items-center justify-center h-4 w-4 rounded-full text-[10px] font-semibold flex-shrink-0",
-                      item.isDone
-                        ? "bg-primary text-primary-foreground"
-                        : "border border-primary/40 text-primary"
+                      "flex items-center gap-2 text-sm",
+                      isDone
+                        ? "text-muted-foreground line-through"
+                        : "text-foreground"
                     )}
                   >
-                    {item.isDone ? (
-                      <Check className="h-2.5 w-2.5" aria-hidden="true" />
-                    ) : (
-                      index + 1
-                    )}
-                    <span className="sr-only">
-                      {item.isDone ? "Done" : "Not done yet"}
+                    <span
+                      className={cn(
+                        "flex items-center justify-center h-4 w-4 rounded-full text-[10px] font-semibold flex-shrink-0",
+                        isDone
+                          ? "bg-primary text-primary-foreground"
+                          : "border border-primary/40 text-primary"
+                      )}
+                    >
+                      {isDone ? (
+                        <Check className="h-2.5 w-2.5" aria-hidden="true" />
+                      ) : (
+                        index + 1
+                      )}
+                      <span className="sr-only">
+                        {isSettling
+                          ? "Checking"
+                          : isDone
+                          ? "Done"
+                          : "Not done yet"}
+                      </span>
                     </span>
-                  </span>
-                  {item.label}
-                </li>
-              ))}
+                    {item.label}
+                  </li>
+                )
+              })}
             </ul>
             {!allDone && (
               <p className="pl-8 text-xs text-muted-foreground">

@@ -36,7 +36,9 @@ const agreementStatus = (isAccepted: boolean) => ({
   isLoading: false,
 })
 
-const renderCard = (props: { hasJobPreferences?: boolean } = {}) =>
+const renderCard = (
+  props: { hasJobPreferences?: boolean; isPreferencesLoading?: boolean } = {}
+) =>
   render(
     <MemoryRouter>
       <NextStepsCard {...props} />
@@ -85,6 +87,37 @@ describe('NextStepsCard', () => {
 
     expect(mockNavigate).toHaveBeenCalledWith('/work-preferences')
     expect(screen.getByRole('button', { name: 'Accept Agreement' })).toBeEnabled()
+  })
+
+  it('disables the preferences and agreement actions until both queries settle', () => {
+    mockUseAgreementStatus.mockReturnValue({
+      ...agreementStatus(false),
+      isLoading: true,
+    })
+
+    renderCard({ hasJobPreferences: false, isPreferencesLoading: true })
+
+    expect(screen.getAllByRole('button', { name: 'Loading…' })).toHaveLength(2)
+    expect(
+      screen.queryByRole('button', { name: 'Accept Agreement' })
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'Set Preferences' })
+    ).not.toBeInTheDocument()
+  })
+
+  it('never offers to accept an agreement the candidate has already accepted, mid-load', () => {
+    // The dangerous ordering: the agreement query has resolved as accepted while work
+    // preferences are still in flight. Without the settling guard the card would say
+    // "Accept Agreement", and following it reaches a form whose own read-only guard has
+    // not settled either — a second row in an append-only legal record.
+    mockUseAgreementStatus.mockReturnValue(agreementStatus(true))
+
+    renderCard({ hasJobPreferences: false, isPreferencesLoading: true })
+
+    expect(
+      screen.queryByRole('button', { name: 'Accept Agreement' })
+    ).not.toBeInTheDocument()
   })
 
   it('asks for a re-accept when the accepted agreement version is superseded', () => {

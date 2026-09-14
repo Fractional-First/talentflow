@@ -71,7 +71,9 @@ interface RecordAcceptanceParams {
   p_entity_confirmed?: boolean
 }
 
-export function useAgreementStatus(): AgreementStatus {
+export function useAgreementStatus({
+  allowDemoOverride = false,
+}: { allowDemoOverride?: boolean } = {}): AgreementStatus {
   const { data: user } = useGetUser()
 
   const { data, isLoading } = useQuery({
@@ -121,7 +123,10 @@ export function useAgreementStatus(): AgreementStatus {
 
   // Dev-only demo affordance (see src/lib/demoStage.ts) forces the unsigned state so the
   // Get Engagement-Ready redesign can be previewed without real account data or DB access.
-  if (getDemoStage() === "unsigned") {
+  // Opt-in per caller: the dashboard cards ask for it, the Agreement page never does. Blanking
+  // acceptanceData there would skip both the prefill and the read-only guard, handing an
+  // already-signed developer a live submit button against the production database.
+  if (allowDemoOverride && getDemoStage() === "unsigned") {
     return {
       isAccepted: false,
       isCurrentVersion: false,
