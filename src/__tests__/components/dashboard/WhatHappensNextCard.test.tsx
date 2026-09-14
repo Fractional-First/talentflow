@@ -63,6 +63,19 @@ describe('WhatHappensNextCard', () => {
     )
   })
 
+  it('leaves the agreement outstanding when the accepted version is no longer current', () => {
+    mockUseAgreementStatus.mockReturnValue({
+      ...agreementStatus(true),
+      isCurrentVersion: false,
+    })
+
+    render(<WhatHappensNextCard isPublished hasJobPreferences />)
+
+    expect(itemState('Accept your agreement with Fractional First')).toBe(
+      'not done'
+    )
+  })
+
   it('confirms everything is complete once all three are done', () => {
     mockUseAgreementStatus.mockReturnValue(agreementStatus(true))
 

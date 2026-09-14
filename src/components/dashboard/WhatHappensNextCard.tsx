@@ -23,7 +23,10 @@ export const WhatHappensNextCard = ({
   isPublished = false,
   hasJobPreferences = false,
 }: WhatHappensNextCardProps) => {
-  const { isAccepted: isAgreementAccepted } = useAgreementStatus()
+  const { isAccepted, isCurrentVersion } = useAgreementStatus()
+  // An acceptance of a superseded agreement version still needs re-accepting — the agreement
+  // page prompts for it — so it does not count as done here.
+  const isAgreementAccepted = isAccepted && isCurrentVersion
 
   // The three actions are independent — a candidate can complete them in any order,
   // so this list reflects what they have already done instead of prescribing a sequence.
