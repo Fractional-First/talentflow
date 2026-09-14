@@ -10,8 +10,8 @@ CREATE TABLE public.roles (
   status TEXT NOT NULL DEFAULT 'searching'
     CHECK (status IN ('on_hold', 'searching', 'active_engagement', 'completed', 'canceled')),
   job_description_id UUID REFERENCES public.job_descriptions(id),
-  created_at TIMESTAMPTZ DEFAULT now(),
-  updated_at TIMESTAMPTZ DEFAULT now()
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 CREATE INDEX roles_organization_id_idx ON public.roles(organization_id);
