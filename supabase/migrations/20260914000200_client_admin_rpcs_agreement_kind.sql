@@ -13,36 +13,30 @@
 -- change they read as `onboarded_unsigned` with empty contracting/entity — the truthful state,
 -- not "Entity".
 --
--- WHY #8'S MIGRATIONS SHIP IN THIS SAME PR
--- `20260826140000` / `20260826140100` above (ff-workspace#8, side letters — Daniel's commit and
--- lane D's 42702 fix, carried here byte-identical) replace this same function, and SQL has no way
--- to patch a function body: whichever definition sorts last wins outright. Split across two PRs,
--- one merge order strands #8's migration before the remote tail — `migrate.yml` runs
--- `supabase db push --linked` with no `--include-all`, so the apply run goes red and lands
--- nothing — and the other silently deletes the side-letter columns, leaving ff-admin's Agreement
--- Variations column reading "None" forever with nothing in any log to explain it.
+-- SHAPE: unchanged from the definition in production today (20260427010245) — all 13 columns in
+-- the same name, type and order. The only difference is the `agreement_kind = 'client'` filter on
+-- the lateral. This migration deliberately does NOT reference `public.agreement_side_letters`:
+-- that table does not exist in production yet (verified with to_regclass), and a PL/pgSQL body
+-- referencing a missing relation is not checked at CREATE time — it would apply green and then
+-- raise 42P01 on every load of the admin Clients page.
 --
--- Shipping them as one ordered set removes the choice. All three orders are then safe:
---   * this PR alone        — 20260826140000 creates the table, then everything applies in
---                            filename order in a single run;
---   * #149 merged first    — those exact two files are already recorded as applied, so the Apply
---                            action skips them and only the 20260914* files run;
---   * this PR merged first — #149 becomes a no-op, for the same reason.
--- Nothing needs re-timestamping and nobody has to remember a merge-order instruction.
+-- ORDERING with ff-workspace#8 (talentflow#149), which replaces this same function: #149's two
+-- migrations are timestamped `20260914000500` / `20260914000600`, so they sort after every file
+-- in this PR, and `20260914000600` is the LAST definition to run — it carries both the five
+-- side-letter columns and this same `agreement_kind = 'client'` filter. Both of its files also
+-- open with a guard that raises if `agreement_acceptances.agreement_kind` is missing, so a
+-- mis-ordered merge lands nothing at all and stays retryable.
 --
--- SHAPE: the 18 columns from `20260826140100`, unchanged in name, type and order. The only
--- differences are the `agreement_kind = 'client'` filter on the `aa` lateral and the extra
--- aliasing below.
+-- Merge this PR first, let Apply Supabase Migrations go green, then #149. Nothing here depends on
+-- #149, so this PR is also correct on its own if #149 never merges.
 --
--- 42702: `agreement_id`, `organization_id`, `contracting_type`, `entity_name`,
--- `agreement_version`, `status`, `company_url` and the rest of the RETURNS TABLE list are OUT
--- variables, and PL/pgSQL resolves a bare column reference against both those and the table.
--- `20260427010245` exists solely to fix that failure for `organization_id`, and lane D hit it
--- again for `agreement_id`. Adding output columns can newly shadow a previously-safe bare
--- identifier, so every column reference in this body is table-qualified, including both laterals'
--- own sources (`aa_src`, `sl_src`). A plain-SQL rehearsal cannot catch this class of bug —
--- OUT-variable shadowing only exists inside the function — so this was verified by calling the
--- function on a real PostgreSQL instance, not by running the query shape.
+-- 42702: every column reference in this body is table-qualified, including the lateral's own
+-- source (`aa_src`). `organization_id` and `agreement_id` are RETURNS TABLE OUT variables that
+-- PL/pgSQL resolves against both the variable and the column — `20260427010245` exists solely to
+-- fix that failure here, and lane D hit it again on #149. Adding output columns can newly shadow
+-- a previously-safe bare identifier, and a plain-SQL rehearsal cannot catch it because
+-- OUT-variable shadowing only exists inside the function, so this was verified by calling the
+-- function on a real PostgreSQL instance.
 
 DROP FUNCTION IF EXISTS public.list_client_signatories_admin();
 
@@ -60,12 +54,7 @@ RETURNS TABLE (
   agreement_version text,
   contracting_type text,
   entity_name text,
-  signed_up_at timestamptz,
-  agreement_id uuid,
-  side_letter_count int,
-  latest_side_letter_title text,
-  latest_side_letter_url text,
-  latest_side_letter_created_at timestamptz
+  signed_up_at timestamptz
 )
 LANGUAGE plpgsql SECURITY DEFINER
 SET search_path TO 'public'
@@ -109,23 +98,15 @@ BEGIN
     aa.agreement_version,
     aa.contracting_type,
     aa.entity_name,
-    u.created_at,
-    aa.id,
-    -- Load-bearing, not redundant: the side-letter lateral is joined ON aa.id IS NOT NULL, so it
-    -- NULL-extends for a client with no signed agreement — 8 of 20 production rows — and the
-    -- admin column would render blank instead of 0 without this.
-    COALESCE(sl.side_letter_count, 0),
-    sl.latest_title,
-    sl.latest_url,
-    sl.latest_created_at
+    u.created_at
   FROM all_rows cp
   LEFT JOIN public.organizations o ON o.id = cp.organization_id
   LEFT JOIN auth.users u           ON u.id = cp.user_id
   LEFT JOIN LATERAL (
-    -- The client agreement only. Without this filter a user who is also a candidate contributes
-    -- their candidate agreement here (ff-workspace#11). Aliased and fully qualified: `user_id`
-    -- and `accepted_at` are safe bare today, but any future RETURNS TABLE column of the same
-    -- name would silently make them ambiguous (42702).
+    -- The client agreement only. Without this filter a user who is also a candidate
+    -- contributes their candidate agreement here (ff-workspace#11). Aliased and fully
+    -- qualified: `user_id`, `agreement_kind` and `accepted_at` are safe bare today, but any
+    -- future RETURNS TABLE column of the same name would silently make them ambiguous (42702).
     SELECT aa_src.*
     FROM public.agreement_acceptances aa_src
     WHERE aa_src.user_id = cp.user_id
@@ -133,18 +114,6 @@ BEGIN
     ORDER BY aa_src.accepted_at DESC
     LIMIT 1
   ) aa ON TRUE
-  LEFT JOIN LATERAL (
-    -- Explicit alias avoids ambiguity with the RETURNS TABLE output variable `agreement_id`:
-    -- an unqualified reference matching both a PL/pgSQL output variable and a column raises
-    -- 42702 at runtime. Same class of error fixed for `organization_id` in 20260427010245.
-    SELECT
-      count(*)::int AS side_letter_count,
-      (array_agg(sl_src.title ORDER BY sl_src.created_at DESC))[1] AS latest_title,
-      (array_agg(sl_src.url ORDER BY sl_src.created_at DESC))[1] AS latest_url,
-      max(sl_src.created_at) AS latest_created_at
-    FROM public.agreement_side_letters sl_src
-    WHERE sl_src.agreement_id = aa.id
-  ) sl ON aa.id IS NOT NULL
   ORDER BY u.created_at DESC;
 END;
 $$;
