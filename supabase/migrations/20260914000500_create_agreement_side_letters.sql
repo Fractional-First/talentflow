@@ -1,3 +1,25 @@
+-- Hard dependency on ff-workspace#11 (talentflow#152), which adds
+-- `agreement_acceptances.agreement_kind`. Fail loudly at apply time rather than
+-- applying green and erroring later on Reza's Clients page: PL/pgSQL bodies are
+-- not relation- or column-checked at CREATE time, so without this the mistake
+-- would only surface at runtime. The guard is in BOTH files of this pair so a
+-- mis-ordered merge lands nothing at all, and the correct order can still be
+-- applied afterwards without --include-all.
+DO $guard$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name   = 'agreement_acceptances'
+      AND column_name  = 'agreement_kind'
+  ) THEN
+    RAISE EXCEPTION
+      'agreement_acceptances.agreement_kind is missing - merge talentflow#152 (ff-workspace#11) and let its migrations apply before this PR';
+  END IF;
+END
+$guard$;
+
 -- Side letters & amendments attached to a signed MSA (agreement_acceptances row).
 -- Link-only tracking; admin-authored, mirrors candidate_annotations' RLS shape.
 -- Consumed by ff-admin's AgreementSideLetters component (candidate + client drawers).

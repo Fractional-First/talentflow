@@ -1,7 +1,44 @@
+-- Hard dependency on ff-workspace#11 (talentflow#152), which adds
+-- `agreement_acceptances.agreement_kind`. Fail loudly at apply time rather than
+-- applying green and erroring later on Reza's Clients page: PL/pgSQL bodies are
+-- not relation- or column-checked at CREATE time, so without this the mistake
+-- would only surface at runtime. The guard is in BOTH files of this pair so a
+-- mis-ordered merge lands nothing at all, and the correct order can still be
+-- applied afterwards without --include-all.
+DO $guard$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name   = 'agreement_acceptances'
+      AND column_name  = 'agreement_kind'
+  ) THEN
+    RAISE EXCEPTION
+      'agreement_acceptances.agreement_kind is missing - merge talentflow#152 (ff-workspace#11) and let its migrations apply before this PR';
+  END IF;
+END
+$guard$;
+
 -- Extend list_client_signatories_admin to surface the agreement id and a
 -- lateral-joined summary of agreement_side_letters, so ff-admin's clients
 -- dashboard can flag non-standard MSAs without a per-row query.
 -- Return type is changing, so the function must be dropped and recreated.
+--
+-- ORDERING: this file must apply AFTER talentflow#152's
+-- 20260914000200_client_admin_rpcs_agreement_kind.sql, which also replaces this
+-- function. #152 keeps production's 13-column shape and adds the
+-- `agreement_kind = 'client'` filter; this file is the LAST definition to run, so
+-- it has to carry BOTH that filter and the five side-letter columns, or whichever
+-- of the two it omits is silently undone. Hence the timestamp: it sorts after
+-- every file in #152 (...000000-000400).
+--
+-- Both files in this PR were moved off their original 20260826140000/140100
+-- timestamps, not just this one: the Supabase CLI refuses ANY pending migration
+-- older than the last one already on remote ("Found local migration files to be
+-- inserted before the last migration on remote database"), not merely an
+-- out-of-order redefinition. Leaving the table-creation file behind would have
+-- failed the apply job just as surely.
 
 DROP FUNCTION IF EXISTS public.list_client_signatories_admin();
 
@@ -78,9 +115,15 @@ BEGIN
   LEFT JOIN public.organizations o ON o.id = cp.organization_id
   LEFT JOIN auth.users u           ON u.id = cp.user_id
   LEFT JOIN LATERAL (
+    -- The client agreement only. Without this filter a user who is also a
+    -- candidate contributes their candidate agreement here (ff-workspace#11).
+    -- Kept byte-identical to the lateral in 20260914000200 so the two are
+    -- trivially comparable. `agreement_kind` is not a RETURNS TABLE output
+    -- variable of this function, so the bare reference cannot raise 42702.
     SELECT *
     FROM public.agreement_acceptances
     WHERE user_id = cp.user_id
+      AND agreement_kind = 'client'
     ORDER BY accepted_at DESC
     LIMIT 1
   ) aa ON TRUE
