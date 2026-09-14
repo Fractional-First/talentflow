@@ -26,8 +26,9 @@ const Dashboard = () => {
   } = useEditProfile()
   const { data: profile, isLoading: profileLoading, error } = useProfileData()
   const { workPreferences, isLoading: workPrefsLoading } = useWorkPreferences()
-  const hasJobPreferences =
+  const hasJobPreferences = Boolean(
     workPreferences && Object.keys(workPreferences).length > 0
+  )
 
   const handleShareProfile = async () => {
     // Generate public profile URL using the profile slug
@@ -148,7 +149,10 @@ const Dashboard = () => {
                 </div>
                 {/* Right column - What happens next */}
                 <div className="space-y-6">
-                  <WhatHappensNextCard />
+                  <WhatHappensNextCard
+                    isPublished={isPublished}
+                    hasJobPreferences={hasJobPreferences}
+                  />
                 </div>
               </div>
             </div>
