@@ -85,13 +85,16 @@ BEGIN
     LIMIT 1
   ) aa ON TRUE
   LEFT JOIN LATERAL (
+    -- Explicit alias avoids ambiguity with the RETURNS TABLE output variable `agreement_id`:
+    -- an unqualified reference matching both a PL/pgSQL output variable and a column raises
+    -- 42702 at runtime. Same class of error fixed for `organization_id` in 20260427010245.
     SELECT
       count(*)::int AS side_letter_count,
-      (array_agg(title ORDER BY created_at DESC))[1] AS latest_title,
-      (array_agg(url ORDER BY created_at DESC))[1] AS latest_url,
-      max(created_at) AS latest_created_at
-    FROM public.agreement_side_letters
-    WHERE agreement_id = aa.id
+      (array_agg(sl_src.title ORDER BY sl_src.created_at DESC))[1] AS latest_title,
+      (array_agg(sl_src.url ORDER BY sl_src.created_at DESC))[1] AS latest_url,
+      max(sl_src.created_at) AS latest_created_at
+    FROM public.agreement_side_letters sl_src
+    WHERE sl_src.agreement_id = aa.id
   ) sl ON aa.id IS NOT NULL
   ORDER BY u.created_at DESC;
 END;
