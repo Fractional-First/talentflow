@@ -39,12 +39,13 @@ export const NextStepsCard = ({
     useAgreementStatus({ allowDemoOverride: true })
   const [showPublishModal, setShowPublishModal] = useState(false)
 
-  // Until both queries settle, "not done" is indistinguishable from "not loaded yet". This card
-  // now renders unconditionally, so on a cold load a candidate who has already accepted would
+  // Until a query settles, "not done" is indistinguishable from "not loaded yet". This card now
+  // renders unconditionally, so on a cold load a candidate who has already accepted would
   // otherwise be shown an "Accept Agreement" button; following it reaches the agreement form,
   // whose read-only guard is also still unsettled, and acceptances are append-only INSERTs — a
-  // duplicate row in the legal record. Disabling until settled closes that window.
-  const isSettling = isPreferencesLoading || isAgreementLoading
+  // duplicate row in the legal record. Each control waits on its OWN query, never on both: a
+  // retrying agreement request must not lock a candidate out of job preferences it says nothing
+  // about.
 
   // Accepting a version that has since been superseded leaves the candidate needing to
   // re-accept — the agreement page says as much — so it is not "engagement-ready" yet.
@@ -115,11 +116,11 @@ export const NextStepsCard = ({
             <div className="mt-auto">
               <Button
                 onClick={() => navigate("/work-preferences")}
-                disabled={isSettling}
+                disabled={isPreferencesLoading}
                 className="w-full"
                 size="sm"
               >
-                {isSettling
+                {isPreferencesLoading
                   ? "Loading…"
                   : hasJobPreferences
                   ? "View or Edit Preferences"
@@ -138,7 +139,7 @@ export const NextStepsCard = ({
                 Get Engagement-Ready
               </h3>
               <p className="text-sm text-muted-foreground">
-                {isSettling
+                {isAgreementLoading
                   ? "Checking your agreement status…"
                   : isAgreementAccepted
                   ? "You're engagement-ready. View your accepted agreement."
@@ -150,11 +151,11 @@ export const NextStepsCard = ({
             <div className="mt-auto">
               <Button
                 onClick={() => navigate("/dashboard/agreement")}
-                disabled={isSettling}
+                disabled={isAgreementLoading}
                 className="w-full"
                 size="sm"
               >
-                {isSettling
+                {isAgreementLoading
                   ? "Loading…"
                   : isAgreementAccepted
                   ? "View Agreement"

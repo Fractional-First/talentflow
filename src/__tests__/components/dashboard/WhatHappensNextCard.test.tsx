@@ -76,7 +76,7 @@ describe('WhatHappensNextCard', () => {
     )
   })
 
-  it('claims nothing about a step while the queries are still settling', () => {
+  it('claims nothing about a step whose query has not settled', () => {
     // Everything is actually done, but neither query has resolved. Marking the steps
     // outstanding here tells a fully-onboarded candidate they have work left to do.
     mockUseAgreementStatus.mockReturnValue({
@@ -88,12 +88,29 @@ describe('WhatHappensNextCard', () => {
       <WhatHappensNextCard isPublished hasJobPreferences isPreferencesLoading />
     )
 
-    const item = screen.getByText('Set your job preferences').closest('li')
-    expect(within(item!).getByText('Checking')).toBeInTheDocument()
-    expect(within(item!).queryByText('Not done yet')).not.toBeInTheDocument()
+    const prefs = screen.getByText('Set your job preferences').closest('li')
+    expect(within(prefs!).getByText('Checking')).toBeInTheDocument()
+    expect(within(prefs!).queryByText('Not done yet')).not.toBeInTheDocument()
     expect(
       screen.queryByText("You're all set — our team is reviewing your profile.")
     ).not.toBeInTheDocument()
+  })
+
+  it('still reports a settled step while a different query is in flight', () => {
+    // Preferences are known; only the agreement request is slow. The preferences step must
+    // not be blanked to "Checking" by a query that says nothing about it.
+    mockUseAgreementStatus.mockReturnValue({
+      ...agreementStatus(false),
+      isLoading: true,
+    })
+
+    render(<WhatHappensNextCard isPublished hasJobPreferences />)
+
+    expect(itemState('Set your job preferences')).toBe('done')
+    const agreement = screen
+      .getByText('Accept your agreement with Fractional First')
+      .closest('li')
+    expect(within(agreement!).getByText('Checking')).toBeInTheDocument()
   })
 
   it('confirms everything is complete once all three are done', () => {

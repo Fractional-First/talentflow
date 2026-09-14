@@ -89,7 +89,7 @@ describe('NextStepsCard', () => {
     expect(screen.getByRole('button', { name: 'Accept Agreement' })).toBeEnabled()
   })
 
-  it('disables the preferences and agreement actions until both queries settle', () => {
+  it('disables both actions while their own queries are in flight', () => {
     mockUseAgreementStatus.mockReturnValue({
       ...agreementStatus(false),
       isLoading: true,
@@ -106,18 +106,36 @@ describe('NextStepsCard', () => {
     ).not.toBeInTheDocument()
   })
 
-  it('never offers to accept an agreement the candidate has already accepted, mid-load', () => {
-    // The dangerous ordering: the agreement query has resolved as accepted while work
-    // preferences are still in flight. Without the settling guard the card would say
-    // "Accept Agreement", and following it reaches a form whose own read-only guard has
-    // not settled either — a second row in an append-only legal record.
-    mockUseAgreementStatus.mockReturnValue(agreementStatus(true))
+  it('never offers to accept an agreement whose status is still unknown', () => {
+    // The dangerous case: the candidate HAS accepted, but the query has not resolved, so the
+    // card cannot know. Saying "Accept Agreement" here leads to a form whose own read-only
+    // guard has not settled either — and acceptances are append-only INSERTs, so following it
+    // writes a second row into the legal record.
+    mockUseAgreementStatus.mockReturnValue({
+      ...agreementStatus(true),
+      isLoading: true,
+    })
 
-    renderCard({ hasJobPreferences: false, isPreferencesLoading: true })
+    renderCard({ hasJobPreferences: true })
 
     expect(
       screen.queryByRole('button', { name: 'Accept Agreement' })
     ).not.toBeInTheDocument()
+  })
+
+  it('keeps job preferences usable while a slow agreement query is still retrying', () => {
+    // The two queries are independent: a retrying agreement request says nothing about
+    // preferences and must not lock a candidate out of the page they came for.
+    mockUseAgreementStatus.mockReturnValue({
+      ...agreementStatus(false),
+      isLoading: true,
+    })
+
+    renderCard({ hasJobPreferences: true, isPreferencesLoading: false })
+
+    const prefs = screen.getByRole('button', { name: 'View or Edit Preferences' })
+    expect(prefs).toBeEnabled()
+    expect(screen.getByRole('button', { name: 'Loading…' })).toBeDisabled()
   })
 
   it('asks for a re-accept when the accepted agreement version is superseded', () => {

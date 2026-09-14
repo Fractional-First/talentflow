@@ -31,22 +31,28 @@ export const WhatHappensNextCard = ({
   // An acceptance of a superseded agreement version still needs re-accepting — the agreement
   // page prompts for it — so it does not count as done here.
   const isAgreementAccepted = isAccepted && isCurrentVersion
-  // Before both queries settle, every step reads as outstanding — which tells a candidate who
-  // has already done them that they haven't. Show the steps without verdicts until it is true.
-  const isSettling = isPreferencesLoading || isAgreementLoading
+  // Before a query settles, its step reads as outstanding — which tells a candidate who has
+  // already done it that they haven't. Each step waits on its OWN query, so a slow agreement
+  // request never makes the already-known preferences step read "Checking".
+  // `isPublished` needs no flag: the Dashboard holds its own spinner until that query resolves.
 
   // The three actions are independent — a candidate can complete them in any order,
   // so this list reflects what they have already done instead of prescribing a sequence.
   const prerequisites = [
-    { label: "Publish your profile", isDone: isPublished },
-    { label: "Set your job preferences", isDone: hasJobPreferences },
+    { label: "Publish your profile", isDone: isPublished, isSettling: false },
+    {
+      label: "Set your job preferences",
+      isDone: hasJobPreferences,
+      isSettling: isPreferencesLoading,
+    },
     {
       label: "Accept your agreement with Fractional First",
       isDone: isAgreementAccepted,
+      isSettling: isAgreementLoading,
     },
   ]
 
-  const allDone = !isSettling && prerequisites.every((item) => item.isDone)
+  const allDone = prerequisites.every((item) => !item.isSettling && item.isDone)
 
   return (
     <StepCard className="h-full flex flex-col bg-primary/5 border-primary/20 shadow-none">
@@ -72,7 +78,7 @@ export const WhatHappensNextCard = ({
             </div>
             <ul className="space-y-2 pl-8">
               {prerequisites.map((item, index) => {
-                const isDone = !isSettling && item.isDone
+                const isDone = !item.isSettling && item.isDone
                 return (
                   <li
                     key={item.label}
@@ -97,7 +103,7 @@ export const WhatHappensNextCard = ({
                         index + 1
                       )}
                       <span className="sr-only">
-                        {isSettling
+                        {item.isSettling
                           ? "Checking"
                           : isDone
                           ? "Done"
