@@ -32,8 +32,13 @@ export const NextStepsCard = ({
   hasJobPreferences = false,
 }: NextStepsCardProps) => {
   const navigate = useNavigate()
-  const { isAccepted: isAgreementAccepted } = useAgreementStatus()
+  const { isAccepted, isCurrentVersion } = useAgreementStatus()
   const [showPublishModal, setShowPublishModal] = useState(false)
+
+  // Accepting a version that has since been superseded leaves the candidate needing to
+  // re-accept — the agreement page says as much — so it is not "engagement-ready" yet.
+  const isAgreementAccepted = isAccepted && isCurrentVersion
+  const needsReAcceptance = isAccepted && !isCurrentVersion
 
   return (
     <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10">
@@ -119,6 +124,8 @@ export const NextStepsCard = ({
               <p className="text-sm text-muted-foreground">
                 {isAgreementAccepted
                   ? "You're engagement-ready. View your accepted agreement."
+                  : needsReAcceptance
+                  ? "Our agreement has been updated. Review and re-accept to stay engagement-ready."
                   : "Complete the final steps to become client engagement-ready."}
               </p>
             </div>
@@ -128,7 +135,11 @@ export const NextStepsCard = ({
                 className="w-full"
                 size="sm"
               >
-                {isAgreementAccepted ? "View Agreement" : "Accept Agreement"}
+                {isAgreementAccepted
+                  ? "View Agreement"
+                  : needsReAcceptance
+                  ? "Review Agreement"
+                  : "Accept Agreement"}
               </Button>
             </div>
           </div>

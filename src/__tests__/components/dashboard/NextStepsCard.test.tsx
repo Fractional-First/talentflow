@@ -87,6 +87,23 @@ describe('NextStepsCard', () => {
     expect(screen.getByRole('button', { name: 'Accept Agreement' })).toBeEnabled()
   })
 
+  it('asks for a re-accept when the accepted agreement version is superseded', () => {
+    mockUseAgreementStatus.mockReturnValue({
+      ...agreementStatus(true),
+      isCurrentVersion: false,
+    })
+
+    renderCard({ hasJobPreferences: false })
+
+    expect(screen.getByRole('button', { name: 'Review Agreement' })).toBeEnabled()
+    expect(
+      screen.getByText(
+        'Our agreement has been updated. Review and re-accept to stay engagement-ready.'
+      )
+    ).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Set Preferences' })).toBeEnabled()
+  })
+
   it('keeps job preferences available after the agreement is accepted', () => {
     mockUseAgreementStatus.mockReturnValue(agreementStatus(true))
 
