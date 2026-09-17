@@ -30,15 +30,29 @@ $guard$;
 -- function. #152 keeps production's 13-column shape and adds the
 -- `agreement_kind = 'client'` filter; this file is the LAST definition to run, so
 -- it has to carry BOTH that filter and the five side-letter columns, or whichever
--- of the two it omits is silently undone. Hence the timestamp: it sorts after
--- every file in #152 (...000000-000400).
+-- of the two it omits is silently undone.
 --
--- Both files in this PR were moved off their original 20260826140000/140100
--- timestamps, not just this one: the Supabase CLI refuses ANY pending migration
--- older than the last one already on remote ("Found local migration files to be
--- inserted before the last migration on remote database"), not merely an
--- out-of-order redefinition. Leaving the table-creation file behind would have
--- failed the apply job just as surely.
+-- This pair has now been re-timestamped TWICE, and the second move is the
+-- instructive one:
+--
+--   20260826140000/140100  original, written before #152 existed
+--   20260914000500/000600  moved to sort after #152's ...000000-000400
+--   20260918000000/000100  moved again, after the apply job refused them
+--
+-- What happened: #149 was merged AFTER talentflow#155, whose
+-- 20260916000000_record_agreement_acceptance_kind.sql had already applied. The
+-- Supabase CLI refuses ANY pending migration older than the last one on remote
+-- ("Found local migration files to be inserted before the last migration on
+-- remote database") — not merely an out-of-order redefinition of the same
+-- object. Both files were rejected together, nothing landed, and #149 sat
+-- merged in git but absent from the database until this PR.
+--
+-- The lesson for whoever reads this next: a migration's timestamp is not a
+-- property of the branch it was written on. It is a claim about where the file
+-- will sit in the applied sequence — and that sequence is fixed by MERGE ORDER,
+-- which is not knowable while the PR is open. Check it against the live
+-- `supabase_migrations.schema_migrations` tail immediately before merging,
+-- rather than when the file is written.
 
 DROP FUNCTION IF EXISTS public.list_client_signatories_admin();
 
