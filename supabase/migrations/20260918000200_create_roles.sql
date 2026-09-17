@@ -24,5 +24,5 @@ CREATE TRIGGER update_roles_updated_at
 
 -- RLS enabled with no policies: no direct client-side access. Phase 1 is
 -- admin-only, served entirely through SECURITY DEFINER RPCs (see
--- 20260826150100_roles_admin_rpcs.sql) that check for the admin role.
+-- 20260918000300_roles_admin_rpcs.sql) that check for the admin role.
 ALTER TABLE public.roles ENABLE ROW LEVEL SECURITY;
