@@ -1,0 +1,128 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { render, screen, within } from '@testing-library/react'
+import { WhatHappensNextCard } from '@/components/dashboard/WhatHappensNextCard'
+
+const mockUseAgreementStatus = vi.fn()
+
+vi.mock('@/queries/useAgreementAcceptance', () => ({
+  useAgreementStatus: () => mockUseAgreementStatus(),
+}))
+
+const agreementStatus = (isAccepted: boolean) => ({
+  isAccepted,
+  isCurrentVersion: isAccepted,
+  acceptedAt: null,
+  agreementVersion: null,
+  acceptanceData: null,
+  isLoading: false,
+})
+
+const itemState = (label: string) => {
+  const item = screen.getByText(label).closest('li')
+  if (!item) throw new Error(`No list item found for "${label}"`)
+  return within(item).queryByText('Done') ? 'done' : 'not done'
+}
+
+describe('WhatHappensNextCard', () => {
+  beforeEach(() => {
+    mockUseAgreementStatus.mockReturnValue(agreementStatus(false))
+  })
+
+  it('shows all three steps outstanding, in any order, for a freshly confirmed candidate', () => {
+    render(<WhatHappensNextCard isPublished={false} hasJobPreferences={false} />)
+
+    expect(itemState('Publish your profile')).toBe('not done')
+    expect(itemState('Set your job preferences')).toBe('not done')
+    expect(itemState('Accept your agreement with Fractional First')).toBe(
+      'not done'
+    )
+    expect(
+      screen.getByText('You can complete these in any order.')
+    ).toBeInTheDocument()
+  })
+
+  it('marks the agreement done when it was signed before job preferences were set', () => {
+    mockUseAgreementStatus.mockReturnValue(agreementStatus(true))
+
+    render(<WhatHappensNextCard isPublished={false} hasJobPreferences={false} />)
+
+    expect(itemState('Accept your agreement with Fractional First')).toBe('done')
+    expect(itemState('Set your job preferences')).toBe('not done')
+    expect(
+      screen.getByText('You can complete these in any order.')
+    ).toBeInTheDocument()
+  })
+
+  it('marks publishing and preferences done when the agreement has not been signed yet', () => {
+    render(<WhatHappensNextCard isPublished hasJobPreferences />)
+
+    expect(itemState('Publish your profile')).toBe('done')
+    expect(itemState('Set your job preferences')).toBe('done')
+    expect(itemState('Accept your agreement with Fractional First')).toBe(
+      'not done'
+    )
+  })
+
+  it('leaves the agreement outstanding when the accepted version is no longer current', () => {
+    mockUseAgreementStatus.mockReturnValue({
+      ...agreementStatus(true),
+      isCurrentVersion: false,
+    })
+
+    render(<WhatHappensNextCard isPublished hasJobPreferences />)
+
+    expect(itemState('Accept your agreement with Fractional First')).toBe(
+      'not done'
+    )
+  })
+
+  it('claims nothing about a step whose query has not settled', () => {
+    // Everything is actually done, but neither query has resolved. Marking the steps
+    // outstanding here tells a fully-onboarded candidate they have work left to do.
+    mockUseAgreementStatus.mockReturnValue({
+      ...agreementStatus(true),
+      isLoading: true,
+    })
+
+    render(
+      <WhatHappensNextCard isPublished hasJobPreferences isPreferencesLoading />
+    )
+
+    const prefs = screen.getByText('Set your job preferences').closest('li')
+    expect(within(prefs!).getByText('Checking')).toBeInTheDocument()
+    expect(within(prefs!).queryByText('Not done yet')).not.toBeInTheDocument()
+    expect(
+      screen.queryByText("You're all set — our team is reviewing your profile.")
+    ).not.toBeInTheDocument()
+  })
+
+  it('still reports a settled step while a different query is in flight', () => {
+    // Preferences are known; only the agreement request is slow. The preferences step must
+    // not be blanked to "Checking" by a query that says nothing about it.
+    mockUseAgreementStatus.mockReturnValue({
+      ...agreementStatus(false),
+      isLoading: true,
+    })
+
+    render(<WhatHappensNextCard isPublished hasJobPreferences />)
+
+    expect(itemState('Set your job preferences')).toBe('done')
+    const agreement = screen
+      .getByText('Accept your agreement with Fractional First')
+      .closest('li')
+    expect(within(agreement!).getByText('Checking')).toBeInTheDocument()
+  })
+
+  it('confirms everything is complete once all three are done', () => {
+    mockUseAgreementStatus.mockReturnValue(agreementStatus(true))
+
+    render(<WhatHappensNextCard isPublished hasJobPreferences />)
+
+    expect(
+      screen.getByText("You're all set — our team is reviewing your profile.")
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByText('You can complete these in any order.')
+    ).not.toBeInTheDocument()
+  })
+})

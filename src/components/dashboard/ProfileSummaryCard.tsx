@@ -36,6 +36,7 @@ export function ProfileSummaryCard({
         </div>
       )}
       <div className="p-6 flex-1 flex flex-col">
+        <h2 className="text-2xl font-semibold text-foreground pb-4 mb-4 border-b border-border">Your Profile</h2>
         <div className="flex items-start space-x-4">
           <Avatar className="h-16 w-16 border-2 border-primary/10">
             {profile.profilePicture && (
@@ -46,20 +47,20 @@ export function ProfileSummaryCard({
             </AvatarFallback>
           </Avatar>
           <div className="flex-1">
-            <h2 className="text-xl font-semibold text-gray-900">
+            <h3 className="text-xl font-semibold text-foreground">
               {profile.name}
-            </h2>
-            <p className="text-gray-600">{profile.title}</p>
-            <p className="text-gray-500 text-sm">{profile.company}</p>
-            <p className="text-gray-500 text-sm">{profile.location}</p>
+            </h3>
+            <p className="text-muted-foreground">{profile.title}</p>
+            <p className="text-muted-foreground text-sm">{profile.company}</p>
+            <p className="text-muted-foreground text-sm">{profile.location}</p>
           </div>
         </div>
         <div className="mt-4 flex-1">
-          <h3 className="text-lg font-medium text-gray-900">About</h3>
-          <p className="mt-2 text-sm text-gray-600">{profile.about}</p>
+          <h3 className="text-lg font-medium text-foreground">About</h3>
+          <p className="mt-2 text-sm text-muted-foreground">{profile.about}</p>
         </div>
         <div className="mt-4">
-          <h3 className="text-lg font-medium text-gray-900">Skills</h3>
+          <h3 className="text-lg font-medium text-foreground">Skills</h3>
           <div className="mt-2 flex flex-wrap gap-2">
             {profile.skills.map((skill, index) => (
               <span
