@@ -42,6 +42,7 @@ interface AgreementStatus {
 }
 
 interface RecordAcceptanceParams {
+  p_agreement_kind: "talent" | "client"
   p_agreement_version: string
   p_signature_name: string
   p_contact_email: string
