@@ -41,6 +41,23 @@ describe('WhatHappensNextCard', () => {
     ).toBeInTheDocument()
   })
 
+  it('does not strike through or grey out a completed step', () => {
+    mockUseAgreementStatus.mockReturnValue(agreementStatus(true))
+
+    render(<WhatHappensNextCard isPublished hasJobPreferences />)
+
+    for (const label of [
+      'Publish your profile',
+      'Set your job preferences',
+      'Accept your agreement with Fractional First',
+    ]) {
+      const item = screen.getByText(label).closest('li')!
+      expect(itemState(label)).toBe('done')
+      expect(item.className).not.toMatch(/line-through/)
+      expect(item.className).toMatch(/text-foreground/)
+    }
+  })
+
   it('marks the agreement done when it was signed before job preferences were set', () => {
     mockUseAgreementStatus.mockReturnValue(agreementStatus(true))
 

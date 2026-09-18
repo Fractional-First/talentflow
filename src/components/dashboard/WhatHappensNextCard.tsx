@@ -79,15 +79,13 @@ export const WhatHappensNextCard = ({
             <ul className="space-y-2 pl-8">
               {prerequisites.map((item, index) => {
                 const isDone = !item.isSettling && item.isDone
+                // A completed step is signalled by the filled checkmark badge alone — the row is
+                // never struck through or greyed out. These are the things a candidate has to do
+                // to be placed on a project, and they stay legible once done (Daniel, 18 Sep).
                 return (
                   <li
                     key={item.label}
-                    className={cn(
-                      "flex items-center gap-2 text-sm",
-                      isDone
-                        ? "text-muted-foreground line-through"
-                        : "text-foreground"
-                    )}
+                    className="flex items-center gap-2 text-sm text-foreground"
                   >
                     <span
                       className={cn(
