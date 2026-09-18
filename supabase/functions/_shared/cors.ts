@@ -1,12 +1,15 @@
+// Browser origins allowed to call the edge functions that use this helper
+// (submit-rdg-lead, submit-shortlist). Every entry is annotated with the app it
+// serves, and every entry must be a host that actually resolves: a dead name
+// here is dead weight at best, and an origin nobody holds the DNS for at worst.
 const ALLOWED_ORIGINS = [
-  "https://app.fractionalfirst.com",
-  "https://candidates.fractionalfirst.com",
-  "https://clients.fractionalfirst.com",
-  "https://role-description-generator.fractionalfirst.com",
-  "https://rdg.fractionalfirst.com",
-  "https://guest-jd-generator.netlify.app",
-  "http://localhost:5173",
-  "http://localhost:3000",
+  "https://talent.fractionalfirst.com",                     // talentflow — talent portal
+  "https://candidates.fractionalfirst.com",                 // public-profiles
+  "https://clients.fractionalfirst.com",                    // ff-client-portal
+  "https://role-description-generator.fractionalfirst.com", // guest-jd-generator — custom domain
+  "https://guest-jd-generator.netlify.app",                 // guest-jd-generator — Netlify site
+  "http://localhost:5173",                                  // vite dev server
+  "http://localhost:3000",                                  // next dev server
 ];
 
 const ALLOWED_PATTERNS = [
