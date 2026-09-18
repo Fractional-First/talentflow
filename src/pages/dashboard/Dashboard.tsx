@@ -150,11 +150,7 @@ const Dashboard = () => {
                 </div>
                 {/* Right column - What happens next */}
                 <div className="space-y-6">
-                  <WhatHappensNextCard
-                    isPublished={isPublished}
-                    hasJobPreferences={hasJobPreferences}
-                    isPreferencesLoading={workPrefsLoading}
-                  />
+                  <WhatHappensNextCard />
                 </div>
               </div>
             </div>
