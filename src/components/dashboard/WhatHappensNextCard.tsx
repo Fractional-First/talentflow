@@ -4,7 +4,7 @@ import { ClipboardCheck, Handshake, MessageCircle } from "lucide-react"
 const prerequisites = [
   "Published your profile",
   "Set your job preferences",
-  "Accept your agreement with Fractional First",
+  "Accepted your agreement with Fractional First",
 ]
 
 const steps = [
