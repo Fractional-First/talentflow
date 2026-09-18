@@ -2,20 +2,11 @@ import { useState } from "react"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
-import { Badge } from "@/components/ui/badge"
-import {
   Share2,
-  Users,
+  Briefcase,
   Search,
-  PartyPopper,
   RefreshCw,
   Globe,
-  Copy,
 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { useAgreementStatus } from "@/queries/useAgreementAcceptance"
@@ -28,6 +19,7 @@ interface NextStepsCardProps {
   isUpdatingPublishStatus?: boolean
   publicProfileUrl?: string
   firstName?: string
+  hasJobPreferences?: boolean
 }
 
 export const NextStepsCard = ({
@@ -37,27 +29,20 @@ export const NextStepsCard = ({
   isUpdatingPublishStatus = false,
   publicProfileUrl = "",
   firstName,
+  hasJobPreferences = false,
 }: NextStepsCardProps) => {
   const navigate = useNavigate()
   const { isAccepted: isAgreementAccepted } = useAgreementStatus()
   const [showPublishModal, setShowPublishModal] = useState(false)
 
-  const handleGetGuidance = () => {
-    navigate("/dashboard/branding")
-  }
-
   return (
     <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10">
       <CardHeader className="text-center space-y-3 pb-4">
-        <div className="flex items-center justify-center gap-2">
-          <PartyPopper className="h-6 w-6 text-primary" />
-          <h2 className="text-2xl font-semibold text-foreground">
-            Your profile and job preferences are now complete!
-          </h2>
-          <PartyPopper className="h-6 w-6 text-primary" />
-        </div>
+        <h2 className="text-2xl font-semibold text-foreground">
+          Your profile is now complete
+        </h2>
         <p className="text-lg text-muted-foreground font-medium">
-          Here's how to put them to work.
+          Recommended actions
         </p>
       </CardHeader>
 
@@ -80,7 +65,7 @@ export const NextStepsCard = ({
               <p className="text-sm text-muted-foreground">
                 {isPublished
                   ? "Showcase your expertise to your network and allow companies to find you."
-                  : "Make your profile publicly accessible so others can discover and connect with you."}
+                  : "Creates a personalized link to share and helps our team match you to opportunities."}
               </p>
             </div>
             <div className="mt-auto">
@@ -100,21 +85,24 @@ export const NextStepsCard = ({
             </div>
           </div>
 
-          {/* Get Guidance Action */}
+          {/* Job Preferences Action */}
           <div className="space-y-3 text-center flex flex-col">
             <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-              <Users className="h-6 w-6 text-primary" />
+              <Briefcase className="h-6 w-6 text-primary" />
             </div>
             <div className="space-y-2 flex-1">
-              <h3 className="font-semibold text-foreground">Get Guidance</h3>
+              <h3 className="font-semibold text-foreground">Job Preferences</h3>
               <p className="text-sm text-muted-foreground">
-                Work with a coach to refine your personal positioning and career
-                strategy.
+                Help us understand what you're looking for in your next role. This information will stay private.
               </p>
             </div>
             <div className="mt-auto">
-              <Button onClick={handleGetGuidance} className="w-full" size="sm">
-                Get Guidance
+              <Button
+                onClick={() => navigate("/work-preferences")}
+                className="w-full"
+                size="sm"
+              >
+                {hasJobPreferences ? "View or Edit Preferences" : "Set Preferences"}
               </Button>
             </div>
           </div>
@@ -125,9 +113,8 @@ export const NextStepsCard = ({
               <Search className="h-6 w-6 text-primary" />
             </div>
             <div className="space-y-2 flex-1">
-              <h3 className="font-semibold text-foreground flex items-center justify-center gap-2">
+              <h3 className="font-semibold text-foreground">
                 Get Engagement-Ready
-                {!isAgreementAccepted && <Badge variant="default" className="text-[10px] px-1.5 py-0">New</Badge>}
               </h3>
               <p className="text-sm text-muted-foreground">
                 {isAgreementAccepted
