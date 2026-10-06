@@ -1,7 +1,8 @@
 // Browser origins allowed to call the edge functions that use this helper
-// (submit-rdg-lead, submit-shortlist). Every entry is annotated with the app it
-// serves, and every entry must be a host that actually resolves: a dead name
-// here is dead weight at best, and an origin nobody holds the DNS for at worst.
+// (submit-rdg-lead, submit-shortlist, submit-contact-us). Every entry is
+// annotated with the app it serves, and every entry must be a host that
+// actually resolves: a dead name here is dead weight at best, and an origin
+// nobody holds the DNS for at worst.
 const ALLOWED_ORIGINS = [
   "https://talent.fractionalfirst.com",                     // talentflow — talent portal
   "https://candidates.fractionalfirst.com",                 // public-profiles
