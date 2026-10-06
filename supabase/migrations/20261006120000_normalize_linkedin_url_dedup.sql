@@ -93,6 +93,8 @@ BEGIN
     FROM profiles
     WHERE public.normalize_linkedin_url(linkedinurl)
         = public.normalize_linkedin_url(p_linkedin_url)
+    -- Existing dupes: always return the oldest profile.
+    ORDER BY created_at, id
     LIMIT 1;
 
     IF v_existing_id IS NOT NULL THEN
