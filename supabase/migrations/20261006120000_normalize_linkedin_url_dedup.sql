@@ -11,7 +11,14 @@
 -- Approach: Add an immutable normalize_linkedin_url(text) helper and call it
 --          on both sides of the dedup WHERE clause. No schema or stored-value
 --          changes; the RPC body is otherwise identical to the previous
---          revision (20260303120000_guest_profile_urls.sql).
+--          revision (20260303120000_guest_profile_urls.sql), which is still
+--          the latest definition of create_guest_profile on main as of
+--          2026-10-06 (nothing after it redefines the function).
+--
+-- Timestamp: first written as 20260513000000. Re-stamped on 2026-10-06
+--          because production already has later migrations (20260918*), and
+--          `supabase db push` (no --include-all, as in migrate.yml) refuses
+--          to apply a local migration older than the newest remote one.
 --
 -- Limitation: PL/pgSQL has no built-in URL decoder, so URL-encoded variants
 --          (e.g. %2D in usernames) are not decoded. The canonical TypeScript
@@ -80,7 +87,7 @@ BEGIN
   END;
 
   -- Check for duplicate by LinkedIn URL (normalized — see migration
-  -- 20260513000000_normalize_linkedin_url_dedup.sql for the helper).
+  -- 20261006120000_normalize_linkedin_url_dedup.sql for the helper).
   IF p_linkedin_url IS NOT NULL AND p_linkedin_url != '' THEN
     SELECT id INTO v_existing_id
     FROM profiles
