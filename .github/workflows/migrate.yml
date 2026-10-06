@@ -1,4 +1,6 @@
-name: Apply Supabase Migrations
+# Ships Supabase changes to production when they merge to main: migrations first,
+# then the edge functions the merge changed. Mirrors Kelvin's cd.yml.
+name: Deploy Supabase (migrations + edge functions)
 
 on:
   push:
@@ -6,11 +8,13 @@ on:
       - main
     paths:
       - supabase/migrations/**
+      - supabase/functions/**
+      - supabase/config.toml
 
   workflow_dispatch:
     inputs:
       dry_run:
-        description: "Dry-run only (no changes applied). Defaults to true for manual dispatch — set to false to actually apply."
+        description: "Dry-run only (no changes applied). Defaults to true for manual dispatch — set to false to apply migrations and deploy every edge function."
         required: false
         default: "true"
         type: choice
@@ -110,4 +114,77 @@ jobs:
             echo "Database migrations are serialized and applied from GitHub Actions."
             echo ""
             echo "To fully guarantee 'migration before deploy', production frontend deploy must be triggered after this job rather than independently by host-side auto-deploy."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # Runs after `migrate`, so a function that depends on new schema never goes live
+  # before its migration. Deploys only the functions this merge changed; see
+  # .github/scripts/changed-functions.sh for why, and for the _shared/config.toml exception.
+  deploy-functions:
+    needs: migrate
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Work out which functions to deploy
+        id: plan
+        env:
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT" = "workflow_dispatch" ]; then
+            fns=$(bash .github/scripts/changed-functions.sh --all)
+          else
+            fns=$(bash .github/scripts/changed-functions.sh "$BEFORE" "$AFTER")
+          fi
+          echo "Functions to deploy: ${fns:-none}"
+          {
+            echo "functions<<EOF"
+            echo "$fns"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Deploy edge functions
+        if: ${{ steps.plan.outputs.functions != '' && inputs.dry_run != 'true' }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+          FUNCTIONS: ${{ steps.plan.outputs.functions }}
+        run: |
+          set -euo pipefail
+          while read -r fn; do
+            [ -z "$fn" ] && continue
+            echo "::group::Deploy $fn"
+            supabase functions deploy "$fn" --project-ref "$SUPABASE_PROJECT_REF"
+            echo "::endgroup::"
+          done <<< "$FUNCTIONS"
+
+      - name: Summary
+        if: always()
+        env:
+          FUNCTIONS: ${{ steps.plan.outputs.functions }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          {
+            echo "## Edge functions"
+            echo ""
+            if [ -z "$FUNCTIONS" ]; then
+              echo "No edge function changed in this merge; nothing deployed."
+            else
+              if [ "$DRY_RUN" = "true" ]; then echo "Dry-run: would deploy:"; else echo "Deployed:"; fi
+              echo ""
+              printf '%s\n' "$FUNCTIONS" | sed 's/^/- `/; s/$/`/'
+            fi
           } >> "$GITHUB_STEP_SUMMARY"

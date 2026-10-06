@@ -1,0 +1,53 @@
+# An edge-function change ships in its OWN PR (supabase/functions/** and
+# supabase/config.toml only), separate from app code and migrations. Merging it
+# deploys the changed functions (migrate.yml → deploy-functions), so the
+# function is live before the app PR that calls it lands, and that app PR's
+# Netlify preview works end to end. Mirrors Kelvin's ci-edge-function-pr-guard.yml.
+name: Edge function PR guard
+
+on:
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  guard:
+    name: Edge functions must be their own PR
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fail if this PR mixes edge functions with other changes
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          FILES="$(git diff --name-only "$BASE_SHA"..."$HEAD_SHA")"
+          FN="$(printf '%s\n' "$FILES" | grep -E '^supabase/functions/' || true)"
+          OTHER="$(printf '%s\n' "$FILES" | grep -vE '^(supabase/functions/|supabase/config\.toml$)' | grep -v '^$' || true)"
+
+          if [ -n "$FN" ] && [ -n "$OTHER" ]; then
+            echo "::error::This PR mixes edge-function changes with other files. Ship edge functions in their own PR (supabase/functions/** and supabase/config.toml only)."
+            echo ""
+            echo "Edge function files:"
+            printf '%s\n' "$FN"
+            echo ""
+            echo "Move these to a separate PR:"
+            printf '%s\n' "$OTHER"
+            exit 1
+          fi
+
+          echo "OK: this PR is function-only, or has no edge-function changes."
