@@ -269,6 +269,15 @@ describe('usePublicProfile', () => {
 □ Cross-repo changes: Deploy public-profiles FIRST (read-only, safer)
 ```
 
+### How Supabase changes ship
+
+Merging to `main` ships them to production through `.github/workflows/migrate.yml`. Nobody deploys by hand.
+
+1. **Migrations:** new files in `supabase/migrations/` are applied first.
+2. **Edge functions:** next, the functions the merge changed are deployed, using the `verify_jwt` settings in `supabase/config.toml`. A change to `supabase/functions/_shared/` or to `config.toml` redeploys every function. A function removed from the repo is reported, never deleted from production.
+3. **Function PRs stand alone:** an edge-function PR contains only `supabase/functions/**` (and `config.toml`). The *Edge function PR guard* check fails a PR that mixes them with app code or migrations. Merge the function PR first; the app PR that calls it then works on its Netlify preview.
+4. **New functions:** add a `[functions.<name>]` block to `config.toml` if it must run without a JWT. Otherwise it deploys with `verify_jwt = true`.
+
 ---
 
 ## Cross-Repo Coordination
