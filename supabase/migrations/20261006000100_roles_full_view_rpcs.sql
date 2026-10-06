@@ -183,6 +183,13 @@ BEGIN
   IF p_role ? 'organization_id' AND NULLIF(p_role->>'organization_id', '') IS NULL THEN
     RAISE EXCEPTION 'A role needs a client';
   END IF;
+  -- The foreign key enforces this too; this says it in words.
+  IF NULLIF(p_role->>'confirmed_candidate_id', '') IS NOT NULL AND NOT EXISTS (
+    SELECT 1 FROM public.role_candidates
+    WHERE role_id = v_id AND profile_id = (p_role->>'confirmed_candidate_id')::uuid
+  ) THEN
+    RAISE EXCEPTION 'Introduce a candidate before confirming them';
+  END IF;
   UPDATE public.roles r
   SET
     title = CASE WHEN p_role ? 'title' THEN v_title ELSE r.title END,
