@@ -52,6 +52,23 @@ function normalizeRequired(value: unknown, maxLength: number) {
   return normalized;
 }
 
+// Pragmatic shape check (one @, a dotted domain, no whitespace), so a typo
+// gets a 400 here instead of a Resend 422 that surfaces as a 502.
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// Only links back to a candidate profile end up in the email.
+const PROFILE_URL_ORIGIN = "https://candidates.fractionalfirst.com";
+
+function safeProfileUrl(value: string | null) {
+  if (!value) return null;
+  try {
+    const url = new URL(value);
+    return url.origin === PROFILE_URL_ORIGIN ? url.href : null;
+  } catch {
+    return null;
+  }
+}
+
 function normalizeSubject(value: string) {
   return value.replace(/[\r\n]+/g, " ").slice(0, 140);
 }
@@ -94,10 +111,14 @@ Deno.serve(async (req) => {
     );
   }
 
+  if (!EMAIL_PATTERN.test(email)) {
+    return jsonResponse({ error: "Invalid email address" }, 400, cors);
+  }
+
   const company = normalizeOptional(body.company, 160);
   const message = normalizeOptional(body.message, 4000);
   const candidateName = normalizeOptional(body.candidateName, 160);
-  const profileUrl = normalizeOptional(body.profileUrl, 500);
+  const profileUrl = safeProfileUrl(normalizeOptional(body.profileUrl, 500));
   const source = normalizeOptional(body.source, 80) ?? "anonymous_profile_cta";
   const candidateSuffix = candidateName
     ? ` — re: ${normalizeSubject(candidateName)}`
@@ -122,20 +143,26 @@ Deno.serve(async (req) => {
   }
     <p style="color:#888;font-size:12px;">Source: ${escapeHtml(source)}</p>`;
 
-  const r = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      authorization: `Bearer ${RESEND_API_KEY}`,
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({
-      from: FROM,
-      to: NOTIFY_TO,
-      reply_to: email,
-      subject,
-      html,
-    }),
-  });
+  let r: Response;
+  try {
+    r = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${RESEND_API_KEY}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        from: FROM,
+        to: NOTIFY_TO,
+        reply_to: email,
+        subject,
+        html,
+      }),
+    });
+  } catch (err) {
+    console.error("[submit-contact-us] Resend unreachable", err);
+    return jsonResponse({ error: "Failed to send email" }, 502, cors);
+  }
 
   if (!r.ok) {
     console.error("[submit-contact-us] Resend error", r.status, await r.text());
