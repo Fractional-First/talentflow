@@ -12,6 +12,7 @@ interface LinkedInInputSectionProps {
   hideResumeFallback?: boolean
   showSubmitButton?: boolean
   onLinkedInUrlChange?: (url: string) => void
+  signedUpViaLinkedIn?: boolean
 }
 
 export const LinkedInInputSection = ({
@@ -21,6 +22,7 @@ export const LinkedInInputSection = ({
   hideResumeFallback = false,
   showSubmitButton = true,
   onLinkedInUrlChange,
+  signedUpViaLinkedIn = false,
 }: LinkedInInputSectionProps) => {
   const [linkedinUrl, setLinkedinUrl] = useState("")
   const [validationError, setValidationError] = useState("")
@@ -75,7 +77,15 @@ export const LinkedInInputSection = ({
               LinkedIn Profile
             </h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Enter your LinkedIn username or URL to automatically generate your profile.
+              {signedUpViaLinkedIn ? (
+                <>
+                  Thanks for signing up with LinkedIn!
+                  <br />
+                  Enter your LinkedIn username or URL to automatically generate your profile. LinkedIn does not share this information as part of the authentication process.
+                </>
+              ) : (
+                "Enter your LinkedIn username or URL to automatically generate your profile."
+              )}
             </p>
           </div>
         </div>

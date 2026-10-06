@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label"
 import { useDocumentUpload } from "@/queries/useDocumentUpload"
 import { toast } from "@/hooks/use-toast"
 import { useSubmitLinkedInProfile } from "@/queries/useSubmitLinkedInProfile"
+import { useGetUser } from "@/queries/auth/useGetUser"
 import { AlertCircle, ArrowRight, Clock, Home } from "lucide-react"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
@@ -38,6 +39,16 @@ const ProfileCreation = () => {
   } = useDocumentUpload()
 
   const submitLinkedInMutation = useSubmitLinkedInProfile()
+  const { data: user } = useGetUser()
+  // Dev-only demo affordance: localStorage.setItem('ff_demo_linkedin_signup', '1') to preview
+  // the LinkedIn-OAuth copy without a real LinkedIn sign-up. Dead-code-eliminated in prod
+  // builds since import.meta.env.DEV is statically false there.
+  const demoLinkedInSignup =
+    import.meta.env.DEV &&
+    typeof window !== "undefined" &&
+    window.localStorage.getItem("ff_demo_linkedin_signup") === "1"
+  const signedUpViaLinkedIn =
+    demoLinkedInSignup || user?.app_metadata?.provider === "linkedin_oidc"
 
   const [validationErrors, setValidationErrors] = useState<string[]>([])
   const [serverError, setServerError] = useState("")
@@ -215,6 +226,7 @@ const ProfileCreation = () => {
                         hideResumeFallback={true}
                         showSubmitButton={false}
                         onLinkedInUrlChange={setCurrentLinkedInUrl}
+                        signedUpViaLinkedIn={signedUpViaLinkedIn}
                       />
 
                       {/* OR DIVIDER */}
