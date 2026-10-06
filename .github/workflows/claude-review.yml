@@ -1,0 +1,207 @@
+name: Claude PR Review
+
+# Calls Claude via OpenRouter (https://openrouter.ai/api/v1/chat/completions).
+# To swap models, change the `model` slug in the jq builder below.
+# OpenRouter model catalog: https://openrouter.ai/models
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    if: |
+      !startsWith(github.event.pull_request.title, '[skip-review]') &&
+      github.actor != 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.fork == false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get PR diff
+        id: diff
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.sha }}
+        run: |
+          DIFF=$(git diff "$BASE_SHA" "$HEAD_SHA" | head -8000)
+          FILES=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA")
+          echo "$DIFF" > /tmp/pr_diff.txt
+          echo "$FILES" > /tmp/pr_files.txt
+          echo "files_changed<<EOF" >> $GITHUB_OUTPUT
+          echo "$FILES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Read project context
+        id: context
+        run: |
+          CLAUDE_MD=$(cat CLAUDE.md 2>/dev/null || echo "No CLAUDE.md found")
+          echo "claude_md<<EOF" >> $GITHUB_OUTPUT
+          echo "$CLAUDE_MD" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Claude Code Review (via OpenRouter)
+        id: claude_review
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          CLAUDE_MD: ${{ steps.context.outputs.claude_md }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${OPENROUTER_API_KEY:-}" ]; then
+            echo "OPENROUTER_API_KEY is not available to this workflow."
+            echo "review=OpenRouter API error: OPENROUTER_API_KEY is missing for this workflow run." >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+
+          DIFF=$(cat /tmp/pr_diff.txt)
+          FILES=$(cat /tmp/pr_files.txt)
+
+          {
+            cat <<EOF
+          You are reviewing a Pull Request for the Fractional First talentflow project, a recruiting platform built on React + Vite + Supabase + Pinecone.
+
+          Project Context
+          ${CLAUDE_MD}
+
+          Changed Files
+          ${FILES}
+
+          Full Diff
+          [diff]
+          ${DIFF}
+          [/diff]
+
+          Review Instructions
+          Review this PR and provide feedback in the following areas. Be concise and specific. Only flag real issues, not theoretical ones.
+
+          1. Security
+          - Edge Functions and RPCs: do they verify incoming requests using an Authorization header or JWT?
+          - Any secrets or credentials hardcoded or exposed?
+          - RLS policies missing or bypassable?
+          - SQL injection risks?
+
+          2. Database and Migrations
+          - Migration files follow naming convention YYYYMMDDHHMMSS_description.sql?
+          - Any destructive SQL such as DROP, TRUNCATE, or broad UPDATE without WHERE?
+          - Schema changes backward compatible with existing code?
+          - Missing indexes on foreign keys or frequently queried columns?
+
+          3. Talentflow Pipeline Safety
+          - Candidate profile creation flow: LinkedIn URL normalization, guest profile RPC, profile slug generation — any regression risk?
+          - Pinecone vector routing: full-profile vs anon vectors must go to the correct hosts (PINECONE_HOST vs PINECONE_HOST_ANON).
+          - LinkedIn scrape pipeline changes (Apify integration, anti-bot handling)?
+          - Auth flow changes, especially around guest profile to claimed profile transitions?
+
+          4. Code Quality
+          - TypeScript type safety issues?
+          - React hooks used correctly, including missing dependencies or stale closures?
+          - Error handling: are errors silently swallowed?
+          - Missing loading or error states in UI?
+
+          5. Test Coverage
+          - New logic covered by tests?
+          - Are VERIFY blocks present for UI changes?
+
+          Output Format
+          Use this exact structure:
+
+          ### Summary
+          <2-3 sentence summary of what this PR does>
+
+          ### Risk Level
+          <ONE of: Low | Medium | High>
+          <One sentence explaining why>
+
+          ### Issues Found
+          <If none, write "No issues found.">
+          <Otherwise, list as:>
+          - [SEVERITY] file:line - Description and suggested fix
+
+          ### Suggestions
+          <Optional improvements, not blockers. If none, omit this section.>
+
+          ### Checklist
+          - [ ] or [x] Security: No hardcoded secrets or exposed credentials
+          - [ ] or [x] Security: Edge Functions and RPCs verify incoming requests
+          - [ ] or [x] Migrations: Safe, additive SQL only
+          - [ ] or [x] Pipeline: Candidate profile + Pinecone vector flow not affected
+          - [ ] or [x] Types: No TypeScript errors introduced
+          - [ ] or [x] Tests: New logic has test coverage
+          EOF
+          } > /tmp/claude_prompt.txt
+
+          jq -Rs '{
+            model: "anthropic/claude-sonnet-4.5",
+            max_tokens: 2048,
+            messages: [{ role: "user", content: . }]
+          }' < /tmp/claude_prompt.txt > /tmp/claude_request.json
+
+          RESPONSE=$(curl -s https://openrouter.ai/api/v1/chat/completions \
+            -H "Authorization: Bearer $OPENROUTER_API_KEY" \
+            -H "Content-Type: application/json" \
+            -H "HTTP-Referer: https://github.com/Fractional-First/talentflow" \
+            -H "X-Title: talentflow-pr-review" \
+            --data @/tmp/claude_request.json)
+
+          REVIEW=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // "Claude review failed — check API key and logs."')
+          echo "$REVIEW" > /tmp/review.txt
+
+          ERROR=$(echo "$RESPONSE" | jq -r '.error.message // empty')
+          if [ -n "$ERROR" ]; then
+            echo "OpenRouter API error: $ERROR"
+            echo "review=OpenRouter API error: $ERROR" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+          {
+            echo "review<<EOF"
+            cat /tmp/review.txt
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+      - name: Post Review Comment
+        uses: actions/github-script@v7
+        env:
+          CLAUDE_REVIEW: ${{ steps.claude_review.outputs.review }}
+        with:
+          script: |
+            const reviewBody = process.env.CLAUDE_REVIEW ?? 'Claude review did not return any output.';
+            const review = `## Claude Code Review\n\n${reviewBody}\n\n---\n*Automated review by Claude via OpenRouter. Always verify with human judgment.*`;
+
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existing = comments.data.find(c =>
+              c.user.login === 'github-actions[bot]' &&
+              c.body.startsWith('## Claude Code Review')
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body: review,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: review,
+              });
+            }

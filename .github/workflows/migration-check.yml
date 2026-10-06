@@ -1,0 +1,125 @@
+name: Migration Check
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - supabase/migrations/**
+
+permissions:
+  contents: read
+
+jobs:
+  validate-migrations:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate migration filenames
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.sha }}
+          HEAD_REF: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          mapfile -t files < <(git diff --name-only "$BASE_REF" "$HEAD_REF" -- 'supabase/migrations/**')
+
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "No migration files changed."
+            exit 0
+          fi
+
+          invalid=0
+          for file in "${files[@]}"; do
+            name=$(basename "$file")
+            if [[ ! "$name" =~ ^[0-9]{14}_[a-z0-9_]+\.sql$ ]] && [[ "$name" != "00000000000000_baseline.sql" ]]; then
+              echo "Invalid migration filename: $file"
+              invalid=1
+            fi
+          done
+
+          if [ "$invalid" -ne 0 ]; then
+            echo "Migration filenames must match YYYYMMDDHHMMSS_description.sql"
+            exit 1
+          fi
+
+      - name: Detect destructive migration patterns
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.sha }}
+          HEAD_REF: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          mapfile -t files < <(git diff --name-only "$BASE_REF" "$HEAD_REF" -- 'supabase/migrations/**')
+
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "No migration files changed."
+            exit 0
+          fi
+
+          destructive_pattern='(^|[^a-z])(drop[[:space:]]+table|drop[[:space:]]+column|truncate([[:space:]]+table)?|drop[[:space:]]+type|drop[[:space:]]+schema)([^a-z]|$)'
+          review_pattern='(^|[^a-z])(delete[[:space:]]+from|alter[[:space:]]+type|update[[:space:]]+[a-zA-Z0-9_".]+[[:space:]]+set[[:space:]]+)([^a-z]|$)'
+          destructive_found=0
+          review_found=0
+
+          for file in "${files[@]}"; do
+            lower=$(mktemp)
+            trap 'rm -f "$lower"' EXIT
+            perl -0pe 's{/\*.*?\*/}{}gs' "$file" | sed 's/--.*$//g' | tr '[:upper:]' '[:lower:]' > "$lower"
+
+            if grep -En "$destructive_pattern" "$lower"; then
+              echo "::error file=$file::Destructive migration pattern detected. Use an additive approach or split this into a reviewed manual migration plan."
+              destructive_found=1
+            fi
+
+            if grep -En "$review_pattern" "$lower"; then
+              echo "::warning file=$file::Data-rewriting migration detected. This needs explicit human review and a documented rollback/backfill plan."
+              review_found=1
+            fi
+
+            rm -f "$lower"
+            trap - EXIT
+          done
+
+          if [ "$review_found" -ne 0 ]; then
+            cat <<'EOF' >> "$GITHUB_STEP_SUMMARY"
+            ## Manual review required
+
+            This PR includes data-rewriting SQL such as `UPDATE`, `DELETE`, or `ALTER TYPE`.
+
+            Before merging, verify:
+            - the migration is intentional
+            - a rollback/backfill plan is written in the PR
+            - the change was reviewed by a human with schema ownership
+          EOF
+          fi
+
+          if [ "$destructive_found" -ne 0 ]; then
+            cat <<'EOF' >> "$GITHUB_STEP_SUMMARY"
+            ## Destructive migration patterns detected
+
+            This PR includes SQL that may rewrite or delete production data.
+
+            Required next step:
+            - rewrite the migration to be additive, or
+            - split the risky operation into a separately reviewed manual plan before merge
+          EOF
+            exit 1
+          fi
+
+      - name: Migration review reminder
+        run: |
+          cat <<'EOF' >> "$GITHUB_STEP_SUMMARY"
+          ## Migration review required
+
+          This PR changes `supabase/migrations/**`.
+
+          Before merging, verify:
+          - SQL matches the intended schema change
+          - migration ordering is correct
+          - downstream code is compatible with the new schema
+          - destructive or data-rewriting changes are intentionally avoided
+          EOF

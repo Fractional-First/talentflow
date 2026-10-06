@@ -17,6 +17,8 @@ import {
   ArrowLeft,
   Users,
   Award,
+  Target,
+  Rocket,
 } from "lucide-react"
 import { BlurImage } from "@/components/BlurImage"
 
@@ -29,13 +31,14 @@ const Branding = () => {
       title: "Executive 1:1 Coaching",
       subtitle: "Perform Better. Relate Better. Feel Better.",
       description: "Personalized coaching to accelerate your leadership growth and well-being.",
+      coach: "Stephen Burke",
       features: [
         "Tailored to your unique leadership context",
         "3-month engagement with up to 3 sessions per month",
         "Free, zero-commitment intro call to assess fit"
       ],
       icon: Users,
-      imageSrc: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+      imageSrc: "/lovable-uploads/executive1to1coaching-2.png",
       path: "/dashboard/executive-coaching"
     },
     {
@@ -43,14 +46,47 @@ const Branding = () => {
       title: "Leadership Team Coaching",
       subtitle: "Elevate Team Effectiveness and Outcomes",
       description: "Customized coaching to strengthen your leadership team's relationships, decision-making, and impact.",
+      coach: "Stephen Burke",
       features: [
         "Designed around your team's meeting cadence",
         "Balances business priorities with deep relationship work",
         "Free, zero-commitment intro call and proposal"
       ],
       icon: Award,
-      imageSrc: "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+      imageSrc: "/lovable-uploads/leadershipteamcoaching.png",
       path: "/dashboard/team-coaching"
+    },
+    {
+      id: 3,
+      title: "Leadership Impact Coaching",
+      subtitle: "Show Up With Clarity, Confidence, and Purpose",
+      description: "Personalised pre-placement coaching to help you prepare for your next opportunity with intention and self-awareness.",
+      coach: "Ikigai Leading, The Thinking Field",
+      features: [
+        "Grounded in the Leadership Circle Profile® (LCP) Self-Assessment",
+        "Builds clarity of purpose and strengthens authentic leadership positioning",
+        "4-session 1:1 coaching series tailored to your leadership context",
+        "Free, zero-commitment intro call to assess fit and align on goals"
+      ],
+      icon: Target,
+      imageSrc: "/lovable-uploads/leadershipimpact1.png",
+      path: "/dashboard/leadership-impact-coaching"
+    },
+    {
+      id: 4,
+      title: "Placement Impact Coaching",
+      subtitle: "Start Strong, Adapt Fast, Deliver Impact",
+      description: "Post-placement coaching to help you navigate a new role with clarity, confidence, and agility.",
+      coach: "Ikigai Leading, The Thinking Field",
+      features: [
+        "Uses the Leadership Circle Profile® (LCP) Self-Assessment",
+        "Sharpens alignment with role expectations and team dynamics",
+        "5-session 1:1 coaching series supporting early-stage success",
+        "Free, zero-commitment intro call to assess fit and align on goals"
+      ],
+      icon: Rocket,
+      imageSrc: "/lovable-uploads/placementimpact-2.png",
+      path: "/dashboard/placement-impact-coaching"
     },
   ]
 
@@ -94,11 +130,6 @@ const Branding = () => {
                           alt={offering.title}
                           className="object-cover w-full h-full"
                         />
-                        <div className="absolute top-4 right-4">
-                          <Badge className="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">
-                            Paid Service
-                          </Badge>
-                        </div>
                       </div>
 
                       <CardHeader className="pb-4">
@@ -116,7 +147,7 @@ const Branding = () => {
                       <CardContent className="pt-0 pb-4">
                         <CardDescription className="text-base mb-4">{offering.description}</CardDescription>
                         
-                        <ul className="space-y-2 text-sm text-muted-foreground">
+                        <ul className="space-y-2 text-sm text-muted-foreground mb-4">
                           {offering.features.map((feature, featureIndex) => (
                             <li key={featureIndex} className="flex items-start">
                               <span className="text-primary mr-2 flex-shrink-0">•</span>
@@ -124,6 +155,12 @@ const Branding = () => {
                             </li>
                           ))}
                         </ul>
+                        
+                        <div className="pt-3 border-t border-border">
+                          <p className="text-sm text-muted-foreground">
+                            <span className="font-medium text-foreground">Coaching by:</span> {offering.coach}
+                          </p>
+                        </div>
                       </CardContent>
 
                       <CardFooter>

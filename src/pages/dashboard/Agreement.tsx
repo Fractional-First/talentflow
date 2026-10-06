@@ -168,6 +168,7 @@ const Agreement = () => {
 
     recordAcceptance.mutate(
       {
+        p_agreement_kind: "talent",
         p_agreement_version: CURRENT_AGREEMENT_VERSION,
         p_signature_name: personalDetails.fullLegalName,
         p_contact_email: contactEmail,

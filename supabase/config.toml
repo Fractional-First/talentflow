@@ -8,3 +8,15 @@ verify_jwt = false
 
 [functions.record-agreement-acceptance]
 verify_jwt = true
+
+# Public lead-capture endpoints — called anonymously from the RDG / guest JD
+# generator browser bundle. They self-protect via the CORS origin allowlist
+# (_shared/cors.ts) and required-field validation, and write internally with the
+# service role. They must NOT require a JWT, or the gateway 401s before the
+# function runs (UNAUTHORIZED_NO_AUTH_HEADER). Keep these here so redeploys don't
+# default back to verify_jwt = true.
+[functions.submit-rdg-lead]
+verify_jwt = false
+
+[functions.submit-shortlist]
+verify_jwt = false

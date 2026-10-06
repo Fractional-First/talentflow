@@ -68,6 +68,12 @@ Simply open [Lovable](https://lovable.dev/projects/0e90ca9c-e0b4-49b0-84e2-b4e24
 
 We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
 
+## How DB migrations ship
+
+Schema changes live in `supabase/migrations/`. When a PR that touches that folder merges into `main`, the **Supabase DB Push** GitHub Action (`.github/workflows/supabase-db-push.yml`) runs `supabase db push --linked` against the production project ref pinned in `supabase/config.toml`. The job prints `migration list` and a `--dry-run` plan before applying, fails loudly on history conflicts, and is a no-op when no new migrations are present. You can also trigger it manually from the Actions tab with `dry_run = true` to inspect the plan without writing.
+
+Two repo secrets must be present for the workflow to succeed: `SUPABASE_ACCESS_TOKEN` (Supabase personal access token) and `SUPABASE_DB_PASSWORD` (the linked project's DB password). See `docs/ci/README.md` if the workflow file is still staged there pending activation.
+
 # Fractional First – UX & Design System (Mobile-First)
 
 This guide defines the **visual identity**, **UX/UI patterns**, and **accessibility-first rules** for Fractional First's digital experiences.
