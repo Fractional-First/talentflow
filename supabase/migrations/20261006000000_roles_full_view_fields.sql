@@ -24,6 +24,8 @@ CREATE TABLE public.role_candidates (
 );
 
 CREATE INDEX role_candidates_profile_id_idx ON public.role_candidates(profile_id);
+-- Serves the ON DELETE SET NULL lookup when a profile is deleted.
+CREATE INDEX roles_confirmed_candidate_id_idx ON public.roles(confirmed_candidate_id);
 
 -- The confirmed hire must be one of the candidates introduced to that role.
 -- NO ACTION (checked at end of statement), not RESTRICT: when a profile is

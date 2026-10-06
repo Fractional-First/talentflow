@@ -125,7 +125,15 @@ BEGIN
     END IF;
   END IF;
 
-  v_id := NULLIF(p_role->>'id', '')::uuid;
+  -- An edit that lost its id must fail, not quietly add a duplicate role.
+  IF p_role ? 'id' AND NULLIF(p_role->>'id', '') IS NULL THEN
+    RAISE EXCEPTION 'upsert_role_admin: id is empty; omit it to add a role';
+  END IF;
+  IF p_role ? 'status' AND NULLIF(p_role->>'status', '') IS NULL THEN
+    RAISE EXCEPTION 'A role needs a status';
+  END IF;
+
+  v_id := (p_role->>'id')::uuid;
 
   IF v_id IS NULL THEN
     IF v_title IS NULL THEN
@@ -158,7 +166,7 @@ BEGIN
     VALUES (
       v_org_id,
       v_title,
-      COALESCE(NULLIF(p_role->>'status', ''), 'searching'),
+      COALESCE(p_role->>'status', 'searching'),
       NULLIF(p_role->>'job_description_id', '')::uuid,
       NULLIF(TRIM(p_role->>'client_sow_url'), ''),
       NULLIF(TRIM(p_role->>'candidate_sow_url'), ''),
@@ -175,10 +183,6 @@ BEGIN
   IF p_role ? 'organization_id' AND NULLIF(p_role->>'organization_id', '') IS NULL THEN
     RAISE EXCEPTION 'A role needs a client';
   END IF;
-  IF p_role ? 'status' AND NULLIF(p_role->>'status', '') IS NULL THEN
-    RAISE EXCEPTION 'A role needs a status';
-  END IF;
-
   UPDATE public.roles r
   SET
     title = CASE WHEN p_role ? 'title' THEN v_title ELSE r.title END,
@@ -269,6 +273,8 @@ SET search_path TO 'public'
 AS $$
 DECLARE
   v_query text := NULLIF(TRIM(p_query), '');
+  -- Typed % and _ are literal characters, not wildcards.
+  v_pattern text := '%' || replace(replace(replace(v_query, '\', '\\'), '%', '\%'), '_', '\_') || '%';
 BEGIN
   IF (auth.jwt() -> 'app_metadata' ->> 'role') IS DISTINCT FROM 'admin' THEN
     RAISE EXCEPTION 'Unauthorized: not an admin user';
@@ -293,9 +299,9 @@ BEGIN
     LEFT JOIN auth.users u ON u.id = p.id
   ) n
   WHERE v_query IS NULL
-    OR n.name ILIKE '%' || v_query || '%'
-    OR n.email ILIKE '%' || v_query || '%'
-    OR n.linkedinurl ILIKE '%' || v_query || '%'
+    OR n.name ILIKE v_pattern
+    OR n.email ILIKE v_pattern
+    OR n.linkedinurl ILIKE v_pattern
   ORDER BY n.updated_at DESC
   LIMIT 20;
 END;
