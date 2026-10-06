@@ -13,7 +13,6 @@ import { useNavigate, useLocation } from "react-router-dom"
 import { User, Briefcase, Home, Settings, LogOut, Award } from "lucide-react"
 import React from "react"
 import { useSignOut } from "@/queries/auth/useSignOut"
-import { cn } from "@/lib/utils"
 
 const menuItems = [
   {
@@ -30,6 +29,7 @@ const menuItems = [
     title: "Professional Coaching",
     path: "/dashboard/branding",
     icon: Award,
+    isNew: true,
   },
   {
     title: "Job Preferences",
@@ -43,11 +43,7 @@ const menuItems = [
   },
 ]
 
-interface AppSidebarProps {
-  isOnboarding?: boolean
-}
-
-export function AppSidebar({ isOnboarding = false }: AppSidebarProps) {
+export function AppSidebar() {
   const navigate = useNavigate()
   const location = useLocation()
   const { signOut } = useSignOut()
@@ -60,13 +56,6 @@ export function AppSidebar({ isOnboarding = false }: AppSidebarProps) {
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => {
-                const isJobPreferences = item.path === "/work-preferences"
-                const isDisabled =
-                  isOnboarding &&
-                  !isJobPreferences &&
-                  item.path !== "/dashboard"
-                const isHighlighted = isOnboarding && isJobPreferences
-
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
@@ -76,36 +65,20 @@ export function AppSidebar({ isOnboarding = false }: AppSidebarProps) {
                         (item.path === "/dashboard" &&
                           location.pathname === "/dashboard")
                       }
-                      className={cn(
-                        isDisabled && "opacity-50 pointer-events-none",
-                        isHighlighted &&
-                          "bg-primary/10 border border-primary/20 shadow-sm"
-                      )}
                     >
                       <a
                         href={item.path}
                         onClick={(e) => {
                           e.preventDefault()
-                          if (!isDisabled) {
-                            navigate(item.path)
-                          }
+                          navigate(item.path)
                         }}
                       >
-                        <item.icon
-                          className={cn(
-                            "mr-2",
-                            isHighlighted && "text-primary"
-                          )}
-                        />
-                        <span
-                          className={cn(
-                            isHighlighted && "text-primary font-medium"
-                          )}
-                        >
+                        <item.icon className="mr-2" />
+                        <span>
                           {item.title}
-                          {isHighlighted && (
+                          {item.isNew && (
                             <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-primary text-primary-foreground">
-                              Next
+                              NEW
                             </span>
                           )}
                         </span>
