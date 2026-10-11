@@ -9,8 +9,14 @@ export const CTA_LABEL = "Complete your onboarding";
 export const CTA_URL = "https://talent.fractionalfirst.com/dashboard";
 export const LINKEDIN_URL = "https://www.linkedin.com/company/fractionalfirst/";
 export const WEBSITE_URL = "https://www.fractionalfirst.com";
+export const LOGO_URL = "https://dtyugokvlksnatftpucm.supabase.co/storage/v1/object/public/assets//FFlogo.png";
+export const SUPPORT_EMAIL = "support@fractionalfirst.com";
+export const PRIVACY_URL = "https://www.fractionalfirst.com/privacy-policy";
+export const TERMS_URL = "https://www.fractionalfirst.com/terms-of-service";
 
-const BRAND = "#449889"; // talentflow --primary
+// Styling matches FF's "Verify your email" Supabase Auth template.
+const BRAND = "#449889";
+const FONT = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif";
 
 type Section = { heading?: string; paragraphs: string[] };
 
@@ -81,8 +87,8 @@ function escapeHtml(s: string): string {
     .replace(/'/g, "&#39;");
 }
 
-const P = 'style="margin:0 0 16px;font-size:16px;line-height:1.6;color:#1A1A1A;"';
-const H = 'style="margin:24px 0 8px;font-size:16px;line-height:1.4;font-weight:700;color:#1A1A1A;"';
+const P = 'style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.5;"';
+const H = 'style="margin:24px 0 8px;font-size:15px;font-weight:700;color:#333;line-height:1.5;"';
 
 function sectionHtml({ heading, paragraphs }: Section): string {
   return (heading ? `<p ${H}>${escapeHtml(heading)}</p>` : "") +
@@ -95,25 +101,33 @@ function sectionText({ heading, paragraphs }: Section): string {
 
 export function renderWelcomeEmail(firstName: string | null | undefined): { subject: string; html: string; text: string } {
   const hi = greeting(firstName);
+  const year = new Date().getUTCFullYear();
+  const signer = SIGN_OFF.slice(0, -1);
+  const team = SIGN_OFF[SIGN_OFF.length - 1];
 
-  const html = `<!doctype html>
+  const html = `<!DOCTYPE html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${SUBJECT}</title></head>
-<body style="margin:0;padding:0;background:#F9F9F9;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F9F9F9;">
-<tr><td align="center" style="padding:32px 16px;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#FFFFFF;border-radius:8px;font-family:Urbanist,'Helvetica Neue',Arial,sans-serif;">
-<tr><td style="padding:32px 32px 8px;font-size:20px;font-weight:700;color:${BRAND};">Fractional First</td></tr>
-<tr><td style="padding:16px 32px 32px;">
-<p ${P}>${escapeHtml(hi)}</p>
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>${SUBJECT}</title></head>
+<body style="margin:0;padding:0;font-family:${FONT};background-color:#f9f9f9;">
+<table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 0;">
+<tr><td align="center">
+<table width="600" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px;background-color:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,0.05);">
+<tr><td align="center" style="padding:30px 0 10px;"><img src="${LOGO_URL}" alt="Fractional First" width="120" style="margin-bottom:8px;" /></td></tr>
+<tr><td align="center" style="padding:30px 40px 20px;"><h2 style="margin:0;font-size:24px;font-weight:600;">${escapeHtml(hi)}</h2></td></tr>
+<tr><td style="padding:0 40px 30px;">
 ${INTRO.map((p) => `<p ${P}>${escapeHtml(p)}</p>`).join("\n")}
 ${STEPS.map(sectionHtml).join("\n")}
-<table role="presentation" cellpadding="0" cellspacing="0" style="margin:24px 0;"><tr><td style="border-radius:6px;background:${BRAND};">
-<a href="${CTA_URL}" style="display:inline-block;padding:14px 28px;font-size:16px;font-weight:700;color:#FFFFFF;text-decoration:none;">${CTA_LABEL}</a>
-</td></tr></table>
+<div style="text-align:center;margin:24px 0;"><a href="${CTA_URL}" style="display:inline-block;background-color:${BRAND};color:#ffffff;text-decoration:none;padding:14px 24px;border-radius:9999px;font-weight:500;">${CTA_LABEL}</a></div>
 ${AFTER_STEPS.map(sectionHtml).join("\n")}
-<p style="margin:24px 0 0;font-size:16px;line-height:1.6;color:#1A1A1A;">${SIGN_OFF.map(escapeHtml).join("<br>")}</p>
-<p style="margin:24px 0 0;font-size:14px;line-height:1.6;color:#6B6B6B;"><a href="${LINKEDIN_URL}" style="color:${BRAND};">LinkedIn</a> &middot; <a href="${WEBSITE_URL}" style="color:${BRAND};">fractionalfirst.com</a></p>
+</td></tr>
+<tr><td style="padding:0 40px 30px;text-align:center;">
+<p style="margin:0 0 4px;font-size:15px;color:#333;line-height:1.5;">${signer.map(escapeHtml).join("<br />")}</p>
+<p style="margin:0;font-size:14px;color:${BRAND};">${escapeHtml(team)}</p>
+<p style="margin:16px 0 0;font-size:13px;color:#888;"><a href="${LINKEDIN_URL}" style="color:${BRAND};">LinkedIn</a> &nbsp;|&nbsp; <a href="${WEBSITE_URL}" style="color:${BRAND};">fractionalfirst.com</a></p>
+</td></tr>
+<tr><td style="padding:20px 40px;border-top:1px solid #eee;text-align:center;font-size:12px;color:#999;">
+Need help? Contact us at <a href="mailto:${SUPPORT_EMAIL}" style="color:${BRAND};">${SUPPORT_EMAIL}</a><br />
+&copy; ${year} Fractional First &nbsp;|&nbsp; <a href="${PRIVACY_URL}" style="color:#999;">Privacy Policy</a> &nbsp;|&nbsp; <a href="${TERMS_URL}" style="color:#999;">Terms of Service</a>
 </td></tr>
 </table>
 </td></tr>
@@ -129,6 +143,7 @@ ${AFTER_STEPS.map(sectionHtml).join("\n")}
     ...AFTER_STEPS.map(sectionText),
     SIGN_OFF.join("\n"),
     `LinkedIn: ${LINKEDIN_URL}\nWebsite: ${WEBSITE_URL}`,
+    `Need help? Contact us at ${SUPPORT_EMAIL}`,
   ].join("\n\n");
 
   return { subject: SUBJECT, html, text };
