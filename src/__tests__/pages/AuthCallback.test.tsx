@@ -68,12 +68,16 @@ describe('AuthCallback — welcome email', () => {
     expect(mockInvoke).toHaveBeenCalledWith('send-welcome-email')
   })
 
-  it('still continues onboarding when the welcome email fails', async () => {
-    mockInvoke.mockRejectedValue(new Error('network down'))
+  it('still continues onboarding, and logs it, when the welcome email fails', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
+    // What supabase-js resolves with when the function answers non-2xx.
+    const failure = new Error('Edge Function returned a non-2xx status code')
+    mockInvoke.mockResolvedValue({ data: null, error: failure })
     arriveFromVerificationLink()
 
     expect(await screen.findByText('create profile page')).toBeInTheDocument()
-    await waitFor(() => expect(mockInvoke).toHaveBeenCalledTimes(1))
+    await waitFor(() => expect(consoleError).toHaveBeenCalledWith('Welcome email failed:', failure))
+    consoleError.mockRestore()
   })
 
   it('still continues onboarding when the welcome email never answers', async () => {

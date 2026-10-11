@@ -24,12 +24,12 @@ const AuthCallback = () => {
               refresh_token,
             })
 
-            // Welcome email (ff-workspace#43). Not awaited: the edge function decides
-            // whether this person gets it (newly verified, once), and a failure must
-            // never hold up onboarding.
-            supabase.functions
-              .invoke("send-welcome-email")
-              .catch((error) => console.error("Welcome email failed:", error))
+            // Not awaited: the send-welcome-email function decides whether this
+            // person gets it (newly verified, once), and a failure must never hold
+            // up onboarding. invoke() resolves with { error } rather than rejecting.
+            supabase.functions.invoke("send-welcome-email").then(({ error }) => {
+              if (error) console.error("Welcome email failed:", error)
+            })
 
             // Check if user has profile data (generated profile)
             const { data: profileData } = await supabase
