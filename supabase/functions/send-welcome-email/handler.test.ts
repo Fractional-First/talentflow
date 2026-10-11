@@ -100,7 +100,7 @@ Deno.test("a newly verified talent gets one welcome email at their own address",
   assertEquals(resendCalls.length, 1);
   const { body, headers } = resendCalls[0];
   assertEquals(body.to, [t.email]);
-  assertEquals(body.from, "Fractional First <noreply@fractionalfirst.com>");
+  assertEquals(body.from, "Reza Behnam, Fractional First <hello@fractionalfirst.com>");
   assertEquals(body.reply_to, "hello@fractionalfirst.com");
   assertEquals(body.subject, "Welcome to Fractional First");
   assertStringIncludes(String(body.text), "Hi Claire,");

@@ -1,10 +1,9 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { renderWelcomeEmail } from "./email.ts";
 
-// Sender. Kept as two constants so switching to Reza at hello@ (the copy's own
-// header note) is a one-line change. The domain must stay one Resend has verified.
-export const FROM_NAME = "Fractional First";
-export const FROM_ADDRESS = "noreply@fractionalfirst.com";
+// Sender. The address's domain must stay one Resend has verified.
+export const FROM_NAME = "Reza Behnam, Fractional First";
+export const FROM_ADDRESS = "hello@fractionalfirst.com";
 export const REPLY_TO = "hello@fractionalfirst.com";
 
 // Only people who verified their email this recently are welcomed, so existing
