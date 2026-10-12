@@ -224,12 +224,12 @@ interface ProfileData {
 | Route | Component | Auth | Statuses | Purpose |
 |-------|-----------|------|----------|---------|
 | `/` | Redirect → `/login` | No | — | Root redirect |
-| `/login` | Login | No | — | Email/password + LinkedIn OAuth |
-| `/signup` | SignUp | No | — | Account creation |
+| `/login` | Login | No | — | Email/password + Google and LinkedIn OAuth |
+| `/signup` | SignUp | No | — | Account creation (email, Google, LinkedIn) |
 | `/forgot-password` | ForgotPassword | No | — | Password reset request |
 | `/reset-password` | ResetPassword | No | — | Password reset with token |
 | `/check-email` | CheckEmail | No | — | Email verification + resend |
-| `/auth/callback` | AuthCallback | No | — | OAuth callback (LinkedIn OIDC) |
+| `/auth/callback` | AuthCallback | No | — | Return point for email verification links, Google sign-in and LinkedIn sign-up (LinkedIn login goes straight to `/dashboard`); raises onboarding status (never lowers it) and routes by it |
 | `/legal/privacy` | PrivacyPolicy | No | — | Privacy policy |
 | `/profile/:slug` | PublicProfile | No | — | Public anonymous profile view |
 | `/profile/preview/:uuid` | PublicProfile | No | — | Preview before publish |

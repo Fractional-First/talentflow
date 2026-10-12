@@ -4,10 +4,14 @@ import { Spinner } from "@/components/ui/spinner"
 import { supabase } from "@/integrations/supabase/client"
 import { useQueryClient } from "@tanstack/react-query"
 import { useState, useEffect } from "react"
+import {
+  routeForOnboardingStatus,
+  type OnboardingStatus,
+} from "@/utils/onboardingStatus"
 
 interface ProtectedRouteProps {
   children: React.ReactNode
-  allowedStatuses?: string[]
+  allowedStatuses?: OnboardingStatus[]
 }
 
 export const ProtectedRoute = ({
@@ -88,21 +92,7 @@ export const ProtectedRoute = ({
     !allowedStatuses.includes(onboardingStatus)
   ) {
     // Redirect based on current onboarding status
-    switch (onboardingStatus) {
-      case "SIGNED_UP":
-        return <Navigate to="/check-email" replace />
-      case "EMAIL_CONFIRMED":
-        return <Navigate to="/create-profile" replace />
-      case "SET_PASSWORD":
-        return <Navigate to="/change-password" replace />
-      case "PROFILE_GENERATED":
-        return <Navigate to="/edit-profile" replace />
-      case "PROFILE_CONFIRMED":
-      case "PREFERENCES_SET":
-        return <Navigate to="/dashboard" replace />
-      default:
-        return <Navigate to="/create-profile" replace />
-    }
+    return <Navigate to={routeForOnboardingStatus(onboardingStatus)} replace />
   }
 
   return <>{children}</>

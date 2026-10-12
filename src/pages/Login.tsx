@@ -1,6 +1,7 @@
 
 import { AuthBackground } from "@/components/auth/AuthBackground"
 import { BrandHeader } from "@/components/auth/BrandHeader"
+import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton"
 import {
   StepCard,
   StepCardContent,
@@ -90,19 +91,26 @@ const Login = () => {
           </StepCardHeader>
 
           <StepCardContent className="space-y-6">
-            <Button
-              variant="outline"
-              className="w-full flex items-center justify-center gap-2"
-              onClick={handleLinkedInLogin}
-              disabled={isLinkedInSubmitting || loading}
-            >
-              <Linkedin className="h-5 w-5" />
-              <span>
-                {isLinkedInSubmitting
-                  ? "Connecting..."
-                  : "Continue with LinkedIn"}
-              </span>
-            </Button>
+            <div className="space-y-3">
+              <GoogleSignInButton
+                label="Continue with Google"
+                disabled={isLinkedInSubmitting || loading}
+              />
+
+              <Button
+                variant="outline"
+                className="w-full flex items-center justify-center gap-2"
+                onClick={handleLinkedInLogin}
+                disabled={isLinkedInSubmitting || loading}
+              >
+                <Linkedin className="h-5 w-5" />
+                <span>
+                  {isLinkedInSubmitting
+                    ? "Connecting..."
+                    : "Continue with LinkedIn"}
+                </span>
+              </Button>
+            </div>
 
             <div className="relative">
               <Separator />
