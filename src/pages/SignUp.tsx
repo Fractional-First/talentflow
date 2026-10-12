@@ -8,6 +8,7 @@ import {
 } from "@/components/StepCard"
 import { AuthBackground } from "@/components/auth/AuthBackground"
 import { BrandHeader } from "@/components/auth/BrandHeader"
+import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton"
 import { LinkedInSignUp } from "@/components/auth/LinkedInSignUp"
 import { SignUpForm } from "@/components/auth/SignUpForm"
 import { Button } from "@/components/ui/button"
@@ -100,7 +101,10 @@ const SignUp = () => {
               </Alert>
             )}
 
-            <LinkedInSignUp isSubmitting={loading} />
+            <div className="space-y-3">
+              <GoogleSignInButton label="Sign up with Google" disabled={loading} />
+              <LinkedInSignUp isSubmitting={loading} />
+            </div>
 
             <div className="relative my-4">
               <Separator />
