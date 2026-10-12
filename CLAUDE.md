@@ -1,8 +1,6 @@
 # Fractional First - Claude Code Development Guide
 
 > **PRODUCTION SYSTEM**: ~300 active users. All changes require verification before deployment.
->
-> **Thinking modes**: Use "think" for simple tasks, "think hard" for multi-file changes, "think harder" for architecture decisions, "ultrathink" for production-critical or cross-repo changes.
 
 ---
 
@@ -35,7 +33,6 @@ cd public-profiles && npm run test  # Run tests
 
 # Supabase
 cd talentflow && npx supabase start                    # Start local Supabase
-cd talentflow && npx supabase db reset                 # Reset local DB with migrations
 cd talentflow && npx supabase gen types typescript \
   --project-id dtyugokvlksnatftpucm \
   > src/integrations/supabase/types.ts                 # Regenerate types
@@ -52,7 +49,7 @@ cd talentflow && npx supabase gen types typescript \
 | `src/types/profile.ts` | ProfileData interface |
 | `src/components/create-profile/types.ts` | N8N webhook URLs |
 | `src/queries/usePublicProfile.ts` | Profile fetching (uses get_anon_profile) |
-| `supabase/migrations/` | 43+ SQL migrations |
+| `supabase/migrations/` | SQL migrations |
 
 **public-profiles/**
 | File | Purpose |
@@ -118,8 +115,8 @@ cd talentflow && npx supabase gen types typescript \
 
 **The Problem**: Supabase types diverge over time.
 
-- talentflow types: `src/integrations/supabase/types.ts` (892 lines)
-- public-profiles types: `src/integrations/supabase/types.ts` (968 lines)
+- talentflow types: `src/integrations/supabase/types.ts`
+- public-profiles types: `src/integrations/supabase/types.ts`
 
 **Known differences**:
 - `profiles.email`: talentflow allows null, public-profiles requires string
@@ -169,39 +166,10 @@ webhook-processor-production-1757.up.railway.app
 
 ## TDD Workflow
 
-When implementing features, follow this test-driven approach:
-
-### 1. Write Failing Tests First
-
-```bash
-# Create test file in appropriate directory
-# talentflow: src/__tests__/queries/myFeature.test.ts
-# public-profiles: src/__tests__/lib/myFeature.test.ts
-
-# Run in watch mode
-cd talentflow && npm run test -- --watch src/__tests__/queries/myFeature.test.ts
-```
-
-### 2. Verify Tests Fail Correctly
-
-Tests should fail because the feature doesn't exist, NOT because of:
-- Syntax errors
-- Import issues
-- Mock configuration problems
-
-### 3. Implement Minimum Code
-
-Write only enough code to make tests pass. Don't over-engineer.
-
-### 4. Verify Tests Pass
-
-```bash
-npm run test -- src/__tests__/queries/myFeature.test.ts
-```
-
-### 5. Refactor (Optional)
-
-Clean up code while keeping tests green.
+The testing rules for every FF repo — seams, what may be mocked, the red-before-green receipt —
+live in the workspace's `.claude/skills/tdd.md`. Here: tests go in `src/__tests__/` (only
+`src/**/*.{test,spec}.{ts,tsx}` is picked up); run `npm run test:run`, one file with
+`npx vitest run <path>`.
 
 ### Example Test Pattern (Supabase RPC)
 
@@ -284,11 +252,11 @@ Merging to `main` ships them to production through `.github/workflows/migrate.ym
 
 ### Adding a New Field to ProfileData
 
-1. **Database first** (think harder about schema):
+1. **Database first:**
    ```bash
    cd talentflow
    npx supabase migration new add_field_name
-   # Edit migration file, apply via Supabase dashboard
+   # Edit the migration file; it ships in its own PR and merging to main applies it (see "How Supabase changes ship")
    ```
 
 2. **Regenerate types**:
@@ -343,9 +311,8 @@ npx supabase start
 
 ### Running Migrations Locally
 
-```bash
-npx supabase db reset  # Drops and recreates with all migrations
-```
+`supabase db reset` is hook-blocked. Validate SQL with `supabase start` on a scratch copy of
+`supabase/` with its own `project_id` and ports, and stop it afterwards (`.claude/skills/tdd.md` in the workspace).
 
 ### When to Use Real vs Mock Supabase
 
@@ -456,14 +423,12 @@ ssh -T git@github.com
 
 ### GitHub CLI (`gh`)
 
-The `gh` CLI has multiple accounts. Switch to the correct one before creating PRs:
+The `gh` CLI has multiple accounts. Pin the Fractional First token in every Bash call that runs
+`gh` or `git push` over https, and never run `gh auth switch` — it changes the account for every
+other session on the machine (workspace `CLAUDE.md` → Multi-Repo Git):
 
 ```bash
-# Check current account
-gh auth status
-
-# Switch to Fractional First account
-gh auth switch --user adam-frationalfirst
+export GH_TOKEN=$(gh auth token --user adam-frationalfirst); gh pr create …
 ```
 
 ### Workflow for Changes
@@ -497,7 +462,7 @@ This project uses Claude Code hooks to automatically verify work quality and pro
 
 ### Hook Configuration
 
-Hooks are defined in `talentflow/.claude/settings.local.json`:
+Hooks are defined in `talentflow/.claude/settings.json`:
 
 ```json
 {
@@ -545,11 +510,7 @@ Hooks are defined in `talentflow/.claude/settings.local.json`:
 
 ### Disabling Hooks Temporarily
 
-If hooks are causing issues, you can disable them by renaming the settings file:
-
-```bash
-mv talentflow/.claude/settings.local.json talentflow/.claude/settings.local.json.bak
-```
+If hooks are causing issues, ask Adam before disabling them — `settings.json` is committed and shared.
 
 ---
 
@@ -567,5 +528,4 @@ Use these custom commands for common workflows:
 
 ---
 
-*Last updated: January 2025*
 *Maintained by: Fractional CTO + Claude Code*
