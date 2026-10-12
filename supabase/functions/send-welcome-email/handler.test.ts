@@ -105,7 +105,15 @@ Deno.test("a newly verified talent gets one welcome email at their own address",
   assertEquals(body.subject, "Welcome to Fractional First");
   assertStringIncludes(String(body.text), "Hi Claire,");
   assertStringIncludes(String(body.text), "Complete your onboarding: https://talent.fractionalfirst.com/dashboard");
-  assertStringIncludes(String(body.html), "Hi Claire,");
+  const html = String(body.html);
+  assertStringIncludes(html, '<h2 style="margin:0;font-size:24px;font-weight:600;">Hi Claire,</h2>');
+  assertStringIncludes(html, 'src="https://dtyugokvlksnatftpucm.supabase.co/storage/v1/object/public/assets//FFlogo.png"');
+  assertStringIncludes(html, 'href="https://talent.fractionalfirst.com/dashboard"');
+  assertStringIncludes(html, 'href="mailto:support@fractionalfirst.com"');
+  assertStringIncludes(html, '<a href="https://www.fractionalfirst.com/privacy-policy" style="color:#999;">Privacy Policy</a>');
+  assertStringIncludes(html, '<a href="https://www.fractionalfirst.com/terms-of-service" style="color:#999;">Terms of Service</a>');
+  assertStringIncludes(html, `&copy; ${new Date().getUTCFullYear()} Fractional First`);
+  assertStringIncludes(String(body.text), "Need help? Contact us at support@fractionalfirst.com");
   assertEquals(headers.get("idempotency-key"), `welcome-email/${t.id}`);
   assert(await sentAt(t.id) instanceof Date);
 });
