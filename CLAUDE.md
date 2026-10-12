@@ -25,6 +25,7 @@ See parent folder for shared docs across all FF projects:
 cd talentflow && npm run dev        # Start dev server
 cd talentflow && npm run build      # Production build
 cd talentflow && npm run lint       # ESLint
+cd talentflow && npm run typecheck  # tsc per project; plain `tsc --noEmit` checks no files
 cd talentflow && npm run test       # Run tests
 
 # public-profiles (Next.js 15) - localhost:3000
@@ -262,6 +263,7 @@ describe('usePublicProfile', () => {
 ```
 □ npm run build succeeds in affected repo(s)
 □ npm run lint passes
+□ For talentflow: npm run typecheck passes
 □ npm run test passes
 □ Manual test in dev environment
 □ For talentflow: Test protected routes with different user statuses
@@ -423,8 +425,8 @@ User statuses in order:
 ### Build Failures
 
 ```bash
-# Check TypeScript errors
-npm run build 2>&1 | head -50
+# Check TypeScript errors (vite build does not type-check)
+npm run typecheck
 
 # Check for import issues
 npm run lint
